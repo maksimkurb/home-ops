@@ -5,7 +5,7 @@ creation_rules:
     age: >-
       age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
   - path_regex: cluster/.*\.sops\.ya?ml
-    unencrypted_regex: "^(kind)$"
+    encrypted_regex: "^(data|stringData)$"
     age: >-
       age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
   - path_regex: cluster/.*\.ya?ml
