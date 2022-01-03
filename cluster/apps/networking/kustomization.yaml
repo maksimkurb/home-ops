@@ -4,3 +4,4 @@ resources:
   - traefik
   - cloudflare-ddns
   - external-dns
+  - blocky
