@@ -54,8 +54,6 @@ spec:
       serviceMonitor:
         interval: 30s
         scrapeTimeout: 10s
-      prometheusRule:
-        enabled: true
     config: |
       upstream:
         default:
