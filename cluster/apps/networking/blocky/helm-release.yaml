@@ -49,11 +49,6 @@ spec:
             protocol: UDP
             targetPort: 53
         externalTrafficPolicy: Local
-    metrics:
-      enabled: true
-      serviceMonitor:
-        interval: 30s
-        scrapeTimeout: 10s
     config: |
       upstream:
         default:
