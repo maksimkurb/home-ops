@@ -1,15 +1,14 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - cron-job.yaml
-  - secret.sops.yaml
 namespace: networking
 configMapGenerator:
-  - name: cloudflare-ddns
+  - name: blocky-dashboard
     files:
-      - cloudflare-ddns.sh
+      - blocky-dashboard.json=https://raw.githubusercontent.com/0xERR0R/blocky/v0.17/docs/blocky-grafana.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
     kustomize.toolkit.fluxcd.io/substitute: disabled
+  labels:
+    grafana_dashboard: "true"

@@ -51,7 +51,7 @@ For provisioning the following tools will be used:
 #### Required
 
 | Tool                                               | Purpose                                                                                                                                 |
-|----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | [ansible](https://www.ansible.com)                 | Preparing Ubuntu for Kubernetes and installing k3s                                                                                      |
 | [direnv](https://github.com/direnv/direnv)         | Exports env vars based on present working directory                                                                                     |
 | [flux](https://toolkit.fluxcd.io/)                 | Operator that manages your k8s cluster based on your Git repository                                                                     |
@@ -66,7 +66,7 @@ For provisioning the following tools will be used:
 #### Optional
 
 | Tool                                                   | Purpose                                                  |
-|--------------------------------------------------------|----------------------------------------------------------|
+| ------------------------------------------------------ | -------------------------------------------------------- |
 | [helm](https://helm.sh/)                               | Manage Kubernetes applications                           |
 | [kustomize](https://kustomize.io/)                     | Template-free way to customize application configuration |
 | [pre-commit](https://github.com/pre-commit/pre-commit) | Runs checks pre `git commit`                             |
@@ -194,7 +194,7 @@ In order to use Terraform and `cert-manager` with the Cloudflare DNS challenge y
 4. If everything goes as planned you should see Ansible running the k3s install Playbook against your nodes.
 
 5. Verify the nodes are online
-   
+
 ```sh
 kubectl --kubeconfig=./provision/kubeconfig get nodes
 # NAME           STATUS   ROLES                       AGE     VERSION
@@ -237,7 +237,7 @@ cat ~/.config/sops/age/keys.txt |
 
 5. If you verified all the secrets are encrypted, you can delete the `tmpl` directory now
 
-6.  Push you changes to git
+6. Push you changes to git
 
 ```sh
 git add -A

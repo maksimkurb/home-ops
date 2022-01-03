@@ -2,14 +2,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - cron-job.yaml
-  - secret.sops.yaml
+  - dashboard
+  - helm-release.yaml
 namespace: networking
 configMapGenerator:
-  - name: cloudflare-ddns
+  - name: blocky-whitelist
     files:
-      - cloudflare-ddns.sh
+      - whitelist.txt
 generatorOptions:
   disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
