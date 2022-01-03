@@ -62,7 +62,7 @@ spec:
           - tcp+udp:192.168.40.1
       conditional:
         mapping:
-          ${SECRET_PUBLIC_DOMAIN}: tcp+udp:192.168.40.1
+          ${SECRET_DOMAIN}: tcp+udp:192.168.40.1
       blocking:
         blackLists:
           ads:
