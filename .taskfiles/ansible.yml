@@ -33,6 +33,12 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/ubuntu-upgrade.yml"
 
+  playbook:nfs-prepare:
+    desc: Installs nfs-server and adds exports on all nfs nodes
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yml {{.ANSIBLE_PLAYBOOK_DIR}}/nfs-prepare.yml"
+
   playbook:k3s-install:
     desc: Install Kubernetes on the nodes
     dir: provision/ansible
