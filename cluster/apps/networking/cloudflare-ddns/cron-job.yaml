@@ -15,11 +15,29 @@ spec:
       ttlSecondsAfterFinished: 300
       template:
         spec:
-          restartPolicy: Never
+          restartPolicy: OnFailure
           containers:
             - name: cloudflare-ddns
-              image: mirioeggmann/cloudflare-ddns:latest
+              image: ghcr.io/k8s-at-home/kubectl:v1.23.1
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:
                     name: cloudflare-ddns
+              command:
+                - "/bin/sh"
+                - "/app/cloudflare-ddns.sh"
+              volumeMounts:
+                - name: cloudflare-ddns
+                  mountPath: /app/cloudflare-ddns.sh
+                  subPath: cloudflare-ddns.sh
+                  readOnly: true
+          volumes:
+            - name: cloudflare-ddns
+              projected:
+                defaultMode: 0775
+                sources:
+                  - configMap:
+                      name: cloudflare-ddns
+                      items:
+                        - key: cloudflare-ddns.sh
+                          path: cloudflare-ddns.sh
