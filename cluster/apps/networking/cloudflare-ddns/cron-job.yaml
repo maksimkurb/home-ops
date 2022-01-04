@@ -29,12 +29,15 @@ spec:
               volumeMounts:
                 - name: cloudflare-ddns
                   mountPath: /app/cloudflare-ddns.sh
+                  subPath: cloudflare-ddns.sh
                   readOnly: true
           volumes:
             - name: cloudflare-ddns
-              configMap:
+              projected:
                 defaultMode: 0775
-                name: cloudflare-ddns
-                items:
-                  - key: cloudflare-ddns.sh
-                    path: cloudflare-ddns.sh
+                sources:
+                  - configMap:
+                      name: cloudflare-ddns
+                      items:
+                        - key: cloudflare-ddns.sh
+                          path: cloudflare-ddns.sh
