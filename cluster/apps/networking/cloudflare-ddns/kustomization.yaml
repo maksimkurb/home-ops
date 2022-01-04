@@ -5,11 +5,3 @@ resources:
   - cron-job.yaml
   - secret.sops.yaml
 namespace: networking
-configMapGenerator:
-  - name: cloudflare-ddns
-    files:
-      - cloudflare-ddns.sh
-generatorOptions:
-  disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
