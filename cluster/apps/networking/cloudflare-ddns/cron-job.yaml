@@ -12,7 +12,7 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 3
-      ttlSecondsAfterFinished: 300
+      ttlSecondsAfterFinished: 0
       template:
         spec:
           restartPolicy: Never
@@ -40,4 +40,3 @@ spec:
                       items:
                         - key: cloudflare-ddns.sh
                           path: cloudflare-ddns.sh
-                      optional: true
