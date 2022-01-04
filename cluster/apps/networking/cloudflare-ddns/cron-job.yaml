@@ -15,10 +15,10 @@ spec:
       ttlSecondsAfterFinished: 300
       template:
         spec:
-          restartPolicy: Never
+          restartPolicy: OnFailure
           containers:
             - name: cloudflare-ddns
-              image: curlimages/curl:7.75.0
+              image: ghcr.io/k8s-at-home/kubectl:v1.23.1
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:
