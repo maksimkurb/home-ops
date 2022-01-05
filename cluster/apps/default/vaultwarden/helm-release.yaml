@@ -22,7 +22,6 @@ spec:
       tag: 1.23.1
     env:
       DOMAIN: "https://bitwarden.${SECRET_DOMAIN}"
-      ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
       TZ: "Europe/Saratov"
       DATA_FOLDER: "data"
       SIGNUPS_ALLOWED: "false"
@@ -33,7 +32,9 @@ spec:
       SMTP_PORT: "${SECRET_SMTP_PORT}"
       SMTP_SSL: "${SECRET_SMTP_SSL}"
       SMTP_USERNAME: "${SECRET_SMTP_USERNAME}"
-      SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
+    envFrom:
+      - secretRef:
+          name: vaultwarden-secrets
     ingress:
       main:
         enabled: true
