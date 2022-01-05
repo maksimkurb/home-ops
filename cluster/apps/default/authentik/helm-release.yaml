@@ -30,15 +30,17 @@ spec:
         external-dns/is-public: "true"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        hajimari.io/appName: "Authentik"
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "account-key"
       hosts:
-        - host: authentik.${SECRET_DOMAIN}
+        - host: sso.${SECRET_DOMAIN}
           paths:
             - path: /
-
       tls:
         - secretName: authentik-tls
           hosts:
-            - authentik.${SECRET_DOMAIN}
+            - sso.${SECRET_DOMAIN}
 
     authentik:
       # secret_key: set by valuesFrom
@@ -49,15 +51,15 @@ spec:
 
       email:
         # host: set by valuesFrom
-        port: 587
+        port: "${SECRET_SMTP_PORT_TLS}"
         # username: set by valuesFrom
         # password: set by valuesFrom
-        use_tls: true
+        use_tls: "${SECRET_SMTP_TLS}"
         use_ssl: false
         from: "Authentik <${SECRET_SMTP_USERNAME}>"
 
       postgresql:
-        host: "{{ .Release.Name }}-postgresql"
+        host: "homelab-pgsql.database.svc.cluster.local"
         name: authentik
         user: authentik
         # password: set by valuesFrom
@@ -79,36 +81,6 @@ spec:
 
     postgresql:
       enabled: false
-      persistence:
-        enabled: false
-        # existingClaim: authentik-postgresql
-
-      postgresqlUsername: authentik
-      postgresqlDatabase: authentik
-      # postgresqlPassword: set by valuesFrom
-
-      primary:
-        podAnnotations:
-          backup.velero.io/backup-volumes: data
-          pre.hook.backup.velero.io/container: fsfreeze
-          pre.hook.backup.velero.io/command: '["/sbin/fsfreeze", "--freeze", "/data"]'
-          post.hook.backup.velero.io/container: fsfreeze
-          post.hook.backup.velero.io/command: '["/sbin/fsfreeze", "--unfreeze", "/data"]'
-
-        sidecars:
-          - name: fsfreeze
-            image: ghcr.io/k8s-at-home/fsfreeze:v2.37-r0
-            volumeMounts:
-              - name: data
-                mountPath: /data
-            securityContext:
-              privileged: true
-
-      resources:
-        requests:
-          memory: 256Mi
-        limits:
-          memory: 512Mi
 
     redis:
       enabled: true
@@ -153,11 +125,6 @@ spec:
       name: authentik
       valuesKey: smtp_password
       targetPath: authentik.email.password
-      optional: false
-    - kind: Secret
-      name: authentik
-      valuesKey: postgresql_password
-      targetPath: postgresql.postgresqlPassword
       optional: false
     - kind: Secret
       name: authentik
