@@ -21,7 +21,7 @@ spec:
       repository: vaultwarden/server
       tag: 1.23.1
     env:
-      DOMAIN: "https://vaultwarden.${SECRET_DOMAIN}"
+      DOMAIN: "https://bitwarden.${SECRET_DOMAIN}"
       ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
       TZ: "Europe/Saratov"
       DATA_FOLDER: "data"
@@ -47,14 +47,14 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "form-textbox-password"
         hosts:
-          - host: "vaultwarden.${SECRET_DOMAIN}"
+          - host: "bitwarden.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - hosts:
-              - "vaultwarden.${SECRET_DOMAIN}"
-            secretName: "vaultwarden-tls"
+              - "bitwarden.${SECRET_DOMAIN}"
+            secretName: "vaultwarden-bitwarden-tls"
     persistence:
       data:   
         enabled: true
