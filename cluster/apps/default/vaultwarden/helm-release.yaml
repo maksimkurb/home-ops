@@ -20,6 +20,20 @@ spec:
     image:
       repository: vaultwarden/server
       tag: 1.23.1
+    env:
+      DOMAIN: "https://vaultwarden.${SECRET_DOMAIN}"
+      ADMIN_TOKEN: ${SECRET_VAULTWARDEN_ADMIN_TOKEN}
+      TZ: "Europe/Saratov"
+      DATA_FOLDER: "data"
+      SIGNUPS_ALLOWED: "false"
+      WEBSOCKET_ENABLED: "true"
+      SMTP_HOST: ${SECRET_SMTP_HOST}
+      SMTP_FROM: ${SECRET_SMTP_USERNAME}
+      SMTP_FROM_NAME: Vaultwarden (BitwardenRS) 
+      SMTP_PORT: ${SECRET_SMTP_PORT}
+      SMTP_SSL: ${SECRET_SMTP_SSL}
+      SMTP_USERNAME: ${SECRET_SMTP_USERNAME}
+      SMTP_PASSWORD: ${SECRET_SMTP_PASSWORD}
     ingress:
       main:
         enabled: true
