@@ -83,23 +83,23 @@ spec:
       AUTHENTIK_POSTGRESQL__PASSWORD:
         secretKeyRef:
           key: postgresPassword
-          name: postgresqlPassword
+          name: authentik
       AUTHENTIK_SECRET_KEY:
         secretKeyRef:
-          key: secretKey
-          name: authentikSecretKey
+          key: authentikSecretKey
+          name: authentik
       AUTHENTIK_REDIS__PASSWORD:
         secretKeyRef:
-          key: secretKey
-          name: redisPassword
+          key: redisPassword
+          name: authentik
       AUTHENTIK_EMAIL__USERNAME:
         secretKeyRef:
-          key: secretKey
-          name: smtpUser
+          key: smtpUser
+          name: authentik
       AUTHENTIK_EMAIL__PASSWORD:
         secretKeyRef:
-          key: secretKey
-          name: smtpPassword
+          key: smtpPassword
+          name: authentik
 
     postgresql:
       enabled: false
