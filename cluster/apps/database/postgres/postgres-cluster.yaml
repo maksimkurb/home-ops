@@ -10,8 +10,6 @@ spec:
     size: 10Gi
     storageClass: local-path
   numberOfInstances: 1
-  allowedSourceRanges:
-    - "${SVC_POSTGRES_ADDR}/32"
   postgresql:
     version: "13"
   users:
