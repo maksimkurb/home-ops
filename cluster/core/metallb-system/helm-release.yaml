@@ -22,3 +22,7 @@ spec:
           protocol: layer2
           addresses:
             - "${METALLB_LB_RANGE}"
+        - name: postgres
+          protocol: layer2
+          addresses:
+            - "${METALLB_LB_POSTGRES_RANGE}"
