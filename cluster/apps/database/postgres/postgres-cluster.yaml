@@ -1,0 +1,37 @@
+---
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: postgresql
+  namespace: database
+spec:
+  teamId: "homelab"
+  volume:
+    size: 10Gi
+    storageClass: local-path
+  numberOfInstances: 1
+  postgresql:
+    version: "13"
+  users:
+    operator:
+      - superuser
+      - createdb
+    vaultwarden: []
+    authentik: []
+    firefly: []
+    gitea: []
+    guacamole: []
+    homeassistant: []
+    onlyoffice: []
+  databases:
+    vaultwarden: vaultwarden
+    authentik: authentik
+    firefly: firefly
+    gitea: gitea
+    guacamole: guacamole
+    homeassistant: homeassistant
+    onlyoffice: onlyoffice
+  enableMasterLoadBalancer: true
+  enableConnectionPooler: true
+  enableLogicalBackup: true
+  logicalBackupSchedule: "* */12 * * *"
