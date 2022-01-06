@@ -66,6 +66,8 @@ spec:
         type: hostPath
         hostPath: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
         hostPathType: CharDevice
+    securityContext:
+      privileged: true
     podAnnotations:
       secret.reloader.stakater.com/reload: "home-assistant"
     addons:
