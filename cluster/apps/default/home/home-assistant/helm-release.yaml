@@ -61,6 +61,11 @@ spec:
       config:
         enabled: true
         existingClaim: home-assistant-config-v1
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+        hostPathType: CharDevice
     podAnnotations:
       secret.reloader.stakater.com/reload: "home-assistant"
     addons:
