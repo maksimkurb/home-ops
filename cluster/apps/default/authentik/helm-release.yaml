@@ -44,7 +44,7 @@ spec:
 
     authentik:
       # secret_key: set by valuesFrom
-      log_level: debug
+      # log_level: debug
 
       outposts:
         docker_image_base: ghcr.io/goauthentik/%(type)s:%(version)s
