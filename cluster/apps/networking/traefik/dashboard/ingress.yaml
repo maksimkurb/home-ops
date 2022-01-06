@@ -6,12 +6,13 @@ metadata:
   namespace: networking
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
-    hajimari.io/appName: "traefik"
-    hajimari.io/enable: "true"
-    hajimari.io/icon: "web"
     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
     external-dns/is-public: "true"
     external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+    hajimari.io/appName: "traefik"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "web"
+    hajimari.io/group: "Server maintenance"
 spec:
   ingressClassName: "traefik"
   tls:
