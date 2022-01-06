@@ -25,6 +25,7 @@ spec:
       namespaceSelector:
         matchNames:
           - default
+          - home
           - networking
       name: "you"
       customApps:
