@@ -41,8 +41,10 @@ spec:
         enabled: true
         ingressClassName: "traefik"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+          cert-manager.io/cluster-issuer: "letsencrypt-production"
           external-dns/is-public: "true"
+          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "home-assistant"
           hajimari.io/group: "Home automation"
@@ -54,6 +56,7 @@ spec:
         tls:
           - hosts:
               - "hass.${SECRET_DOMAIN}"
+            secretName: "homeassistant-tls"
     probes:
       liveness:
         enabled: false
