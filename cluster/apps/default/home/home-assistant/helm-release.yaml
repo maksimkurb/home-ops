@@ -57,13 +57,6 @@ spec:
           - hosts:
               - "hass.${SECRET_DOMAIN}"
             secretName: "homeassistant-tls"
-    probes:
-      liveness:
-        enabled: false
-      readiness:
-        enabled: false
-      startup:
-        enabled: false
     persistence:
       config:
         enabled: true
