@@ -55,7 +55,7 @@ spec:
         # username: set by valuesFrom
         # password: set by valuesFrom
         use_tls: "${SECRET_SMTP_TLS}"
-        use_ssl: false
+        use_ssl: "${SECRET_SMTP_TLS}"
         from: "Authentik <${SECRET_SMTP_USERNAME}>"
 
       postgresql:
