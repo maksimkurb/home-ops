@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firefly-iii
+  labels:
+    app: firefly-iii
+spec:
+  clusterIP: None
+  ports:
+    - port: 8080
+  selector:
+    app.kubernetes.io/instance: firefly-iii
+    app.kubernetes.io/name: firefly-iii

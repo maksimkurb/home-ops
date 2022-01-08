@@ -1,14 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - helm-release.yaml
   - config-pvc.yaml
-patches:
-  - target:
-      kind: Deployment
-      name: firefly-iii
-      version: apps/v1
-    patch: |
-      - op: replace
-        path: "/spec/template/spec/containers/0/ports/0/containerPort"
-        value: 8080
+  - cron.yaml
+  - deployment.yaml
+  - ingress.yaml
+  - secret.sops.yaml
+  - service.yaml
