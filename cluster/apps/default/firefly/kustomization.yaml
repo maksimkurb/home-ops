@@ -3,5 +3,12 @@ kind: Kustomization
 resources:
   - helm-release.yaml
   - config-pvc.yaml
-patchesStrategicMerge:
-  - deployment.patch.yaml
+patches:
+  - target:
+      kind: Deployment
+      name: firefly-iii
+      version: apps/v1
+    patch: |
+      - op: replace
+        path: "/spec/template/spec/containers/0/ports/0/containerPort"
+        value: 8080
