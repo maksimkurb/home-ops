@@ -49,9 +49,10 @@ spec:
               - "seafile.${SECRET_DOMAIN}"
             secretName: "seafile-tls"
     persistence:
-      data:   
+      config:
         enabled: true
-        storage-class: local-path
+        existingClaim: seafile-data
+        mountPath: /shared
     mariadb:
       enabled: true
       auth:
@@ -59,7 +60,7 @@ spec:
       primary:
         persistence:
           enabled: true
-          storage-class: local-path
+          existingClaim: seafile-mariadb-data
     resources:
       requests:
         cpu: 100m
