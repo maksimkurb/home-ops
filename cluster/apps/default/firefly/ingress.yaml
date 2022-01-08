@@ -15,7 +15,7 @@ metadata:
   namespace: default
 spec:
   rules:
-  - host: firefly-iii.${SECRET_DOMAIN}
+  - host: firefly.${SECRET_DOMAIN}
     http:
       paths:
       - backend:
