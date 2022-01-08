@@ -33,7 +33,7 @@ spec:
     guacamole: guacamole
     homeassistant: homeassistant
     onlyoffice: onlyoffice
-  enableMasterLoadBalancer: true
+  enableMasterLoadBalancer: false
   enableConnectionPooler: true
   enableLogicalBackup: true
   logicalBackupSchedule: "* */12 * * *"
