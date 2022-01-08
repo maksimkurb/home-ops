@@ -10,8 +10,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: firefly-iii
-      tier: frontend
+      app.kubernetes.io/instance: firefly-iii
+      app.kubernetes.io/name: firefly-iii
   strategy:
     type: Recreate
   template:
