@@ -23,9 +23,12 @@ spec:
     env:
       SEAFILE_SERVER_HOSTNAME: "https://seafile.${SECRET_DOMAIN}"
       TIME_ZONE: "Europe/Saratov"
+      DB_ROOT_PASSWD: ""
+      SEAFILE_ADMIN_EMAIL: ""
+      SEAFILE_ADMIN_PASSWORD: ""
     envFrom:
       - secretRef:
-          name: seafile-secrets
+        name: seafile-secrets
     ingress:
       main:
         enabled: true
