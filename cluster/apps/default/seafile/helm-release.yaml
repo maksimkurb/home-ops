@@ -21,7 +21,7 @@ spec:
       repository: seafileltd/seafile-mc
       tag: 9.0.2
     env:
-      SEAFILE_SERVER_HOSTNAME: "https://seafile.${SECRET_DOMAIN}"
+      SEAFILE_SERVER_HOSTNAME: "seafile.${SECRET_DOMAIN}"
       TIME_ZONE: "Europe/Saratov"
       DB_ROOT_PASSWD: "${SECRET_SEAFILE_DB_ROOT_PASSWORD}"
       SEAFILE_ADMIN_EMAIL: "${SECRET_SEAFILE_ADMIN_EMAIL}"
