@@ -28,7 +28,7 @@ spec:
       SEAFILE_ADMIN_PASSWORD: ""
     envFrom:
       - secretRef:
-        name: seafile-secrets
+          name: seafile-secrets
     ingress:
       main:
         enabled: true
