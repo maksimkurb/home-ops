@@ -23,12 +23,9 @@ spec:
     env:
       SEAFILE_SERVER_HOSTNAME: "https://seafile.${SECRET_DOMAIN}"
       TIME_ZONE: "Europe/Saratov"
-      DB_ROOT_PASSWD: ""
-      SEAFILE_ADMIN_EMAIL: ""
-      SEAFILE_ADMIN_PASSWORD: ""
-    envFrom:
-      - secretRef:
-          name: seafile-secrets
+      DB_ROOT_PASSWD: "${SECRET_SEAFILE_DB_ROOT_PASSWORD}"
+      SEAFILE_ADMIN_EMAIL: "${SECRET_SEAFILE_ADMIN_EMAIL}"
+      SEAFILE_ADMIN_PASSWORD: "${SECRET_SEAFILE_ADMIN_PASSWORD}"
     ingress:
       main:
         enabled: true
@@ -59,7 +56,7 @@ spec:
     mariadb:
       enabled: true
       auth:
-        existingSecret: seafile-secrets
+        rootPassword: "${SECRET_SEAFILE_DB_ROOT_PASSWORD}"
       primary:
         persistence:
           enabled: true
