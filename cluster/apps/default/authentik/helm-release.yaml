@@ -55,8 +55,6 @@ spec:
         port: "${SECRET_SMTP_PORT_TLS}"
         # username: set by valuesFrom
         # password: set by valuesFrom
-        use_tls: "${SECRET_SMTP_TLS}"
-        use_ssl: "false"
         from: "Authentik <${SECRET_SMTP_USERNAME}>"
 
       postgresql:
@@ -79,6 +77,10 @@ spec:
           memory: 384Mi
         limits:
           memory: 512Mi
+
+    env:
+      AUTHENTIK_EMAIL__USE_SSL: "false"
+      AUTHENTIK_EMAIL__USE_TLS: "${SECRET_SMTP_TLS}"
     
     envValueFrom:
       AUTHENTIK_POSTGRESQL__PASSWORD:
