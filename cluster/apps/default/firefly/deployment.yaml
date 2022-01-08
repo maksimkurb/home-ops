@@ -3,8 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: firefly-iii
+  namespace: default
   labels:
-    app: firefly-iii
+    app.kubernetes.io/instance: firefly-iii
+    app.kubernetes.io/name: firefly-iii
 spec:
   selector:
     matchLabels:

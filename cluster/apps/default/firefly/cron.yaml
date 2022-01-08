@@ -2,7 +2,11 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: "firefly-iii-cron"
+  name: firefly-iii-cron
+  namespace: default
+  labels:
+    app.kubernetes.io/instance: firefly-iii-cron
+    app.kubernetes.io/name: firefly-iii-cron
 spec:
   schedule: "*/15 * * * *"
   concurrencyPolicy: Forbid
