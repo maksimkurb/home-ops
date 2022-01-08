@@ -59,5 +59,3 @@ spec:
         password: "${SECRET_FIREFLYIII_DB_PASSWORD}"
         type: pgsql
       url: https://firefly.${SECRET_DOMAIN}
-    service:
-      port: 8080
