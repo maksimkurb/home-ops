@@ -27,6 +27,7 @@ spec:
           - default
           - home
           - networking
+          - media
       name: "you"
       customApps:
         - name: Some External Cluster Service
