@@ -33,6 +33,7 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "filmstrip"
+          hajimari.io/group: "Media"
         hosts:
           - host: "radarr.${SECRET_DOMAIN}"
             paths:

@@ -4,5 +4,6 @@ resources:
   - database
   - default
   - kube-system
+  - media
   - networking
   - system-upgrade

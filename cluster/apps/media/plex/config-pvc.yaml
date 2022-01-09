@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: plex-config-v1
-  namespace: Media
+  namespace: media
 spec:
   accessModes:
     - ReadWriteOnce

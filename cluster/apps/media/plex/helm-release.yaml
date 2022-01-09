@@ -44,6 +44,7 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "plex"
+          hajimari.io/group: "Media"
         hosts:
           - host: "plex.${SECRET_DOMAIN}"
             paths:
