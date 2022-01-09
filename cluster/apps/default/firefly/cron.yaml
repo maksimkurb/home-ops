@@ -10,12 +10,13 @@ metadata:
 spec:
   schedule: "*/15 * * * *"
   concurrencyPolicy: Forbid
-  failedJobsHistoryLimit: 2
-  successfulJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
   jobTemplate:
     spec:
       activeDeadlineSeconds: 120
-      backoffLimit: 5
+      backoffLimit: 3
+      ttlSecondsAfterFinished: 300
       template:
         metadata:
           labels:
