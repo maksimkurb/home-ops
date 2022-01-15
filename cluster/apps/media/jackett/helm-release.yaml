@@ -21,6 +21,7 @@ spec:
       tag: v0.20.319
     env:
       TZ: "Europe/Saratov"
+      WAIT_FOR_VPN: "true"
     ingress:
       main:
         enabled: true
@@ -30,6 +31,7 @@ spec:
           external-dns/is-public: "true"
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+          traefik.ingress.kubernetes.io/router.middlewares: "default-ak-outpost-authentik-embedded-outpost@kubernetescrd"
           hajimari.io/enable: "true"
           hajimari.io/icon: "tshirt-crew"
           hajimari.io/group: "Media"
@@ -46,6 +48,10 @@ spec:
       config:
         enabled: true
         existingClaim: jackett-config-v1
+      shared:
+        enabled: true
+        type: emptyDir
+        mountPath: /shared
     resources:
       requests:
         cpu: 50m
@@ -53,3 +59,32 @@ spec:
       limits:
         cpu: 500m
         memory: 500Mi
+    addons:
+      vpn:
+        enabled: true
+        type: wireguard
+        securityContext:
+          runAsUser: 568
+          runAsGroup: 568
+        env:
+          # Enable a killswitch that kills all trafic when the VPN is not connected
+          KILLSWITCH: "true"
+        configFile: |-
+          [Interface]
+          PrivateKey = {{SECRET_VPN_JACKET_PRIVATE_KEY}}
+          Address = 10.0.51.100/24
+          DNS = 8.8.8.8
+          PostUp = /config/up.sh %i
+          PreDown = /config/down.sh %i
+
+          [Peer]
+          PublicKey = {{SECRET_VPN_PUBLIC_KEY}}
+          AllowedIPs = 0.0.0.0/0
+          Endpoint = {{SECRET_VPN_ENDPOINT}}
+        scripts:
+          up: |-
+            #!/bin/bash
+            echo "connected" > /shared/vpnstatus
+          down: |-
+            #!/bin/bash
+            echo "disconnected" > /shared/vpnstatus
