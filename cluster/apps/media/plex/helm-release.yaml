@@ -94,9 +94,9 @@ spec:
     resources:
       requests:
         # gpu.intel.com/i915: 1
-        cpu: 400m
         memory: 1000Mi
       limits:
+        cpu: 2000m
         # gpu.intel.com/i915: 1
         memory: 6000Mi
     # addons:

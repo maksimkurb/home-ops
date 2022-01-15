@@ -63,7 +63,7 @@ spec:
           existingClaim: seafile-mariadb-data
     resources:
       requests:
-        cpu: 100m
         memory: 1Gi
       limits:
+        cpu: 1000m
         memory: 2Gi
