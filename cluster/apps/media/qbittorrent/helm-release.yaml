@@ -116,7 +116,7 @@ spec:
           KILLSWITCH: "true"
         configFile: |-
           [Interface]
-          PrivateKey = ${SECRET_VPN_JACKET_PRIVATE_KEY}
+          PrivateKey = ${SECRET_VPN_QBITTORRENT_PRIVATE_KEY}
           Address = 10.0.51.100/24
           DNS = 8.8.8.8
           PostUp = /config/up.sh %i
