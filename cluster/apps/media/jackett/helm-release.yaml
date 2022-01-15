@@ -71,16 +71,16 @@ spec:
           KILLSWITCH: "true"
         configFile: |-
           [Interface]
-          PrivateKey = {{SECRET_VPN_JACKET_PRIVATE_KEY}}
+          PrivateKey = ${SECRET_VPN_JACKET_PRIVATE_KEY}
           Address = 10.0.51.100/24
           DNS = 8.8.8.8
           PostUp = /config/up.sh %i
           PreDown = /config/down.sh %i
 
           [Peer]
-          PublicKey = {{SECRET_VPN_PUBLIC_KEY}}
+          PublicKey = ${SECRET_VPN_PUBLIC_KEY}
           AllowedIPs = 0.0.0.0/0
-          Endpoint = {{SECRET_VPN_ENDPOINT}}
+          Endpoint = ${SECRET_VPN_ENDPOINT}
         scripts:
           up: |-
             #!/bin/bash
