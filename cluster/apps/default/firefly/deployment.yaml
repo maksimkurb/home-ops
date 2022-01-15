@@ -55,6 +55,7 @@ spec:
           name: firefly-iii-data
         resources:
           requests:
+            cpu: 50m
             memory: 512Mi
           limits:
             cpu: 900m

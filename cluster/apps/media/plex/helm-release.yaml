@@ -93,12 +93,13 @@ spec:
     #   configmap.reloader.stakater.com/reload: "plex-promtail"
     resources:
       requests:
+        cpu: 50m
         # gpu.intel.com/i915: 1
-        memory: 1000Mi
+        memory: 1G
       limits:
         cpu: 2000m
         # gpu.intel.com/i915: 1
-        memory: 6000Mi
+        memory: 2G
     # addons:
     #   promtail:
     #     enabled: true
