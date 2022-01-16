@@ -26,6 +26,7 @@ spec:
         matchNames:
           - default
           - home
+          - monitoring
           - networking
           - media
       name: "you"
