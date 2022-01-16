@@ -47,6 +47,7 @@ spec:
         tls:
           - hosts:
               - "seafile.${SECRET_DOMAIN}"
+            secretName: "seafile-tls"
     persistence:
       config:
         enabled: true

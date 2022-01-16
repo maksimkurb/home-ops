@@ -39,7 +39,8 @@ spec:
           paths:
             - path: /
       tls:
-        - hosts:
+        - secretName: authentik-tls
+          hosts:
             - sso.${SECRET_DOMAIN}
 
     authentik:
