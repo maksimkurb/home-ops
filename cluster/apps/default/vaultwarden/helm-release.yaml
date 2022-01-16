@@ -26,12 +26,12 @@ spec:
       DATA_FOLDER: "data"
       SIGNUPS_ALLOWED: "false"
       WEBSOCKET_ENABLED: "true"
-      SMTP_HOST: "${SECRET_SMTP_HOST}"
+      SMTP_HOST: "${SMTP_HOST}"
       SMTP_FROM: "${SECRET_SMTP_USERNAME}"
       SMTP_FROM_NAME: Vaultwarden (BitwardenRS) 
-      SMTP_PORT: "${SECRET_SMTP_PORT_TLS}"
-      SMTP_SSL: "${SECRET_SMTP_TLS}"
-      SMTP_EXPLICIT_TLS: "${SECRET_SMTP_TLS}"
+      SMTP_PORT: "${SMTP_PORT_TLS}"
+      SMTP_SSL: "${SMTP_TLS}"
+      SMTP_EXPLICIT_TLS: "${SMTP_TLS}"
       SMTP_USERNAME: "${SECRET_SMTP_USERNAME}"
     envFrom:
       - secretRef:
