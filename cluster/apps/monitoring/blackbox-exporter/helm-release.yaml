@@ -22,7 +22,7 @@ spec:
       repository: quay.io/prometheus/blackbox-exporter
     ingress:
       enabled: true
-      className: nginx
+      className: "traefik"
       annotations:
         cert-manager.io/cluster-issuer: "letsencrypt-production"
         external-dns/is-public: "true"
