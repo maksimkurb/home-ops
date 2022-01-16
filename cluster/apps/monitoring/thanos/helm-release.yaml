@@ -49,7 +49,9 @@ spec:
     compactor:
       enabled: true
       persistence:
-        enabled: false
+        enabled: true
+        storageClass: local-path
+        size: 10Gi
     storegateway:
       enabled: true
       persistence:
