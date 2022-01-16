@@ -42,6 +42,8 @@ spec:
     # extraArgs:
     #   log.level: debug
     config:
+      ingester:
+        chunk_idle_period: 30m
       limits_config:
         enforce_metric_name: false
         reject_old_samples: true
@@ -49,13 +51,8 @@ spec:
         ingestion_rate_mb: 16
         ingestion_burst_size_mb: 24
       storage_config:
-        aws:
-          bucketnames: cubly-loki
-          endpoint: "s3.us-west-000.backblazeb2.com"
-          access_key_id: "${SECRET_AWS_ACCESS_KEY_ID}"
-          secret_access_key: "${SECRET_AWS_SECRET_ACCESS_KEY}"
-          s3forcepathstyle: true
-          insecure: false
+        filesystem:
+          directory: /data
         boltdb_shipper:
           active_index_directory: /data/loki/index
           cache_location: /data/loki/index_cache
@@ -152,3 +149,6 @@ spec:
               category: logs
             annotations:
               summary: "Node-Red is unable to connect to Home Assistant"
+    persistence:
+      enabled: true
+      existingClaim: loki-data
