@@ -53,7 +53,6 @@ spec:
         tls:
           - hosts:
               - "plex.${SECRET_DOMAIN}"
-            secretName: plex-tls
     persistence:
       config:
         enabled: true

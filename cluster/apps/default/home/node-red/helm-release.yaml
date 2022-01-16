@@ -56,7 +56,6 @@ spec:
         tls:
           - hosts:
               - "nodered.${SECRET_DOMAIN}"
-            secretName: "node-red-tls"
     persistence:
       config:
         enabled: true

@@ -28,4 +28,3 @@ spec:
   tls:
     - hosts:
         - "firefly.${SECRET_DOMAIN}"
-      secretName: "firefly-tls"
