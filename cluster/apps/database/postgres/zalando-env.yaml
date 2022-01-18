@@ -14,6 +14,6 @@ data:
   WALE_DISABLE_S3_SSE: "true"
   WAL_BUCKET_SCOPE_PREFIX: ""
   WALG_BUCKET_SCOPE_PREFIX: ""
-  AWS_ENDPOINT: "https://s3.us-west-000.backblazeb2.com"
+  AWS_ENDPOINT: "https://${SECRET_MINIO_ENDPOINT}"
   AWS_REGION: default
   AWS_S3_FORCE_PATH_STYLE: "true"

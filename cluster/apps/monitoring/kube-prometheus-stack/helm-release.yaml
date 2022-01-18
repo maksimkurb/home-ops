@@ -220,7 +220,15 @@ spec:
           objectStorageConfig:
             name: thanos-objstore
             key: objstore.yml
-        additionalScrapeConfigs: []
+        additionalScrapeConfigs:
+          - job_name: minio
+            honor_timestamps: true
+            bearer_token: ${SECRET_MINIO_PROMETHEUS_TOKEN}
+            metrics_path: /minio/v2/metrics/cluster
+            scheme: https
+            static_configs:
+              - targets:
+                  - "${SECRET_MINIO_ENDPOINT}"
           # - job_name: cadvisor
           #   honor_timestamps: true
           #   static_configs:
