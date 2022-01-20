@@ -27,7 +27,6 @@ spec:
       eula: "TRUE"
       type: "SPIGOT"
       difficulty: normal
-      whitelist: ${SECRET_MINECRAFT_PLAYERS_WHITELIST}
       serviceType: LoadBalancer
       loadBalancerIP: "${SVC_MINECRAFT_ADDR}"
       onlineMode: false
