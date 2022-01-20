@@ -32,7 +32,7 @@ spec:
         existingClaim: minecraft-data
     minecraftServer:
       eula: "TRUE"
-      type: "SPIGOT"
+      type: "PURPUR"
       difficulty: normal
       serviceType: LoadBalancer
       loadBalancerIP: "${SVC_MINECRAFT_ADDR}"
