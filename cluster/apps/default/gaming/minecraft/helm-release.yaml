@@ -19,6 +19,13 @@ spec:
   values:
     image: itzg/minecraft-server
     imageTag: java17
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 500m 
+      limits:
+        memory: 2048Mi
+        cpu: 2000m
     persistence:
       dataDir:
         enabled: true
