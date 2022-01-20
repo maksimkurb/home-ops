@@ -9,16 +9,14 @@ spec:
   chart:
     spec:
       # renovate: registryUrl=https://itzg.github.io/minecraft-server-charts/
-      chart: minecraft
-      version: 3.6.4
+      chart: minecraft-bedrock
+      version: 1.2.0
       sourceRef:
         kind: HelmRepository
         name: minecraft-server-charts
         namespace: flux-system
       interval: 5m
   values:
-    image: itzg/minecraft-server
-    imageTag: java17
     resources:
       requests:
         memory: 512Mi
@@ -32,8 +30,11 @@ spec:
         existingClaim: minecraft-data
     minecraftServer:
       eula: "TRUE"
-      type: "PURPUR"
       difficulty: normal
       serviceType: LoadBalancer
       loadBalancerIP: "${SVC_MINECRAFT_ADDR}"
       onlineMode: false
+    livenessProbe:
+      initialDelaySeconds: 90
+    readinessProbe:
+      initialDelaySeconds: 90
