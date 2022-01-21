@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - hajimari
   - home-assistant
+  - librespeed
   - mosquitto
   - node-red
