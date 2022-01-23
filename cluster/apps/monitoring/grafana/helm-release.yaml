@@ -68,27 +68,28 @@ spec:
           - name: Loki
             orgId: 1
         datasources:
-          - name: Prometheus
-            type: prometheus
-            access: proxy
-            url: http://thanos-query:9090/
-            isDefault: true
+          # - name: Prometheus
+          #   type: prometheus
+          #   access: proxy
+          #   url: http://thanos-query:9090/
+          #   isDefault: true
           - name: Loki
             type: loki
             access: proxy
             url: http://loki:3100
-    dashboards:
-      default:
-        # Ref: https://grafana.com/grafana/dashboards/7845
-        zfs:
-          gnetId: 7845
-          revision: 4
-          datasource: Prometheus
-        # Ref: https://grafana.com/grafana/dashboards/13665
-        speedtest:
-          gnetId: 13665
-          revision: 1
-          datasource: Prometheus
+            isDefault: true
+    # dashboards:
+    #   default:
+    #     # Ref: https://grafana.com/grafana/dashboards/7845
+    #     zfs:
+    #       gnetId: 7845
+    #       revision: 4
+    #       datasource: Prometheus
+    #     # Ref: https://grafana.com/grafana/dashboards/13665
+    #     speedtest:
+    #       gnetId: 13665
+    #       revision: 1
+    #       datasource: Prometheus
     sidecar:
       dashboards:
         enabled: true
