@@ -24,6 +24,20 @@ spec:
       retries: 3
   values:
     fullnameOverride: victoria-metrics
+    vmsingle:
+      enabled: true
+      # spec for VMSingle crd
+      # https://github.com/VictoriaMetrics/operator/blob/master/docs/api.MD#vmsinglespec
+      spec:
+        retentionPeriod: "14"
+        replicaCount: 1
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: "local-path"
+          resources:
+            requests:
+              storage: 20Gi
     alertmanager:
       config:
         global:
