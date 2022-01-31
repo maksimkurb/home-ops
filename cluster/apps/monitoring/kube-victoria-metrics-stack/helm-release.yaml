@@ -110,10 +110,10 @@ spec:
           hajimari.io/icon: "torch"
           hajimari.io/group: "Monitoring"
         hosts:
-          - "alert-manager.metrics.${SECRET_DOMAIN}"
+          - "alert-manager.${SECRET_DOMAIN}"
         tls:
           - hosts:
-              - "alert-manager.metrics.${SECRET_DOMAIN}"
+              - "alert-manager.${SECRET_DOMAIN}"
             secretName: alert-manager-tls
       # source https://gist.github.com/milesbxf/e2744fc90e9c41b47aa47925f8ff6512
       monzoTemplate:
