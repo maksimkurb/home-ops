@@ -116,7 +116,7 @@ spec:
           hajimari.io/icon: "torch"
           hajimari.io/group: "Monitoring"
         hosts:
-          - "alert-manager.${SECRET_DOMAIN}"
+          - "alert-manager.metrics.${SECRET_DOMAIN}"
         tls:
           - hosts:
               - "alert-manager.metrics.${SECRET_DOMAIN}"
