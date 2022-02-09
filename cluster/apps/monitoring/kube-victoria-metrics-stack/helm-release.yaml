@@ -41,7 +41,7 @@ spec:
     alertmanager:
       spec:
         extraArgs:
-          "-web.external-url": https://alert-manager.${SECRET_DOMAIN}
+          "--web.external-url": https://alert-manager.${SECRET_DOMAIN}
       config:
         global:
           slack_api_url: "${SECRET_ALERT_MANAGER_DISCORD_WEBHOOK}"
