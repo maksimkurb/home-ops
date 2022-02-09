@@ -53,7 +53,7 @@ spec:
         enabled: true
         existingClaim: seafile-data
         mountPath: /shared
-      nginxConfig:
+      nginx-config:
         enabled: true
         type: custom
         volumeSpec:
