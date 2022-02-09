@@ -40,7 +40,7 @@ spec:
             - name: svc_enable
               value: "false"
             - name: vip_address
-              value: "{{ KUBEVIP_ADDR }}"
+              value: "${KUBEVIP_ADDR}"
           securityContext:
             capabilities:
               add:

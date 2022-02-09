@@ -163,7 +163,7 @@ spec:
     kubeControllerManager:
       enabled: true
       endpoints:
-        - "{{ KUBEVIP_ADDR }}"
+        - "${KUBEVIP_ADDR}"
       service:
         enabled: true
         # port 10252 deprecated
@@ -184,7 +184,7 @@ spec:
     kubeEtcd:
       enabled: true
       endpoints:
-        - "{{ KUBEVIP_ADDR }}"
+        - "${KUBEVIP_ADDR}"
       service:
         enabled: true
         port: 2381
@@ -193,7 +193,7 @@ spec:
     kubeScheduler:
       enabled: true
       endpoints:
-        - "{{ KUBEVIP_ADDR }}"
+        - "${KUBEVIP_ADDR}"
       service:
         enabled: true
         # port 10251 deprecated
@@ -214,4 +214,4 @@ spec:
     kubeProxy:
       enabled: true
       endpoints:
-        - "{{ KUBEVIP_ADDR }}"
+        - "${KUBEVIP_ADDR}"
