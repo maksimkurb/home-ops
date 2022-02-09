@@ -178,7 +178,7 @@ spec:
               port: http-metrics
               scheme: https
               tlsConfig:
-                insecureSkipVerify: "true"
+                insecureSkipVerify: true
                 caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
     kubeEtcd:
@@ -208,7 +208,7 @@ spec:
               port: http-metrics
               scheme: https
               tlsConfig:
-                insecureSkipVerify: "true"
+                insecureSkipVerify: true
                 caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
     kubeProxy:
