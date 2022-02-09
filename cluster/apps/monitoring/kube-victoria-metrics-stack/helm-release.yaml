@@ -38,6 +38,9 @@ spec:
           resources:
             requests:
               storage: 20Gi
+    vmagent:
+      spec:
+        scrapeInterval: 1m
     alertmanager:
       spec:
         extraArgs:
@@ -154,6 +157,7 @@ spec:
     kubelet:
       enabled: true
       spec:
+        interval: "1m"
         relabelConfigs:
           - action: replace
             sourceLabels:
