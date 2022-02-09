@@ -53,6 +53,16 @@ spec:
         enabled: true
         existingClaim: seafile-data
         mountPath: /shared
+      nginxConfig:
+        enabled: true
+        type: custom
+        volumeSpec:
+          configMap:
+            name: seafile-nginx-config
+        subPath:
+          - path: seafile.nginx.conf
+            mountPath: /etc/nginx/sites-enabled/seafile.nginx.conf
+            readOnly: true
     mariadb:
       enabled: true
       auth:
