@@ -11,12 +11,10 @@ spec:
   serviceAccountName: grafana-agent
   metrics:
     instanceSelector:
-      matchLabels:
-        agent: grafana-agent-metrics
+      matchLabels: {}
     externalLabels:
       cluster: mediaserver
 
   logs:
     instanceSelector:
-      matchLabels:
-        agent: grafana-agent-logs
+      matchLabels: {}
