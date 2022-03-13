@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - helm-release.yaml
+  - grafana-agent.yaml
+  - service-account.yaml
+  - cluster-role.yaml
+  - service-monitor.yaml
+
+  - metrics-instance.yaml
+  - metrics-secret.sops.yaml
+
+  - logs-instance.yaml
+  - logs-secret.sops.yaml
+  - pod-logs.yaml

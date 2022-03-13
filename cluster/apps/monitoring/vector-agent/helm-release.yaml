@@ -38,7 +38,10 @@ spec:
           type: loki
           inputs:
             - journal_logs
-          endpoint: http://loki:3100
+          endpoint: '{{ SECRET_LOKI_ENDPOINT }}'
+          auth:
+            user: '{{ SECRET_LOKI_USERNAME }}'
+            password: '{{ SECRET_LOKI_PASSWORD }}'
           encoding:
             codec: json
           batch:
@@ -53,7 +56,10 @@ spec:
           type: loki
           inputs:
             - kubernetes_logs
-          endpoint: http://loki:3100
+          endpoint: '{{ SECRET_LOKI_ENDPOINT }}'
+          auth:
+            user: '{{ SECRET_LOKI_USERNAME }}'
+            password: '{{ SECRET_LOKI_PASSWORD }}'
           encoding:
             codec: json
           batch:
