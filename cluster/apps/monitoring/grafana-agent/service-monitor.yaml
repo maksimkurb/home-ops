@@ -26,9 +26,7 @@ spec:
     scheme: https
     tlsConfig:
       insecureSkipVerify: true
-  namespaceSelector:
-    matchNames:
-    - default
+  namespaceSelector: {}
   selector:
     matchLabels:
       app.kubernetes.io/name: kubelet
@@ -65,9 +63,7 @@ spec:
     scheme: https
     tlsConfig:
       insecureSkipVerify: true
-  namespaceSelector:
-    matchNames:
-    - default
+  namespaceSelector: {}
   selector:
     matchLabels:
       app.kubernetes.io/name: kubelet
