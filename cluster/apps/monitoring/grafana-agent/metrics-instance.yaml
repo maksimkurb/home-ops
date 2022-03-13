@@ -7,7 +7,7 @@ metadata:
     agent: grafana-agent-metrics
 spec:
   remoteWrite:
-  - url: "{{ SECRET_GRAFANA_CLOUD_ENDPOINT_PROMETHEUS }}"
+  - url: "${SECRET_GRAFANA_CLOUD_ENDPOINT_PROMETHEUS}"
     basicAuth:
       username:
         name: primary-credentials-metrics

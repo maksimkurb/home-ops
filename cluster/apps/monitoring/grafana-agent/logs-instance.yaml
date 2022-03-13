@@ -7,7 +7,7 @@ metadata:
     agent: grafana-agent-logs
 spec:
   clients:
-  - url: '{{ SECRET_GRAFANA_CLOUD_ENDPOINT_LOKI }}'
+  - url: "${SECRET_GRAFANA_CLOUD_ENDPOINT_LOKI}"
     basicAuth:
       username:
         name: primary-credentials-logs
