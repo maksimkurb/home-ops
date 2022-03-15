@@ -1,0 +1,12 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: eas-forward-auth
+spec:
+  forwardAuth:
+    address: ${SECRET_EAS_FORWARD_AUTH_URL}
+    authResponseHeaders:
+      - X-Userinfo
+      - X-Id-Token
+      - X-Access-Token
+      - Authorization
