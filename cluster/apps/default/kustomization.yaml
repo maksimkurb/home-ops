@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - vaultwarden
   - authentik
+  - external-auth-server
   - keycloak
   - home
   - seafile

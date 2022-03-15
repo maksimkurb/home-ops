@@ -1,0 +1,74 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: external-auth-server
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://travisghansen.github.io/external-auth-server
+      chart: external-auth-server
+      version: 0.2.1
+      sourceRef:
+        kind: HelmRepository
+        name: external-auth-server-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: travisghansen/external-auth-server
+      tag: v0.12.1
+      pullPolicy: IfNotPresent
+    ingress:
+      enabled: true
+      ingressClassName: "traefik"
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+        external-dns/is-public: "true"
+        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        hajimari.io/appName: "External Auth Server (SSO)"
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "account-key"
+        hajimari.io/group: "Personal services"
+      hosts:
+        - host: auth.${SECRET_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: external-auth-server-tls
+          hosts:
+            - auth.${SECRET_DOMAIN}
+
+    configTokenSignSecret: "${SECRET_EAS_CONFIG_TOKEN_SIGN_SECRET}"
+    configTokenEncryptSecret: "${SECRET_EAS_CONFIG_TOKEN_ENCRYPT_SECRET}"
+    issuerSignSecret: "${SECRET_EAS_ISSUER_SIGN_SECRET}"
+    issuerEncryptSecret: "${SECRET_EAS_ISSUER_ENCRYPT_SECRET}"
+    cookieSignSecret: "${COOKIE_SIGN_SECRET}"
+    cookieEncryptSecret: "${SECRET_EAS_COOKIE_ENCRYPT_SECRET}"
+    sessionEncryptSecret: "${SECRET_EAS_SESSION_ENCRYPT_SECRET}"
+
+    redis-ha:
+      enabled: true
+      auth: true
+      redisPassword: "${SECRET_EAS_REDIS_PASSWORD}"
+      hardAntiAffinity: false
+
+    storeOpts:
+      store: ioredis
+      password: "${SECRET_EAS_REDIS_PASSWORD}"
+      name: redismaster
+      sentinels:
+        - host: external-auth-server-redis-ha-announce-0
+          port: 26379
+      keyPrefix: 'eas:'
+
+
+    resources:
+      requests:
+        memory: 128Mi
+      limits:
+        memory: 512Mi

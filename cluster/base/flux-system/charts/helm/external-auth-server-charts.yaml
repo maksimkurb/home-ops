@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: external-auth-server-charts
+  namespace: flux-system
+spec:
+  interval: 15m
+  url: https://travisghansen.github.io/external-auth-server
+  timeout: 3m
