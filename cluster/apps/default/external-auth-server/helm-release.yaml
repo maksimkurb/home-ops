@@ -76,7 +76,7 @@ spec:
     storeOpts:
       store: ioredis
       password: "${SECRET_EAS_REDIS_PASSWORD}"
-      name: redismaster
+      name: mymaster
       sentinels:
         - host: external-auth-server-redis-ha-announce-0
           port: 26379
