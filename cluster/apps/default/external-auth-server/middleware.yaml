@@ -11,3 +11,19 @@ spec:
       - X-Id-Token
       - X-Access-Token
       - Authorization
+
+---
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: eas-management-forward-auth
+  namespace: default
+spec:
+  forwardAuth:
+    address: ${SECRET_EAS_MANAGEMENT_FORWARD_AUTH_URL}
+    authResponseHeaders:
+      - X-Userinfo
+      - X-Id-Token
+      - X-Access-Token
+      - Authorization
