@@ -47,11 +47,11 @@ spec:
       managementUser: keycloak-manager
       existingSecretPerPassword:
         keyMapping:
-          admin-password: adminPassword
-          management-password: managementPassword
-          database-password: databasePassword
-          tls-keystore-password: tlsKeystyrePassword
-          tls-truststore-password: tlsTruststorePassword
+          adminPassword: adminPassword
+          managementPassword: managementPassword
+          databasePassword: databasePassword
+          tlsKeystorePassword: tlsKeystyrePassword
+          tlsTruststorePassword: tlsTruststorePassword
         adminPassword:
           name: keycloak-credentials
         managementPassword:
