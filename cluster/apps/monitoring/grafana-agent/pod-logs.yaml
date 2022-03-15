@@ -8,6 +8,7 @@ metadata:
 spec:
   pipelineStages:
     - docker: {}
-  namespaceSelector: {}
+  namespaceSelector:
+    any: true
   selector:
     matchLabels: {}
