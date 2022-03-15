@@ -45,14 +45,23 @@ spec:
       createAdminUser: true
       adminUser: keycloak-admin
       managementUser: keycloak-manager
-      existingSecret:
-        name: keycloak-credentials
+      existingSecretPerPassword:
         keyMapping:
           admin-password: adminPassword
           management-password: managementPassword
           database-password: databasePassword
           tls-keystore-password: tlsKeystyrePassword
           tls-truststore-password: tlsTruststorePassword
+        adminPassword:
+          name: keycloak-credentials
+        managementPassword:
+          name: keycloak-credentials
+        databasePassword:
+          name: keycloak-credentials
+        tlsKeystorePassword:
+          name: keycloak-credentials
+        tlsTruststorePassword:
+          name: keycloak-credentials
     proxyAddressForwarding: true
 
     metrics:
