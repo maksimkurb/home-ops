@@ -47,7 +47,7 @@ spec:
     configTokenEncryptSecret: "${SECRET_EAS_CONFIG_TOKEN_ENCRYPT_SECRET}"
     issuerSignSecret: "${SECRET_EAS_ISSUER_SIGN_SECRET}"
     issuerEncryptSecret: "${SECRET_EAS_ISSUER_ENCRYPT_SECRET}"
-    cookieSignSecret: "${COOKIE_SIGN_SECRET}"
+    cookieSignSecret: "${SECRET_EAS_COOKIE_SIGN_SECRET}"
     cookieEncryptSecret: "${SECRET_EAS_COOKIE_ENCRYPT_SECRET}"
     sessionEncryptSecret: "${SECRET_EAS_SESSION_ENCRYPT_SECRET}"
 
