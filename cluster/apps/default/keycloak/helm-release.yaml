@@ -32,14 +32,8 @@ spec:
         hajimari.io/enable: "true"
         hajimari.io/icon: "account-key"
         hajimari.io/group: "Personal services"
-      hosts:
-        - host: login.${SECRET_DOMAIN}
-          paths:
-            - path: /
-      tls:
-        - secretName: keycloak-tls
-          hosts:
-            - login.${SECRET_DOMAIN}
+      hostname: login.${SECRET_DOMAIN}
+      tls: true
 
     auth:
       createAdminUser: true
