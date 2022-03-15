@@ -25,6 +25,7 @@ spec:
     guacamole: []
     homeassistant: []
     onlyoffice: []
+    keycloak: []
   databases:
     vaultwarden: vaultwarden
     authentik: authentik
@@ -33,6 +34,7 @@ spec:
     guacamole: guacamole
     homeassistant: homeassistant
     onlyoffice: onlyoffice
+    keycloak: keycloak
   enableMasterLoadBalancer: true
   enableConnectionPooler: true
   enableLogicalBackup: true
