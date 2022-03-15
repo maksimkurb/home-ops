@@ -55,7 +55,24 @@ spec:
       enabled: true
       auth: true
       redisPassword: "${SECRET_EAS_REDIS_PASSWORD}"
-      hardAntiAffinity: false
+      replicas: 1
+      affinity:
+        affinity: |
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    app: {{ template "redis-ha.name" . }}
+                    release: {{ .Release.Name }}
+                topologyKey: kubernetes.io/hostname
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchLabels:
+                      app:  {{ template "redis-ha.name" . }}
+                      release: {{ .Release.Name }}
+                  topologyKey: failure-domain.beta.kubernetes.io/zone
 
     storeOpts:
       store: ioredis
