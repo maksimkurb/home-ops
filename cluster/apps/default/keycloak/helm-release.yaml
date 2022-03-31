@@ -59,10 +59,7 @@ spec:
     proxyAddressForwarding: true
 
     metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-        interval: 60s
+      enabled: false
 
     postgresql:
       enabled: false
