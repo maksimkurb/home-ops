@@ -13,6 +13,7 @@ stringData:
     HASS_MQTT_PASSWORD: ENC[AES256_GCM,data:1CIjakbm,iv:ERxGS663vTZOkFveJpxSnk2XmFeCgfFzFMT0AWQ9OOM=,tag:O/Ix2wsD4C2DTCiQFT4nDg==,type:str]
     HASS_MQTT_USERNAME: ENC[AES256_GCM,data:7Q0CaVxP,iv:Uf76IPWXLlo2bDE/ZkAG7Rnir0Y6T9ZlOUBBoFle300=,tag:Da3kiIUb2NZ6RNUlYbnZYw==,type:str]
     HASS_POSTGRESQL_CONNECTION_STRING: ENC[AES256_GCM,data:hpJ2uFFaQfyqZxNiUKsAYyVELF/EvyvoLWuvnNRaWAYkekMdRemJ8cEuoOCby8RbH52tBj6tJnn124mGOASOMswjd9tmvC1QeGfL/wbMIHTnJHSXEsyakpAuS8PZD86WeIs5PVjZTmUdKjjMNkKnOFp+WuORbShgXUp50nGUoM2Lbh6YDGAAbV6okOa/YaMdiZIJZbKnsQ==,iv:qFQsK5VwnjJyJ1KIA6H5QyX1xLxi3NrQD39hAK++37A=,tag:jUfpeyOlKpTyxgon8c/D4A==,type:str]
+    longLivingToken: ENC[AES256_GCM,data:neqSmUyyQoJBq2qAawG1ZHVvR5U5NOMILITZ89P9TdlPE1dStL/r7ZsZolsT2hDFwSjQTQYW+MdShqWoqcYIey2OuydwrxHlkheWEFcdE8SnvxFpqNRrzqgYNHbxJETEUlabm8774Pb1/AOOFW8fwmHwM2+M7wAVpSouhTR8WEoi7ILMQUxI4/CfGlNgYnpQ9gcUCwMwKLHt0Sml4LS/0ZcD1rqzaN52txrayqF35XeDNc8TIt2p,iv:XzMhCTaIMKZ7jYnnVjdAd0uqKV6MeI02nyK65Y0dgaM=,tag:rVe7K4ZUlJMsr0/8grBeCA==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -28,8 +29,8 @@ sops:
             Y1JrM3dzOUZBdm5UNUg2ZURrQ3UzOVUKC4OQu8vdHbSOkisYPcN9lZYPs1TO3w7Y
             UysTCx/kfItjbE4gOJVJQ8oG82WBtR4/VxSNdNvS9qDKwiIzHxaJHg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2022-01-06T10:31:29Z"
-    mac: ENC[AES256_GCM,data:XSPaw2vK7CEJnJ2gU6YsCy8uij2j9p5LD/YZT3w2E3fW2dPEPkgqAeVssF13XCPWftGG+j9z/mapIO2gza/klS2SRovCdZs4NiniJL6SIM3Px87dqRB0AkSYOBs/wUqN0JQox3UxbvumdTLZqorJXr5Yh2GxqHvkYvfgz5R1Iqo=,iv:/KPee8HG8Wmtv43dkREyL/ZDDSt5uvwPUsZq0atmz5U=,tag:hQJTyGpi/1NTiKS3SnODLA==,type:str]
+    lastmodified: "2022-04-01T21:49:06Z"
+    mac: ENC[AES256_GCM,data:xjU0w10JpwTqXcT0W7hhSNOttrikOWiLpsODtDz2t9xo0OMb/Of1x6MoJS3UqGtuYJUTqSEe1V21hjnTQnW+Q5vpUIapSW6UvFS5hUZ0Ziyoc8YaeCs3ulGRLI+DwQluFS/0GkmXOnKy7Ne/ktHBkrPEc/EwsotZnOOWP8lJmjM=,iv:mTV3xJDFOQBad8ozOv60BsDIgjemKetss+azpUNn0mI=,tag:0Tu7akE/jaCSo4Xa0+ZfQQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.7.1
