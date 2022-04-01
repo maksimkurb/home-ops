@@ -19,6 +19,11 @@ spec:
         targetLabel: job
         regex: "^(kube-state-metrics)$"
         replacement: integrations/kubernetes/kube-state-metrics
+      - action: replace
+        sourceLabels: [job]
+        targetLabel: job
+        regex: "^(home-assistant)$"
+        replacement: integrations/kubernetes/home-assistant
     basicAuth:
       username:
         name: primary-credentials-metrics
