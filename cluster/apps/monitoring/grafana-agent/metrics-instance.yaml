@@ -8,6 +8,12 @@ metadata:
 spec:
   remoteWrite:
   - url: "${SECRET_GRAFANA_CLOUD_ENDPOINT_PROMETHEUS}"
+    writeRelabelConfigs:
+      - action: replace
+        sourceLabels: [job]
+        targetLabel: job
+        regex: "^(kubelet)$"
+        replacement: integrations/kubernetes/kubelet
     basicAuth:
       username:
         name: primary-credentials-metrics
