@@ -7,4 +7,4 @@ resources:
   - node-problem-detector
   # - speedtest-exporter
   - grafana-agent
-  # - vector-agent
+  - kube-state-metrics
