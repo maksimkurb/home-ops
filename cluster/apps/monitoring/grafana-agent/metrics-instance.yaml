@@ -14,6 +14,11 @@ spec:
         targetLabel: job
         regex: "^(kubelet)$"
         replacement: integrations/kubernetes/kubelet
+      - action: replace
+        sourceLabels: [job]
+        targetLabel: job
+        regex: "^(kube-state-metrics)$"
+        replacement: integrations/kubernetes/kube-state-metrics
     basicAuth:
       username:
         name: primary-credentials-metrics
