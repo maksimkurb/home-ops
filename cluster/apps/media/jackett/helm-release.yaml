@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: jackett
-      version: 11.3.0
+      version: 11.4.0
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home-charts
@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: ghcr.io/k8s-at-home/jackett
-      tag: v0.20.790
+      tag: v0.20.932
     env:
       TZ: "Europe/Saratov"
       WAIT_FOR_VPN: "true"
