@@ -6,9 +6,9 @@ metadata:
   namespace: networking
 spec:
   schedule: "*/5 * * * *"
-  concurrencyPolicy: "Forbid"
+  concurrencyPolicy: "Replace"
   successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       backoffLimit: 3
