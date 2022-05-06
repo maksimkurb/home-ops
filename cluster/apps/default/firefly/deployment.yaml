@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: firefly-iii
-        image: fireflyiii/core:version-5.6.9
+        image: fireflyiii/core:version-5.7.5
         imagePullPolicy: IfNotPresent
         env:
         - name: APP_ENV
