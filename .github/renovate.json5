@@ -42,6 +42,16 @@
       "datasourceTemplate": "docker"
     },
     {
+      "description": "regexManager to read and process Helm-Release files",
+      "fileMatch": [
+        "cluster/.+/helm-release\\.yaml$"
+      ],
+      "matchStrings": [
+        "^\\s*image:\n\\s*repository:\\s+(?<depName>.*)\n\\s*tag:\\s+(?<currentValue>.*)"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
       "description": "regexManager to read and process cert-manager CRD's",
       "fileMatch": [
         "cluster/crds/cert-manager/.+\\.yaml$"
