@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: bitnami/keycloak
-      tag: 16.1.1-debian-10-r36
+      tag: 18.0.2
     ingress:
       enabled: true
       ingressClassName: "traefik"
