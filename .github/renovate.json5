@@ -42,12 +42,12 @@
       "datasourceTemplate": "docker"
     },
     {
-      "description": "regexManager to read and process Helm-Release files",
+      "description": "regexManager to read and process HelmRelease files for Docker dependencies",
       "fileMatch": [
-        "cluster/.+/helm-release\\.yaml$"
+        "cluster/.+\\.yaml$"
       ],
       "matchStrings": [
-        "^\\s*image:\n\\s*repository:\\s+(?<depName>.*)\n\\s*tag:\\s+(?<currentValue>.*)"
+        "image:\n\\s*repository:\\s+(?<depName>.*)\n\\s*tag:\\s+(?<currentValue>.*)\n"
       ],
       "datasourceTemplate": "docker"
     },
