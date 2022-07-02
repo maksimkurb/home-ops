@@ -131,6 +131,12 @@
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "labels": ["renovate/helm", "automerge"]
+    },
+    // k8s-at-home version scheme
+    {
+      "matchDatasources": ["docker"],
+      "matchPackagePrefixes": ["ghcr.io/k8s-at-home/"],
+      "versioning": "regex:^v(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(\\.(?<build>\\d+))?(-.*)?$"
     }
   ]
 }
