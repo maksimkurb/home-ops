@@ -85,7 +85,6 @@ spec:
       prometheus:
         enable: true
         path: /metrics
-      bootstrapDns: tcp:1.1.1.1
       httpPort: 4000
       logFormat: json
       logLevel: info
