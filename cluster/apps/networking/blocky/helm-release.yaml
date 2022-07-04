@@ -32,22 +32,26 @@ spec:
         ports:
           http:
             port: 4000
-      dns:
+      dns-tcp:
         enabled: true
         type: LoadBalancer
         loadBalancerIP: "${SVC_BLOCKY_ADDR}"
-        ports:
-          tcp:
-            enabled: true
-            port: 53
-            protocol: TCP
-            targetPort: 53
-          udp:
-            enabled: true
-            port: 53
-            protocol: UDP
-            targetPort: 53
         externalTrafficPolicy: Local
+        dns-tcp:
+          enabled: true
+          port: 53
+          protocol: TCP
+          targetPort: 53
+      dns-udp:
+        enabled: true
+        type: LoadBalancer
+        loadBalancerIP: "${SVC_BLOCKY_ADDR}"
+        externalTrafficPolicy: Local
+        dns-udp:
+          enabled: true
+          port: 53
+          protocol: TCP
+          targetPort: 53
     config: |
       upstream:
         default:
