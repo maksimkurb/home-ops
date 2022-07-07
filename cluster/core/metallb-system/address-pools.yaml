@@ -5,7 +5,6 @@ metadata:
   name: metallb-pool-main
   namespace: metallb-system
 spec:
-  protocol: layer2
   addresses:
     - "${METALLB_LB_RANGE}"
 
@@ -17,6 +16,13 @@ metadata:
   name: metallb-pool-postgres
   namespace: metallb-system
 spec:
-  protocol: layer2
   addresses:
     - "${METALLB_LB_POSTGRES_RANGE}"
+
+---
+
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb-l2-advertisement
+  namespace: metallb-system
