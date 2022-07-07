@@ -1,0 +1,22 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-pool-main
+  namespace: metallb-system
+spec:
+  protocol: layer2
+  addresses:
+    - "${METALLB_LB_RANGE}"
+
+---
+
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: metallb-pool-postgres
+  namespace: metallb-system
+spec:
+  protocol: layer2
+  addresses:
+    - "${METALLB_LB_POSTGRES_RANGE}"
