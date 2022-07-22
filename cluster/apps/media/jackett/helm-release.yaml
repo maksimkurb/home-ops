@@ -79,7 +79,7 @@ spec:
 
           [Peer]
           PublicKey = ${SECRET_VPN_PUBLIC_KEY}
-          AllowedIPs = 0.0.0.0/1, 128.0.0.0/1
+          AllowedIPs = 0.0.0.0/0, ::/0
           Endpoint = ${SECRET_VPN_ENDPOINT}
           PersistentKeepalive = 25
         scripts:
