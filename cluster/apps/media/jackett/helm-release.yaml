@@ -68,6 +68,7 @@ spec:
         env:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
+          KILLSWITCH_EXCLUDEDNETWORKS_IPV4: "192.168.40.0/23;192.168.42.0/24;10.42.0.0/16;10.43.0.0/16;172.16.0.0/12"
         configFile: |-
           [Interface]
           PrivateKey = ${SECRET_VPN_JACKET_PRIVATE_KEY}
@@ -78,7 +79,7 @@ spec:
 
           [Peer]
           PublicKey = ${SECRET_VPN_PUBLIC_KEY}
-          AllowedIPs = 10.0.51.1/32, 172.67.193.9/32, 104.21.84.130/32, 195.82.146.120/30, 46.148.18.243/32, 194.106.216.222/32, 194.106.216.222/32, 185.167.98.127/32, 45.132.105.85/32
+          AllowedIPs = 0.0.0.0/1, 128.0.0.0/1
           Endpoint = ${SECRET_VPN_ENDPOINT}
           PersistentKeepalive = 25
         scripts:
