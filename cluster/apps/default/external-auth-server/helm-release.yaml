@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: travisghansen/external-auth-server
-      tag: v0.12.3
+      tag: v0.12.4
       pullPolicy: IfNotPresent
     ingress:
       enabled: true
