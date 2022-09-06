@@ -59,6 +59,24 @@ spec:
         filterUnmappedTypes: true
         mapping:
           ipv4.${SECRET_DOMAIN}: 192.168.42.20
+          node-1.${SECRET_DOMAIN}: 192.168.40.1
+          auth.${SECRET_DOMAIN}: 192.168.42.20
+          firefly.${SECRET_DOMAIN}: 192.168.42.20
+          hajimari.${SECRET_DOMAIN}: 192.168.42.20
+          hass.${SECRET_DOMAIN}: 192.168.42.20
+          speedtest.${SECRET_DOMAIN}: 192.168.42.20
+          nodered.${SECRET_DOMAIN}: 192.168.42.20
+          login.${SECRET_DOMAIN}: 192.168.42.20
+          seafile.${SECRET_DOMAIN}: 192.168.42.20
+          bitwarden.${SECRET_DOMAIN}: 192.168.42.20
+          jackett.${SECRET_DOMAIN}: 192.168.42.20
+          overseerr.${SECRET_DOMAIN}: 192.168.42.20
+          plex.${SECRET_DOMAIN}: 192.168.42.20
+          qbittorrent.${SECRET_DOMAIN}: 192.168.42.20
+          radarr.${SECRET_DOMAIN}: 192.168.42.20
+          sonarr.${SECRET_DOMAIN}: 192.168.42.20
+          blackbox.${SECRET_DOMAIN}: 192.168.42.20
+          traefik.${SECRET_DOMAIN}: 192.168.42.20
       blocking:
         blackLists:
           ads:
