@@ -45,10 +45,15 @@ spec:
     config: |
       upstream:
         default:
-          - tcp+udp:192.168.40.1
-      conditional:
+          - https://dns.adguard-dns.com/dns-query
+          - tls://dns.adguard-dns.com
+          - https://security.cloudflare-dns.com/dns-query
+          - tls://security.cloudflare-dns.com
+      customDNS:
+        customTTL: 1h
+        filterUnmappedTypes: true
         mapping:
-          ${SECRET_DOMAIN}: tcp+udp:192.168.40.1
+          ipv4.${SECRET_DOMAIN}: 192.168.42.20
       blocking:
         blackLists:
           ads:
