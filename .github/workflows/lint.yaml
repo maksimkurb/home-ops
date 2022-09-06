@@ -21,17 +21,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate Token
-        uses: tibdex/github-app-token@v1
-        id: generate-token
-        with:
-          app_id: "${{ secrets.BOT_APP_ID }}"
-          private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
-
       - name: MegaLinter
         uses: oxsecurity/megalinter@v6.8.0
         env:
-          GITHUB_TOKEN: "${{ steps.generate-token.outputs.token }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           PRINT_ALPACA: false
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'workflow_dispatch' }}
           ENABLE_LINTERS: |-
