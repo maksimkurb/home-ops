@@ -14,9 +14,7 @@ assignees: ""
 
 **What did you expect to happen:**
 
-**Anything else you would like to add:**
-
-<!-- Note: Miscellaneous information that will assist in solving the issue. -->
+<!-- Note: Describe in as mush detail what you expect to happen. -->
 
 **Additional Information:**
 
