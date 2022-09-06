@@ -49,4 +49,4 @@ jobs:
         uses: renovatebot/github-action@v32.190.6
         with:
           configurationFile: "${{ env.RENOVATE_CONFIG_FILE }}"
-          token: "${{ steps.generate-token.outputs.token }}"
+          token: "x-access-token:${{ steps.generate-token.outputs.token }}"
