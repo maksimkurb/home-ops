@@ -35,7 +35,6 @@ spec:
     homeassistant: homeassistant
     onlyoffice: onlyoffice
     keycloak: keycloak
-  enableMasterLoadBalancer: true
-  enableConnectionPooler: true
+  enableMasterLoadBalancer: false
+  enableConnectionPooler: false
   enableLogicalBackup: true
-  logicalBackupSchedule: "* */12 * * *"

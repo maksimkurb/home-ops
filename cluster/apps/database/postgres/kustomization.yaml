@@ -3,9 +3,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: database
 resources:
-  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.7.1/manifests/postgres-operator.yaml
-  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.7.1/manifests/api-service.yaml
-  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.7.1/manifests/operator-service-account-rbac.yaml
+  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.8.2/manifests/postgres-operator.yaml
+  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.8.2/manifests/api-service.yaml
+  - https://raw.githubusercontent.com/zalando/postgres-operator/v1.8.2/manifests/operator-service-account-rbac.yaml
   - postgres-cluster.yaml
   - zalando-env.yaml
   - secret.sops.yaml
