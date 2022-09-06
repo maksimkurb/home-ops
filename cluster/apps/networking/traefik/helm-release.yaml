@@ -21,7 +21,7 @@ spec:
       namespace: cert-manager
   values:
     image:
-      name: traefik
+      name: public.ecr.aws/docker/library/traefik
       tag: 2.8.4
     deployment:
       kind: Deployment
