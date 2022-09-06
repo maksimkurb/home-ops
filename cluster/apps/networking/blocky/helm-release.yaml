@@ -46,9 +46,9 @@ spec:
       upstream:
         default:
           - https://dns.adguard-dns.com/dns-query
-          - tls://dns.adguard-dns.com
+          - tcp-tls:dns.adguard-dns.com:853
           - https://security.cloudflare-dns.com/dns-query
-          - tls://security.cloudflare-dns.com
+          - tcp-tls:security.cloudflare-dns.com:853
       customDNS:
         customTTL: 1h
         filterUnmappedTypes: true
