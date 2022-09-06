@@ -43,6 +43,11 @@ spec:
           protocol: TCP
           targetPort: 53
     config: |
+      bootstrapDns:
+        upstream: tcp-tls:security.cloudflare-dns.com:853
+        ips:
+          - 1.1.1.2
+          - 1.0.0.2
       upstream:
         default:
           - https://dns.adguard-dns.com/dns-query
