@@ -50,8 +50,6 @@ spec:
           - 1.0.0.2
       upstream:
         default:
-          - https://dns.adguard-dns.com/dns-query
-          - tcp-tls:dns.adguard-dns.com:853
           - https://security.cloudflare-dns.com/dns-query
           - tcp-tls:security.cloudflare-dns.com:853
       customDNS:
