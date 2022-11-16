@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       # renovate: registryUrl=https://gogatekeeper.github.io/helm-gogatekeeper
-      chart: gogatekeeper
+      chart: gatekeeper
       version: 0.1.24
       sourceRef:
         kind: HelmRepository
