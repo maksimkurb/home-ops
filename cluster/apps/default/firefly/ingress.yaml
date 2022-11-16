@@ -11,7 +11,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "piggy-bank"
     hajimari.io/group: "Personal services" 
-    hajimari.io/info: "Check your speed to server"
+    hajimari.io/info: "Personal finances"
   name: firefly-iii
   namespace: default
 spec:
