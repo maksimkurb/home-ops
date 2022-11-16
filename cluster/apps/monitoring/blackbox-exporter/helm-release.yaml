@@ -28,7 +28,7 @@ spec:
         external-dns/is-public: "true"
         external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
         traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-        traefik.ingress.kubernetes.io/router.middlewares: "default-eas-management-forward-auth@kubernetescrd"
+        traefik.ingress.kubernetes.io/router.middlewares: "default-traefik-forward-auth@kubernetescrd"
         hajimari.io/enable: "true"
         hajimari.io/icon: "archive"
         hajimari.io/group: "Monitoring"
