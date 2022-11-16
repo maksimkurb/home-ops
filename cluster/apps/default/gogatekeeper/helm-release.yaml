@@ -25,7 +25,7 @@ spec:
       # is the URL for retrieve the OpenID configuration
       discovery-url: https://login.${SECRET_DOMAIN}/realms/master
       # Indicates we should deny by default all requests and explicitly specify what is permitted, default true
-      enable-default-deny: "true"
+      enable-default-deny: true
       # the client id for the 'client' application
       client-id: ${SECRET_GOGATEKEEPER_CLIENT_ID}
       # the secret associated to the 'client' application
@@ -35,13 +35,13 @@ spec:
       # port on which metrics and health endpoints will be available, if not specified it will be on above specified port
       listen-admin: :4000
       # whether to enable refresh tokens
-      enable-refresh-tokens: "true"
+      enable-refresh-tokens: true
       # the encryption key used to encode the session state
       encryption-key: ${SECRET_GOGATEKEEPER_ENCRYPTION_KEY}
       # Returns HTTP 401 when no authentication is present, used with forward proxies or API protection with client credentials grant.
-      no-redirects: "true"
+      no-redirects: true
       # this option will ensure that request will be not forwarded to upstream
-      no-proxy: "true"
+      no-proxy: true
       # additional scopes to add to the default (openid+email+profile)
       scopes: []
       # a collection of resource i.e. URLs that you wish to protect
