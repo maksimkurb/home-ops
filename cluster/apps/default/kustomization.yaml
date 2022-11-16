@@ -2,9 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - vaultwarden
-  - external-auth-server
+  # - external-auth-server
   - keycloak
-  - gogatekeeper
+  - traefik-forward-auth
   - home
   - seafile
   - firefly
