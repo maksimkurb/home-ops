@@ -23,6 +23,8 @@ spec:
     hajimari:
       defaultEnable: false
       showAppGroups: true
+      showAppUrls: false
+      showAppInfo: true
       lightTheme: passion
       darkTheme: tron
       namespaceSelector:
