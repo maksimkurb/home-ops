@@ -59,6 +59,8 @@ spec:
     extraEnvVars:
       - name: KEYCLOAK_PRODUCTION
         value: "true"
+      - name: KEYCLOAK_PROXY
+        value: "true"
     proxyAddressForwarding: true
 
     metrics:
