@@ -49,7 +49,6 @@ spec:
         - uri: /admin*
           groups:
             - admin
-        - uri: /*
           # methods: ["GET"]
           # roles:
           #   - openvpn:vpn-user
