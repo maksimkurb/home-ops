@@ -53,7 +53,9 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "cloud-download"
-          hajimari.io/group: "Media"
+          hajimari.io/group: "Media automation"
+          hajimari.io/appName: "qBitTorrent"
+          hajimari.io/info: "Torrent client"
         hosts:
           - host: "qbittorrent.${SECRET_DOMAIN}"
             paths:

@@ -48,6 +48,8 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "home-assistant"
           hajimari.io/group: "Home automation"
+          hajimari.io/appName: "Home Assistant"
+          hajimari.io/info: "Home automation hub"
         hosts:
           - host: "hass.${SECRET_DOMAIN}"
             paths:

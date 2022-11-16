@@ -39,6 +39,7 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "file-document-multiple"
           hajimari.io/group: "Personal services"
+          hajimari.io/info: "Personal file hosting"
         hosts:
           - host: "seafile.${SECRET_DOMAIN}"
             paths:

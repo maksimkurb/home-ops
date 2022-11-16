@@ -14,6 +14,7 @@ metadata:
     hajimari.io/enable: "true"
     hajimari.io/icon: "web"
     hajimari.io/group: "Server maintenance"
+    hajimari.io/info: "Web server dashboard"
 spec:
   ingressClassName: "traefik"
   tls:

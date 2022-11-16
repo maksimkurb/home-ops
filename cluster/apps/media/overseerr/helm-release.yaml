@@ -35,6 +35,8 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "eye-circle"
           hajimari.io/group: "Media"
+          hajimari.io/appName: "Overseerr"
+          hajimari.io/info: "Request media to download"
         hosts:
           - host: "overseerr.${SECRET_DOMAIN}"
             paths:

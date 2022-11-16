@@ -45,6 +45,8 @@ spec:
           hajimari.io/enable: "true"
           hajimari.io/icon: "plex"
           hajimari.io/group: "Media"
+          hajimari.io/appName: "Plex"
+          hajimari.io/info: "Watch your media"
         hosts:
           - host: "plex.${SECRET_DOMAIN}"
             paths:

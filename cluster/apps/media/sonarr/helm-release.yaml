@@ -33,7 +33,9 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "television-box"
-          hajimari.io/group: "Media"
+          hajimari.io/group: "Media automation"
+          hajimari.io/appName: "Sonarr"
+          hajimari.io/info: "TV Shows download automation"
         hosts:
           - host: "sonarr.${SECRET_DOMAIN}"
             paths:

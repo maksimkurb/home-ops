@@ -33,7 +33,9 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
           hajimari.io/icon: "tshirt-crew"
-          hajimari.io/group: "Media"
+          hajimari.io/group: "Media automation"
+          hajimari.io/appName: "Jackett"
+          hajimari.io/info: "Torznab feed for Sonarr & Radarr"
         hosts:
           - host: jackett.${SECRET_DOMAIN}
             paths:
