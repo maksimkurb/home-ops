@@ -19,8 +19,8 @@ spec:
   values:
     image:
       registry: docker.io
-      repository: gogatekeeper/gatekeeper
-      tag: latest
+      repository: maksimkurb/gogatekeeper
+      tag: 1.8.1
 
     config:
       # is the URL for retrieve the OpenID configuration
