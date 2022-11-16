@@ -4,6 +4,7 @@ resources:
   - vaultwarden
   - external-auth-server
   - keycloak
+  - gogatekeeper
   - home
   - seafile
   - firefly

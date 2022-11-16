@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: gogatekeeper-main-forward-auth
+  namespace: default
+spec:
+  forwardAuth:
+    address: http://gogatekeeper:4000
+    authResponseHeaders:
+      - X-Auth-Email
+      - X-Auth-ExpiresIn
+      - X-Auth-Groups
+      - X-Auth-Roles
+      - X-Auth-Subject
+      - X-Auth-Token
+      - X-Auth-Userid
+      - X-Auth-Username
+      - Authorization

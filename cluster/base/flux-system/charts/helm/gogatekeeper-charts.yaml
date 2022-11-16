@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: gogatekeeper-charts
+  namespace: flux-system
+spec:
+  interval: 15m
+  url: https://gogatekeeper.github.io/helm-gogatekeeper
+  timeout: 3m

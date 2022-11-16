@@ -1,0 +1,63 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: keycloak
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://gogatekeeper.github.io/helm-gogatekeeper
+      chart: gogatekeeper
+      version: 0.1.24
+      sourceRef:
+        kind: HelmRepository
+        name: gogatekeeper-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: gogatekeeper/gatekeeper
+      tag: 1.8.1
+
+    config:
+      # is the URL for retrieve the OpenID configuration
+      discovery-url: https://login.${SECRET_DOMAIN}/realms/master
+      # Indicates we should deny by default all requests and explicitly specify what is permitted, default true
+      enable-default-deny: "true"
+      # the client id for the 'client' application
+      client-id: ${SECRET_GOGATEKEEPER_CLIENT_ID}
+      # the secret associated to the 'client' application
+      client-secret: ${SECRET_GOGATEKEEPER_CLIENT_SECRET}
+      # the interface definition you wish the proxy to listen, all interfaces is specified as ':<port>', unix sockets as unix://<REL_PATH>|</ABS PATH>
+      listen: :3000
+      # port on which metrics and health endpoints will be available, if not specified it will be on above specified port
+      listen-admin: :4000
+      # whether to enable refresh tokens
+      enable-refresh-tokens: "true"
+      # the encryption key used to encode the session state
+      encryption-key: ${SECRET_GOGATEKEEPER_ENCRYPTION_KEY}
+      # Returns HTTP 401 when no authentication is present, used with forward proxies or API protection with client credentials grant.
+      no-redirects: "true"
+      # this option will ensure that request will be not forwarded to upstream
+      no-proxy: "true"
+      # additional scopes to add to the default (openid+email+profile)
+      scopes: []
+      # a collection of resource i.e. URLs that you wish to protect
+      resources:
+        - uri: /admin*
+          groups:
+            - admin
+        - uri: /*
+          # methods: ["GET"]
+          # roles:
+          #   - openvpn:vpn-user
+          #   - openvpn:prod-vpn
+          #   - test
+
+    resources:
+      requests:
+        memory: 128Mi
+      limits:
+        memory: 512Mi
