@@ -44,14 +44,14 @@ spec:
           targetPort: 53
     config: |
       bootstrapDns:
-        upstream: tcp-tls:cloudflare-dns.com:853
+        upstream: tcp-tls:1.1.1.1:853
         ips:
           - 1.1.1.1
           - 1.0.0.1
       upstream:
         default:
-          - https://cloudflare-dns.com/dns-query
-          - tcp-tls:cloudflare-dns.com:853
+          - https://1.1.1.1/dns-query
+          - tcp-tls:1.1.1.1:853
       customDNS:
         customTTL: 1h
         filterUnmappedTypes: true
