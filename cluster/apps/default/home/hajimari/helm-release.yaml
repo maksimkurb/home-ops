@@ -36,18 +36,13 @@ spec:
           - networking
           - media
       name: "you"
-      # customApps:
-      #   - group: Router configuration
-      #     apps:
-      #       - name: Keenetic @ 3sad
-      #         url: http://192.168.40.1
-      #         icon: router-network
-      #       - name: Keenetic @ spb
-      #         url: http://192.168.54.1
-      #         icon: router-network
-      #       - name: Keenetic @ avia42
-      #         url: http://192.168.100.1
-      #         icon: router-network
+      customApps:
+        - group: Server maintenance
+          apps:
+            - name: Keenetic @ 3sad
+              url: https://traefik.cubly.ru/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
       showGlobalBookmarks: true
       globalBookmarks:
         - group: Communicate
