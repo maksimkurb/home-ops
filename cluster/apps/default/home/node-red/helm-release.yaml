@@ -45,7 +45,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
-          hajimari.io/icon: "resistor-nodes"
+          hajimari.io/icon: "simple-icons:nodered"
           hajimari.io/group: "Home automation"
           hajimari.io/appName: "NodeRED"
           hajimari.io/info: "Home automation flows"

@@ -97,6 +97,11 @@ spec:
             external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
             traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
             traefik.ingress.kubernetes.io/router.middlewares: "default-traefik-forward-auth@kubernetescrd"
+            hajimari.io/enable: "true"
+            hajimari.io/icon: "mdi:vs-code"
+            hajimari.io/group: "Home automation"
+            hajimari.io/appName: "Home Assistant Code"
+            hajimari.io/info: "VSCode instance for Home Assistant"
           hosts:
             - host: "hass-config.${SECRET_DOMAIN}"
               paths:

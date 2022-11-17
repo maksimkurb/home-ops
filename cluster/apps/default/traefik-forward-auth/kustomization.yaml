@@ -5,3 +5,7 @@ resources:
   - middleware.yaml
   - deployment.yaml
   - service.yaml
+configMapGenerator:
+- name: traefik-forward-auth-config
+  files:
+    - config/traefik-forward-auth.ini

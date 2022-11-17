@@ -30,6 +30,8 @@ spec:
             value: "info"
           - name: COOKIE_DOMAIN
             value: "${SECRET_DOMAIN}"
+          - name: CONFIG
+            value: "/config"
           - name: DEFAULT_PROVIDER
             value: oidc
           - name: PROVIDERS_OIDC_ISSUER_URL
@@ -49,9 +51,19 @@ spec:
               secretKeyRef:
                 name: traefik-forward-auth-secrets
                 key: encryptionKey
+
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              subPath: traefik-forward-auth.ini
+
           resources:
             requests:
               memory: 128Mi
             limits:
               memory: 512Mi
               cpu: "500m"
+      volumes:
+      - name: config
+        configMap:
+          name: traefik-forward-auth-config
