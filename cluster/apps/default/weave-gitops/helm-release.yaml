@@ -10,7 +10,6 @@ spec:
     spec:
       # renovate: registryUrl=oci://ghcr.io/weaveworks/charts
       chart: weave-gitops
-      version: 0.10.2
       sourceRef:
         kind: HelmRepository
         name: weaveworks-charts
@@ -19,7 +18,11 @@ spec:
   values:
     image:
       repository: ghcr.io/weaveworks/wego-app
-      tag: v0.10.2
+      tag: 0.10.2
+    adminUser:
+      create: true
+      passwordHash: ${WEAVEWORKS_GITOPS_PASSWORD_HASH}
+      username: admin
     ingress:
       enabled: true
       сlassName: "traefik"
