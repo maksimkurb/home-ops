@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - authentik-charts.yaml
   - bitnami-charts.yaml
   - deliveryhero-charts.yaml
   - descheduler-charts.yaml
@@ -25,4 +24,5 @@ resources:
   - traefik-charts.yaml
   - vector-charts.yaml
   - victoria-metrics-charts.yaml
-  - weaveworks-kured-charts.yaml
+  - weaveworks-charts.yaml
+  - kubereboot-charts.yaml

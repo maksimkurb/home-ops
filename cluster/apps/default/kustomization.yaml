@@ -8,3 +8,4 @@ resources:
   - home
   - seafile
   - firefly
+  - weave-gitops
