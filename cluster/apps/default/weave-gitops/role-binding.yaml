@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: admin-user-read-resources
+  namespace: flux-system
+subjects:
+  - kind: User
+    apiGroup: rbac.authorization.k8s.io
+    name: ${SECRET_KEYCLOAK_MAX_EMAIL}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: wego-admin-role
