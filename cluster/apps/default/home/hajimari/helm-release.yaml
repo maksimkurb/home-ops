@@ -35,6 +35,7 @@ spec:
           - monitoring
           - networking
           - media
+          - flux-system
       name: "you"
       showGlobalBookmarks: true
       globalBookmarks:
