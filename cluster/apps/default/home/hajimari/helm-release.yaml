@@ -36,13 +36,6 @@ spec:
           - networking
           - media
       name: "you"
-      customApps:
-        - group: Server maintenance
-          apps:
-            - name: Keenetic @ 3sad
-              url: https://traefik.cubly.ru/_oauth/logout
-              icon: mdi:logout
-              targetBlank: true
       showGlobalBookmarks: true
       globalBookmarks:
         - group: Communicate
@@ -122,6 +115,20 @@ spec:
             - name: Keenetic @ avia42
               url: http://192.168.100.1
               icon: material-symbols:router
+        - group: Logout
+          bookmarks:
+            - name: Home Assistant Code
+              url: https://hass-config.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Traefik Dashboard
+              url: https://traefik.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Keycloak
+              url: https://login.${SECRET_DOMAIN}/realms/master/protocol/openid-connect/logout
+              icon: mdi:logout
+              targetBlank: true
     ingress:
       main:
         enabled: true
