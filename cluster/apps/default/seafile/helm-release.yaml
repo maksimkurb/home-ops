@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: seafileltd/seafile-mc
-      tag: 9.0.9
+      tag: 9.0.10
     env:
       SEAFILE_SERVER_HOSTNAME: "seafile.${SECRET_DOMAIN}"
       TIME_ZONE: "Europe/Saratov"
