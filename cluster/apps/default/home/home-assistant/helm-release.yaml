@@ -84,8 +84,7 @@ spec:
         enabled: true
         type: secret
         name: home-assistant-secrets-yaml
-        # 500 octal = 320 decimal
-        defaultMode: 320
+        readOnly: true
         subPath:
           - path: secrets_yaml
             mountPath: /config/secrets.yaml
