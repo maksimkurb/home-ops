@@ -88,12 +88,6 @@ spec:
         subPath:
           - path: secrets_yaml
             mountPath: /config/secrets.yaml
-      oidc_config:
-        enabled: true
-        type: secret
-        name: home-assistant-secrets-yaml
-        readOnly: true
-        subPath:
           - path: auth_oicd_ini
             mountPath: /config/scripts/auth-oidc.ini
       usb:
