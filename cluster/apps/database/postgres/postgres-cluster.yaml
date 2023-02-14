@@ -13,7 +13,7 @@ spec:
   allowedSourceRanges:
     - "0.0.0.0/0"
   postgresql:
-    version: "13"
+    version: "15"
   users:
     operator:
       - superuser
