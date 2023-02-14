@@ -1,11 +1,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.coreos.com_podmonitors.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.coreos.com_probes.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.coreos.com_servicemonitors.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.grafana.com_grafanaagents.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.grafana.com_integrations.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.grafana.com_logsinstances.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.grafana.com_metricsinstances.yaml?ref=v0.31.2
-  - https://github.com/grafana/agent/production/operator/crds/monitoring.grafana.com_podlogs.yaml?ref=v0.31.2
+  - crds.yaml

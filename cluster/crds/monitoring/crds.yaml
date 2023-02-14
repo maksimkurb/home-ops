@@ -1,0 +1,16 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: grafana-agent-crd-source
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://github.com/grafana/agent.git
+  ref:
+    tag: v0.31.3
+  ignore: |
+    # exclude all
+    /*
+    # path to crds
+    !/production/operator/crds/
