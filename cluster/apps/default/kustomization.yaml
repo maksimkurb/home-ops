@@ -6,6 +6,6 @@ resources:
   - keycloak
   - traefik-forward-auth
   - home
-  - seafile
   - firefly
   - weave-gitops
+  - minio
