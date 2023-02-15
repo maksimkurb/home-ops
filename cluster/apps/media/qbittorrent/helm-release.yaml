@@ -115,6 +115,7 @@ spec:
         env:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
+          IPTABLES_BACKEND: nft
         configFile: |-
           [Interface]
           PrivateKey = ${SECRET_VPN_QBITTORRENT_PRIVATE_KEY}
