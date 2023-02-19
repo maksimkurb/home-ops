@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: bitnami/minio
-      tag: 2023.2.10-debian-11-r0
+      tag: 2023.2.17-debian-11-r0
     ingress:
       enabled: true
       ingressClassName: "traefik"
