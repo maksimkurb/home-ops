@@ -123,6 +123,7 @@ spec:
           DNS = 8.8.8.8
           PostUp = /config/up.sh %i
           PreDown = /config/down.sh %i
+          FwMark = 1341
 
           [Peer]
           PublicKey = ${SECRET_VPN_PUBLIC_KEY}
