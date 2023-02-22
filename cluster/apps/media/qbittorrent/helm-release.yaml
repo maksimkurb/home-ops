@@ -16,6 +16,10 @@ spec:
         name: bjw-s-charts
         namespace: flux-system
   values:
+    controller:
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
     image:
       repository: ghcr.io/onedr0p/qbittorrent
       tag: 4.5.1
