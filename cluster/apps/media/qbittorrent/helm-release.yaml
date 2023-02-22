@@ -100,25 +100,22 @@ spec:
       vpn:
         enabled: true
         type: gluetun
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          capabilities:
+            add:
+              - NET_ADMIN
+              - SYS_MODULE
         env:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
           IPTABLES_BACKEND: nft
           VPN_TYPE: wireguard
-        configFile: |-
-          [Interface]
-          PrivateKey = ${SECRET_VPN_QBITTORRENT_PRIVATE_KEY}
-          Address = 10.0.51.100/24
-          DNS = 8.8.8.8
-          PostUp = /config/up.sh %i
-          PreDown = /config/down.sh %i
-          FwMark = 1341
-
-          [Peer]
-          PublicKey = ${SECRET_VPN_PUBLIC_KEY}
-          AllowedIPs = 10.0.51.1/32, 172.67.193.9/32, 104.21.84.130/32, 195.82.146.120/30, 46.148.18.243/32, 194.106.216.222/32, 194.106.216.222/32, 185.167.98.127/32, 45.132.105.85/32
-          Endpoint = ${SECRET_VPN_ENDPOINT}
-          PersistentKeepalive = 25
+          VPN_SERVICE_PROVIDER: custom
+        envFrom:
+          - secretRef:
+              name: qbittorrent-vpn-secrets
         scripts:
           up: |-
             #!/bin/bash
