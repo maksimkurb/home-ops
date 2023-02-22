@@ -69,6 +69,7 @@ spec:
         tls:
           - hosts:
               - *host
+            secretName: filestash-tls
     probes:
       liveness:
         enabled: true
