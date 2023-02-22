@@ -100,9 +100,6 @@ spec:
       vpn:
         enabled: true
         type: gluetun
-        securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
         env:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
