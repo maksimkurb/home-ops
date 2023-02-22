@@ -101,8 +101,6 @@ spec:
         enabled: true
         type: gluetun
         securityContext:
-          runAsUser: 1
-          runAsGroup: 1
           capabilities:
             add:
               - NET_ADMIN
@@ -115,7 +113,7 @@ spec:
           VPN_SERVICE_PROVIDER: custom
         envFrom:
           - secretRef:
-              name: qbittorrent-vpn-secrets
+              name: qbittorrent-vpn-secret
         scripts:
           up: |-
             #!/bin/bash
