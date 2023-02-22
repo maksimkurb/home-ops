@@ -78,7 +78,7 @@ spec:
         enabled: true
         mountPath: /app/data/state
         size: 1Gi
-        storageClass: local-storage
+        storageClass: local-path
       media:
         enabled: true
         type: hostPath
