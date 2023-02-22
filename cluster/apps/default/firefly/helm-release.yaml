@@ -82,8 +82,12 @@ spec:
     probes:
       liveness:
         enabled: true
+        spec:
+          initialDelaySeconds: 60
       readiness:
         enabled: true
+        spec:
+          initialDelaySeconds: 60
       startup:
         enabled: false
     persistence:
