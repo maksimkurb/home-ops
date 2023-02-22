@@ -33,7 +33,7 @@ spec:
         reloader.stakater.com/auto: "true"
     image:
       repository: fireflyiii/core
-      tag: version-v6.0
+      tag: version-5.7.18
     env:
       - name: APP_ENV
         value: "local"
