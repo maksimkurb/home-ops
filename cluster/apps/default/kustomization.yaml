@@ -7,6 +7,6 @@ resources:
   - traefik-forward-auth
   - home
   - firefly
-  - filestash
+  - owncloud
   - weave-gitops
   - minio
