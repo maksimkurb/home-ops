@@ -5,42 +5,40 @@ metadata:
   name: qbittorrent
   namespace: media
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: qbittorrent
-      version: 13.5.2
+      chart: app-template
+      version: 1.3.2
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s
         namespace: flux-system
-      interval: 5m
   values:
     image:
-      repository: ghcr.io/k8s-at-home/qbittorrent
-      tag: v4.4.3.1
+      repository: ghcr.io/onedr0p/qbittorrent
+      tag: 4.5.1
     env:
       TZ: "Europe/Saratov"
       WAIT_FOR_VPN: "true"
-    settings:
-      automaticPortSetup: false
+      QBITTORRENT__PORT: &port 80
+      QBITTORRENT__BT_PORT: &port-bt 50413
     service:
       main:
         ports:
           http:
-            port: 8080
+            port: *port
       bittorrent:
         enabled: true
         type: LoadBalancer
-        externalIPs:
-          - "${SVC_QBITTORRENT_ADDR}"
+        externalIPs: ["${SVC_QBITTORRENT_ADDR}"]
         ports:
           bittorrent:
             enabled: true
-            port: 50413
+            port: *port-bt
             protocol: TCP
-            targetPort: 50413
+            targetPort: *port-bt
         externalTrafficPolicy: Local
     ingress:
       main:
@@ -65,23 +63,12 @@ spec:
           - hosts:
               - "qbittorrent.${SECRET_DOMAIN}"
             secretName: qbittorrent-tls
-    metrics:
-      enabled: false
-      exporter:
-        image:
-          repository: ghcr.io/k8s-at-home/prometheus-qbittorrent-exporter
-          tag: v1.2.0
-        env:
-          user: "${SECRET_QB_USERNAME}"
-          password: "${SECRET_QB_PASSWORD}"
-      serviceMonitor:
-        interval: 1m
-        scrapeTimeout: 10s
-      prometheusRule:
-        enabled: true
     podSecurityContext:
-      supplementalGroups:
-        - 100
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups: [10000]
     persistence:
       config:
         enabled: true
@@ -110,8 +97,8 @@ spec:
         enabled: true
         type: wireguard
         securityContext:
-          runAsUser: 568
-          runAsGroup: 568
+          runAsUser: 1000
+          runAsGroup: 1000
         env:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
