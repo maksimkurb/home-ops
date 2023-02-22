@@ -99,7 +99,7 @@ spec:
     addons:
       vpn:
         enabled: true
-        type: wireguard
+        type: gluetun
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -107,6 +107,7 @@ spec:
           # Enable a killswitch that kills all trafic when the VPN is not connected
           KILLSWITCH: "true"
           IPTABLES_BACKEND: nft
+          VPN_TYPE: wireguard
         configFile: |-
           [Interface]
           PrivateKey = ${SECRET_VPN_QBITTORRENT_PRIVATE_KEY}
