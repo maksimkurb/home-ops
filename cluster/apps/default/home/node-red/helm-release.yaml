@@ -20,6 +20,10 @@ spec:
     - name: home-assistant
       namespace: home
   values:
+    controller:
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
     # initContainers:
     #   npm-update-modules:
     #     image: node:12-buster-slim@sha256:426f05df1d1feefa841471c0faa22a20db286766bf528993421847f9a3b8efe3
