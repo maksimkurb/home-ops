@@ -90,11 +90,16 @@ spec:
         mountPath: /etc/ocis
         size: 1Gi
         storageClass: local-path
+        retain: true
       data:
         enabled: true
         mountPath: /var/lib/ocis
         size: 10Gi
         storageClass: local-path
+        type: pvc
+        accessMode: ReadWriteOnce
+        readOnly: false
+        retain: true
       # media:
       #   enabled: true
       #   type: hostPath
