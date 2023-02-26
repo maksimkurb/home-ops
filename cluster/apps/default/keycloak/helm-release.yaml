@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: bitnami/keycloak
-      tag: 20.0.3
+      tag: 20.0.5
     ingress:
       enabled: true
       ingressClassName: "traefik"
