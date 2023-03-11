@@ -25,7 +25,6 @@ spec:
       tag: 4.5.2
     env:
       TZ: "Europe/Saratov"
-      WAIT_FOR_VPN: "true"
       QBITTORRENT__PORT: &port 80
       QBITTORRENT__BT_PORT: &port-bt 50413
     service:
@@ -85,10 +84,6 @@ spec:
             server: "${SECRET_NFS_SERVER_HOST}"
             path: ${SECRET_NFS_PATH}/01_media
         mountPath: /media
-      shared:
-        enabled: true
-        type: emptyDir
-        mountPath: /shared
     resources:
       requests:
         cpu: 50m
@@ -104,20 +99,12 @@ spec:
           capabilities:
             add:
               - NET_ADMIN
-              - SYS_MODULE
         env:
-          # Enable a killswitch that kills all trafic when the VPN is not connected
-          KILLSWITCH: "true"
-          IPTABLES_BACKEND: nft
           VPN_TYPE: wireguard
+          VPN_INTERFACE: wg0
+          FIREWALL: 'off'
+          DOT: 'off'
           VPN_SERVICE_PROVIDER: custom
         envFrom:
           - secretRef:
               name: qbittorrent-vpn-secret
-        scripts:
-          up: |-
-            #!/bin/bash
-            echo "connected" > /shared/vpnstatus
-          down: |-
-            #!/bin/bash
-            echo "disconnected" > /shared/vpnstatus
