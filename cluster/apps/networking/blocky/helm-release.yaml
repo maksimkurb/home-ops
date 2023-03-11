@@ -35,7 +35,8 @@ spec:
       dns-udp:
         enabled: true
         type: LoadBalancer
-        loadBalancerIP: "${SVC_BLOCKY_ADDR}"
+        annotations:
+          metallb.universe.tf/address-pool: metallb-pool-blocky
         externalTrafficPolicy: Local
         dns-udp:
           enabled: true

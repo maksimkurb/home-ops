@@ -46,9 +46,9 @@ spec:
     service:
       main:
         type: LoadBalancer
-        externalIPs:
-          - "${SVC_HOME_ASSISTANT_ADDR}"
         externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/address-pool: metallb-pool-home-assistant
         ports:
           http:
             port: 8123

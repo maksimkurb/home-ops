@@ -27,9 +27,9 @@ spec:
     service:
       main:
         type: LoadBalancer
-        externalIPs:
-          - "${SVC_MOSQUITTO_ADDR}"
         externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/address-pool: metallb-pool-mosquitto
     auth:
       enabled: true
     podAnnotations:
