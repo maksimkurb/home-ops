@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: node-red
+  name: agent-dvr
   namespace: home
 spec:
   interval: 5m
@@ -15,29 +15,16 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-  dependsOn:
-    - name: home-assistant
-      namespace: home
   values:
     controller:
       type: statefulset
       annotations:
         reloader.stakater.com/auto: "true"
-    # initContainers:
-    #   npm-update-modules:
-    #     image: node:12-buster-slim@sha256:426f05df1d1feefa841471c0faa22a20db286766bf528993421847f9a3b8efe3
-    #     command: ["npm", "update", "--verbose"]
-    #     workingDir: /data
-    #     volumeMounts:
-    #       - name: config
-    #         mountPath: /data
     image:
-      repository: docker.io/nodered/node-red
-      tag: v3.0.2
+      repository: docker.io/doitandbedone/ispyagentdvr
+      tag: "4.5.8.0"
     env:
       TZ: "Europe/Saratov"
-      NODE_RED_ENABLE_PROJECTS: "true"
-      NODE_RED_ENABLE_SAFE_MODE: "false"
     ingress:
       main:
         enabled: true
@@ -48,24 +35,37 @@ spec:
           external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
           traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
           hajimari.io/enable: "true"
-          hajimari.io/icon: "simple-icons:nodered"
-          hajimari.io/group: "Home automation"
-          hajimari.io/appName: "NodeRED"
-          hajimari.io/info: "Home automation flows"
+          hajimari.io/icon: "mdi:cctv"
+          hajimari.io/group: "Media"
+          hajimari.io/appName: "Agent DVR"
+          hajimari.io/info: "Surveillance"
         hosts:
-          - host: "nodered.${SECRET_DOMAIN}"
+          - host: "agent-dvr.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - hosts:
-              - "nodered.${SECRET_DOMAIN}"
-            secretName: "node-red-tls"
+              - "agent-dvr.${SECRET_DOMAIN}"
+            secretName: "agent-dvr-tls"
     persistence:
       config:
         enabled: true
-        existingClaim: node-red-config-v1
-        mountPath: "/data"
+        existingClaim: agent-dvr-config-v1
+        mountPath: "/agent/Media/XML"
+      commands:
+        enabled: true
+        existingClaim: agent-dvr-commands-v1
+        mountPath: "/agent/Commands"
+      media:
+        enabled: true
+        type: custom
+        volumeSpec:
+          nfs:
+            server: "${SECRET_NFS_SERVER_HOST}"
+            path: ${SECRET_NFS_PATH}/03_cctv
+        mountPath: /agent/Media/WebServerRoot/Media
+        readOnly: false
     resources:
       requests:
         cpu: 200m
