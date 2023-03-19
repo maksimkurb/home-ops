@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://demo.frigate.video/api/config/schema
+logger:
+  default: info
+  # logs:
+  #   frigate.record: debug
+
+mqtt:
+  host: mosquitto
+  topic_prefix: frigate
+  user: "{FRIGATE_MQTT_USERNAME}"
+  password: "{FRIGATE_MQTT_PASSWORD}"
+
+database:
+  path: /data/frigate.db
+
+ffmpeg:
+  global_args: ["-hide_banner", "-loglevel", "warning"]
+  hwaccel_args: ["-hwaccel", "vaapi", "-hwaccel_device", "/dev/dri/renderD128", "-hwaccel_output_format", "yuv420p"]
+
+snapshots:
+  enabled: true
+  timestamp: false
+  bounding_box: true
+  retain:
+    default: 2
+
+record:
+  enabled: true
+  retain:
+    days: 2
+    mode: all
+  events:
+    retain:
+      default: 2
+      mode: active_objects
+
+cameras:
+  frigate_hallway:
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=0.sdp
+          roles: ["detect"]
+        - path: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=1.sdp
+          roles: ["record"]
+    detect:
+      enabled: false
