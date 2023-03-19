@@ -5,7 +5,7 @@ metadata:
   name: home-assistant
   namespace: home
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-      interval: 5m
   maxHistory: 3
   install:
     createNamespace: true
