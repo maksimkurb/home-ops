@@ -8,7 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
       version: 1.3.2
       sourceRef:
@@ -25,6 +25,19 @@ spec:
       tag: "4.5.8.0"
     env:
       TZ: "Europe/Saratov"
+    service:
+      main:
+        ports:
+          http:
+            port: 8090
+          turn:
+            enable: true
+            port: 3478
+            protocol: TCP
+          webrtc:
+            enable: true
+            port: 50000
+            protocol: TCP
     ingress:
       main:
         enabled: true
