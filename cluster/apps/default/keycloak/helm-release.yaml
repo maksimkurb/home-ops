@@ -17,6 +17,9 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
+    service:
+      annotations:
+        metallb.universe.tf/address-pool: metallb-pool-main
     image:
       repository: bitnami/keycloak
       tag: 20.0.5
