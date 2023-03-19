@@ -42,7 +42,7 @@ spec:
     #         mountPath: /data
     image:
       repository: docker.io/nodered/node-red
-      tag: v3.0.2
+      tag: 3.0.2
     env:
       TZ: "Europe/Saratov"
       NODE_RED_ENABLE_PROJECTS: "true"
