@@ -27,6 +27,10 @@ spec:
       TZ: "Europe/Saratov"
     service:
       main:
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/address-pool: metallb-pool-main
         ports:
           http:
             port: 8090
