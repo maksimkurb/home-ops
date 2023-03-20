@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://demo.frigate.video/api/config/schema
+# yaml-language-server: $schema=https://frigate.cubly.ru/api/config/schema.json
 logger:
   default: info
   # logs:
@@ -13,6 +13,11 @@ mqtt:
 
 database:
   path: /data/frigate.db
+
+go2rtc:
+  streams:
+    hallway_hq: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=0.sdp
+    hallway_lq: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=1.sdp
 
 ffmpeg:
   global_args: ["-hide_banner", "-loglevel", "warning"]
@@ -38,10 +43,14 @@ record:
 cameras:
   frigate_hallway:
     ffmpeg:
+      output_args:
+        record: preset-record-generic-audio-copy
       inputs:
-        - path: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=0.sdp
+        - path: rtsp://127.0.0.1:8554/hallway_lq
+          input_args: preset-rtsp-restream
           roles: ["detect"]
-        - path: rtsp://192.168.42.181:554/user=admin_password=_channel=1_stream=1.sdp
+        - path: rtsp://127.0.0.1:8554/hallway_hq
+          input_args: preset-rtsp-restream
           roles: ["record"]
     detect:
       enabled: false
