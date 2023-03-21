@@ -4,14 +4,5 @@ kind: Kustomization
 namespace: home
 resources:
   - frigate.sops.yaml
+  - frigate-config.sops.yaml
   - helm-release.yaml
-
-generatorOptions:
-  disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
-
-configMapGenerator:
-  - name: frigate-configmap
-    files:
-      - config.yaml=./config.yaml

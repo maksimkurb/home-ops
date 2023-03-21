@@ -1,0 +1,28 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+    name: frigate-config
+    namespace: home
+stringData:
+    config_yaml: ENC[AES256_GCM,data:so+FFLn3/nSd4W4MDMxNWmiDGYvt2fsHQKmTfs6l+nBhuOaQ8FtIu9CaTps+d2+aeQpsI6Bj3ZIRWLry56DMZ0+1BXruDjOLnfZKm1IUOeK/MKw58mK59I7f4dhcvmv0Aht+PWNqG2IwXyzsLeCOjlzMkfGNnncPVR/rYzGu5Winw7m9f1llOfAMr+VVlu3CW+MifnFo2eqqzEQUqUDHNr2iM20NR10j6m5fm8xgVXn1dbehwyS9rbfPI7RTv6QDP09heARjpwLK81BCr6EcIqrzuZ744S8i68FVZDu7IhMh+H8GQSWS9R0UfeI2kFL02fCLcLT4JZtdN9u6MU+XMpAHwBjtrcS/y4nmEcbhO508PA34Mlww45bFL89uyKDtTcQ2yxsfNyE8p+QfjpJlOUT7s1FFqS/nAiqACvpsYILf/4Br2CjSvWwNzAgzsVXY2Ha9lWmjkSBZ/6Du/vX+To4YmGfI3EO3RjLz/RLIulTzcChDBeFPmb4NEbTDIY4227HL7nUCG6MuZplxFrCViF3ELTnu6b1gA2MuPoZ6RB9Vw7p1lZLS7rNX6aS+iLTAWhCkE5VNWdtH+qdpCKYYf2Eb29GmVab1u0FRai7AqcpBxWb0y8/Cbg9qUXSTrdm11r+6M/AmlUuSQ3El/B1QBVhAPUAV2cXJN8RCxYtX6yva7mH8Nwm8jyD5yQMF84LEw5gLG/3d3JxZLhzcpS29sJme9AHO2c4KlWYnL266CovYBGysB7d76jTlIDQ72uakOoYwdYjYMAePGO9iXMdynRnayCZ1+s9erE+X0H2vsocJOpRvxJTEs0hXWSqogyMhqgVYAnYrSJmZRDGFQFoIXgd3iRAr9mI2T0nOGozH968v0YXymwEB9ysQgRoXdAG+cEM23Omyt+oXYJ9HGcP5NSH+9LywjpYb4mmzY8Cg1ft1wWIaL88l0n4SQ4BHiTKcuEGsAVG8ZGRACQRUJYD+tbubL03UD2cg0oEUx7IsrA2y7G6s27J2Ub/8/2kncpId34qxXH37HHcc7TjAJ2ubu3o+6Up8siS2pMSBRxVbmSUekjs01zVa5cIg50DHHAuYxtFlbZ7HqbnjzjQnWGxhOc/zHIsBztbE00ZAkDniB/SJzvkYdluNMIIBbv0CXB1t3z8CBCzKjPGeLdM1rKHIv/3X3AiAkC/N6U3xUkw0M+TSdkkOW331v11DuAoBEBhrt8QYuU41QqwpU8zFPPCUTB8xi9oJUZKsDCSqAq2TG4d10cSEVjW5uHBOYLyLkLPU05If1LSbjqz2RxDG66MWKU/f9xhDaoAsu10EzNfT5cL3xYblEH++GshdG3HmZGAA1BoZduAnAOxpeyJ+HCN8WY9VcE+Go90u1DBwGMhB4avWgtKjh4daLOV/gZMP/m7XCJcmf7z8kNptosvMfgjQ1+O+8fo8M9Pc8KXXCt0zP5uQL/Zi1OjLHCwo36K1jVkGoCxHL3qhtHkgetfBYw9qeHoWa15KZ8oiUj/oskxeDbPMuPTemVokGs2Xigeal7jpSFgJ0sg18NkYo8WFJS7ceFB5Q2646RxS8YdDDUzsV0wb/tBre8Tu5C3Ov+3XDvJoeqCCPeFWwULz18OJwxJLByMYlG3lHYlzXwEa00b3pLspZoh1cCnPjkCtYmSBM0QMACauyKpD565Ol7lNQXy0jJEUr5JCeBOFRynq7JMD2IB+UC5/Pq64wGOVo8CPw0zxGP83/zmTVM9oYnYgD7aEwBHGmtfrC9+b8o+gzLHJ8oxKU+EAGPfcKtbBTPXv8Et/rmZTRJd8R8d/QjIQl2Qzn/MPWgt5OOw4QszQrGFUdriYzcDqp5jTz0wZb7fV/i1SwMuqTzzmarOwZlK9YmyBUlVsNrM/GaOT1TVesu1gfJgesQhMzWDCZ3fFnr9YzHNQYA9HZY4roXaE/LMdRooFePIiXi4wICzawAtLVPQZDGFdv1FF+6/AH7gfUcBkhmlEEVTpZCtEWdCr7NO/OHf/pQ31XC4CU14RFGJ2SNK2+txoaMHVH1ixMnP5s+Ggoqq/uPcZjW/87z8EUp1HK14FkdP7bbG7hmHlTeWnGW2DtmlRTxbBrRp8i0bmwpvucd08FyHh78khLcKwKrBRjuUzswW8upx1tnXT2rIatVcc+Z+G/tK+mYPI1kTLRTg3CnJnYW7uBE/eB6JxaYKfkJd41nlYwiPOimKGslG4N8dgrm8GVdtLUd4ME0gQLPXWNhlsm6b2bx8oUQ/pCeV9LnPH,iv:VnXR2sc0AJtSyjAjdaKiX+CtOuRKefVSb4huBDvK8u4=,tag:LfY3dm/+9VLGPfdMvZLcDw==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZ0J5VjR1MllXNExtUnJx
+            N2xGekxwR1g4MmxoUStMZzZuZ0tOYUNySUhJCitkQ0xBZkRXcm5pVEY4bUZWN2Zo
+            ZUM2bzljc2p3RzV0SCtSNUFPRVl3TW8KLS0tIFhRNS84N3dWMFcwWnI2ejlpYlpi
+            Y1JrM3dzOUZBdm5UNUg2ZURrQ3UzOVUKC4OQu8vdHbSOkisYPcN9lZYPs1TO3w7Y
+            UysTCx/kfItjbE4gOJVJQ8oG82WBtR4/VxSNdNvS9qDKwiIzHxaJHg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-03-21T20:13:45Z"
+    mac: ENC[AES256_GCM,data:0uf43AWzTnN812FC4ZjaJY8DkRLXM5IYIDUHX+YtwP+VRpSSOC3gEGX+rl27n+9BrVngbZ3KFlYl/HPZyfZeAmUL52UT3ggFzaeXQaQFgjkvmDjfGzu9e59mbDpuc2vLA+7eRU9r81ClSaQz8q3lIqlcQI6F2timijlhTgjkgTo=,iv:pPVZfIAZRwps+to/R3pJRRhaOvVq7VFn6t+mFeoQidE=,tag:QgJqANtTE4KHlSSLQbpdTg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3

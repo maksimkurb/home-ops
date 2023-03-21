@@ -75,9 +75,9 @@ spec:
     persistence:
       config-file:
         enabled: true
-        type: configMap
-        name: frigate-configmap
-        subPath: config.yaml
+        type: secret
+        name: frigate-config
+        subPath: config_yaml
         mountPath: /config/config.yml
         readOnly: true
       dshm:
