@@ -86,7 +86,7 @@ spec:
         name: nodered-config
         readOnly: true
         subPath:
-          - path: settings_js
+          - path: settingsjs
             mountPath: /data/settings.js
     resources:
       requests:
