@@ -80,6 +80,14 @@ spec:
         enabled: true
         existingClaim: node-red-config-v1
         mountPath: "/data"
+      settings_js:
+        enabled: true
+        type: secret
+        name: nodered-config
+        readOnly: true
+        subPath:
+          - path: settings_js
+            mountPath: /data/settings.js
     resources:
       requests:
         cpu: 200m
