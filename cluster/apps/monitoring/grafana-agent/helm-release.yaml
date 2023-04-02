@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://grafana.github.io/helm-charts
       chart: grafana-agent-operator
-      version: 0.2.14
+      version: 0.2.15
       sourceRef:
         kind: HelmRepository
         name: grafana-charts
