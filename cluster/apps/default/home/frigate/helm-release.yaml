@@ -42,6 +42,10 @@ spec:
             enable: true
             port: 1935
             protocol: TCP
+          rtsp:
+            enable: true
+            port: 8554
+            protocol: TCP
     ingress:
       main:
         enabled: true
