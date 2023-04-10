@@ -24,6 +24,17 @@ spec:
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
+  name: metallb-pool-frigate
+  namespace: metallb-system
+spec:
+  addresses:
+    - "${METALLB_LB_FRIGATE_RANGE}"
+
+---
+
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
   name: metallb-pool-traefik
   namespace: metallb-system
 spec:
