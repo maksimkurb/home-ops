@@ -23,7 +23,6 @@ spec:
     image:
       name: public.ecr.aws/docker/library/traefik
       tag: 2.8.4
-    hostNetwork: true
     deployment:
       podAnnotations:
         reloader.stakater.com/auto: "true"
