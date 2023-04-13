@@ -50,6 +50,11 @@ spec:
           - hosts:
               - "whoami.${SECRET_DOMAIN}"
             secretName: "whoami-tls"
+    service:
+      main:
+        ports:
+          http:
+            port: 80
     resources:
       requests:
         cpu: 50m
