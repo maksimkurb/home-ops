@@ -77,6 +77,14 @@ spec:
         size: 5Gi
         storageClass: local-path
     persistence:
+      data:
+        enabled: true
+        type: pvc
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        mountPath: /data-new
+        storageClass: local-path
+        retain: true
       config-file:
         enabled: true
         type: secret
