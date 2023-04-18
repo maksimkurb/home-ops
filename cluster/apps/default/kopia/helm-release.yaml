@@ -27,7 +27,7 @@ spec:
       retries: 3
   values:
     image:
-      image: docker.io/kopia/kopia
+      repository: docker.io/kopia/kopia
       tag: latest
     controller:
       type: statefulset
