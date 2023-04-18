@@ -4,6 +4,7 @@ resources:
   - vaultwarden
   # - external-auth-server
   - keycloak
+  - kopia
   - traefik-forward-auth
   - home
   - firefly
