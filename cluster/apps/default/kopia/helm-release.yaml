@@ -72,7 +72,7 @@ spec:
         type: configMap
         name: kopia
         subPath: repository.config
-        mountPath: /config/repository.config
+        mountPath: /app/config/repository.config
         readOnly: false
       snapshots:
         enabled: true
