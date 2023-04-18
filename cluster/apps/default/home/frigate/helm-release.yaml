@@ -70,19 +70,13 @@ spec:
           - hosts:
               - "frigate.${SECRET_DOMAIN}"
             secretName: "frigate-tls"
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /data
-        accessMode: ReadWriteOnce
-        size: 5Gi
-        storageClass: local-path
     persistence:
       data:
         enabled: true
         type: pvc
         accessMode: ReadWriteOnce
         size: 5Gi
-        mountPath: /data-new
+        mountPath: /data
         storageClass: local-path
         retain: true
       config-file:
