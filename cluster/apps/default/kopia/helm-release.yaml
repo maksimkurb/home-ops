@@ -80,10 +80,12 @@ spec:
         server: "${SECRET_NFS_BACKUP_HOST}"
         path: /backup/kopia/snapshots
         mountPath: /snapshots
-      data1:
+      data:
         enabled: true
-        mountPath: /data/home-assistant
-        existingClaim: home-assistant-config-v1
+        type: nfs
+        server: "${SECRET_NFS_SERVER_HOST}"
+        path: ${SECRET_NFS_PATH_DATA}
+        mountPath: /data
         readOnly: true
     resources:
       requests:
