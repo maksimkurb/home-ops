@@ -81,6 +81,7 @@ spec:
         path: /backup/kopia/snapshots
         mountPath: /snapshots
       data1:
+        enabled: true
         mountPath: /data/home-assistant
         existingClaim: home-assistant-config-v1
         readOnly: true
