@@ -47,7 +47,7 @@ spec:
     envFrom:
       - secretRef:
           name: owncloud-secret
-    command: ["-c", "ocis init || true; ocis server"]
+    # command: ["ocis init || true; ocis server"]
     service:
       main:
         type: ClusterIP
