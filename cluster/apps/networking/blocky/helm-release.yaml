@@ -64,6 +64,8 @@ spec:
           auth.${SECRET_DOMAIN}: 192.168.42.20
           firefly.${SECRET_DOMAIN}: 192.168.42.20
           hajimari.${SECRET_DOMAIN}: 192.168.42.20
+          s3.${SECRET_DOMAIN}: 192.168.42.20
+          s3-console.${SECRET_DOMAIN}: 192.168.42.20
           hass.${SECRET_DOMAIN}: 192.168.42.20
           speedtest.${SECRET_DOMAIN}: 192.168.42.20
           nodered.${SECRET_DOMAIN}: 192.168.42.20
