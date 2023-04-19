@@ -41,6 +41,9 @@ spec:
         existingSecretPasswordKey: redis-password
     nextcloud:
       datadir: /var/www/data
+      extraEnv:
+        - name: PHP_UPLOAD_LIMIT
+          value: 10G
       existingSecret:
         enabled: true
         secretName: nextcloud-secret
