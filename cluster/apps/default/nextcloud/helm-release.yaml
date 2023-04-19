@@ -28,9 +28,9 @@ spec:
     keepHistory: false
   values:
     image:
-      flavor: fpm-alpine
+      flavor: apache-alpine
     nginx:
-      enabled: true
+      enabled: false
     cronjob:
       enabled: true
     redis:
