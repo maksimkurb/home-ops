@@ -11,7 +11,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: ${SECRET_NFS_SERVER_HOST}
-    path: ${SECRET_NFS_PATH_DATA}/Nextcloud
+    path: ${SECRET_NFS_PATH_NEXTCLOUD}
   # Note: The first two options are strictly for NFSv4.2
   mountOptions: ["nfsvers=4.2", "nconnect=8", "hard", "noatime"]
 ---
