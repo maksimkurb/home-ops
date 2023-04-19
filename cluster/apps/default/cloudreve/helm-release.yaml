@@ -75,7 +75,16 @@ spec:
     persistence:
       data:
         enabled: true
-        mountPath: /cloudreve
+        mountPath: /cloudreve/uploads
+        size: 10Gi
+        storageClass: local-path
+        type: pvc
+        accessMode: ReadWriteOnce
+        readOnly: false
+        retain: true
+      avatars:
+        enabled: true
+        mountPath: /cloudreve/avatars
         size: 10Gi
         storageClass: local-path
         type: pvc
@@ -86,7 +95,7 @@ spec:
         enabled: true
         type: secret
         name: cloudreve-config
-        readOnly: true
+        readOnly: false
         subPath:
           - path: config_ini
             mountPath: /cloudreve/conf.ini
