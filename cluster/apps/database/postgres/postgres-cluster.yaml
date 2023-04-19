@@ -26,6 +26,7 @@ spec:
     homeassistant: []
     onlyoffice: []
     keycloak: []
+    nextcloud: []
   databases:
     vaultwarden: vaultwarden
     authentik: authentik
@@ -35,6 +36,7 @@ spec:
     homeassistant: homeassistant
     onlyoffice: onlyoffice
     keycloak: keycloak
+    nextcloud: nextcloud
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
