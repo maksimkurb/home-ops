@@ -72,6 +72,7 @@ spec:
           files.${SECRET_DOMAIN}: 192.168.42.20
           nextcloud.${SECRET_DOMAIN}: 192.168.42.20
           owncloud.${SECRET_DOMAIN}: 192.168.42.20
+          f.${SECRET_DOMAIN}: 192.168.42.20
           kopia.${SECRET_DOMAIN}: 192.168.42.20
           bitwarden.${SECRET_DOMAIN}: 192.168.42.20
           jackett.${SECRET_DOMAIN}: 192.168.42.20
