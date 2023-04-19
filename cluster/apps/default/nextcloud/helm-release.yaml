@@ -65,7 +65,7 @@ spec:
     externalDatabase:
       enabled: true
       type: postgresql
-      host: homelab-pgsql.database.svc.cluster.local:5432
+      host: homelab-pgsql.database.svc.cluster.local
       database: nextcloud
       existingSecret:
         enable: true
