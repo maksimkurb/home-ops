@@ -28,7 +28,7 @@ spec:
     keepHistory: false
   values:
     image:
-      flavor: apache-alpine
+      flavor: apache
     nginx:
       enabled: false
     cronjob:
