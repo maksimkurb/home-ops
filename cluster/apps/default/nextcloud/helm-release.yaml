@@ -98,3 +98,5 @@ spec:
         enabled: true
         existingClaim: nextcloud-nfs
         accessMode: ReadWriteMany
+    startupProbe:
+      enabled: true
