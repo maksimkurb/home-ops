@@ -93,7 +93,7 @@ spec:
           secretName: nextcloud-tls
     persistence:
       enabled: true
-      existingClaim: nextcloud
+      storageClass: local-path
       nextcloudData:
         enabled: true
         existingClaim: nextcloud-nfs
