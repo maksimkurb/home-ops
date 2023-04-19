@@ -8,7 +8,7 @@ resources:
   - traefik-forward-auth
   - home
   - firefly
-  - owncloud
+  # - owncloud
   - nextcloud
   - weave-gitops
   - minio
