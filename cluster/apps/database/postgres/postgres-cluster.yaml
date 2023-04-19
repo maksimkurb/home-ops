@@ -27,6 +27,7 @@ spec:
     onlyoffice: []
     keycloak: []
     nextcloud: []
+    cloudreve: []
   databases:
     vaultwarden: vaultwarden
     authentik: authentik
@@ -37,6 +38,7 @@ spec:
     onlyoffice: onlyoffice
     keycloak: keycloak
     nextcloud: nextcloud
+    cloudreve: cloudreve
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
