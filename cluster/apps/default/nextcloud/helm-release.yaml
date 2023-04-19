@@ -31,18 +31,14 @@ spec:
       flavor: fpm-alpine
     nginx:
       enabled: true
+    redis:
+      enabled: true
+      auth:
+        enabled: true
+        existingSecret: nextcloud-secret
+        existingSecretPasswordKey: redis-password
     nextcloud:
       datadir: /var/www/data
-      extraEnv:
-        - name: REDIS_HOST
-          value: redis.database.svc.cluster.local
-        - name: REDIS_HOST_PORT
-          value: "6379"
-        - name: REDIS_HOST_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: nextcloud-secret
-              key: redis-password
       existingSecret:
         enabled: true
         secretName: nextcloud-secret
