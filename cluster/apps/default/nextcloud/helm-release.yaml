@@ -31,6 +31,8 @@ spec:
       flavor: fpm-alpine
     nginx:
       enabled: true
+    cronjob:
+      enabled: true
     redis:
       enabled: true
       auth:
