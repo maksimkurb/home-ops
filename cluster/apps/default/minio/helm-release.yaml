@@ -57,6 +57,9 @@ spec:
       forcePassword: true
       forceNewKeys: true
 
+    persistence:
+      existingClaim: minio-nfs
+
     resources:
       requests:
         memory: 384Mi
