@@ -1,5 +1,5 @@
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: grafana-agent-crd-source
@@ -15,7 +15,7 @@ spec:
     # path to crds
     !/production/operator/crds/
 ---
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: grafana-agent-crds
