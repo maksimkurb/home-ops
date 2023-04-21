@@ -1,4 +1,7 @@
 ---
 # https://github.com/geerlingguy/ansible-role-nfs
 
-nfs_exports: [ "/data-pool/media *(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)" ]
+nfs_exports:
+  - "/data-pool/media *(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000,insecure)"
+  - "/data-pool/minio 192.168.42.5(rw,hide,sync,no_subtree_check,root_squash,all_squash,anonuid=1000,anongid=1000,insecure)"
+  - "/data-pool/data 192.168.42.5(ro,hide,sync,no_subtree_check,root_squash,anonuid=0,anongid=0,insecure)"
