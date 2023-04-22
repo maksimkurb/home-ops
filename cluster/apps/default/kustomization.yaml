@@ -9,6 +9,6 @@ resources:
   - home
   - firefly
   - filestash
-  - mindav
+  - s3dav-proxy
   - weave-gitops
   - minio
