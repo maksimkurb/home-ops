@@ -33,7 +33,7 @@ spec:
     image:
       repository: hrntknr/s3dav-proxy
       tag: latest
-    command: ["--endpoint", "minio:9000", "--allow-buckets-ops"]
+    command: ["/usr/local/bin/s3dav-proxy", "--endpoint", "minio:9000", "--allow-buckets-ops"]
     env:
       TZ: Europe/Saratov
     service:
