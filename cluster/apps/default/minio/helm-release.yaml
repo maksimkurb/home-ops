@@ -57,13 +57,11 @@ spec:
       forcePassword: true
       forceNewKeys: true
 
-    provisioning:
-      podSecurityContext:
-        fsGroup: 1000
+    podSecurityContext:
+      fsGroup: 1000
 
-    volumePermissions:
-      containerSecurityContext:
-        runAsUser: 1000
+    containerSecurityContext:
+      runAsUser: 1000
 
     persistence:
       existingClaim: minio-nfs
