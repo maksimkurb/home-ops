@@ -5,34 +5,39 @@ metadata:
   name: plex
   namespace: media
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
-      chart: plex
-      version: 6.4.3
+      chart: app-template
+      version: 1.4.0
+      interval: 30m
       sourceRef:
         kind: HelmRepository
-        name: k8s-at-home-charts
+        name: bjw-s-charts
         namespace: flux-system
-      interval: 5m
   values:
+    controller:
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
-      repository: ghcr.io/k8s-at-home/plex
-      tag: v1.29.2.6364-6d72b0cf6
+      repository: ghcr.io/onedr0p/plex
+      tag: 1.32.0.6973-a787c5a8e@sha256:970a7f3226b6d9e3dcda12134647b465a4f14115c03d52751264d603a8f621e5
+
     env:
       TZ: "Europe/Saratov"
-    podSecurityContext:
-      supplementalGroups:
-        - 44
-        - 109
-        - 100
+
     service:
       main:
         type: LoadBalancer
         externalTrafficPolicy: Local
         annotations:
           metallb.universe.tf/address-pool: metallb-pool-plex
+        ports:
+          http:
+            port: 32400
+
     ingress:
       main:
         enabled: true
@@ -56,6 +61,7 @@ spec:
           - hosts:
               - "plex.${SECRET_DOMAIN}"
             secretName: plex-tls
+
     persistence:
       config:
         enabled: true
@@ -69,41 +75,25 @@ spec:
         enabled: true
         type: emptyDir
         medium: Memory
-    # affinity:
-    #   nodeAffinity:
-    #     requiredDuringSchedulingIgnoredDuringExecution:
-    #       nodeSelectorTerms:
-    #         - matchExpressions:
-    #             - key: feature.node.kubernetes.io/custom-intel-gpu
-    #               operator: In
-    #               values:
-    #                 - "true"
-    # podAnnotations:
-    #   configmap.reloader.stakater.com/reload: "plex-promtail"
+
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups:
+        - 44
+        - 109
+        - 100
+
+    nodeSelector:
+      intel.feature.node.kubernetes.io/gpu: "true"
+
     resources:
       requests:
-        cpu: 50m
-        # gpu.intel.com/i915: 1
-        memory: 1G
+        cpu: 100m
+        gpu.intel.com/i915: 1
+        memory: 200M
       limits:
-        cpu: 2000m
-        # gpu.intel.com/i915: 1
+        gpu.intel.com/i915: 1
         memory: 2G
-    # addons:
-    #   promtail:
-    #     enabled: true
-    #     image:
-    #       repository: ghcr.io/k8s-at-home/promtail
-    #       tag: v2.4.1
-    #     loki: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
-    #     logs:
-    #       - name: promtail/plex
-    #         path: "/config/Library/Application Support/Plex Media Server/Logs/*.log"
-    #       - name: promtail/plex/plugins
-    #         path: "/config/Library/Application Support/Plex Media Server/Logs/PMS Plugin Logs/*.log"
-    #     volumeMounts:
-    #       - name: config
-    #         mountPath: /config
-    #         readOnly: true
-    #     securityContext:
-    #       runAsUser: 0

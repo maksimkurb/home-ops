@@ -5,7 +5,7 @@ metadata:
   name: frigate
   namespace: home
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
