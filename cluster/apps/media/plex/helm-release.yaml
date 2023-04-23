@@ -62,23 +62,8 @@ spec:
         existingClaim: plex-config-v1
       media:
         enabled: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: "${SECRET_NFS_SERVER_HOST}"
-            path: ${SECRET_NFS_PATH}/01_media
-          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+        existingClaim: plex-media-nfs
         mountPath: /media
-        readOnly: false
-      backup:
-        enabled: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: "${SECRET_NFS_SERVER_HOST}"
-            path: ${SECRET_NFS_PATH}/02_backups/plex
-          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
-        mountPath: /config/Backups
         readOnly: false
       transcode:
         enabled: true

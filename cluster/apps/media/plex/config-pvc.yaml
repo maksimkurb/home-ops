@@ -11,3 +11,30 @@ spec:
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-media-nfs
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: plex-media-nfs
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "${SECRET_NFS_SERVER_HOST}"
+    path: ${SECRET_NFS_PATH}/01_media
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-media-nfs
+  namespace: default
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: plex-media-nfs
+  resources:
+    requests:
+      storage: 1Mi
