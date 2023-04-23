@@ -17,8 +17,8 @@ spec:
         namespace: flux-system
   values:
     image:
-      repository: ghcr.io/onedr0p/jackett
-      tag: 0.20.2297
+      repository: linuxserver/jackett
+      tag: 0.20.2489
 
     env:
       TZ: "Europe/Saratov"
@@ -51,10 +51,7 @@ spec:
       config:
         enabled: true
         existingClaim: jackett-config-v1
-      shared:
-        enabled: true
-        type: emptyDir
-        mountPath: /shared
+
     resources:
       requests:
         cpu: 50m
