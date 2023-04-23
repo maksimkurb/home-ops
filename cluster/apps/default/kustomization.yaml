@@ -5,6 +5,7 @@ resources:
   # - external-auth-server
   - keycloak
   - kopia
+  - intel-gpu-plugin
   - traefik-forward-auth
   - home
   - firefly
