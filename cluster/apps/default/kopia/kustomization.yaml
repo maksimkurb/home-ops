@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: default
 resources:
   - kopia-secret.sops.yaml
+  - pvc.yaml
   - helm-release.yaml
 configMapGenerator:
   - name: kopia
