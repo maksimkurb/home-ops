@@ -20,8 +20,10 @@ spec:
     image:
       repository: ghcr.io/k8s-at-home/sonarr
       tag: v3.0.9.1549
+
     env:
       TZ: "Europe/Saratov"
+
     ingress:
       main:
         enabled: true
@@ -45,9 +47,14 @@ spec:
           - hosts:
               - "sonarr.${SECRET_DOMAIN}"
             secretName: sonarr-tls
+
     podSecurityContext:
       supplementalGroups:
         - 100
+
+    podAnnotations:
+      setGateway: "true"
+
     # metrics:
     #   enabled: true
     #   serviceMonitor:
@@ -63,6 +70,7 @@ spec:
     #       port: 9794
     #       additionalMetrics: true
     #       unknownQueueItems: false
+
     persistence:
       config:
         enabled: true
@@ -86,6 +94,7 @@ spec:
           mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
         mountPath: /config/Backups
         readOnly: false
+
     resources:
       requests:
         cpu: 50m

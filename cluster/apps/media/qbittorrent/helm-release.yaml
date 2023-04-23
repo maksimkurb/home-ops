@@ -103,39 +103,3 @@ spec:
       limits:
         cpu: 1000m
         memory: 2G
-
-    addons:
-      vpn:
-        enabled: true
-        type: gluetun
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-        env:
-          - name: VPN_SERVICE_PROVIDER
-            value: custom
-          - name: VPN_TYPE
-            value: wireguard
-          - name: VPN_INTERFACE
-            value: wg0
-          - name: VPN_ENDPOINT_PORT
-            value: "2611"
-          - name: FIREWALL
-            value: "off"
-          - name: DOT
-            value: "off"
-        envFrom:
-          - secretRef:
-              name: qbittorrent-vpn-secret
-        networkPolicy:
-          enabled: true
-          egress:
-            - to:
-                - ipBlock:
-                    cidr: 0.0.0.0/0
-              ports:
-                - port: 2611
-                  protocol: UDP
-            - to:
-                - namespaceSelector: {}

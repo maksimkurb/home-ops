@@ -19,9 +19,11 @@ spec:
     image:
       repository: ghcr.io/k8s-at-home/jackett
       tag: v0.20.2269
+
     env:
       TZ: "Europe/Saratov"
       WAIT_FOR_VPN: "true"
+
     ingress:
       main:
         enabled: true
@@ -45,6 +47,7 @@ spec:
           - hosts:
               - jackett.${SECRET_DOMAIN}
             secretName: jackett-tls
+
     persistence:
       config:
         enabled: true
@@ -60,34 +63,6 @@ spec:
       limits:
         cpu: 500m
         memory: 500Mi
-    addons:
-      vpn:
-        enabled: true
-        type: wireguard
-        securityContext:
-          runAsUser: 568
-          runAsGroup: 568
-        env:
-          # Enable a killswitch that kills all trafic when the VPN is not connected
-          KILLSWITCH: "true"
-          KILLSWITCH_EXCLUDEDNETWORKS_IPV4: "192.168.40.0/23;192.168.42.0/24;10.42.0.0/16;10.43.0.0/16;172.16.0.0/12"
-        configFile: |-
-          [Interface]
-          PrivateKey = ${SECRET_VPN_JACKET_PRIVATE_KEY}
-          Address = 10.0.51.101/24
-          DNS = 8.8.8.8
-          PostUp = /config/up.sh %i
-          PreDown = /config/down.sh %i
 
-          [Peer]
-          PublicKey = ${SECRET_VPN_PUBLIC_KEY}
-          AllowedIPs = 0.0.0.0/0, ::/0
-          Endpoint = ${SECRET_VPN_ENDPOINT}
-          PersistentKeepalive = 25
-        scripts:
-          up: |-
-            #!/bin/bash
-            echo "connected" > /shared/vpnstatus
-          down: |-
-            #!/bin/bash
-            echo "disconnected" > /shared/vpnstatus
+    podAnnotations:
+      setGateway: "true"
