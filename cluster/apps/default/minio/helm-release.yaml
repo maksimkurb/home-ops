@@ -23,7 +23,7 @@ spec:
         reloader.stakater.com/auto: "true"
     image:
       repository: bitnami/minio
-      tag: 2023.3.24-debian-11-r0
+      tag: 2023.4.20-debian-11-r0
     ingress:
       enabled: true
       ingressClassName: "traefik"
