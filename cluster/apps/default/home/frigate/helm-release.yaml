@@ -98,7 +98,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_SERVER_HOST}"
             path: ${SECRET_NFS_PATH}/03_cctv
-            mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
         mountPath: /media/frigate
         readOnly: false
     resources:

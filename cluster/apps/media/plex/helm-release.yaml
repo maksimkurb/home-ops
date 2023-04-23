@@ -67,7 +67,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_SERVER_HOST}"
             path: ${SECRET_NFS_PATH}/01_media
-            mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
         mountPath: /media
         readOnly: false
       backup:
@@ -77,7 +77,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_SERVER_HOST}"
             path: ${SECRET_NFS_PATH}/02_backups/plex
-            mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
         mountPath: /config/Backups
         readOnly: false
       transcode:

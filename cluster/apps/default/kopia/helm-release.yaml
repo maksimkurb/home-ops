@@ -82,7 +82,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_BACKUP_HOST}"
             path: /backup/kopia/snapshots
-            mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "timeo=50", "noatime"]
+          mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "timeo=50", "noatime"]
       data:
         enabled: true
         mountPath: /data
@@ -92,7 +92,7 @@ spec:
           nfs:
             server: "${SECRET_NFS_SERVER_HOST}"
             path: "${SECRET_NFS_PATH_DATA}"
-            mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
     resources:
       requests:
         cpu: 10m
