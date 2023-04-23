@@ -46,7 +46,7 @@ spec:
   nfs:
     server: "${SECRET_NFS_BACKUP_HOST}"
     path: "/backup/kopia/snapshots"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "timeo=50", "noatime"]
+  mountOptions: ["nfsvers=3", "nconnect=16", "soft", "timeo=50", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
