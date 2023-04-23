@@ -77,22 +77,12 @@ spec:
       snapshots:
         enabled: true
         mountPath: /snapshots
-        type: custom
-        volumeSpec:
-          nfs:
-            server: "${SECRET_NFS_BACKUP_HOST}"
-            path: /backup/kopia/snapshots
-          mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "timeo=50", "noatime"]
+        existingClaim: kopia-snapshots-nfs
       data:
         enabled: true
         mountPath: /data
         readOnly: true
-        type: custom
-        volumeSpec:
-          nfs:
-            server: "${SECRET_NFS_SERVER_HOST}"
-            path: "${SECRET_NFS_PATH_DATA}"
-          mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+        existingClaim: kopia-data-nfs
     resources:
       requests:
         cpu: 10m
