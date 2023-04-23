@@ -7,4 +7,5 @@ resources:
   - networking.yaml
   - home.yaml
   - media.yaml
+  - vpn.yaml
   - monitoring.yaml

@@ -7,4 +7,5 @@ resources:
   - media
   - monitoring
   - networking
+  - vpn
   - system-upgrade

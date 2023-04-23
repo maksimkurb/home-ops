@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: pod-gateway
-  namespace: media
+  namespace: vpn
 spec:
   interval: 30m
   chart:
