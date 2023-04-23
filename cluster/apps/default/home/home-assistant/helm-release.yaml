@@ -74,6 +74,12 @@ spec:
           - hosts:
               - "hass.${SECRET_DOMAIN}"
             secretName: "homeassistant-tls"
+    initContainers:
+      - name: check-db-ready
+        image: postgres:15.2
+        command: ['sh', '-c', 
+          'until pg_isready -h homelab-pgsql.database.svc.cluster.local -p 5432; 
+          do echo "waiting for database to be ready"; sleep 2; done;']
     persistence:
       config:
         enabled: true
