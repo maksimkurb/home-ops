@@ -5,12 +5,12 @@ metadata:
   name: qbittorrent
   namespace: media
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: app-template
-      version: 1.3.2
+      version: 1.4.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -20,13 +20,19 @@ spec:
       type: statefulset
       annotations:
         reloader.stakater.com/auto: "true"
+
     image:
       repository: ghcr.io/onedr0p/qbittorrent
       tag: 4.5.2
+
     env:
       TZ: "Europe/Saratov"
       QBITTORRENT__PORT: &port 80
       QBITTORRENT__BT_PORT: &port-bt 50413
+
+    podAnnotations:
+      setGateway: "true"
+
     service:
       main:
         ports:
@@ -44,6 +50,7 @@ spec:
             protocol: TCP
             targetPort: *port-bt
         externalTrafficPolicy: Local
+
     ingress:
       main:
         enabled: true
@@ -67,12 +74,14 @@ spec:
           - hosts:
               - "qbittorrent.${SECRET_DOMAIN}"
             secretName: qbittorrent-tls
+
     podSecurityContext:
       runAsUser: 1000
       runAsGroup: 1000
       fsGroup: 1000
       fsGroupChangePolicy: "OnRootMismatch"
       supplementalGroups: [10000]
+
     persistence:
       config:
         enabled: true
@@ -86,6 +95,7 @@ spec:
             path: ${SECRET_NFS_PATH}/01_media
           mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
         mountPath: /media
+
     resources:
       requests:
         cpu: 50m
@@ -93,20 +103,3 @@ spec:
       limits:
         cpu: 1000m
         memory: 2G
-    addons:
-      vpn:
-        enabled: true
-        type: gluetun
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-        env:
-          VPN_TYPE: wireguard
-          VPN_INTERFACE: wg0
-          FIREWALL: 'off'
-          DOT: 'off'
-          VPN_SERVICE_PROVIDER: custom
-        envFrom:
-          - secretRef:
-              name: qbittorrent-vpn-secret

@@ -4,6 +4,7 @@ resources:
   - jackett
   - plex
   - overseerr
+  - pod-gateway
   - qbittorrent
   - radarr
   - sonarr
