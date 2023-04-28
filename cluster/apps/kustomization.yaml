@@ -1,11 +1,15 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - database
   - default
+  - database
+  - downloads
+  - flux-system
   - kube-system
+  - kyverno
   - media
   - monitoring
   - networking
-  - vpn
-  - system-upgrade
+  - security
+  - vpn-gateway

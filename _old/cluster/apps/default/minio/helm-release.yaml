@@ -1,0 +1,73 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: minio
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
+      chart: minio
+      version: 12.1.14
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    controller:
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
+    image:
+      repository: bitnami/minio
+      tag: 2023.4.20-debian-11-r0
+    ingress:
+      enabled: true
+      ingressClassName: "traefik"
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+        external-dns/is-public: "true"
+        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+        hajimari.io/appName: "MinIO"
+        hajimari.io/enable: "true"
+        hajimari.io/icon: "nas"
+        hajimari.io/group: "Server maintenance"
+        hajimari.io/info: "S3-Compatible File Storage"
+      hostname: s3-console.${SECRET_DOMAIN}
+      tls: true
+    apiIngress:
+      enabled: true
+      ingressClassName: "traefik"
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+        external-dns/is-public: "true"
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+      hostname: s3.${SECRET_DOMAIN}
+      tls: true
+
+    auth:
+      existingSecret: minio-credentials
+      forcePassword: true
+      forceNewKeys: true
+
+    podSecurityContext:
+      fsGroup: 1000
+
+    containerSecurityContext:
+      runAsUser: 1000
+
+    persistence:
+      existingClaim: minio-nfs
+
+    resources:
+      requests:
+        memory: 384Mi
+      limits:
+        memory: 2G

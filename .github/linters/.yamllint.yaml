@@ -6,7 +6,7 @@ ignore: |
   .terraform/
   .vscode/
   *.sops.*
-  gotk-components.yaml
+  talos/cni/install.yaml
 extends: default
 rules:
   truthy:

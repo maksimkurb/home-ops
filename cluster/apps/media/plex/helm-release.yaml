@@ -2,95 +2,107 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: plex
+  name: &app plex
   namespace: media
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: app-template
-      version: 1.4.0
-      interval: 30m
+      version: 0.2.2
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
+      interval: 15m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  dependsOn:
+    - name: intel-gpu-plugin
+      namespace: kube-system
+    - name: node-feature-discovery
+      namespace: kube-system
   values:
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
-
+    global:
+      nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/plex
-      tag: 1.32.0.6973-a787c5a8e@sha256:970a7f3226b6d9e3dcda12134647b465a4f14115c03d52751264d603a8f621e5
-
+      tag: 1.29.1.6316-f4cdfea9c@sha256:2882168ac9316dd2490a58b82d7dec3f644140546ad1c64b5a35b50afc68193e
     env:
-      TZ: "Europe/Saratov"
-
+      TZ: "${TIMEZONE}"
+      ADVERTISE_IP: "http://${SVC_PLEX_ADDR}:32400/"
+      ALLOWED_NETWORKS: "10.0.0.0/8,172.16.0.0/16"
     service:
       main:
         type: LoadBalancer
+        loadBalancerIP: "${SVC_PLEX_ADDR}"
         externalTrafficPolicy: Local
-        annotations:
-          metallb.universe.tf/address-pool: metallb-pool-plex
         ports:
           http:
             port: 32400
-
     ingress:
       main:
         enabled: true
-        ingressClassName: "traefik"
+        ingressClassName: "nginx"
         annotations:
-          cert-manager.io/cluster-issuer: "letsencrypt-production"
-          external-dns/is-public: "true"
-          external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
-          traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-          hajimari.io/enable: "true"
-          hajimari.io/icon: "plex"
-          hajimari.io/group: "Media"
-          hajimari.io/appName: "Plex"
-          hajimari.io/info: "Watch your media"
+          external-dns.home.arpa/enabled: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          hajimari.io/icon: plex
+          nginx.ingress.kubernetes.io/configuration-snippet: |
+            location = / {
+              if ($http_x_plex_device = ""){
+                return 301 $scheme://$host/web/index.html;
+              }
+            }
         hosts:
-          - host: "plex.${SECRET_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
         tls:
           - hosts:
-              - "plex.${SECRET_DOMAIN}"
-            secretName: plex-tls
-
+              - *host
+    podSecurityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups:
+        - 44
+        - 5600
     persistence:
       config:
         enabled: true
         existingClaim: plex-config-v1
       media:
         enabled: true
-        existingClaim: plex-media-nfs
+        type: nfs
+        server: "nas01.${SECRET_PRIVATE_DOMAIN}"
+        path: /tank/share
         mountPath: /media
-        readOnly: false
+        readOnly: true
       transcode:
         enabled: true
         type: emptyDir
-        medium: Memory
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups:
-        - 44
-        - 109
-        - 100
-
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: feature.node.kubernetes.io/custom-intel-gpu
+                  operator: In
+                  values:
+                    - "true"
     resources:
       requests:
-        cpu: 100m
         gpu.intel.com/i915: 1
-        memory: 200M
+        cpu: 1000m
+        memory: 2000Mi
       limits:
         gpu.intel.com/i915: 1
-        memory: 2G
+        memory: 16000Mi
