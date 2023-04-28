@@ -1,8 +1,14 @@
 ---
-clusterName: cluster01
-talosVersion: v1.2.6
-kubernetesVersion: v1.24.3
-endpoint: https://cluster01.${domainName}:6443
+clusterName: home-cluster
+talosVersion: v1.4.1
+kubernetesVersion: v1.27.0
+endpoint: https://192.168.40.84:6443
+domain: cluster.local
+additionalMachineCertSans:
+  - 192.168.40.84
+allowSchedulingOnMasters: true
+additionalApiServerCertSans:
+  - home-cluster.local
 clusterPodNets:
   - 172.22.0.0/16
 clusterSvcNets:
@@ -10,55 +16,24 @@ clusterSvcNets:
 cniConfig:
   name: none
 nodes:
-  - hostname: k8s-control01.${domainName}
-    ipAddress: 10.75.40.20
-    kvmChannel: 3
+  - hostname: k8s-master
+    ipAddress: 192.168.40.84
     controlPlane: true
     installDisk: /dev/sda
     networkInterfaces:
       - interface: eth0
         dhcp: true
-        vip:
-          ip: 10.75.40.10
-  - hostname: k8s-control02.${domainName}
-    ipAddress: 10.75.40.21
-    kvmChannel: 2
-    controlPlane: true
-    installDisk: /dev/sda
-    networkInterfaces:
-      - interface: eth0
-        dhcp: true
-        vip:
-          ip: 10.75.40.10
-  - hostname: k8s-control03.${domainName}
-    ipAddress: 10.75.40.22
-    kvmChannel: 1
-    controlPlane: true
-    installDisk: /dev/sda
-    networkInterfaces:
-      - interface: eth0
-        dhcp: true
-        vip:
-          ip: 10.75.40.10
-  - hostname: k8s-worker01.${domainName}
-    ipAddress: 10.75.40.30
-    kvmChannel: 5
+        # vip:
+        #   ip: 10.75.40.10
+  - hostname: k8s-worker1
+    ipAddress: 192.168.40.97
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
       - interface: eth0
         dhcp: true
-  - hostname: k8s-worker02.${domainName}
-    ipAddress: 10.75.40.31
-    kvmChannel: 4
-    controlPlane: false
-    installDisk: /dev/sda
-    networkInterfaces:
-      - interface: eth0
-        dhcp: true
-  - hostname: k8s-worker03.${domainName}
-    ipAddress: 10.75.40.32
-    kvmChannel: 6
+  - hostname: k8s-worker2
+    ipAddress: 192.168.40.96
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
@@ -67,55 +42,36 @@ nodes:
 controlPlane:
   inlinePatch:
     cluster:
-      aescbcEncryptionSecret: ${aescbcEncryptionKey}
-      aggregatorCA:
-        crt: ${k8sAggregatorCert}
-        key: ${k8sAggregatorCertKey}
       apiServer:
         admissionControl: []
         certSANs:
-          - ${clusterEndpointIP}
-          - cluster01.${domainName}
+          - 192.168.40.84
         extraArgs:
-          feature-gates: MixedProtocolLBService=true,EphemeralContainers=True
-      ca:
-        crt: ${clusterCert}
-        key: ${clusterCertKey}
+          feature-gates: MixedProtocolLBService=true
       controllerManager:
         extraArgs:
           bind-address: 0.0.0.0
-          feature-gates: MixedProtocolLBService=true,EphemeralContainers=True
+          feature-gates: MixedProtocolLBService=true
       discovery:
         registries:
           service:
             disabled: true
-      etcd:
-        ca:
-          crt: ${etcdCert}
-          key: ${etcdCertKey}
-        extraArgs:
-          listen-metrics-urls: http://0.0.0.0:2381
+      # etcd:
+      #   extraArgs:
+      #     listen-metrics-urls: http://0.0.0.0:2381
       extraManifests:
         - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/v0.5.1/deploy/ha-install.yaml
       proxy:
         disabled: true
         extraArgs:
-          feature-gates: MixedProtocolLBService=true,EphemeralContainers=True
+          feature-gates: MixedProtocolLBService=true
       scheduler:
         extraArgs:
           bind-address: 0.0.0.0
-          feature-gates: MixedProtocolLBService=true,EphemeralContainers=True
-      secret: ${clusterSecret}
-      serviceAccount:
-        key: ${k8sServiceAccountKey}
-      token: ${clusterToken}
+          feature-gates: MixedProtocolLBService=true
     machine:
-      ca:
-        crt: ${machineCert}
-        key: ${machineCertKey}
       certSANs:
-        - ${clusterEndpointIP}
-        - cluster01.${domainName}
+        - 192.168.40.84
       files:
         - content: |
             [plugins."io.containerd.grpc.v1.cri"]
@@ -123,9 +79,9 @@ controlPlane:
               enable_unprivileged_icmp = true
           path: /var/cri/conf.d/allow-unpriv-ports.toml
           op: create
-      install:
-        extraKernelArgs:
-          - talos.logging.kernel=udp://10.75.45.102:6050/
+      # install:
+      #   extraKernelArgs:
+      #     - talos.logging.kernel=udp://10.75.45.102:6050/
       kubelet:
         extraArgs:
           feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
@@ -133,45 +89,29 @@ controlPlane:
         nodeIP:
           validSubnets:
             - 10.75.40.0/24
-      logging:
-        destinations:
-          - endpoint: udp://10.75.45.102:6051/
-            format: json_lines
-      network:
-        extraHostEntries:
-          - aliases:
-              - cluster-0.${domainName}
-            ip: ${clusterEndpointIP}
-      registries:
-        mirrors:
-          docker.io:
-            endpoints:
-              - http://nas01.dfw.56k.sh:5000
+      # logging:
+      #   destinations:
+      #     - endpoint: udp://10.75.45.102:6051/
+      #       format: json_lines
+      # registries:
+      #   mirrors:
+      #     docker.io:
+      #       endpoints:
+      #         - http://nas01.dfw.56k.sh:5000
       time:
         disabled: false
         servers:
-          - 10.75.0.1
-      token: ${machineToken}
+          - 192.168.40.1
 worker:
   inlinePatch:
     cluster:
-      aescbcEncryptionSecret: ${aescbcEncryptionKey}
-      ca:
-        crt: ${clusterCert}
-        key: ${clusterCertKey}
       discovery:
         registries:
           service:
             disabled: true
-      secret: ${clusterSecret}
-      token: ${clusterToken}
     machine:
-      ca:
-        crt: ${machineCert}
-        key: ${machineCertKey}
       certSANs:
-        - ${clusterEndpointIP}
-        - cluster01.${domainName}
+        - 192.168.40.84
       files:
         - content: |
             [plugins."io.containerd.grpc.v1.cri"]
@@ -179,35 +119,29 @@ worker:
               enable_unprivileged_icmp = true
           path: /var/cri/conf.d/allow-unpriv-ports.toml
           op: create
-      install:
-        extraKernelArgs:
-          - talos.logging.kernel=udp://10.75.45.102:6050/
+      # install:
+      #   extraKernelArgs:
+      #     - talos.logging.kernel=udp://10.75.45.102:6050/
       kubelet:
         extraArgs:
-          feature-gates: MixedProtocolLBService=true,EphemeralContainers=True
+          feature-gates: MixedProtocolLBService=true
           rotate-server-certificates: "true"
         nodeIP:
           validSubnets:
             - 10.75.40.0/24
-      logging:
-        destinations:
-          - endpoint: udp://10.75.45.102:6051/
-            format: json_lines
-      network:
-        extraHostEntries:
-          - aliases:
-              - cluster01.${domainName}
-            ip: ${clusterEndpointIP}
+      # logging:
+      #   destinations:
+      #     - endpoint: udp://10.75.45.102:6051/
+      #       format: json_lines
       sysctls:
         fs.inotify.max_user_instances: "8192"
         fs.inotify.max_user_watches: "1048576"
-      registries:
-        mirrors:
-          docker.io:
-            endpoints:
-              - http://nas01.dfw.56k.sh:5000
+      # registries:
+      #   mirrors:
+      #     docker.io:
+      #       endpoints:
+      #         - http://nas01.dfw.56k.sh:5000
       time:
         disabled: false
         servers:
-          - 10.75.0.1
-      token: ${machineToken}
+          - 192.168.40.1

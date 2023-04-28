@@ -5,3 +5,6 @@ cluster01-k8s-worker01.dfw.56k.sh.yaml
 cluster01-k8s-worker02.dfw.56k.sh.yaml
 cluster01-k8s-worker03.dfw.56k.sh.yaml
 talosconfig
+home-cluster-k8s-master.yaml
+home-cluster-k8s-worker1.yaml
+home-cluster-k8s-worker2.yaml
