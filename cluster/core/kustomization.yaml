@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - cluster-issuers
   # - rook-ceph
-  - longhorn
+  - nfs-provisioner
