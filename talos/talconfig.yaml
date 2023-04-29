@@ -2,10 +2,10 @@
 clusterName: home-cluster
 talosVersion: v1.4.1
 kubernetesVersion: v1.27.0
-endpoint: https://192.168.40.84:6443
+endpoint: https://10.75.40.10:6443
 domain: cluster.local
 additionalMachineCertSans:
-  - 192.168.40.84
+  - 10.75.40.10
 allowSchedulingOnMasters: true
 additionalApiServerCertSans:
   - home-cluster.local
@@ -17,35 +17,41 @@ cniConfig:
   name: none
 nodes:
   - hostname: k8s-master
-    ipAddress: 192.168.40.84
+    ipAddress: 192.168.40.11
     controlPlane: true
     installDisk: /dev/sda
     networkInterfaces:
       - interface: eth0
         dhcp: true
-        # vip:
-        #   ip: 10.75.40.10
+      - interface: eth1
+        addresses: [10.75.40.21/24]
+        vip:
+          ip: 10.75.40.10
   - hostname: k8s-worker1
-    ipAddress: 192.168.40.97
+    ipAddress: 192.168.40.21
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
       - interface: eth0
         dhcp: true
+      - interface: eth1
+        addresses: [10.75.40.41/24]
   - hostname: k8s-worker2
-    ipAddress: 192.168.40.96
+    ipAddress: 192.168.40.22
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
       - interface: eth0
         dhcp: true
+      - interface: eth1
+        addresses: [10.75.40.42/24]
 controlPlane:
   inlinePatch:
     cluster:
       apiServer:
         admissionControl: []
         certSANs:
-          - 192.168.40.84
+          - 10.75.40.10
         extraArgs:
           feature-gates: MixedProtocolLBService=true
       controllerManager:
@@ -71,7 +77,7 @@ controlPlane:
           feature-gates: MixedProtocolLBService=true
     machine:
       certSANs:
-        - 192.168.40.84
+        - 10.75.40.10
       files:
         - content: |
             [plugins."io.containerd.grpc.v1.cri"]
@@ -111,7 +117,7 @@ worker:
             disabled: true
     machine:
       certSANs:
-        - 192.168.40.84
+        - 10.75.40.10
       files:
         - content: |
             [plugins."io.containerd.grpc.v1.cri"]
