@@ -11,7 +11,7 @@ spec:
     branch: new-cluster
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/maksimkurb/home-ops
+  url: https://github.com/maksimkurb/home-ops.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
