@@ -4,10 +4,10 @@ kind: Kustomization
 namespace: rook-ceph
 resources:
   - deployment.yaml
-configMapGenerator:
-  - name: direct-mount-backup-script
-    files:
-      - backup.sh
+# configMapGenerator:
+#   - name: direct-mount-backup-script
+#     files:
+#       - backup.sh
 generatorOptions:
   disableNameSuffixHash: true
   annotations:

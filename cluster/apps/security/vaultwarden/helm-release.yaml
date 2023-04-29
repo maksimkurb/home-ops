@@ -38,15 +38,15 @@ spec:
       WEBSOCKET_ENABLED: true
       WEBSOCKET_ADDRESS: 0.0.0.0
       WEBSOCKET_PORT: 3012
-      DOMAIN: https://warden.${SECRET_DOMAIN}
-      ADMIN_TOKEN: ${SECRET_VAULTWARDEN_ADMIN_TOKEN}
-      SMTP_HOST: "smtp.sendgrid.net"
-      SMTP_FROM: "no-reply@56k.jp"
+      DOMAIN: https://bitwarden.${SECRET_DOMAIN}
+      ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_FROM: "${SMTP_EMAIL}"
       SMTP_FROM_NAME: "Vaultwarden"
       SMTP_SSL: true
       SMTP_PORT: 587
-      SMTP_USERNAME: "apikey"
-      SMTP_PASSWORD: "${SECRET_SENDGRID_API_KEY}"
+      SMTP_USERNAME: "${SMTP_EMAIL}"
+      SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
       DATABASE_URL:
         valueFrom:
           secretKeyRef:
@@ -68,7 +68,7 @@ spec:
           hajimari.io/icon: "form-textbox-password"
           external-dns.home.arpa/enabled: "true"
         hosts:
-          - host: "warden.${SECRET_DOMAIN}"
+          - host: &host "bitwarden.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -84,7 +84,7 @@ spec:
                   port: *websocket-port
         tls:
           - hosts:
-              - "warden.${SECRET_DOMAIN}"
+              - *host
     persistence:
       config:
         enabled: true

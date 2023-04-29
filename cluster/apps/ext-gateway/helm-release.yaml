@@ -52,7 +52,7 @@ spec:
             command:
               - sh
               - -c
-              - if [ $(curl -s https://am.i.mullvad.net/ip) = '${SECRET_EXT_GATEWAY_IP}' ]; then exit 0; else exit $?; fi
+              - if [ $(curl -s https://ifconfig.co/ip) = '${SECRET_EXT_GATEWAY_IP}' ]; then exit 0; else exit $?; fi
           initialDelaySeconds: 30
           periodSeconds: 60
           failureThreshold: 1

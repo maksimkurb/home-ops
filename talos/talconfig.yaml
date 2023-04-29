@@ -101,7 +101,7 @@ controlPlane:
       time:
         disabled: false
         servers:
-          - 192.168.40.1
+          - pool.ntp.org
 worker:
   inlinePatch:
     cluster:
@@ -144,4 +144,4 @@ worker:
       time:
         disabled: false
         servers:
-          - 192.168.40.1
+          - pool.ntp.org

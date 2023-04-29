@@ -47,8 +47,6 @@ spec:
     txtOwnerId: "default"
     domainFilters:
       - "${SECRET_DOMAIN}"
-      - "${SECRET_DOMAIN_2}"
-      - "${SECRET_DOMAIN_3}"
     serviceMonitor:
       enabled: true
     resources:

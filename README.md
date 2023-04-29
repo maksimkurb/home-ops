@@ -68,7 +68,7 @@ This Git repository contains the following directories (_kustomizatons_) under [
 
 | Name                                         | CIDR            |
 |----------------------------------------------|-----------------|
-| Kubernetes Nodes                             | `10.75.40.0/24` |
+| Kubernetes Nodes                             | `192.168.42.0/24` |
 | Kubernetes external services (Cilium w/ BGP) | `10.75.45.0/24` |
 | Kubernetes pods                              | `172.22.0.0/16` |
 | Kubernetes services                          | `172.24.0.0/16` |

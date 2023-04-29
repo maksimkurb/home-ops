@@ -6,7 +6,7 @@ resources:
   - cert-manager
   - cilium
   - descheduler
-  - intel-gpu-plugin
+  # - intel-gpu-plugin # TODO: replace with NVidia
   - kube-cleanup-operator
   - metrics-server
   - node-feature-discovery
