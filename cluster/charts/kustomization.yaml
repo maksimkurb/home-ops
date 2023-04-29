@@ -15,6 +15,7 @@ resources:
   - k8s-at-home-charts.yaml
   - kubernetes-sigs-descheduler-charts.yaml
   - kyverno-charts.yaml
+  - longhorn-charts.yaml
   - lwolf-charts.yaml
   - metrics-server-charts.yaml
   - node-feature-discovery-charts.yaml
