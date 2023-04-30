@@ -90,10 +90,14 @@ spec:
         readOnly: true
       snapshots:
         enabled: true
-        type: nfs
-        server: "nas01.${SECRET_PRIVATE_DOMAIN}"
-        path: /tank/data/backups/kopia
+        type: pvc
         mountPath: /snapshots
+        existingClaim: kopia-snapshots-nfs
+      source:
+        enabled: true
+        type: pvc
+        mountPath: /data
+        existingClaim: kopia-data-nfs
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
     resources:

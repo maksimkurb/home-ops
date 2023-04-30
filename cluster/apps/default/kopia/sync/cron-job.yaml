@@ -47,12 +47,14 @@ spec:
                 - /bin/bash
                 - -c
                 - |
-                  printf "\e[1;32m%-6s\e[m\n" "[01/03] Connect to repo ..."      && kopia repo connect filesystem --path=/snapshots --override-hostname=cluster --override-username=root
+                  printf "\e[1;32m%-6s\e[m\n" "[01/03] Connect to repo ..."      && kopia repo connect filesystem --path=/snapshots --override-hostname=kopia-0 --override-username=root
                   printf "\e[1;32m%-6s\e[m\n" "[02/03] Sync to remote ..."       && kopia repo sync-to from-config --file=/remote/repository.config --parallel 8 --delete
                   printf "\e[1;32m%-6s\e[m\n" "[03/03] Disconnect from repo ..." && kopia repo disconnect
               volumeMounts:
                 - name: snapshots
                   mountPath: /snapshots
+                - name: data
+                  mountPath: /data
                 - name: remote-config
                   mountPath: /remote
                   readOnly: true
@@ -60,9 +62,14 @@ spec:
                 privileged: true
           volumes:
             - name: snapshots
-              nfs:
-                server: "nas01.${SECRET_PRIVATE_DOMAIN}"
-                path: /tank/data/backups/kopia
+              persistentVolumeClaim:
+                claimName: kopia-snapshots-nfs
+            - name: data
+              persistentVolumeClaim:
+                claimName: kopia-data-nfs
             - name: remote-config
-              secret:
-                secretName: *app
+              configMap:
+                name: kopia
+                items:
+                  - key: repository.config
+                    path: /config/repository.config

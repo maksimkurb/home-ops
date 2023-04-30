@@ -24,6 +24,11 @@ spec:
       TZ: "America/Chicago"
     hajimari:
       defaultEnable: true
+      showAppGroups: true
+      showAppUrls: false
+      showAppInfo: true
+      lightTheme: passion
+      darkTheme: tron
       namespaceSelector:
         matchNames:
           - downloads
@@ -31,71 +36,99 @@ spec:
           - media
           - monitoring
           - security
+      showGlobalBookmarks: true
       globalBookmarks:
         - group: Communicate
           bookmarks:
             - name: Discord
-              url: 'https://discord.com'
+              url: "https://discord.com"
+              icon: ic:baseline-discord
             - name: Gmail
-              url: 'http://gmail.com'
+              url: "https://gmail.com"
+              icon: mdi:gmail
             - name: Slack
-              url: 'https://slack.com/signin'
+              url: "https://slack.com/signin"
+              icon: mdi:slack
         - group: Cloud
           bookmarks:
-            - name: Box
-              url: 'https://box.com'
+            - name: Google Drive
+              url: "https://drive.google.com"
+              icon: uil:google-drive
+            - name: Mega
+              url: "https://mega.nz"
+              icon: simple-icons:mega
             - name: Dropbox
-              url: 'https://dropbox.com'
-            - name: Drive
-              url: 'https://drive.google.com'
-        - group: Design
-          bookmarks:
-            - name: Awwwards
-              url: 'https://awwwards.com'
-            - name: Dribbble
-              url: 'https://dribbble.com'
-            - name: Muz.li
-              url: 'https://medium.muz.li/'
+              url: "https://dropbox.com"
+              icon: mdi:dropbox
         - group: Dev
           bookmarks:
             - name: Codepen
-              url: 'https://codepen.io/'
+              url: "https://codepen.io/"
+              icon: mdi:codepen
             - name: Devdocs
-              url: 'https://devdocs.io'
+              url: "https://devdocs.io"
+              icon: file-icons:readthedocs
             - name: Devhints
-              url: 'https://devhints.io'
-        - group: Lifestyle
-          bookmarks:
-            - name: Design Milk
-              url: 'https://design-milk.com/category/interior-design/'
-            - name: Dwell
-              url: 'https://www.dwell.com/'
-            - name: Freshome
-              url: 'https://www.mymove.com/freshome/'
+              url: "https://devhints.io"
+              icon: fluent-mdl2:hint-text
         - group: Media
           bookmarks:
             - name: Spotify
-              url: 'http://browse.spotify.com'
-            - name: Trakt
-              url: 'http://trakt.tv'
+              url: "http://open.spotify.com"
+              icon: mdi:spotify
             - name: YouTube
-              url: 'https://youtube.com/feed/subscriptions'
+              url: "https://youtube.com/feed/subscriptions"
+              icon: mdi:youtube
         - group: Reading
           bookmarks:
-            - name: Instapaper
-              url: 'https://www.instapaper.com/u'
+            - name: VC
+              url: "https://vc.ru/"
+              icon: https://vc.ru/static/build/vc.ru/favicons/favicon.ico
+            - name: Pikabu
+              url: "https://pikabu.ru/"
+              icon: https://cs.pikabu.ru/assets/favicon.ico
             - name: Medium
-              url: 'http://medium.com'
+              url: "http://medium.com"
+              icon: "https://miro.medium.com/1*m-R_BkNf1Qjr1YbyOIJY2w.png"
             - name: Reddit
-              url: 'http://reddit.com'
-        - group: Tech
+              url: "http://reddit.com"
+              icon: https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png
+        - group: My resources
           bookmarks:
-            - name: TheNextWeb
-              url: 'https://thenextweb.com/'
-            - name: The Verge
-              url: 'https://theverge.com/'
-            - name: MIT Technology Review
-              url: 'https://www.technologyreview.com/'
+            - name: Personal Website @maksimkurb
+              url: https://cubly.ru
+              icon: mdi:resume
+            - name: LinkedIn @maksimkurb
+              url: https://www.linkedin.com/in/maxim-kurbatov/
+              icon: mdi:linkedin
+            - name: GitHub @maksimkurb
+              url: https://github.com/maksimkurb
+              icon: mdi:github
+        - group: Router configuration
+          bookmarks:
+            - name: Keenetic @ 3sad
+              url: http://192.168.40.1
+              icon: material-symbols:router
+            - name: Keenetic @ spb
+              url: http://192.168.54.1
+              icon: material-symbols:router
+            - name: Keenetic @ avia42
+              url: http://192.168.100.1
+              icon: material-symbols:router
+        - group: Logout
+          bookmarks:
+            - name: Home Assistant Code
+              url: https://hass-config.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Traefik Dashboard
+              url: https://traefik.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Keycloak
+              url: https://login.${SECRET_DOMAIN}/realms/master/protocol/openid-connect/logout
+              icon: mdi:logout
+              targetBlank: true
     ingress:
       main:
         enabled: true
