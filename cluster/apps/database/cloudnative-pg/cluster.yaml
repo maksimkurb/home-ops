@@ -9,7 +9,7 @@ spec:
   primaryUpdateStrategy: unsupervised
   storage:
     size: 15Gi
-    storageClass: ceph-block
+    storageClass: nfs-proxmox
   superuserSecret:
     name: postgres-superuser
   bootstrap:
