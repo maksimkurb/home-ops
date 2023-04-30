@@ -65,6 +65,8 @@ spec:
       accessModes: ReadWriteMany
       onDelete: retain
       pathPattern: ${.PVC.namespace}-${.PVC.name}
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
     nfs:
       server: ${NFS_PROXMOX_ADDR}
       path: ${NFS_PROXMOX_POSTGRES}
