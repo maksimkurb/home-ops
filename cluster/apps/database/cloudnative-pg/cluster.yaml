@@ -15,20 +15,20 @@ spec:
   superuserSecret:
     name: postgres-superuser
   bootstrap:
-    initdb:
-      import:
-        type: monolith
-        databases:
-          - firefly
-          - homeassistant
-          - keycloak
-          - vaultwarden
-        roles:
-          - "*"
-        source:
-          externalCluster: old-database
-    # recovery:
-    #   source: postgres-backup
+    # initdb:
+    #   import:
+    #     type: monolith
+    #     databases:
+    #       - firefly
+    #       - homeassistant
+    #       - keycloak
+    #       - vaultwarden
+    #     roles:
+    #       - "*"
+    #     source:
+    #       externalCluster: old-database
+    recovery:
+      source: postgres-backup
   postgresql:
     parameters:
       max_connections: "800"
