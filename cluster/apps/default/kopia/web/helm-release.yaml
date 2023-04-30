@@ -27,7 +27,7 @@ spec:
       nameOverride: *app
     initContainers:
       wait-for-repo:
-        image: ghcr.io/onedr0p/kopia:0.11.3@sha256:72406602c99357951cb7284abbf88699081d60f6cffd22baddd8a6a2afe919f5
+        image: kopia/kopia:0.12.1
         command:
           - /bin/bash
           - -c
@@ -40,8 +40,8 @@ spec:
           - name: snapshots
             mountPath: /snapshots
     image:
-      repository: ghcr.io/onedr0p/kopia
-      tag: 0.11.3@sha256:72406602c99357951cb7284abbf88699081d60f6cffd22baddd8a6a2afe919f5
+      repository: kopia/kopia
+      tag: 0.12.1
     env:
       TZ: "${TIMEZONE}"
     envFrom:
