@@ -151,9 +151,9 @@ data:
   # sidecar_docker_images: ""
   # set_memory_request_to_limit: "false"
   spilo_allow_privilege_escalation: "true"
-  # spilo_runasuser: "26"
-  # spilo_runasgroup: "26"
-  # spilo_fsgroup: "26"
+  spilo_runasuser: "777"
+  spilo_runasgroup: "777"
+  spilo_fsgroup: "777"
   spilo_privileged: "false"
   storage_resize_mode: "off" # We do not need to increase PVC size as it is NFS anyways
   super_username: postgres
