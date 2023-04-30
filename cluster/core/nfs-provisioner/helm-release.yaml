@@ -64,7 +64,7 @@ spec:
       name: nfs-postgres
       accessModes: ReadWriteMany
       onDelete: retain
-      pathPattern: <pvc-namespace>-<pvc-name>
+      pathPattern: ${.PVC.namespace}-${.PVC.name}
     nfs:
       server: ${NFS_PROXMOX_ADDR}
       path: ${NFS_PROXMOX_POSTGRES}
