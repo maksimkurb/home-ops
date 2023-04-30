@@ -32,3 +32,37 @@ spec:
     nfs:
       server: ${NFS_PROXMOX_ADDR}
       path: ${NFS_PROXMOX_POD_DATA}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nfs-provisioner-postgres
+  namespace: nfs-provisioner
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: nfs-subdir-external-provisioner
+      version: 4.0.18
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-provisioner-charts
+        namespace: flux-system
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    storageClass:
+      name: nfs-provisioner-postgres
+      accessModes: ReadWriteMany
+    nfs:
+      server: ${NFS_PROXMOX_ADDR}
+      path: ${NFS_PROXMOX_POSTGRES}
