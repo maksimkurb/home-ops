@@ -38,6 +38,8 @@ kind: HelmRelease
 metadata:
   name: nfs-provisioner-postgres
   namespace: nfs-provisioner
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
 spec:
   interval: 15m
   chart:
@@ -65,8 +67,6 @@ spec:
       accessModes: ReadWriteMany
       onDelete: retain
       pathPattern: ${.PVC.namespace}-${.PVC.name}
-      annotations:
-        kustomize.toolkit.fluxcd.io/substitute: disabled
     nfs:
-      server: ${NFS_PROXMOX_ADDR}
-      path: ${NFS_PROXMOX_POSTGRES}
+      server: 10.75.40.1
+      path: /tank/postgres
