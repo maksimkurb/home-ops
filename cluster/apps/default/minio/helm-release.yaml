@@ -27,7 +27,7 @@ spec:
       nameOverride: *app
     image:
       repository: quay.io/minio/minio
-      tag: RELEASE.2022-07-17T15-43-14Z
+      tag: RELEASE.2023-04-28T18-11-17Z
     env:
       TZ: "${TIMEZONE}"
       MINIO_UPDATE: "off"
