@@ -5,7 +5,8 @@ metadata:
   name: postgres
   namespace: database
 spec:
-  instances: 2
+  # TODO: increate instances count
+  instances: 1
   primaryUpdateStrategy: unsupervised
   storage:
     size: 15Gi
@@ -13,31 +14,30 @@ spec:
   affinity:
     enablePodAntiAffinity: true
     additionalPodAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: node-role.kubernetes.io/control-plane
-                  operator: DoesNotExist
-            topologyKey: kubernetes.io/hostname
-          weight: 100
+      preferredDuringSchedulingIgnoredDuringExecution: []
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: DoesNotExist
+          topologyKey: kubernetes.io/hostname
   superuserSecret:
     name: postgres-superuser
   bootstrap:
-    # initdb:
-    #   import:
-    #     type: monolith
-    #     databases:
-    #       - firefly
-    #       - homeassistant
-    #       - keycloak
-    #       - vaultwarden
-    #     roles:
-    #       - "*"
-    #     source:
-    #       externalCluster: old-database
-    recovery:
-      source: postgres-backup
+    initdb:
+      import:
+        type: monolith
+        databases:
+          - firefly
+          - homeassistant
+          - keycloak
+          - vaultwarden
+        roles:
+          - "*"
+        source:
+          externalCluster: old-database
+    # recovery:
+    #   source: postgres-backup
   postgresql:
     parameters:
       max_connections: "800"
@@ -76,11 +76,11 @@ spec:
           secretAccessKey:
             name: postgres-minio
             key: MINIO_SECRET_KEY
-    # - name: old-database
-    #   connectionParameters:
-    #     host: 192.168.42.31
-    #     user: postgres
-    #     dbname: postgres
-    #   password:
-    #     name: postgres-old
-    #     key: password
+    - name: old-database
+      connectionParameters:
+        host: 192.168.42.31
+        user: postgres
+        dbname: postgres
+      password:
+        name: postgres-old
+        key: password
