@@ -8,4 +8,5 @@ resources:
   # - ext-postgres-operator
   - kube-prometheus-stack
   - kyverno
-  - rook-ceph
+  # - rook-ceph
+  - zalando
