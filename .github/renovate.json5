@@ -33,6 +33,9 @@
     "ghcr.io/fluxcd/notification-controller",
     "ghcr.io/fluxcd/source-controller"
   ],
+  "ignorePaths": [
+    "_old/**"
+  ],
   "docker-compose": {
     "fileMatch": ["ansible/.+/docker-compose.*\\.ya?ml(\\.j2)?$"]
   },
