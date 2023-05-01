@@ -166,7 +166,7 @@ spec:
             resources:
               requests:
                 storage: 1Mi
-            storageClassName: kopia-snapshots-job-nfs
+            storageClassName: kopia-snapshots-job-nfs-{{request.object.metadata.name}}
             volumeMode: Filesystem
     - name: create-kopia-snapshot-pvs
       match:
@@ -176,7 +176,7 @@ spec:
       generate:
         apiVersion: v1
         kind: PersistentVolumeClaim
-        name: kopia-snapshots-job-nfs
+        name: kopia-snapshots-job-nfs-{{request.object.metadata.name}}
         namespace: "{{request.object.metadata.name}}"
         synchronize: true
         data:
@@ -188,6 +188,6 @@ spec:
               path: /backup/kopia/cluster0
             accessModes: ["ReadWriteMany"]
             persistentVolumeReclaimPolicy: Retain
-            storageClassName: kopia-snapshots-job-nfs
+            storageClassName: kopia-snapshots-job-nfs-{{request.object.metadata.name}}
             mountOptions:
               ["nfsvers=3", "nconnect=16", "soft", "timeo=50", "noatime"]
