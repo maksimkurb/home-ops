@@ -27,7 +27,7 @@ spec:
       nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/qbittorrent
-      tag: 4.4.5@sha256:6765f8a7709ad446fb761d3dde16f2a2706d118c21e2f191955ba07935e75e29
+      tag: 4.5.2@sha256:4fb6a9dc178ce58716283ca849d3f5cc34ddf4cc21740793b142448df911cdf0
     hostname: qbittorrent
     podAnnotations:
       setGateway: "true"
