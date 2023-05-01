@@ -7,7 +7,5 @@ secretGenerator:
   - name: glauth
     files:
       - server.toml=server.sops.toml
-      - users.toml=users.sops.toml
-      - groups.toml=groups.sops.toml
 generatorOptions:
   disableNameSuffixHash: true

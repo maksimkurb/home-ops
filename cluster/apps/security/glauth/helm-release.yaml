@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 0.2.2
+      version: 1.4.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -56,10 +56,6 @@ spec:
         items:
           - key: server.toml
             path: server.toml
-          - key: users.toml
-            path: users.toml
-          - key: groups.toml
-            path: groups.toml
     podAnnotations:
       secret.reloader.stakater.com/reload: *app
     resources:
