@@ -25,6 +25,11 @@ spec:
   values:
     installCRDs: false
     replicaCount: 3
+    admissionController:
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
     extraArgs:
       - --autogenInternals=false
       - --clientRateLimitQPS=30
