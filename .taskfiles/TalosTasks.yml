@@ -13,9 +13,9 @@ tasks:
     desc: Apply Talos config
     dir: talos
     cmds:
-      - talosctl apply-config -f clusterconfig/home-cluster-k8s-master.yaml --nodes 192.168.40.11 {{.CLI_ARGS}}
-      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker1.yaml --nodes 192.168.40.21 {{.CLI_ARGS}}
-      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker2.yaml --nodes 192.168.40.22 {{.CLI_ARGS}}
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-master.yaml --nodes 192.168.42.101 {{.CLI_ARGS}}
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker1.yaml --nodes 192.168.42.102 {{.CLI_ARGS}}
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker2.yaml --nodes 192.168.42.103 {{.CLI_ARGS}}
 
   bootstrap:
     desc: Apply Talos config

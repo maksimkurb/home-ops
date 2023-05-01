@@ -17,7 +17,7 @@ cniConfig:
   name: none
 nodes:
   - hostname: k8s-master
-    ipAddress: 192.168.40.11
+    ipAddress: 192.168.42.101
     controlPlane: true
     installDisk: /dev/sda
     networkInterfaces:
@@ -28,7 +28,7 @@ nodes:
         vip:
           ip: 10.75.40.10
   - hostname: k8s-worker1
-    ipAddress: 192.168.40.21
+    ipAddress: 192.168.42.102
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
@@ -37,7 +37,7 @@ nodes:
       - interface: eth1
         addresses: [10.75.40.41/24]
   - hostname: k8s-worker2
-    ipAddress: 192.168.40.22
+    ipAddress: 192.168.42.103
     controlPlane: false
     installDisk: /dev/sda
     networkInterfaces:
