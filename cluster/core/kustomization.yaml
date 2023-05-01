@@ -5,6 +5,4 @@ resources:
   - cluster-issuers
   # - rook-ceph
   - nfs-provisioner
-
-patchesStrategicMerge:
   - add-node-taints.yaml
