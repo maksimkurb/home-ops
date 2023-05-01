@@ -1,34 +1,3 @@
-#########################
-# Backup source (WebUI) #
-#########################
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: kopia-data-nfs
-spec:
-  capacity:
-    storage: 1Mi
-  accessModes: ["ReadWriteMany"]
-  storageClassName: kopia-data-nfs
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
-    path: "${NFS_PROXMOX_POD_DATA}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime", "nolock"]
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: kopia-data-nfs
-  namespace: default
-spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: kopia-data-nfs
-  resources:
-    requests:
-      storage: 1Mi
-
 #################
 # Backup target #
 #################

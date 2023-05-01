@@ -34,7 +34,7 @@ spec:
       context:
         - name: appName
           variable:
-            jmesPath: "request.object.metadata.labels.\"app.kubernetes.io/name\""
+            jmesPath: 'request.object.metadata.labels."app.kubernetes.io/name"'
         - name: claimName
           variable:
             jmesPath: "request.object.metadata.name"
@@ -44,16 +44,16 @@ spec:
         - name: nodeAffinity
           variable:
             value:
-              ignored: "{{ (request.object.metadata.labels.\"snapshot.home.arpa/ignoreAffinity\" || 'false') == 'false' }}"
+              ignored: '{{ (request.object.metadata.labels."snapshot.home.arpa/ignoreAffinity" || ''false'') == ''false'' }}'
               labels:
                 - key: app.kubernetes.io/name
                   operator: "In"
                   values:
-                    - "{{ request.object.metadata.labels.\"app.kubernetes.io/name\" }}"
+                    - '{{ request.object.metadata.labels."app.kubernetes.io/name" }}'
                 - key: app.kubernetes.io/instance
                   operator: "In"
                   values:
-                    - "{{ request.object.metadata.labels.\"app.kubernetes.io/instance\" }}"
+                    - '{{ request.object.metadata.labels."app.kubernetes.io/instance" }}'
       generate:
         synchronize: true
         apiVersion: batch/v1
@@ -63,8 +63,8 @@ spec:
         data:
           metadata:
             labels:
-              app.kubernetes.io/name: "{{ request.object.metadata.labels.\"app.kubernetes.io/name\" }}"
-              app.kubernetes.io/instance: "{{ request.object.metadata.labels.\"app.kubernetes.io/instance\" }}"
+              app.kubernetes.io/name: '{{ request.object.metadata.labels."app.kubernetes.io/name" }}'
+              app.kubernetes.io/instance: '{{ request.object.metadata.labels."app.kubernetes.io/instance" }}'
             ownerReferences:
               - apiVersion: "{{ request.object.apiVersion }}"
                 kind: "{{ request.object.kind }}"
@@ -126,12 +126,68 @@ spec:
                         persistentVolumeClaim:
                           claimName: "{{ claimName }}"
                       - name: snapshots
-                        nfs:
-                          server: "nas01.${SECRET_PRIVATE_DOMAIN}"
-                          path: /tank/data/backups/kopia
+                        persistentVolumeClaim:
+                          claimName: "kopia-snapshots-job-nfs"
                     affinity:
                       podAffinity:
                         requiredDuringSchedulingIgnoredDuringExecution:
                           - topologyKey: kubernetes.io/hostname
                             labelSelector:
                               matchExpressions: "{{ nodeAffinity.ignored && [] || nodeAffinity.labels }}"
+
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: create-kopia-pvcs
+  annotations:
+    policies.kyverno.io/title: Create Kopia PVCs and PVs
+    policies.kyverno.io/subject: PersistentVolumeClaim
+    policies.kyverno.io/description: >-
+      This policy will create PVCs and PVs for Kopia snapshots in every namespace
+spec:
+  mutateExistingOnPolicyUpdate: true
+  generateExistingOnPolicyUpdate: true
+  rules:
+    - name: create-kopia-snapshot-pvcs
+      match:
+        resources:
+          kinds:
+            - Namespace
+      generate:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        name: kopia-snapshots-job-nfs
+        namespace: "{{request.object.metadata.name}}"
+        synchronize: true
+        data:
+          spec:
+            accessModes: ["ReadWriteMany"]
+            resources:
+              requests:
+                storage: 1Mi
+            storageClassName: kopia-snapshots-job-nfs
+            volumeMode: Filesystem
+    - name: create-kopia-snapshot-pvs
+      match:
+        resources:
+          kinds:
+            - Namespace
+      generate:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        name: kopia-snapshots-job-nfs
+        namespace: "{{request.object.metadata.name}}"
+        synchronize: true
+        data:
+          spec:
+            capacity:
+              storage: 1Mi
+            nfs:
+              server: 192.168.102.102
+              path: /backup/kopia/cluster0
+            accessModes: ["ReadWriteMany"]
+            persistentVolumeReclaimPolicy: Retain
+            storageClassName: kopia-snapshots-job-nfs
+            mountOptions:
+              ["nfsvers=3", "nconnect=16", "soft", "timeo=50", "noatime"]
