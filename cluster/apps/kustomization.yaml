@@ -11,5 +11,5 @@ resources:
   # - media
   # - monitoring
   - networking
-  # - security
+  - security
   # - vpn-gateway
