@@ -27,7 +27,7 @@ spec:
       nameOverride: *app
     initContainers:
       wait-for-repo:
-        image: kopia/kopia:0.12.1
+        image: kopia/kopia:0.13.0
         command:
           - /bin/bash
           - -c
@@ -41,7 +41,7 @@ spec:
             mountPath: /snapshots
     image:
       repository: kopia/kopia
-      tag: 0.12.1
+      tag: 0.13.0
     env:
       TZ: "${TIMEZONE}"
     envFrom:
