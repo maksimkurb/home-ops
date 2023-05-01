@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: linuxserver/jackett
-      tag: 0.20.4029
+      tag: 0.20.4032
 
     env:
       TZ: "Europe/Saratov"
