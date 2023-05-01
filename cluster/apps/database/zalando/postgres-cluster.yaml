@@ -1,0 +1,32 @@
+---
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: homelab-pgsql
+  namespace: database
+spec:
+  teamId: "homelab"
+  volume:
+    size: 10Gi
+    storageClass: nfs-postgres
+  numberOfInstances: 1
+  allowedSourceRanges:
+    - "0.0.0.0/0"
+  postgresql:
+    version: "15"
+  users:
+    operator:
+      - superuser
+      - createdb
+    vaultwarden: []
+    firefly: []
+    homeassistant: []
+    keycloak: []
+  databases:
+    vaultwarden: vaultwarden
+    firefly: firefly
+    homeassistant: homeassistant
+    keycloak: keycloak
+  enableMasterLoadBalancer: true
+  enableConnectionPooler: false
+  enableLogicalBackup: true

@@ -4,4 +4,4 @@ kind: Namespace
 metadata:
   name: media
   labels:
-    routed-gateway: "true"
+    goldilocks.fairwinds.com/enabled: "true"

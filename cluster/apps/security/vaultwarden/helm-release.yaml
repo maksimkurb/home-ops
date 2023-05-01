@@ -1,0 +1,91 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app vaultwarden
+  namespace: security
+spec:
+  releaseName: *app
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 0.2.2
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+      interval: 15m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  dependsOn:
+    - name: cloudnative-pg
+      namespace: database
+  values:
+    global:
+      nameOverride: *app
+    image:
+      repository: docker.io/vaultwarden/server
+      tag: 1.27.0
+    env:
+      DATA_FOLDER: "config"
+      SIGNUPS_ALLOWED: false
+      WEBSOCKET_ENABLED: true
+      WEBSOCKET_ADDRESS: 0.0.0.0
+      WEBSOCKET_PORT: 3012
+      DOMAIN: https://bitwarden.${SECRET_DOMAIN}
+      ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_FROM: "${SMTP_EMAIL}"
+      SMTP_FROM_NAME: "Vaultwarden"
+      SMTP_SSL: true
+      SMTP_PORT: 587
+      SMTP_USERNAME: "${SMTP_EMAIL}"
+      SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
+      DATABASE_URL:
+        valueFrom:
+          secretKeyRef:
+            name: vaultwarden-postgres
+            key: POSTGRES_URL
+    service:
+      main:
+        ports:
+          http:
+            port: &port 80
+          websocket:
+            enabled: true
+            port: &websocket-port 3012
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          hajimari.io/icon: "form-textbox-password"
+          external-dns.home.arpa/enabled: "true"
+        hosts:
+          - host: &host "bitwarden.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  port: *port
+              - path: /notifications/hub/negotiate
+                pathType: Prefix
+                service:
+                  port: *port
+              - path: /notifications/hub
+                pathType: Prefix
+                service:
+                  port: *websocket-port
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      config:
+        enabled: true
+        existingClaim: vaultwarden-config-v1

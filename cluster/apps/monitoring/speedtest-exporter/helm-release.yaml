@@ -5,25 +5,37 @@ metadata:
   name: speedtest-exporter
   namespace: monitoring
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
-      # renovate: registryUrl=https://k8s-at-home.com/charts/
       chart: speedtest-exporter
       version: 5.4.2
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home-charts
         namespace: flux-system
-      interval: 5m
+      interval: 15m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
   values:
     image:
       repository: ghcr.io/miguelndecarvalho/speedtest-exporter
-      tag: v3.5.3
+      tag: v3.5.2
+    env:
+      SPEEDTEST_CACHE_FOR: 3600
     metrics:
       enabled: true
       serviceMonitor:
         interval: 60m
         scrapeTimeout: 1m
       prometheusRule:
-        enabled: false
+        enabled: true
+        downloadLimit: 2500
+        uploadLimit: 2500
+        pingLimit: 10
+        jitterLimit: 30

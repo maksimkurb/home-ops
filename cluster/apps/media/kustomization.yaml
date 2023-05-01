@@ -1,9 +1,12 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - jackett
+  - namespace.yaml
+  - calibre-web
+  - calibre-web-fic
+  - jellyfin
+  # - owncast
   - plex
-  - overseerr
-  - qbittorrent
-  - radarr
-  - sonarr
+  - szurubooru
+  - tautulli

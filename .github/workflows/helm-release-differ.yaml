@@ -1,5 +1,5 @@
 ---
-name: "Helm Release Differ"
+name: Helm Release Differ
 
 on: # yamllint disable-line rule:truthy
   pull_request:
@@ -11,18 +11,15 @@ on: # yamllint disable-line rule:truthy
 env:
   # Currently no way to detect automatically
   DEFAULT_BRANCH: main
-  BOT_USERNAME: "renovate[bot]"
+  BOT_USERNAME: "chii-bot[bot]"
 
 jobs:
   detect-file-changes:
     name: Detect File Changes
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Filter Helm Releases
-        uses: dorny/paths-filter@v2
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
         id: filter
         with:
           list-files: json
@@ -31,7 +28,6 @@ jobs:
               - added|modified: "**/helm-release.yaml"
     outputs:
       yaml_files: ${{ steps.filter.outputs.yaml_files }}
-
   helm-release-differ:
     name: Helm Release Differ
     runs-on: ubuntu-latest
@@ -42,18 +38,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
       - name: Checkout default branch
         uses: actions/checkout@v3
         with:
           ref: "${{ env.DEFAULT_BRANCH }}"
           path: default
-
       - name: Install Helm
         uses: azure/setup-helm@v3
         with:
-          version: latest
-
+          version: v3.6.3
       - name: Helm Release Differ
         id: diff
         run: |
@@ -63,7 +62,6 @@ jobs:
           diff="${diff//$'\n'/'%0A'}"
           diff="${diff//$'\r'/'%0D'}"
           echo "::set-output name=diff::$(echo ${diff})"
-
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: find-comment
@@ -71,11 +69,10 @@ jobs:
           issue-number: "${{ github.event.pull_request.number }}"
           comment-author: "${{ env.BOT_USERNAME }}"
           body-includes: "${{ matrix.file }}"
-
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v2
         with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ steps.generate-token.outputs.token }}"
           comment-id: "${{ steps.find-comment.outputs.comment-id }}"
           issue-number: "${{ github.event.pull_request.number }}"
           body: "${{ steps.diff.outputs.diff }}"

@@ -1,0 +1,151 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: hajimari
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://hajimari.io
+      chart: hajimari
+      version: 2.0.1
+      sourceRef:
+        kind: HelmRepository
+        name: hajimari-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    image:
+      repository: ghcr.io/toboshii/hajimari
+      tag: v0.3.1
+    env:
+      TZ: "America/Chicago"
+    hajimari:
+      defaultEnable: true
+      showAppGroups: true
+      showAppUrls: false
+      showAppInfo: true
+      lightTheme: passion
+      darkTheme: tron
+      namespaceSelector:
+        matchNames:
+          - downloads
+          - kube-system
+          - media
+          - monitoring
+          - security
+      showGlobalBookmarks: true
+      globalBookmarks:
+        - group: Communicate
+          bookmarks:
+            - name: Discord
+              url: "https://discord.com"
+              icon: ic:baseline-discord
+            - name: Gmail
+              url: "https://gmail.com"
+              icon: mdi:gmail
+            - name: Slack
+              url: "https://slack.com/signin"
+              icon: mdi:slack
+        - group: Cloud
+          bookmarks:
+            - name: Google Drive
+              url: "https://drive.google.com"
+              icon: uil:google-drive
+            - name: Mega
+              url: "https://mega.nz"
+              icon: simple-icons:mega
+            - name: Dropbox
+              url: "https://dropbox.com"
+              icon: mdi:dropbox
+        - group: Dev
+          bookmarks:
+            - name: Codepen
+              url: "https://codepen.io/"
+              icon: mdi:codepen
+            - name: Devdocs
+              url: "https://devdocs.io"
+              icon: file-icons:readthedocs
+            - name: Devhints
+              url: "https://devhints.io"
+              icon: fluent-mdl2:hint-text
+        - group: Media
+          bookmarks:
+            - name: Spotify
+              url: "http://open.spotify.com"
+              icon: mdi:spotify
+            - name: YouTube
+              url: "https://youtube.com/feed/subscriptions"
+              icon: mdi:youtube
+        - group: Reading
+          bookmarks:
+            - name: VC
+              url: "https://vc.ru/"
+              icon: https://vc.ru/static/build/vc.ru/favicons/favicon.ico
+            - name: Pikabu
+              url: "https://pikabu.ru/"
+              icon: https://cs.pikabu.ru/assets/favicon.ico
+            - name: Medium
+              url: "http://medium.com"
+              icon: "https://miro.medium.com/1*m-R_BkNf1Qjr1YbyOIJY2w.png"
+            - name: Reddit
+              url: "http://reddit.com"
+              icon: https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png
+        - group: My resources
+          bookmarks:
+            - name: Personal Website @maksimkurb
+              url: https://cubly.ru
+              icon: mdi:resume
+            - name: LinkedIn @maksimkurb
+              url: https://www.linkedin.com/in/maxim-kurbatov/
+              icon: mdi:linkedin
+            - name: GitHub @maksimkurb
+              url: https://github.com/maksimkurb
+              icon: mdi:github
+        - group: Router configuration
+          bookmarks:
+            - name: Keenetic @ 3sad
+              url: http://192.168.40.1
+              icon: material-symbols:router
+            - name: Keenetic @ spb
+              url: http://192.168.54.1
+              icon: material-symbols:router
+            - name: Keenetic @ avia42
+              url: http://192.168.100.1
+              icon: material-symbols:router
+        - group: Logout
+          bookmarks:
+            - name: Home Assistant Code
+              url: https://hass-config.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Traefik Dashboard
+              url: https://traefik.${SECRET_DOMAIN}/_oauth/logout
+              icon: mdi:logout
+              targetBlank: true
+            - name: Keycloak
+              url: https://login.${SECRET_DOMAIN}/realms/master/protocol/openid-connect/logout
+              icon: mdi:logout
+              targetBlank: true
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: &host "start.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      data:
+        enabled: true
+        existingClaim: hajimari-data-v1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128M

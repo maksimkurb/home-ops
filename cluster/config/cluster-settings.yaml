@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-settings
+  namespace: flux-system
+data:
+  TIMEZONE: "Europe/Saratov"
+  CLUSTER_NAME: "cluster01"
+  CLUSTER_ID: "1"
+  CONTROL_PLANE_ENDPOINT: "10.75.40.10"
+  GATEWAY_IP: 10.75.0.1
+  NETWORK_K8S_CLUSTER_CIDR: 172.22.0.0/16
+  NETWORK_K8S_SERVICE_CIDR: 172.24.0.0/16
+  NETWORK_MANAGEMENT_CIDR: 10.0.0.0/8
+  NETWORK_BGP_SVC_RANGE: 10.5.0.0/24
+  SMTP_EMAIL: notify@cubly.ru
+  SMTP_HOST: smtp.mailgun.org
+  SVC_NGINX_ADDR: 10.5.0.1
+  SVC_VECTOR_AGGREGATOR_ADDR: 10.5.0.2
+  SVC_PLEX_ADDR: 10.5.0.3
+  SVC_JELLYFIN_ADDR: 10.5.0.4
+  SVC_OWNCAST_ADDR: 10.5.0.5
+  NFS_PROXMOX_ADDR: 10.75.40.1
+  NFS_PROXMOX_POD_DATA: /tank/pod-data
+  NFS_PROXMOX_POSTGRES: /tank/postgres
+  NFS_BACKUP_ADDR: 192.168.102.102
+  NFS_BACKUP_SNAPSHOTS: "/backup/kopia/cluster0"

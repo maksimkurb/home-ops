@@ -1,5 +1,5 @@
 # Editors
-.vscode/
+.fttemplates/
 # Trash
 .DS_Store
 Thumbs.db
@@ -7,13 +7,34 @@ Thumbs.db
 kubeconfig
 # vscode-sops
 .decrypted~*.yaml
-.decrypted~*.yml
-.config.env
-*.agekey
+# Binaries
+bin
+/flux
+*.iso
+# Temp folders
+.temp*
+.private/
+.logs/
+.task/
 # Ansible
+ansible/inventory/e2e/hosts.yml
 xanmanning.k3s*
-geerlingguy.nfs*
+nvidia.nvidia_driver*
+node_modules
 # Terraform
-.terraform
+.terraform*
 .terraform.tfstate*
 terraform.tfstate*
+# Sops
+.decrypted~*
+*.agekey
+# Kubernetes
+kubeconfig*
+talosconfig*
+*.pub
+*.key
+# Extras
+config.xml
+*.pid
+kubernetes
+talos/cni/charts

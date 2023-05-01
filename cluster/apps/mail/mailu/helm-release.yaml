@@ -1,0 +1,64 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mailu
+  namespace: mail
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://mailu.github.io/helm-charts
+      chart: mailu
+      version: 0.3.2
+      sourceRef:
+        kind: HelmRepository
+        name: mailu-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    certmanager:
+      issuerName: letsencrypt-production
+    domain: "${SECRET_DOMAIN}"
+    hostnames:
+      - "dfw2-gtw-ipv4.${SECRET_DOMAIN}"
+      - "smtp.${SECRET_DOMAIN}"
+      - "imap.${SECRET_DOMAIN}"
+      - "mail.${SECRET_DOMAIN}"
+    initialAccount:
+      domain: "${SECRET_DOMAIN}"
+      username: postmaster
+      password: "${SECRET_MAILU_POSTMASTER_PASSWORD}"
+    secretKey: "${SECRET_MAILU_SECRET_KEY}"
+    subnet: "${NETWORK_K8S_CLUSTER_CIDR}"
+    logLevel: INFO
+    ingress:
+      annotations:
+        external-dns.home.arpa/enabled: "true"
+      hosts:
+        - "mail.${SECRET_DOMAIN}"
+      tls:
+        hosts:
+          - "mail.${SECRET_DOMAIN}"
+    persistence:
+      existingClaim: mailu-data-v1
+    rspamd:
+      resources:
+        limits:
+          memory: 500Mi
+    roundcube:
+      resources:
+        requests:
+          cpu: 200m
+        limits:
+          cpu: 400m
+  postRenderers:
+    - kustomize:
+        patchesJson6902:
+          - target:
+              kind: Deployment
+              name: mailu-front
+            patch:
+              - op: add
+                path: /spec/template/spec/hostname
+                value: mailu-front

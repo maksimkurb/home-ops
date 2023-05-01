@@ -1,0 +1,30 @@
+---
+version: "3"
+
+tasks:
+
+  genconfig:
+    desc: Generate Talos config
+    dir: talos
+    cmds:
+      - talhelper genconfig
+
+  apply:
+    desc: Apply Talos config
+    dir: talos
+    cmds:
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-master.yaml --nodes 192.168.40.11 {{.CLI_ARGS}}
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker1.yaml --nodes 192.168.40.21 {{.CLI_ARGS}}
+      - talosctl apply-config -f clusterconfig/home-cluster-k8s-worker2.yaml --nodes 192.168.40.22 {{.CLI_ARGS}}
+
+  bootstrap:
+    desc: Apply Talos config
+    dir: talos
+    cmds:
+      - talosctl bootstrap --nodes k8s-master
+
+  cni:
+    desc: Apply CNI config
+    dir: talos
+    cmds:
+      - kubectl kustomize --enable-helm ./cni/ | kubectl apply -f -

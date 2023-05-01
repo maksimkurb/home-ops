@@ -26,6 +26,15 @@
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["minor", "patch"],
       "matchPackageNames": ["lycheeverse/lychee-action", "renovatebot/github-action"]
+    },
+    {
+      "description": "Auto merge Helm charts",
+      "matchDatasources": ["helm"],
+      "automerge": true,
+      "automergeType": "branch",
+      "requiredStatusChecks": null,
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["minio"]
     }
   ]
 }

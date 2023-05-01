@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cert-manager.yaml
+  - database.yaml
+  - metallb-system.yaml
+  - networking.yaml
+  - home.yaml
+  - media.yaml
+  - vpn.yaml
+  - monitoring.yaml
