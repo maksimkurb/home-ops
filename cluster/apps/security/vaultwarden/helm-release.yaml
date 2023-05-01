@@ -48,7 +48,7 @@ spec:
         valueFrom:
           secretKeyRef:
             name: vaultwarden-postgres
-            key: POSTGRES_URL
+            key: DATABASE_URL
     service:
       main:
         ports:
