@@ -18,6 +18,6 @@ spec:
       interval: 5m
   values:
     image:
-      repository: k8s.gcr.io/kube-state-metrics/kube-state-metrics
+      repository: registry\.k8s\.io/kube-state-metrics/kube-state-metrics
       tag: v2.8.2
       pullPolicy: IfNotPresent
