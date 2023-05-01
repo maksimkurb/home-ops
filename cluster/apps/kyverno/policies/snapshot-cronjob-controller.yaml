@@ -159,7 +159,6 @@ spec:
         kind: PersistentVolumeClaim
         name: kopia-snapshots-job-nfs
         namespace: "{{request.object.metadata.name}}"
-        synchronize: true
         data:
           spec:
             accessModes: ["ReadWriteMany"]
@@ -178,7 +177,6 @@ spec:
         kind: PersistentVolumeClaim
         name: kopia-snapshots-job-nfs-{{request.object.metadata.name}}
         namespace: "{{request.object.metadata.name}}"
-        synchronize: true
         data:
           spec:
             capacity:
