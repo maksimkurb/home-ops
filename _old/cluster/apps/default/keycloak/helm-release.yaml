@@ -22,7 +22,7 @@ spec:
         metallb.universe.tf/address-pool: metallb-pool-main
     image:
       repository: bitnami/keycloak
-      tag: 20.0.5
+      tag: 21.0.2
     ingress:
       enabled: true
       ingressClassName: "traefik"
