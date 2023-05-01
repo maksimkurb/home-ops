@@ -6,4 +6,4 @@ resources:
   - protect-node-taints.yaml
   - snapshot-cronjob-controller.yaml
   - update-ingress-annotations.yaml
-  - sync-postgres-secrets.yaml
+  # - sync-postgres-secrets.yaml
