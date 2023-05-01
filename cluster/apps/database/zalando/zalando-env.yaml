@@ -15,6 +15,7 @@ data:
   WALE_DISABLE_S3_SSE: "true"
   WAL_BUCKET_SCOPE_PREFIX: ""
   WALG_BUCKET_SCOPE_PREFIX: ""
-  AWS_ENDPOINT: "https://${SECRET_MINIO_ENDPOINT}"
+  AWS_ENDPOINT: "http://minio.default:9000"
+  WALE_S3_ENDPOINT: "https+path://minio.default:9000"
   AWS_REGION: default
   AWS_S3_FORCE_PATH_STYLE: "true"
