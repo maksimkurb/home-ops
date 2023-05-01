@@ -7,7 +7,7 @@ metadata:
 spec:
   interval: 10m
   ref:
-    branch: new-cluster
+    branch: main
   url: https://github.com/maksimkurb/home-ops
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
