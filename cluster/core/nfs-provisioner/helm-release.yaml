@@ -32,7 +32,7 @@ spec:
     nfs:
       server: ${NFS_PROXMOX_ADDR}
       path: ${NFS_PROXMOX_POD_DATA}
-      mountOptions: ["nfsvers=4.1", "nconnect=16", "hard", "noatime", "nolock"]
+      mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime", "nolock"]
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -71,4 +71,4 @@ spec:
     nfs:
       server: 10.75.40.1
       path: /tank/postgres
-      mountOptions: ["nfsvers=4.1", "nconnect=16", "hard", "noatime", "nolock"]
+      mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime", "nolock"]
