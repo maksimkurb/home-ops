@@ -27,7 +27,7 @@ spec:
       namespace: kube-system
   values:
     controller:
-      replicaCount: 3
+      replicaCount: 2
       updateStrategy:
         rollingUpdate:
           maxUnavailable: 1
@@ -87,7 +87,7 @@ spec:
       image:
         repository: ghcr.io/tarampampam/error-pages
         tag: 2.24.0
-      replicaCount: 3
+      replicaCount: 2
       extraEnvs:
         - name: TEMPLATE_NAME
           value: ghost

@@ -25,7 +25,7 @@ spec:
       retries: 5
   values:
     kind: Deployment
-    replicas: 3
+    replicas: 2
     leaderElection:
       enabled: true
       leaseDuration: 15s

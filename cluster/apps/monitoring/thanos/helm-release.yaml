@@ -32,7 +32,7 @@ spec:
         insecure: true
     query:
       enabled: true
-      replicaCount: 3
+      replicaCount: 2
       replicaLabel:
         - __replica__
       dnsDiscovery:
@@ -52,7 +52,7 @@ spec:
       enabled: false
     bucketweb:
       enabled: true
-      replicaCount: 3
+      replicaCount: 2
       updateStrategy:
         type: RollingUpdate
         rollingUpdate:
@@ -93,7 +93,7 @@ spec:
         size: 50Gi
     storegateway:
       enabled: true
-      replicaCount: 3
+      replicaCount: 2
       podAntiAffinityPreset: hard
       ingress:
         enabled: true
@@ -111,7 +111,7 @@ spec:
         size: 20Gi
     ruler:
       enabled: true
-      replicaCount: 3
+      replicaCount: 2
       podAntiAffinityPreset: hard
       dnsDiscovery:
         enabled: true
