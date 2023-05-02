@@ -16,11 +16,9 @@
     "github>maksimkurb/home-ops//.github/renovate/semanticCommits.json5"
   ],
   "platform": "github",
-  "username": "chii-bot[bot]",
   "repositories": ["maksimkurb/home-ops"],
   "onboarding": false,
   "requireConfig": false,
-  "gitAuthor": "chii-bot <109454249+chii-bot[bot]@users.noreply.github.com>",
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
