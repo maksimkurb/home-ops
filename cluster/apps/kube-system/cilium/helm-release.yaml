@@ -33,8 +33,6 @@ spec:
     cluster:
       name: "${CLUSTER_NAME}"
       id: "${CLUSTER_ID}"
-    gatewayAPI:
-      enabled: true
     rollOutCiliumPods: true
     localRedirectPolicy: true
     kubeProxyReplacement: "strict"
