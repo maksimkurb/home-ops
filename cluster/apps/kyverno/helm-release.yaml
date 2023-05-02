@@ -25,6 +25,10 @@ spec:
   values:
     installCRDs: false
     replicaCount: 3
+    updateStrategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 99%
     admissionController:
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
