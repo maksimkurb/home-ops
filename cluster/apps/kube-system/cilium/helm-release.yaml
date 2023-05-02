@@ -38,6 +38,10 @@ spec:
       enabled: true
     hostPort:
       enabled: true
+    bgpControlPlane:
+      enabled: true
+    bpf:
+      masquerade: true
     cluster:
       name: "${CLUSTER_NAME}"
       id: "${CLUSTER_ID}"
