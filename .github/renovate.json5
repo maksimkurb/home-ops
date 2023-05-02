@@ -16,9 +16,11 @@
     "github>maksimkurb/home-ops//.github/renovate/semanticCommits.json5"
   ],
   "platform": "github",
-  "repositories": ["maksimkurb/home-ops"],
+  "username": "github-actions[bot]",
+  "repositories": ["toboshii/home-ops"],
   "onboarding": false,
   "requireConfig": false,
+  "gitAuthor": "github-actions <41898282+github-actions[bot]@users.noreply.github.com>",
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
