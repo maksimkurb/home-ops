@@ -38,3 +38,4 @@ config.xml
 *.pid
 kubernetes
 talos/cni/charts
+.monokle
