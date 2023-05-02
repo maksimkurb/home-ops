@@ -17,7 +17,7 @@
   ],
   "platform": "github",
   "username": "github-actions[bot]",
-  "repositories": ["toboshii/home-ops"],
+  "repositories": ["maksimkurb/home-ops"],
   "onboarding": false,
   "requireConfig": false,
   "gitAuthor": "github-actions <41898282+github-actions[bot]@users.noreply.github.com>",
