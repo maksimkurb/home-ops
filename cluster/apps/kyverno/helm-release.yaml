@@ -29,7 +29,30 @@ spec:
       rollingUpdate:
         maxSurge: 1
         maxUnavailable: 99%
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
     admissionController:
+      replicas: 3
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+    backgroundController:
+      replicas: 3
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+    cleanupController:
+      replicas: 3
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+    reportsController:
+      replicas: 3
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
