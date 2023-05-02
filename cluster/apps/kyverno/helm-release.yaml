@@ -35,7 +35,6 @@ spec:
           operator: "Exists"
           effect: "NoSchedule"
     extraArgs:
-      - --autogenInternals=false
       - --clientRateLimitQPS=30
       - --clientRateLimitBurst=60
     serviceMonitor:
