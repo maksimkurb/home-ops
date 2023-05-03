@@ -27,6 +27,10 @@ spec:
     worker:
       annotations:
         configmap.reloader.stakater.com/reload: node-feature-discovery-worker-conf
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
       config:
         core:
           sources:
