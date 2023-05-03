@@ -8,7 +8,7 @@ data:
   config.yaml: |
     peers:
       - peer-address: 10.75.40.1
-        peer-asn: 64512
+        peer-asn: 65000
         my-asn: 64512
     address-pools:
       - name: default
