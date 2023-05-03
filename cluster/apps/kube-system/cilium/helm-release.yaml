@@ -30,6 +30,18 @@ spec:
       remediateLastFailure: true
     cleanupOnFail: true
   values:
+    externalIPs:
+      enabled: true
+    socketLB:
+      enabled: true
+    nodePort:
+      enabled: true
+    hostPort:
+      enabled: true
+    bgpControlPlane:
+      enabled: true
+    bpf:
+      masquerade: true
     cluster:
       name: "${CLUSTER_NAME}"
       id: "${CLUSTER_ID}"
