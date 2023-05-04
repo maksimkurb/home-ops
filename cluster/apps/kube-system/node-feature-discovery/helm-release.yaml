@@ -22,15 +22,26 @@ spec:
     remediation:
       retries: 5
   values:
+    enableNodeFeatureApi: true
     nodeFeatureRule:
       createCRD: true
     worker:
+      serviceAccount:
+        name: node-feature-discovery
+        # disable creation to avoid duplicate serviceaccount creation by master spec below
+        create: false
       annotations:
         configmap.reloader.stakater.com/reload: node-feature-discovery-worker-conf
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"
           effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
       config:
         core:
           sources:
@@ -38,6 +49,15 @@ spec:
             - pci
             - usb
         sources:
+          pci:
+            deviceClassWhitelist:
+              - "02"
+              - "0200"
+              - "0207"
+              - "0300"
+              - "0302"
+            deviceLabelFields:
+              - vendor
           usb:
             deviceClassWhitelist:
               - "02"
@@ -46,8 +66,6 @@ spec:
               - "ef"
               - "fe"
               - "ff"
-              - "10de"
-              - "1c03"
             deviceLabelFields:
               - class
               - vendor
@@ -68,3 +86,7 @@ spec:
             #   matchOn:
             #     - usbId:
             #         vendor: ["1a6e", "18d1"]
+    master:
+      serviceAccount:
+        name: node-feature-discovery
+        create: true
