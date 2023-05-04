@@ -1,22 +1,16 @@
 .:1053 {
   errors
-  log error
+  log
   health {
     lameduck 5s
   }
   ready
-  k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
-    apex  k8s-gateway.network
+  k8s_gateway ${SECRET_DOMAIN} {
     resources Ingress
-    ttl 300
+    fallthrough
   }
-  k8s_gateway ${SECRET_PRIVATE_DOMAIN} {
-    apex  k8s-gateway.network
-    resources Service
-    ttl 300
-  }
+  k8s_gateway cubly.lan
+  forward . 1.1.1.1 1.0.0.1
   prometheus 0.0.0.0:9153
-  loop
-  reload
   loadbalance
 }

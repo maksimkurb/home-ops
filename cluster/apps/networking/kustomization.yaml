@@ -6,5 +6,4 @@ resources:
   - echo-server
   - ingress-nginx
   - external-dns
-  - internal-dns
   - k8s-gateway
