@@ -1,6 +1,12 @@
 ---
 version: "3"
 
+env:
+  USERNAME: maksimkurb
+  REGISTRY: docker.io
+  TAG: v1.4.1-nvidia
+  PKGS_REF: 988f1ecf95536fb259cbd79e044a556728bc7332
+
 tasks:
 
   genconfig:
@@ -28,3 +34,24 @@ tasks:
     dir: talos
     cmds:
       - kubectl kustomize --enable-helm ./cni/ | kubectl apply -f -
+
+  nvidia:build:kernel:
+    desc: Build NVidia kernel modules
+    dir: .
+    cmds:
+      - "[ -d talos/pkgs ] || git clone https://github.com/siderolabs/pkgs.git talos/pkgs"
+      - cd talos/pkgs && git checkout $PKGS_REF && make kernel nonfree-kmod-nvidia PLATFORM=linux/amd64 PUSH=true
+
+  nvidia:build:installer:
+    desc: Build NVidia Talos installer
+    dir: .
+    cmds:
+      - docker pull $REGISTRY/$USERNAME/nonfree-kmod-nvidia:$TAG
+      - cd talos/nvidia && DOCKER_BUILDKIT=0 docker build --squash --build-arg RM="/lib/modules" -t $REGISTRY/$USERNAME/installer:$TAG .
+      - docker push $REGISTRY/$USERNAME/installer:$TAG
+
+  nvidia:install:
+    desc: Install NVidia on node
+    dir: talos
+    cmds:
+      - talosctl --nodes 192.168.42.103 upgrade --image=$REGISTRY/$USERNAME/installer:$TAG

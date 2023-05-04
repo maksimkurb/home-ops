@@ -50,7 +50,6 @@ nodes:
         - op: add
           path: /machine/install/extensions
           value:
-            - image: ghcr.io/siderolabs/nvidia-open-gpu-kernel-modules:530.41.03-v1.4.1
             - image: ghcr.io/siderolabs/nvidia-container-toolkit:530.41.03-v1.12.1
         - op: add
           path: /machine/kernel
