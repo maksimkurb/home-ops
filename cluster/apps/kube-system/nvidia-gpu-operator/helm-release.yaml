@@ -10,7 +10,7 @@ spec:
     spec:
       # renovate: registryUrl=https://helm.ngc.nvidia.com/nvidia
       chart: gpu-operator
-      version: v22.9.2
+      version: v23.3.1
       sourceRef:
         kind: HelmRepository
         name: nvidia-charts
