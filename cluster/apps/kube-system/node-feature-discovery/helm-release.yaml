@@ -46,6 +46,8 @@ spec:
               - "ef"
               - "fe"
               - "ff"
+              - "10de"
+              - "1c03"
             deviceLabelFields:
               - class
               - vendor
