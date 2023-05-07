@@ -90,6 +90,17 @@ spec:
         subPath: repository.config
         mountPath: /config/repository.config
         readOnly: true
+      source:
+        enabled: true
+        type: pvc
+        mountPath: /data
+        existingClaim: kopia-data-nfs
+        readOnly: true
+      restore:
+        enabled: true
+        type: pvc
+        mountPath: /data-rw
+        existingClaim: kopia-data-nfs
       snapshots:
         enabled: true
         type: pvc

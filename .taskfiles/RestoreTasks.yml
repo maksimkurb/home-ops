@@ -7,14 +7,15 @@ tasks:
     desc: Create a job to restore a kopia snapshot (ex. task PVC=plex-config-v1 restore:volume)
     interactive: true
     cmds:
+      - 'echo "Namespace: {{.NAMESPACE}} | App: {{.APP}}"'
       - flux -n {{.NAMESPACE}} suspend helmrelease {{.APP}}
       - kubectl -n {{.NAMESPACE}} scale deployment {{.APP}} --replicas 0
       - kubectl -n {{.NAMESPACE}} wait pod --for delete --selector="app.kubernetes.io/name={{.APP}}" --timeout=2m
       - envsubst < <(cat ./hack/restore-job.yaml) | kubectl apply -f -
-      - kubectl -n {{.NAMESPACE}} wait job --for condition=complete {{.APP}}-restore --timeout=60m
+      - kubectl -n {{.NAMESPACE}} wait job --for condition=complete {{.APP}}-{{.PVC}}-restore-snapshot --timeout=60m
       - flux -n {{.NAMESPACE}} resume helmrelease {{.APP}}
-      - kubectl -n {{.NAMESPACE}} logs job {{.APP}}-restore
-      - kubectl -n {{.NAMESPACE}} delete job {{.APP}}-restore
+      - kubectl -n {{.NAMESPACE}} logs job {{.APP}}-{{.PVC}}-restore-snapshot
+      - kubectl -n {{.NAMESPACE}} delete job {{.APP}}-{{.PVC}}-restore-snapshot
     vars:
       NAMESPACE:
         sh: kubectl get pvc -A | grep {{.PVC}} | awk '{print $1}'
@@ -26,6 +27,12 @@ tasks:
         sh: kubectl get pvc -A | grep {{.PVC}} | awk '{print $1}'
       APP:
         sh: kubectl -n {{.NAMESPACE}} get pvc {{.PVC}} -o jsonpath='{.metadata.labels.app\.kubernetes\.io\/name}'
+      KOPIA_PASSWORD:
+        sh: sops -d cluster/config/cluster-secrets.sops.yaml | grep SECRET_KOPIA_REPO_PASSWORD | awk '{print $2}'
     preconditions:
       - sh: kubectl -n {{.NAMESPACE}} get pvc {{.PVC}}
         msg: "Error: pvc/{{.PVC}} in namespace/{{.NAMESPACE}} not found"
+      - sh: '[ ! "{{.SNAPSHOT}}" = "" ]'
+        msg: "SNAPSHOT is required"
+      - sh: '[ ! "{{.PVC}}" = "" ]'
+        msg: "PVC is required"

@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ${APP}-${CLAIM}-restore-snapshot
+  name: ${APP}-${PVC}-restore-snapshot
   namespace: ${NAMESPACE}
 spec:
   ttlSecondsAfterFinished: 3600
@@ -15,19 +15,19 @@ spec:
           image: kopia/kopia:20230429.0.231157
           env:
             - name: KOPIA_PASSWORD
-              value: "${SECRET_KOPIA_REPO_PASSWORD}"
+              value: "${KOPIA_PASSWORD}"
           command:
             - /bin/bash
             - -c
             - |-
               shopt -s dotglob
               printf "\e[1;32m%-6s\e[m\n" "[01/04] Connect to repo ..."      && kopia repo connect filesystem --path=/snapshots --override-hostname=cluster --override-username=root
-              printf "\e[1;32m%-6s\e[m\n" "[02/04] Remove previous data ..." && rm -rf /data/${NAMESPACE}/${APP}/${CLAIM}/*
-              printf "\e[1;32m%-6s\e[m\n" "[03/04] Restore snapshot ..."     && kopia snap restore "${SNAPSHOT}" /data/${NAMESPACE}/${APP}/${CLAIM}
+              printf "\e[1;32m%-6s\e[m\n" "[02/04] Remove previous data ..." && rm -rf /data/${NAMESPACE}/${APP}/${PVC}/*
+              printf "\e[1;32m%-6s\e[m\n" "[03/04] Restore snapshot ..."     && kopia snap restore "${SNAPSHOT}" /data/${NAMESPACE}/${APP}/${PVC}
               printf "\e[1;32m%-6s\e[m\n" "[04/04] Disconnect from repo ..." && kopia repo disconnect
           volumeMounts:
             - name: data
-              mountPath: /data/${NAMESPACE}/${APP}/${CLAIM}
+              mountPath: /data/${NAMESPACE}/${APP}/${PVC}
             - name: snapshots
               mountPath: /snapshots
           securityContext:
@@ -35,8 +35,8 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: ${CLAIM}
+            claimName: ${PVC}
         - name: snapshots
           nfs:
-            server: nas01
-            path: /tank/data/backups/kopia
+            server: "192.168.102.102"
+            path: "/backup/kopia/cluster0"

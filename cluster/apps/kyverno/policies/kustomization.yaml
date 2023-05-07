@@ -5,6 +5,6 @@ resources:
   - delete-cpu-limits.yaml
   - postgres-loadbalancer-ip.yaml
   - protect-node-taints.yaml
-  - snapshot-cronjob-controller.yaml
+  # - snapshot-cronjob-controller.yaml
   - update-ingress-annotations.yaml
   # - sync-postgres-secrets.yaml
