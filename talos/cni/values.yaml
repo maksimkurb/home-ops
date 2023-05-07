@@ -7,7 +7,8 @@ localRedirectPolicy: true
 kubeProxyReplacement: "strict"
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 ipv4NativeRoutingCIDR: 172.22.0.0/16
-k8sServiceHost: 10.75.40.10
+# TODO: haven't succeeded in using kube-vip IP here because of circular dependency between kube-vip and cilium
+k8sServiceHost: 10.75.40.21
 k8sServicePort: 6443
 loadBalancer:
   algorithm: "maglev"
