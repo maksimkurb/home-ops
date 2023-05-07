@@ -45,6 +45,7 @@ spec:
     env:
       TZ: "${TIMEZONE}"
       KOPIA_CONFIG_PATH: /config/repository.config
+      KOPIA_PASSWORD: "${SECRET_KOPIA_REPO_PASSWORD}"
     command: kopia
     args:
       - server
