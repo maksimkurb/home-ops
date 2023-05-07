@@ -148,6 +148,7 @@ metadata:
 spec:
   mutateExistingOnPolicyUpdate: true
   generateExistingOnPolicyUpdate: true
+  validationFailureAction: Enforce
   rules:
     - name: create-kopia-snapshot-pvcs
       match:
