@@ -44,9 +44,6 @@ spec:
       tag: 20230429.0.231157
     env:
       TZ: "${TIMEZONE}"
-    envFrom:
-      - secretRef:
-          name: kopia-secret
     command: kopia
     args:
       - server

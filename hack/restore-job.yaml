@@ -12,10 +12,10 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: restore
-          image: ghcr.io/onedr0p/kopia:0.11.3@sha256:2ae9ede0edac68c09d517abd71fa12c96efcf19f27ce7ffca968cebb10ed0e2d
+          image: kopia/kopia:20230429.0.231157
           env:
             - name: KOPIA_PASSWORD
-              value: "none"
+              value: "${SECRET_KOPIA_REPO_PASSWORD}"
           command:
             - /bin/bash
             - -c
