@@ -37,6 +37,8 @@ talosconfig*
 config.xml
 *.pid
 kubernetes
+!provision/ansible/inventory/group_vars/kubernetes
+provision/kubeconfig
 talos/cni/charts
 .monokle
 talos/pkgs/

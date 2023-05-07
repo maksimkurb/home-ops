@@ -1,0 +1,25 @@
+---
+# (string) Timezone for the servers
+timezone: "Europe/Saratov"
+
+netplan_enabled: true
+netplan_renderer: networkd
+netplan_configuration:
+  network:
+    version: 2
+    ethernets:
+      ens18:
+        dhcp4: "true"
+        dhcp4-overrides:
+          route-metric: 100
+      ens19:
+        dhcp4: "false"
+        addresses:
+          - "{{ node_ip }}/24"
+        nameservers:
+          addresses:
+            - "10.5.0.3"
+        routes:
+          - to: default
+            via: 10.75.40.1
+            metric: 200
