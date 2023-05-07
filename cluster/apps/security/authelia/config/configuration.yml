@@ -16,9 +16,9 @@ access_control:
     - domain: "*.${SECRET_DOMAIN}"
       policy: bypass
       resources:
-        - "^manifest.json$"
-        - "^.well-known/(.*)$"
-        - "^favicon(.*)$"
+        - "^/manifest.json$"
+        - "^/.well-known/(.*)$"
+        - "^/favicon\\.(.*)$"
 
     # - domain: ["*.${SECRET_PUBLIC_DOMAIN}"]
     #   policy: bypass
