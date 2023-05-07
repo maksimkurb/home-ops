@@ -13,10 +13,12 @@ access_control:
     #   policy: bypass
     #   networks: ["internal"]
 
-    # - domain:
-    #     - "radarr-test.${SECRET_PUBLIC_DOMAIN}"
-    #   policy: bypass
-    #   resources: ["^/api([?/].*)?$"]
+    - domain: "*.${SECRET_DOMAIN}"
+      policy: bypass
+      resources:
+        - "^manifest.json$"
+        - "^.well-known/(.*)$"
+        - "^favicon(.*)$"
 
     # - domain: ["*.${SECRET_PUBLIC_DOMAIN}"]
     #   policy: bypass
