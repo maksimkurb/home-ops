@@ -1,0 +1,24 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: postgres-loadbalancer-ip
+  annotations:
+    policies.kyverno.io/title: Update Postgres LoadBalancer IP
+    policies.kyverno.io/subject: LoadBalancer
+    policies.kyverno.io/description: >-
+      This policy explicitly sets postgres LoadBalancer IP.
+spec:
+  mutateExistingOnPolicyUpdate: true
+  generateExistingOnPolicyUpdate: true
+  rules:
+    - name: postgres-lb
+      match:
+        any:
+          - resources:
+              names: ["homelab-pgsql-0"]
+              kinds: ["LoadBalancer"]
+      mutate:
+        patchStrategicMerge:
+          spec:
+            loadBalancerIP: ${SVC_DATABASE_ADDR}
