@@ -36,8 +36,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: admin
+  name: kyverno-pv
 subjects:
   - kind: ServiceAccount
-    name: kyverno-pv
+    name: kyverno
     namespace: kyverno
