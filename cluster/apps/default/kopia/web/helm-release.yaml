@@ -96,11 +96,6 @@ spec:
         type: pvc
         mountPath: /snapshots
         existingClaim: kopia-snapshots-nfs
-      source:
-        enabled: true
-        type: pvc
-        mountPath: /data
-        existingClaim: kopia-data-nfs
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
     resources:

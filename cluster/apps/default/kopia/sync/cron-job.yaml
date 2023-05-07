@@ -64,9 +64,6 @@ spec:
             - name: snapshots
               persistentVolumeClaim:
                 claimName: kopia-snapshots-nfs
-            - name: data
-              persistentVolumeClaim:
-                claimName: kopia-data-nfs
             - name: remote-config
               configMap:
                 name: kopia
