@@ -44,6 +44,7 @@ spec:
       tag: 20230429.0.231157
     env:
       TZ: "${TIMEZONE}"
+      KOPIA_CONFIG_PATH: /config/repository.config
     command: kopia
     args:
       - server
@@ -54,7 +55,6 @@ spec:
       - --metrics-listen-addr
       - 0.0.0.0:8080
       - --without-password
-      - --config-file /config/repository.config
     service:
       main:
         ports:
