@@ -100,7 +100,7 @@ spec:
         enabled: true
         type: pvc
         mountPath: /data-rw
-        existingClaim: kopia-data-nfs
+        existingClaim: kopia-data-nfs-rw
       snapshots:
         enabled: true
         type: pvc
