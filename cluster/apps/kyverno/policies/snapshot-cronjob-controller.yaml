@@ -85,11 +85,6 @@ spec:
                     automountServiceAccountToken: false
                     restartPolicy: OnFailure
                     # Stagger jobs to run randomly within X seconds to avoid bringing down all apps at once
-                    initContainers:
-                      - name: wait
-                        image: kopia/kopia:20230429.0.231157
-                        command: ["/scripts/sleep.sh"]
-                        args: ["1", "900"]
                     containers:
                       - name: snapshot
                         image: kopia/kopia:20230429.0.231157
