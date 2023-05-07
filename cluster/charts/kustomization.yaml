@@ -24,3 +24,4 @@ resources:
   - stakater-charts.yaml
   - hajimari-charts.yaml
   - vector-charts.yaml
+  - zalando-postgres-operator-charts.yaml
