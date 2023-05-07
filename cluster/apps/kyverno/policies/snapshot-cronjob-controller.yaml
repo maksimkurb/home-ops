@@ -163,7 +163,7 @@ spec:
         apiVersion: v1
         kind: PersistentVolumeClaim
         name: kopia-snapshots-job-nfs
-        namespace: "{{request.object.metadata.name}}"
+        namespace: "{{request.object.metadata.namespace}}"
         data:
           spec:
             accessModes: ["ReadWriteMany"]
@@ -183,9 +183,8 @@ spec:
             jmesPath: "request.object.metadata.namespace"
       generate:
         apiVersion: v1
-        kind: PersistentVolumeClaim
-        name: kopia-snapshots-job-nfs-{{request.object.metadata.name}}
-        namespace: "{{request.object.metadata.name}}"
+        kind: PersistentVolume
+        name: kopia-snapshots-job-nfs-{{request.object.metadata.namespace}}
         data:
           spec:
             capacity:
