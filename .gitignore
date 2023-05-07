@@ -38,6 +38,8 @@ config.xml
 *.pid
 kubernetes
 !provision/ansible/inventory/group_vars/kubernetes
+provision/ansible/roles/*
+!provision/ansible/roles/ubuntu
 provision/kubeconfig
 talos/cni/charts
 .monokle
