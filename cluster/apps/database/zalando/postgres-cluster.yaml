@@ -23,12 +23,14 @@ spec:
     homeassistant: []
     keycloak: []
     authelia: []
+    coder: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
     homeassistant: homeassistant
     keycloak: keycloak
     authelia: authelia
+    coder: coder
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
