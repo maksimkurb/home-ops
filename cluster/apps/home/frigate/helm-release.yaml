@@ -1,0 +1,107 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: frigate
+  namespace: home
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
+      chart: app-template
+      version: 1.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                  operator: In
+                  values:
+                    - "true"
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    image:
+      repository: ghcr.io/blakeblackshear/frigate
+      tag: "0.12.0-tensorrt"
+    env:
+      TZ: "${TZ}"
+    envFrom:
+      - secretRef:
+          name: frigate-secret
+    service:
+      main:
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_FRIGATE_ADDR}"
+        ports:
+          http:
+            port: 5000
+          rtmp:
+            enable: true
+            port: 1935
+            protocol: TCP
+          rtsp:
+            enable: true
+            port: 8554
+            protocol: TCP
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          auth.home.arpa/enabled: "true"
+          external-dns.home.arpa/enabled: "true"
+          hajimari.io/icon: "mdi:cctv"
+          hajimari.io/group: "Home"
+        hosts:
+          - host: "frigate.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "frigate.${SECRET_DOMAIN}"
+            secretName: "frigate-tls"
+    persistence:
+      data:
+        enabled: true
+        type: pvc
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        mountPath: /data
+        storageClass: local-path
+        retain: true
+      config-file:
+        enabled: true
+        type: secret
+        name: frigate-config
+        subPath: config_yaml
+        mountPath: /config/config.yml
+        readOnly: true
+      dshm:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 200Mi
+      media:
+        enabled: true
+        existingClaim: frigate-media-nfs
+        mountPath: /media/frigate
+        readOnly: false
+    resources:
+      requests:
+        cpu: 200m
+        memory: 100Mi
+        nvidia.com/gpu: "1"
+      limits:
+        cpu: 1000m
+        memory: 1500Mi
+        nvidia.com/gpu: "1"

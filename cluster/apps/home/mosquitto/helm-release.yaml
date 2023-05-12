@@ -1,0 +1,51 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mosquitto
+  namespace: home
+spec:
+  interval: 15m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
+      chart: app-template
+      version: 1.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    image:
+      repository: public.ecr.aws/docker/library/eclipse-mosquitto
+      tag: 2.0.15
+    service:
+      main:
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_MQTT_ADDR}"
+        ports:
+          http:
+            enabled: false
+          mqtt:
+            enabled: true
+            port: 1883
+    persistence:
+      data:
+        enabled: true
+        existingClaim: mosquitto-external-config
+      configinc:
+        enabled: true
+        type: custom
+        volumeSpec:
+          secret:
+            secretName: mosquitto
+    resources:
+      requests:
+        cpu: 5m
+        memory: 10M
+      limits:
+        memory: 100M

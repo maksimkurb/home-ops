@@ -6,6 +6,7 @@ resources:
   - database
   # - downloads
   - flux-system
+  - home
   - kube-system
   - kyverno
   # - media
