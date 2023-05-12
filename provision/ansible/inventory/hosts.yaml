@@ -14,3 +14,9 @@ kubernetes:
         k3s-worker2:
           ansible_host: 192.168.42.113
           ansible_user: k3s
+
+nvidia:
+  hosts:
+    k3s-worker2:
+      ansible_host: 192.168.42.113
+      ansible_user: k3s

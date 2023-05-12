@@ -1,0 +1,48 @@
+---
+- hosts:
+    - nvidia
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  pre_tasks:
+    - name: Pausing for 5 seconds...
+      pause:
+        seconds: 5
+  tasks:
+    - name: Add an Apt signing key
+      ansible.builtin.apt_key:
+        url: https://nvidia.github.io/libnvidia-container/gpgkey
+        state: present
+
+    - name: Get the codename of the distribution
+      shell: . /etc/os-release;echo $ID$VERSION_ID
+      register: dist_version
+
+    - name: Download file with custom HTTP headers
+      ansible.builtin.get_url:
+        url: https://nvidia.github.io/libnvidia-container/{{ dist_version.stdout }}/libnvidia-container.list
+        dest: /etc/apt/sources.list.d/libnvidia-container.list
+
+    - name: Upgrade all system packages
+      ansible.builtin.apt:
+        upgrade: full
+        update_cache: true
+        cache_valid_time: 3600
+        autoclean: true
+        autoremove: true
+      register: apt_upgrade
+      retries: 5
+      until: apt_upgrade is success
+
+    - name: Install nvidia-container-toolkit
+      ansible.builtin.apt:
+        name:
+          - nvidia-container-toolkit
+        install_recommends: false
+        update_cache: true
+        cache_valid_time: 3600
+        autoclean: true
+        autoremove: true
+      register: apt_install_nvidia_ctr
+      retries: 5
+      until: apt_install_nvidia_ctr is success

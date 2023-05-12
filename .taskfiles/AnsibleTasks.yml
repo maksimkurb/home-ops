@@ -39,6 +39,12 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/k3s-install.yaml"
 
+  playbook:nvidia-ctr-install:
+    desc: Install Kubernetes on the nodes
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/nvidia-ctr-install.yaml"
+
   playbook:k3s-nuke:
     desc: Uninstall Kubernetes on the nodes
     dir: provision/ansible
