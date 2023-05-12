@@ -59,6 +59,8 @@ spec:
       # additional_pod_capabilities:
       # - "SYS_NICE"
 
+      enable_readiness_probe: true
+
       cluster_domain: cluster.local
       cluster_labels:
         application: spilo
