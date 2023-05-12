@@ -78,7 +78,7 @@ spec:
     initContainers:
       checkDbReady:
         name: check-db-ready
-        image: postgres:15.2
+        image: postgres:15.3
         command:
           - "sh"
           - "-c"
