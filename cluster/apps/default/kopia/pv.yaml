@@ -15,7 +15,7 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: "${NFS_PROXMOX_POD_DATA}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -46,7 +46,7 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: "${NFS_PROXMOX_POD_DATA}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
