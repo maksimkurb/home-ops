@@ -77,7 +77,7 @@ spec:
         accessMode: ReadWriteOnce
         size: 5Gi
         mountPath: /data
-        storageClass: local-path
+        storageClass: nfs-proxmox
         retain: true
       config-file:
         enabled: true
