@@ -42,9 +42,10 @@ spec:
       data:
         enabled: true
         existingClaim: mosquitto-external-config
-      configinc:
+      config:
         enabled: true
         type: custom
+        mountPath: /mosquitto/config
         volumeSpec:
           secret:
             secretName: mosquitto
