@@ -6,7 +6,6 @@ resources:
   - cert-manager
   - cilium
   - descheduler
-  - nvidia-gpu-operator
   - kube-cleanup-operator
   - metrics-server
   - node-feature-discovery
