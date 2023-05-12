@@ -71,17 +71,23 @@ spec:
               - vendor
               - device
           custom:
-            - name: zwave # TODO: ZigBee
+            - name: zigbee
               matchOn:
                 - usbId:
                     class: ["02"]
-                    vendor: ["0658"]
-                    device: ["0200"]
-            # - name: intel-gpu # TODO: NVidia
-            #   matchOn:
-            #     - pciId:
-            #         class: ["0300"]
-            #         vendor: ["8086"]
+                    vendor: ["0451"]
+                    device: ["16c8"]
+            - name: ups
+              matchOn:
+                - usbId:
+                    class: ["00"]
+                    vendor: ["0665"]
+                    device: ["5161"]
+            - name: nvidia-gpu
+              matchOn:
+                - pciId:
+                    class: ["0300"]
+                    vendor: ["10de"]
             # - name: coral-tpu
             #   matchOn:
             #     - usbId:
