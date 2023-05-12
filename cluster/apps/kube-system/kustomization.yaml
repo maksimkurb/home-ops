@@ -3,11 +3,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
-  - https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.14.0/nvidia-device-plugin.yml
   - cert-manager
   - cilium
   - descheduler
   - kube-cleanup-operator
   - metrics-server
   - node-feature-discovery
+  - nvidia-device-plugin
   - reloader
