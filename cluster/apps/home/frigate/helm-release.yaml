@@ -25,6 +25,7 @@ spec:
                   operator: In
                   values:
                     - "true"
+    runtimeClassName: nvidia
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
