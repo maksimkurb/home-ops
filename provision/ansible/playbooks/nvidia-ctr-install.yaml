@@ -46,3 +46,10 @@
       register: apt_install_nvidia_ctr
       retries: 5
       until: apt_install_nvidia_ctr is success
+
+    - name: Restart k3s-agent service
+      ansible.builtin.service:
+        name: k3s.service
+        daemon_reload: true
+        enabled: true
+        state: restarted
