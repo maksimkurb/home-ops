@@ -80,7 +80,7 @@ spec:
             - name: ups
               matchOn:
                 - usbId:
-                    class: ["00"]
+                    class: ["03"]
                     vendor: ["0665"]
                     device: ["5161"]
             - name: nvidia-gpu
