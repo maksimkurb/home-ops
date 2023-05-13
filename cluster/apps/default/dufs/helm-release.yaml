@@ -37,7 +37,8 @@ spec:
     command:
       - dufs
       - -A
-      - --bind 0.0.0.0
+      - --bind
+      - "0.0.0.0"
       - -a
       - "/@${SECRET_DUFS_ADMIN}"
       - -a
