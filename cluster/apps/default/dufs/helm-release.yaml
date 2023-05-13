@@ -47,6 +47,8 @@ spec:
       - "/@${SECRET_DUFS_ADMIN}"
       - -a
       - "/filehosting@${SECRET_DUFS_SHARE}"
+      - -a
+      - "/media/01_media@${SECRET_DUFS_MEDIA}"
       - /data
     service:
       main:
