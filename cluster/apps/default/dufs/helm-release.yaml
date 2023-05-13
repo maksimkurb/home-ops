@@ -39,6 +39,8 @@ spec:
       - -A
       - --bind
       - "0.0.0.0"
+      - --port
+      - '5000'
       - -a
       - "/@${SECRET_DUFS_ADMIN}"
       - -a
