@@ -90,7 +90,7 @@ spec:
         type: configMap
         name: *app
         subPath: config.json
-        mountPath: /etc/sftpgo/config.json
+        mountPath: /etc/sftpgo/sftpgo.json
         readOnly: true
       media:
         enabled: true
