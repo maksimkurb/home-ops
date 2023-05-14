@@ -24,6 +24,7 @@ spec:
     keycloak: []
     authelia: []
     coder: []
+    sftpgo: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -31,6 +32,7 @@ spec:
     keycloak: keycloak
     authelia: authelia
     coder: coder
+    sftpgo: sftpgo
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
