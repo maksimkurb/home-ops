@@ -40,9 +40,6 @@ spec:
             name: *app
     env:
       TZ: "${TZ}"
-    envFrom:
-      - secretRef:
-          name: *app
     command:
       - sftpgo
       - serve
@@ -88,6 +85,13 @@ spec:
       fsGroup: 777
       fsGroupChangePolicy: "OnRootMismatch"
     persistence:
+      config:
+        enabled: true
+        type: configMap
+        name: *app
+        subPath: config.json
+        mountPath: /etc/sftpgo/config.json
+        readOnly: true
       media:
         enabled: true
         existingClaim: sftpgo-nfs-media
