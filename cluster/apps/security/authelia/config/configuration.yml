@@ -82,6 +82,5 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - https://nodered.${SECRET_PUBLIC_DOMAIN}/
-          - https://nodered.${SECRET_PUBLIC_DOMAIN}/*
+          - https://nodered.${SECRET_PUBLIC_DOMAIN}/auth/strategy/callback
         userinfo_signing_algorithm: none
