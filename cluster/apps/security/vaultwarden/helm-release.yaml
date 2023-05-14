@@ -62,8 +62,8 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         annotations:
+          external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
           hajimari.io/icon: "form-textbox-password"
-          external-dns.home.arpa/enabled: "true"
         hosts:
           - host: &host "bitwarden.${SECRET_DOMAIN}"
             paths:

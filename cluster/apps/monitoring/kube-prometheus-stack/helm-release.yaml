@@ -96,6 +96,7 @@ spec:
         pathType: Prefix
         ingressClassName: "nginx"
         annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/appName: "alertmanager"
         hosts:
           - &host "alert-manager.${SECRET_PUBLIC_DOMAIN}"
@@ -182,6 +183,7 @@ spec:
         pathType: Prefix
         ingressClassName: "nginx"
         annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/enable: "false"
         hosts:
           - &host "prometheus.${SECRET_DOMAIN}"
@@ -197,6 +199,7 @@ spec:
         pathType: Prefix
         ingressClassName: "nginx"
         annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
           hajimari.io/enable: "false"
