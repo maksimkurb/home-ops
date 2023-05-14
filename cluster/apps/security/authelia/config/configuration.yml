@@ -69,3 +69,19 @@ identity_providers:
           - https://f.${SECRET_PUBLIC_DOMAIN}/
           - https://f.${SECRET_PUBLIC_DOMAIN}/*
         userinfo_signing_algorithm: none
+
+      - id: nodered
+        description: NodeRED
+        secret: ${SECRET_NODERED_OAUTH_CLIENT_SECRET}
+        public: false
+        authorization_policy: one_factor
+        pre_configured_consent_duration: 1y
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        redirect_uris:
+          - https://nodered.${SECRET_PUBLIC_DOMAIN}/
+          - https://nodered.${SECRET_PUBLIC_DOMAIN}/*
+        userinfo_signing_algorithm: none
