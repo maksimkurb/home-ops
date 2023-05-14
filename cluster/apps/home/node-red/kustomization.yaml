@@ -5,3 +5,10 @@ resources:
   - config-pvc.yaml
   - nodered-config.sops.yaml
   - helm-release.yaml
+namespace: home
+configMapGenerator:
+  - name: nodered-passwd
+    files:
+      - nodered-passwd
+generatorOptions:
+  disableNameSuffixHash: true

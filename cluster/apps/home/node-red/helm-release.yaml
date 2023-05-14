@@ -82,6 +82,13 @@ spec:
         enabled: true
         existingClaim: node-red-config
         mountPath: "/data"
+      passwd:
+        enabled: true
+        type: configMap
+        name: nodered-passwd
+        readOnly: true
+        subPath: nodered-passwd
+        mountPath: /etc/nodered-passwd
       settingsjs:
         enabled: true
         type: secret
