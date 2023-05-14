@@ -7,3 +7,4 @@ resources:
   - zalando-env.yaml
   - secret.sops.yaml
   - postgres-cluster.yaml
+  - lb.yaml
