@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - helm-release.yaml
   - pvc.yaml
+  - secret.sops.yaml
 namespace: default
 configMapGenerator:
   - name: sftpgo
