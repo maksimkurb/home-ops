@@ -70,13 +70,11 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  port:
-                    number: 8080
+                  port: 8080
               - path: /dav
                 pathType: Prefix
                 service:
-                  port:
-                    number: 8088
+                  port: 8088
         tls:
           - hosts:
               - *host
