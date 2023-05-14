@@ -49,6 +49,11 @@ spec:
       NODE_RED_ENABLE_PROJECTS: "true"
       NODE_RED_ENABLE_SAFE_MODE: "false"
       REDBOT_ENABLE_MISSION_CONTROL: "true"
+    podSecurityContext:
+      runAsUser: 777
+      runAsGroup: 777
+      fsGroup: 777
+      fsGroupChangePolicy: "OnRootMismatch"
     service:
       main:
         ports:
