@@ -1,0 +1,416 @@
+{
+  "common": {
+    "idle_timeout": 15,
+    "upload_mode": 0,
+    "actions": {
+      "execute_on": [],
+      "execute_sync": [],
+      "hook": ""
+    },
+    "setstat_mode": 0,
+    "rename_mode": 0,
+    "temp_path": "",
+    "proxy_protocol": 0,
+    "proxy_allowed": [],
+    "proxy_skipped": [],
+    "startup_hook": "",
+    "post_connect_hook": "",
+    "post_disconnect_hook": "",
+    "data_retention_hook": "",
+    "max_total_connections": 0,
+    "max_per_host_connections": 20,
+    "allowlist_status": 0,
+    "allow_self_connections": 0,
+    "defender": {
+      "enabled": false,
+      "driver": "memory",
+      "ban_time": 30,
+      "ban_time_increment": 50,
+      "threshold": 15,
+      "score_invalid": 2,
+      "score_valid": 1,
+      "score_limit_exceeded": 3,
+      "score_no_auth": 0,
+      "observation_time": 30,
+      "entries_soft_limit": 100,
+      "entries_hard_limit": 150
+    },
+    "rate_limiters": [
+      {
+        "average": 0,
+        "period": 1000,
+        "burst": 1,
+        "type": 2,
+        "protocols": [
+          "SSH",
+          "FTP",
+          "DAV",
+          "HTTP"
+        ],
+        "generate_defender_events": false,
+        "entries_soft_limit": 100,
+        "entries_hard_limit": 150
+      }
+    ]
+  },
+  "sftpd": {
+    "bindings": [
+      {
+        "port": 2022,
+        "address": "",
+        "apply_proxy_config": true
+      }
+    ],
+    "max_auth_tries": 6,
+    "banner": "SSH-2.0-SFTPGo",
+    "host_keys": [],
+    "host_certificates": [],
+    "host_key_algorithms": [],
+    "moduli": [],
+    "kex_algorithms": [],
+    "ciphers": [],
+    "macs": [],
+    "trusted_user_ca_keys": [],
+    "revoked_user_certs_file": "",
+    "login_banner_file": "",
+    "enabled_ssh_commands": [
+      "md5sum",
+      "sha1sum",
+      "sha256sum",
+      "cd",
+      "pwd",
+      "scp"
+    ],
+    "keyboard_interactive_authentication": true,
+    "keyboard_interactive_auth_hook": "",
+    "password_authentication": true,
+    "folder_prefix": ""
+  },
+  "ftpd": {
+    "bindings": [
+      {
+        "port": 0,
+        "address": "",
+        "apply_proxy_config": true,
+        "tls_mode": 0,
+        "certificate_file": "",
+        "certificate_key_file": "",
+        "min_tls_version": 12,
+        "force_passive_ip": "",
+        "passive_ip_overrides": [],
+        "passive_host": "",
+        "client_auth_type": 0,
+        "tls_cipher_suites": [],
+        "passive_connections_security": 0,
+        "active_connections_security": 0,
+        "debug": false
+      }
+    ],
+    "banner": "",
+    "banner_file": "",
+    "active_transfers_port_non_20": true,
+    "passive_port_range": {
+      "start": 50000,
+      "end": 50100
+    },
+    "disable_active_mode": false,
+    "enable_site": false,
+    "hash_support": 0,
+    "combine_support": 0,
+    "certificate_file": "",
+    "certificate_key_file": "",
+    "ca_certificates": [],
+    "ca_revocation_lists": []
+  },
+  "webdavd": {
+    "bindings": [
+      {
+        "port": 8088,
+        "address": "",
+        "enable_https": false,
+        "certificate_file": "",
+        "certificate_key_file": "",
+        "min_tls_version": 12,
+        "client_auth_type": 0,
+        "tls_cipher_suites": [],
+        "prefix": "/dav",
+        "proxy_allowed": [
+
+          "127.0.0.1",
+          "172.16.0.0/12",
+          "10.42.0.0/16",
+          "10.43.0.0/16",
+          "173.245.48.0/20",
+          "103.21.244.0/22",
+          "103.22.200.0/22",
+          "103.31.4.0/22",
+          "141.101.64.0/18",
+          "108.162.192.0/18",
+          "190.93.240.0/20",
+          "188.114.96.0/20",
+          "197.234.240.0/22",
+          "198.41.128.0/17",
+          "162.158.0.0/15",
+          "104.16.0.0/13",
+          "104.24.0.0/14",
+          "172.64.0.0/13",
+          "131.0.72.0/22",
+          "2400:cb00::/32",
+          "2606:4700::/32",
+          "2803:f800::/32",
+          "2405:b500::/32",
+          "2405:8100::/32",
+          "2a06:98c0::/29",
+          "2c0f:f248::/32",
+          "192.168.42.5",
+          "1.5.0.1"
+        ],
+        "client_ip_proxy_header": "X-Real-IP",
+        "client_ip_header_depth": 0,
+        "disable_www_auth_header": false
+      }
+    ],
+    "certificate_file": "",
+    "certificate_key_file": "",
+    "ca_certificates": [],
+    "ca_revocation_lists": [],
+    "cors": {
+      "enabled": false,
+      "allowed_origins": [],
+      "allowed_methods": [],
+      "allowed_headers": [],
+      "exposed_headers": [],
+      "allow_credentials": false,
+      "max_age": 0,
+      "options_passthrough": false,
+      "options_success_status": 0,
+      "allow_private_network": false
+    },
+    "cache": {
+      "users": {
+        "expiration_time": 0,
+        "max_size": 50
+      },
+      "mime_types": {
+        "enabled": true,
+        "max_size": 1000,
+        "custom_mappings": []
+      }
+    }
+  },
+  "data_provider": {
+    "driver": "postgresql",
+    "name": "sftpgo",
+    "host": "homelab-pgsql.database",
+    "port": 5432,
+    "username": "sftpgo",
+    "sslmode": 0,
+    "disable_sni": false,
+    "target_session_attrs": "",
+    "root_cert": "",
+    "client_cert": "",
+    "client_key": "",
+    "connection_string": "",
+    "sql_tables_prefix": "",
+    "track_quota": 1,
+    "delayed_quota_update": 5,
+    "pool_size": 0,
+    "users_base_dir": "personal",
+    "actions": {
+      "execute_on": [],
+      "execute_for": [],
+      "hook": ""
+    },
+    "external_auth_hook": "",
+    "external_auth_scope": 0,
+    "pre_login_hook": "",
+    "post_login_hook": "",
+    "post_login_scope": 0,
+    "check_password_hook": "",
+    "check_password_scope": 0,
+    "password_hashing": {
+      "bcrypt_options": {
+        "cost": 10
+      },
+      "argon2_options": {
+        "memory": 65536,
+        "iterations": 1,
+        "parallelism": 2
+      },
+      "algo": "bcrypt"
+    },
+    "password_validation": {
+      "admins": {
+        "min_entropy": 60
+      },
+      "users": {
+        "min_entropy": 50
+      }
+    },
+    "password_caching": true,
+    "update_mode": 0,
+    "create_default_admin": true,
+    "naming_rules": 7,
+    "is_shared": 1,
+    "backups_path": "/data/backups"
+  },
+  "httpd": {
+    "bindings": [
+      {
+        "port": 8080,
+        "address": "",
+        "enable_web_admin": true,
+        "enable_web_client": true,
+        "enable_rest_api": false,
+        "enabled_login_methods": 0,
+        "enable_https": false,
+        "certificate_file": "",
+        "certificate_key_file": "",
+        "min_tls_version": 12,
+        "client_auth_type": 0,
+        "tls_cipher_suites": [],
+        "proxy_allowed": [
+          "127.0.0.1",
+          "172.16.0.0/12",
+          "10.42.0.0/16",
+          "10.43.0.0/16",
+          "173.245.48.0/20",
+          "103.21.244.0/22",
+          "103.22.200.0/22",
+          "103.31.4.0/22",
+          "141.101.64.0/18",
+          "108.162.192.0/18",
+          "190.93.240.0/20",
+          "188.114.96.0/20",
+          "197.234.240.0/22",
+          "198.41.128.0/17",
+          "162.158.0.0/15",
+          "104.16.0.0/13",
+          "104.24.0.0/14",
+          "172.64.0.0/13",
+          "131.0.72.0/22",
+          "2400:cb00::/32",
+          "2606:4700::/32",
+          "2803:f800::/32",
+          "2405:b500::/32",
+          "2405:8100::/32",
+          "2a06:98c0::/29",
+          "2c0f:f248::/32",
+          "192.168.42.5",
+          "1.5.0.1"
+        ],
+        "client_ip_proxy_header": "X-Real-Ip",
+        "client_ip_header_depth": 0,
+        "hide_login_url": 1,
+        "render_openapi": false,
+        "web_client_integrations": [],
+        "oidc": {
+          "client_id": "sftpgo",
+          "client_secret": "${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}",
+          "config_url": "https://auth.${SECRET_DOMAIN}/",
+          "redirect_base_url": "https://f.${SECRET_DOMAIN}",
+          "scopes": [
+            "openid",
+            "profile",
+            "email"
+          ],
+          "username_field": "preferred_username",
+          "role_field": "groups",
+          "implicit_roles": false,
+          "custom_fields": [],
+          "insecure_skip_signature_check": false,
+          "debug": true
+        },
+        "security": {
+          "enabled": false,
+          "allowed_hosts": [],
+          "allowed_hosts_are_regex": false,
+          "hosts_proxy_headers": [],
+          "https_redirect": false,
+          "https_host": "",
+          "https_proxy_headers": [],
+          "sts_seconds": 0,
+          "sts_include_subdomains": false,
+          "sts_preload": false,
+          "content_type_nosniff": false,
+          "content_security_policy": "",
+          "permissions_policy": "",
+          "cross_origin_opener_policy": "",
+          "expect_ct_header": ""
+        }
+      }
+    ],
+    "templates_path": "templates",
+    "static_files_path": "static",
+    "openapi_path": "openapi",
+    "web_root": "",
+    "certificate_file": "",
+    "certificate_key_file": "",
+    "ca_certificates": [],
+    "ca_revocation_lists": [],
+    "max_upload_file_size": 0,
+    "cors": {
+      "enabled": true,
+      "allowed_origins": [
+        "https://f.${SECRET_DOMAIN}"
+      ],
+      "allowed_methods": [
+        "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "PROPFIND", "PROPPATCH", "MKCOL", "COPY", "MOVE", "LOCK", "UNLOCK"
+      ],
+      "allowed_headers": ["Origin", "Content-Type", "Cache-Control", "Accept", "Authorization", "If-Match", "Destination", "Overwrite"],
+      "exposed_headers": ["Content-Length", "Content-Range", "ETag"],
+      "allow_credentials": true,
+      "max_age": 0,
+      "options_passthrough": false,
+      "options_success_status": 204,
+      "allow_private_network": false
+    },
+    "hide_support_link": true
+  },
+  "telemetry": {
+    "bind_port": 8989,
+    "bind_address": "",
+    "enable_profiler": false,
+    "auth_user_file": "",
+    "certificate_file": "",
+    "certificate_key_file": "",
+    "min_tls_version": 12,
+    "tls_cipher_suites": []
+  },
+  "http": {
+    "timeout": 20,
+    "retry_wait_min": 2,
+    "retry_wait_max": 30,
+    "retry_max": 3,
+    "ca_certificates": [],
+    "certificates": [],
+    "skip_tls_verify": false,
+    "headers": []
+  },
+  "command": {
+    "timeout": 30,
+    "env": [],
+    "commands": []
+  },
+  "mfa": {
+    "totp": [
+      {
+        "name": "Default",
+        "issuer": "SFTPGo",
+        "algo": "sha256"
+      }
+    ]
+  },
+  "smtp": {
+    "host": "${SMTP_HOST}",
+    "port": 587,
+    "from": "",
+    "user": "${SMTP_EMAIL}",
+    "password": "${SECRET_SMTP_PASSWORD}",
+    "auth_type": 1,
+    "encryption": 1,
+    "domain": "${SMTP_HOST}",
+    "templates_path": "templates"
+  },
+  "plugins": []
+}

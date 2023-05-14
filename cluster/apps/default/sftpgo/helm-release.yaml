@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: dufs
+  name: &app sftpgo
   namespace: default
 spec:
   interval: 15m
@@ -30,32 +30,32 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     image:
-      repository: sigoden/dufs
-      tag: v0.33.0
+      repository: ghcr.io/drakkan/sftpgo
+      tag: v2.5-distroless-slim
+      command:
+        - sftpgo
+        - initprovider
+      envFrom:
+        - secretRef:
+            name: *app
     env:
       TZ: "${TZ}"
+    envFrom:
+      - secretRef:
+          name: *app
     command:
-      - dufs
-      - -A
-      - --bind
-      - "0.0.0.0"
-      - --port
-      - '5000'
-      - '--auth-method'
-      - 'basic'
-      - -a
-      - "/@${SECRET_DUFS_ADMIN}"
-      - -a
-      - "/filehosting@${SECRET_DUFS_SHARE}"
-      - -a
-      - "/media/01_media@${SECRET_DUFS_MEDIA}"
-      - /data
+      - sftpgo
+      - serve
     service:
       main:
         type: ClusterIP
         ports:
           http:
-            port: 5000
+            port: 8080
+          dav:
+            port: 8088
+          sftp:
+            port: 2022
     ingress:
       main:
         enabled: true
@@ -72,6 +72,12 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  port: http
+              - path: /dav
+                pathType: Prefix
+                service:
+                  port: dav
         tls:
           - hosts:
               - *host
@@ -84,11 +90,11 @@ spec:
     persistence:
       media:
         enabled: true
-        existingClaim: dufs-nfs-media
+        existingClaim: sftpgo-nfs-media
         mountPath: /data/media
       filehosting:
         enabled: true
-        existingClaim: dufs-nfs-filehosting
+        existingClaim: sftpgo-nfs-filehosting
         mountPath: /data/filehosting
     probes:
       liveness:
