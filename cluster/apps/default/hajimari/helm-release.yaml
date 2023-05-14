@@ -21,7 +21,7 @@ spec:
       repository: ghcr.io/toboshii/hajimari
       tag: v0.3.1
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
     hajimari:
       defaultEnable: true
       showAppGroups: true

@@ -37,7 +37,7 @@ spec:
             drop:
               - "SYS_MODULE"
         env:
-          TZ: "America/Chicago"
+          TZ: "${TIMEZONE}"
           IPTABLES_BACKEND: nft
           KILLSWITCH: "false"
         configFileSecret: ext-gateway-vpnconfig

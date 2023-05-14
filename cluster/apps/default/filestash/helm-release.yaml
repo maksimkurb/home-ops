@@ -34,7 +34,7 @@ spec:
       repository: machines/filestash
       tag: latest
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
     service:
       main:
         ports:

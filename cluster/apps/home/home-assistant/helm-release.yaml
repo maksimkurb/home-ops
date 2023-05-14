@@ -44,7 +44,7 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
     envFrom:
       - secretRef:
           name: home-assistant

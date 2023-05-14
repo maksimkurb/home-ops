@@ -39,7 +39,7 @@ spec:
         - secretRef:
             name: *app
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
     command:
       - sftpgo
       - serve

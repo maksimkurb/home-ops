@@ -45,7 +45,7 @@ spec:
       repository: docker.io/nodered/node-red
       tag: 3.0.2
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
       NODE_RED_ENABLE_PROJECTS: "true"
       NODE_RED_ENABLE_SAFE_MODE: "false"
       REDBOT_ENABLE_MISSION_CONTROL: "true"

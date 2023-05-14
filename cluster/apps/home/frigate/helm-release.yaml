@@ -33,7 +33,7 @@ spec:
       repository: ghcr.io/blakeblackshear/frigate
       tag: "0.12.0-tensorrt"
     env:
-      TZ: "${TZ}"
+      TZ: "${TIMEZONE}"
     envFrom:
       - secretRef:
           name: frigate-secret
