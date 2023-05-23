@@ -307,7 +307,7 @@
         "oidc": {
           "client_id": "sftpgo",
           "client_secret": "${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}",
-          "config_url": "https://auth.${SECRET_DOMAIN}/",
+          "config_url": "https://auth.${SECRET_DOMAIN}",
           "redirect_base_url": "https://f.${SECRET_DOMAIN}",
           "scopes": [
             "openid",
