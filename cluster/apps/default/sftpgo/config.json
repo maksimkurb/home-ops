@@ -63,7 +63,11 @@
     ],
     "max_auth_tries": 6,
     "banner": "SSH-2.0-SFTPGo",
-    "host_keys": [],
+    "host_keys": [
+      "/data/filehosting/sftpgo/keys/id_rsa",
+      "/data/filehosting/sftpgo/keys/id_ecdsa",
+      "/data/filehosting/sftpgo/keys/id_ed25519"
+    ],
     "host_certificates": [],
     "host_key_algorithms": [],
     "moduli": [],
