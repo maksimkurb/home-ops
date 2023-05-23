@@ -9,7 +9,7 @@
     },
     "setstat_mode": 0,
     "rename_mode": 0,
-    "temp_path": "",
+    "temp_path": "/data/filehosting/sftpgo/temp",
     "proxy_protocol": 0,
     "proxy_allowed": [],
     "proxy_skipped": [],
@@ -256,7 +256,7 @@
     "create_default_admin": true,
     "naming_rules": 7,
     "is_shared": 1,
-    "backups_path": "/data/backups"
+    "backups_path": "/data/filehosting/sftpgo/backups"
   },
   "httpd": {
     "bindings": [
@@ -344,9 +344,9 @@
         }
       }
     ],
-    "templates_path": "templates",
-    "static_files_path": "static",
-    "openapi_path": "openapi",
+    "templates_path": "/usr/share/sftpgo/templates",
+    "static_files_path": "/usr/share/sftpgo/static",
+    "openapi_path": "/usr/share/sftpgo/openapi",
     "web_root": "",
     "certificate_file": "",
     "certificate_key_file": "",
@@ -414,7 +414,7 @@
     "auth_type": 1,
     "encryption": 1,
     "domain": "${SMTP_HOST}",
-    "templates_path": "templates"
+    "templates_path": "/usr/share/sftpgo/templates"
   },
   "plugins": []
 }
