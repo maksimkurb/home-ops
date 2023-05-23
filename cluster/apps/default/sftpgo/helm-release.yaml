@@ -40,6 +40,9 @@ spec:
             name: *app
     env:
       TZ: "${TIMEZONE}"
+    envFrom:
+      - secretRef:
+          name: *app
     command:
       - sftpgo
       - serve
