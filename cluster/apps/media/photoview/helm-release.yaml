@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app photoview
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                  operator: In
+                  values:
+                    - "true"
+    runtimeClassName: nvidia
+    env:
+      TZ: "${TIMEZONE}"
+      PHOTOVIEW_LISTEN_IP: 0.0.0.0
+      PHOTOVIEW_LISTEN_PORT: 8080
+      PHOTOVIEW_DATABASE_DRIVER: postgres
+    envFrom:
+      - secretRef:
+          name: *app
+    image:
+      repository: viktorstrate/photoview
+      tag: 2.3.13
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: nginx
+        hosts:
+          - host: &host photoview.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+            secretName: photoview-tls
+    service:
+      main:
+        ports:
+          http:
+            port: 8080
+    persistence:
+      originals:
+        enabled: true
+        existingClaim: photoview-photos-nfs
+        mountPath: /photos
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+      limits:
+        memory: 2000Mi
