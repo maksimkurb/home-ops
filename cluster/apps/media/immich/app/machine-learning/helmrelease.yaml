@@ -82,3 +82,5 @@ spec:
         cpu: 5m
         memory: 250Mi
         nvidia.com/gpu: "1"
+      limits:
+        nvidia.com/gpu: "1"
