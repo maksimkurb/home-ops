@@ -26,6 +26,7 @@ spec:
     coder: []
     sftpgo: []
     photoview: []
+    immich: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -35,6 +36,7 @@ spec:
     coder: coder
     sftpgo: sftpgo
     photoview: photoview
+    immich: immich
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
