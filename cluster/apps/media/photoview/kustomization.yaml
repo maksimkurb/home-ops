@@ -5,3 +5,4 @@ namespace: media
 resources:
   - pv.yaml
   - helm-release.yaml
+  - secret.sops.yaml
