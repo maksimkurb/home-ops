@@ -29,6 +29,16 @@ spec:
   dependsOn:
     - name: immich-server
   values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                  operator: In
+                  values:
+                    - "true"
+    runtimeClassName: nvidia
     controller:
       replicas: 2
       strategy: RollingUpdate
@@ -71,3 +81,4 @@ spec:
       requests:
         cpu: 5m
         memory: 250Mi
+        nvidia.com/gpu: "1"
