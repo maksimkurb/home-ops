@@ -84,3 +84,20 @@ identity_providers:
         redirect_uris:
           - https://nodered.${SECRET_PUBLIC_DOMAIN}/auth/strategy/callback
         userinfo_signing_algorithm: none
+
+      - id: immich
+        description: Immich
+        secret: ${SECRET_IMMICH_OAUTH_CLIENT_SECRET}
+        public: false
+        authorization_policy: one_factor
+        pre_configured_consent_duration: 1y
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        redirect_uris:
+          - app.immich:/
+          - https://photos.${SECRET_PUBLIC_DOMAIN}/auth/login
+          - https://photos.${SECRET_PUBLIC_DOMAIN}/user-settings
+        userinfo_signing_algorithm: none
