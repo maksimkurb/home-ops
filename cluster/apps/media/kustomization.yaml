@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - photoview
+  - immich
   # - calibre-web
   # - calibre-web-fic
   # - jellyfin

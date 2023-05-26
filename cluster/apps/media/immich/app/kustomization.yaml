@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.trux.dev/kustomize.config.k8s.io/kustomization_v1beta1.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: media
+resources:
+  - ./secret.sops.yaml
+  - ./configmap.yaml
+  - ./nfs-pvc.yaml
+  - ./server
+  - ./microservices
+  - ./machine-learning
+  - ./typesense
+  - ./web
+labels:
+  - pairs:
+      app.kubernetes.io/name: immich
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/part-of: immich
