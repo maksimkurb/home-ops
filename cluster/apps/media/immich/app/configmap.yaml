@@ -5,7 +5,8 @@ metadata:
   name: immich-configmap
   namespace: media
 data:
-  DISABLE_REVERSE_GEOCODING: "true"
+  DISABLE_REVERSE_GEOCODING: "false"
+  REVERSE_GEOCODING_PRECISION: "1"
   ENABLE_MAPBOX: "true"
   LOG_LEVEL: log
   NODE_ENV: "production"
