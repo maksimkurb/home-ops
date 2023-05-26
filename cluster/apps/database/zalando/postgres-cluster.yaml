@@ -25,6 +25,7 @@ spec:
     authelia: []
     coder: []
     sftpgo: []
+    photoview: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -33,6 +34,7 @@ spec:
     authelia: authelia
     coder: coder
     sftpgo: sftpgo
+    photoview: photoview
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
