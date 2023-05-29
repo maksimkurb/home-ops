@@ -45,8 +45,10 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     image:
-      repository: ghcr.io/immich-app/immich-machine-learning
-      tag: v1.58.0
+      # repository: ghcr.io/immich-app/immich-machine-learning
+      # tag: v1.57.1
+      repository: docker.io/maksimkurb/immich-machine-learning-cuda
+      tag: v1.57.1
     envFrom:
       - secretRef:
           name: immich
@@ -62,6 +64,12 @@ spec:
         enabled: true
         existingClaim: immich-nfs
         mountPath: /usr/src/app/upload
+    volumeClaimTemplates:
+      - name: cache
+        mountPath: /cache
+        accessMode: ReadWriteOnce
+        size: 1Mi
+        storageClass: nfs-proxmox
     # this is necessary for the downloads to complete
     startupProbe:
       enabled: true
