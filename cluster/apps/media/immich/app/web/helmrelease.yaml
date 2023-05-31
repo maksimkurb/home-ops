@@ -90,4 +90,4 @@ spec:
         cpu: 2m
         memory: 64Mi
       limits:
-        memory: 87Mi
+        memory: 200Mi
