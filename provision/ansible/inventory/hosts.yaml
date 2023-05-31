@@ -20,3 +20,8 @@ nvidia:
     k3s-worker2:
       ansible_host: 192.168.42.113
       ansible_user: k3s
+
+vpn:
+  hosts:
+    node-de:
+      ansible_user: ubuntu

@@ -1,0 +1,27 @@
+# Docker configuration backend
+providers:
+  docker:
+    defaultRule: 'Host(`{% raw %}{{ trimPrefix "/" .Name }}{% endraw %}.{{ base_domain }}`)'
+
+# API and dashboard configuration
+api:
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  le:
+    acme:
+      email: "{{ acme_email }}"
+      storage: "/etc/traefik/acme.json"
+      tlsChallenge: {}
