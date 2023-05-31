@@ -44,27 +44,32 @@
       pip:
         name: docker
 
-    # - name: VPN / Create server wireguard config
-    #   template:
-    #     dest: /etc/wireguard/wg0.conf
-    #     src: server_wg0.conf.j2
-    #     owner: root
-    #     group: root
-    #     mode: '0600'
+    - name: VPN / Create server wireguard config
+      template:
+        dest: "/opt/{{ item }}"
+        src: "{{ item }}.j2"
+        owner: root
+        group: root
+        mode: '0700'
+      loop:
+        - wg-enable-nat.sh
+        - wg-disable-nat.sh
 
     - name: VPN / Enable and persist ip forwarding
       sysctl:
-        name: net.ipv4.ip_forward
+        name: "{{ item }}"
         value: "1"
         state: present
         sysctl_set: yes
         reload: yes
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv6.conf.all.forwarding
 
-    - name: VPN / Start wireguard and enable on boot
+    - name: VPN / Enable wireguard on boot
       systemd:
         name: wg-quick@wg0
         enabled: yes
-        state: started
 
     - name: VPN / Pull WireGuard Portal Image
       community.docker.docker_image:
@@ -102,9 +107,12 @@
           ADMIN_USER: "{{ wg_portal_admin_user }}"
           ADMIN_PASS: "{{ wg_portal_admin_pass }}"
           # Mail Settings
-          MAIL_FROM: "WireGuard VPN <noreply+wireguard@company.com>"
-          EMAIL_HOST: "10.10.10.10"
-          EMAIL_PORT: "25"
+          MAIL_FROM: "WireGuard VPN <{{ smtp_user }}>"
+          EMAIL_HOST: "{{ smtp_host }}"
+          EMAIL_PORT: "587"
+          EMAIL_USERNAME: "{{ smtp_user }}"
+          EMAIL_PASSWORD: "{{ smtp_pass }}"
+          EMAIL_TLS: "true"
           # LDAP Settings
           LDAP_ENABLED: "false"
           # - LDAP_URL=ldap://srv-ad01.company.local:389
