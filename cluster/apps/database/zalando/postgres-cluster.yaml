@@ -27,6 +27,8 @@ spec:
     sftpgo: []
     photoview: []
     immich: []
+    prowlarr: []
+    radarr: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -37,6 +39,10 @@ spec:
     sftpgo: sftpgo
     photoview: photoview
     immich: immich
+    prowlarr: prowlarr
+    prowlarr_log: prowlarr
+    radarr: radarr
+    radarr_log: radarr
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
