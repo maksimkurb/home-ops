@@ -20,3 +20,11 @@ $IPT -D INPUT -i $IN_FACE -p udp --dport $WG_PORT -j ACCEPT
 ## $IPT6 -D INPUT -i $WG_FACE -j ACCEPT
 ## $IPT6 -D FORWARD -i $IN_FACE -o $WG_FACE -j ACCEPT
 ## $IPT6 -D FORWARD -i $WG_FACE -o $IN_FACE -j ACCEPT
+
+## IPv4 Port Forwarding ##
+WG_IP=$(ip addr show dev $WG_FACE | awk '/inet / {print $2}' | cut -d/ -f1)
+
+{% for item in vpn_port_forwards %}
+$IPT -t nat -D POSTROUTING -d "{{ item.target_ip }}" -o $WG_FACE -p "{{ item.protocol }}" --dport "{{ item.source_port }}" -j SNAT --to-source $WG_IP
+$IPT -t nat -D PREROUTING -i $IN_FACE -p "{{ item.protocol }}" --dport "{{ item.source_port }}" -j DNAT --to-destination "{{ item.target_ip }}:{{ item.target_port }}" -m comment --comment "Forward :{{ item.source_port }} to WG {{ item.target_ip }}:{{ item.target_port }}"
+{% endfor %}
