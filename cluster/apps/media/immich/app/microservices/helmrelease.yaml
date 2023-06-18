@@ -31,11 +31,8 @@ spec:
     keepHistory: false
   values:
     controller:
-      replicas: 2
+      replicas: 1
       strategy: RollingUpdate
-      rollingUpdate:
-        surge: 1
-        unavailable: 1
       annotations:
         reloader.stakater.com/auto: "true"
     image:
@@ -69,4 +66,4 @@ spec:
         cpu: 5m
         memory: 145M
       limits:
-        memory: 2000M
+        memory: 4000M
