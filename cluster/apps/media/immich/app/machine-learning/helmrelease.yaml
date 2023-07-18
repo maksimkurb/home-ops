@@ -48,10 +48,10 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     image:
-      # repository: ghcr.io/immich-app/immich-machine-learning
+      repository: ghcr.io/immich-app/immich-machine-learning
+      tag: v1.67.2
+      # repository: docker.io/maksimkurb/immich-machine-learning-cuda
       # tag: v1.57.1
-      repository: docker.io/maksimkurb/immich-machine-learning-cuda
-      tag: v1.57.1
     envFrom:
       - secretRef:
           name: immich
