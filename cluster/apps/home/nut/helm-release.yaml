@@ -1,0 +1,87 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app nut
+  namespace: home
+spec:
+  interval: 15m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
+      chart: app-template
+      version: 1.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                # Stick to the same node as Home Assistant
+                - key: feature.node.kubernetes.io/custom-ups
+                  operator: In
+                  values:
+                    - "true"
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    image:
+      repository: instantlinux/nut-upsd
+      tag: 2.8.0-r4
+    env:
+      TZ: "${TIMEZONE}"
+      DRIVER: "blazer_usb"
+      VENDORID: "0665"
+    envFrom:
+      - secretRef:
+          name: *app
+    service:
+      main:
+        ports:
+          http:
+            port: &app-port 3493
+    resources:
+      requests:
+        cpu: 10m
+        memory: 10Mi
+      limits:
+        cpu: 300m
+        memory: 200Mi
+    probes:
+      liveness:
+        type: TCP
+        port: *app-port
+        spec:
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+      readiness:
+        type: TCP
+        port: *app-port
+        spec:
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+      startup:
+        type: TCP
+        port: *app-port
+        spec:
+          initialDelaySeconds: 0
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 30
