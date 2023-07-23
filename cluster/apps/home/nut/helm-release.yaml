@@ -57,10 +57,15 @@ spec:
             enabled: true
             port: 3493
     persistence:
-      usb:
+      usbser:
         enabled: true
         type: hostPath
         hostPath: /dev/ttyACM0
+        hostPathType: CharDevice
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/bus/usb/002/003
         hostPathType: CharDevice
     resources:
       requests:
