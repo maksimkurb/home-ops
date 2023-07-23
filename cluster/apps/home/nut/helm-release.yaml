@@ -51,7 +51,10 @@ spec:
     service:
       main:
         ports:
+          http:
+            enabled: false
           nut:
+            enabled: true
             port: 3493
     resources:
       requests:
