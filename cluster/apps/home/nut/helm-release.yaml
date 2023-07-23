@@ -56,6 +56,12 @@ spec:
           nut:
             enabled: true
             port: 3493
+    persistence:
+      usb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/ttyACM0
+        hostPathType: CharDevice
     resources:
       requests:
         cpu: 10m
