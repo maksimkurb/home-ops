@@ -56,9 +56,6 @@ spec:
           nut:
             enabled: true
             port: 3493
-    podSecurityContext:
-      runAsUser: 110
-      runAsGroup: 112
     persistence:
       usb:
         enabled: true
