@@ -7,4 +7,3 @@ resources:
   - home-assistant
   - mosquitto
   - node-red
-  - nut
