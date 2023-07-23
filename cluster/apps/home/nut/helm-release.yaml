@@ -51,8 +51,8 @@ spec:
     service:
       main:
         ports:
-          http:
-            port: &app-port 3493
+          nut:
+            port: 3493
     resources:
       requests:
         cpu: 10m
@@ -63,7 +63,7 @@ spec:
     probes:
       liveness:
         type: TCP
-        port: *app-port
+        port: nut
         spec:
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -71,7 +71,7 @@ spec:
           failureThreshold: 3
       readiness:
         type: TCP
-        port: *app-port
+        port: nut
         spec:
           initialDelaySeconds: 0
           periodSeconds: 10
@@ -79,7 +79,7 @@ spec:
           failureThreshold: 3
       startup:
         type: TCP
-        port: *app-port
+        port: nut
         spec:
           initialDelaySeconds: 0
           timeoutSeconds: 1
