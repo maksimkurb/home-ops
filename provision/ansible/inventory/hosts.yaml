@@ -25,3 +25,7 @@ vpn:
   hosts:
     node-de:
       ansible_user: ubuntu
+
+mail:
+  hosts:
+    node-contabo: {}
