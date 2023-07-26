@@ -28,7 +28,7 @@ spec:
       nameOverride: *app
     image:
       repository: docker.io/vaultwarden/server
-      tag: 1.29.0
+      tag: 1.29.1
     env:
       DATA_FOLDER: "config"
       SIGNUPS_ALLOWED: false
