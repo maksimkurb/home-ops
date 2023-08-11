@@ -52,3 +52,19 @@
   any_errors_fatal: true
   roles:
     - mailcow.mailcow
+
+- hosts:
+    - mail
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tasks:
+    - name: Update MailServer configs
+      template:
+        dest: "/opt/mailserver/data/conf/{{ item }}"
+        src: "mailserver/{{ item }}.j2"
+        owner: root
+        group: root
+        mode: '0700'
+      loop:
+        - postfix/extra.cf

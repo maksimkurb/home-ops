@@ -73,13 +73,13 @@
 
     - name: VPN / Pull WireGuard Portal Image
       community.docker.docker_image:
-        name: "h44z/wg-portal:latest"
+        name: "ghcr.io/h44z/wg-portal:v1.0.18"
         source: pull
 
     - name: VPN / Create WireGuard Portal Container
       community.docker.docker_container:
         name: "wg-portal"
-        image: "h44z/wg-portal:latest"
+        image: "ghcr.io/h44z/wg-portal:v1.0.18"
         restart_policy: unless-stopped
         capabilities:
           - NET_ADMIN
