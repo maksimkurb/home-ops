@@ -16,12 +16,17 @@
     "prettier.configPath": ".github/linters/.prettierrc.yaml",
     "prettier.ignorePath": ".github/linters/.prettierignore",
     "yaml.schemas": {
-        "Kubernetes": "cluster/*.yaml"
+        "Kubernetes": "cluster/*.yaml",
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json": "file:///home/maksimkurb/Dev/home-ops/provision/ansible/roles/ubuntu-external/tasks/traefik.yaml"
     },
     "editor.fontFamily": "FiraCode Nerd Font",
     "editor.fontLigatures": true,
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs":"active",
     "editor.hover.delay": 1500,
-    "explorer.autoReveal": false
+    "explorer.autoReveal": false,
+    "cSpell.language": "en,en-US",
+    "cSpell.words": [
+        "traefik"
+    ]
 }

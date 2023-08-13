@@ -1,49 +1,4 @@
 ---
-- hosts:
-    - mail
-  become: true
-  gather_facts: true
-  any_errors_fatal: true
-  tasks:
-    - name: Prepare / Install required system packages
-      apt:
-        pkg:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-          - python3-pip
-          - virtualenv
-          - python3-setuptools
-          - wireguard
-        state: latest
-        update_cache: true
-
-    - name: Prepare / Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-
-    - name: Prepare / Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
-
-    - name: Prepare / Install Docker
-      apt:
-        pkg:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-          - docker-buildx-plugin
-          - docker-compose-plugin
-          - docker-compose
-        state: latest
-        update_cache: true
-
-    - name: Prepare / Install Docker Module for Python
-      pip:
-        name: docker
 
 - hosts:
     - mail
@@ -51,6 +6,7 @@
   gather_facts: true
   any_errors_fatal: true
   roles:
+    - ubuntu-external
     - mailcow.mailcow
 
 - hosts:
@@ -68,3 +24,18 @@
         mode: '0700'
       loop:
         - postfix/extra.cf
+
+    - name: Update MailServer docker-compose.override.yaml
+      template:
+        dest: "/opt/mailserver/docker-compose.override.yml"
+        src: "mailserver/docker-compose.override.yml.j2"
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Restart mailcow container stack
+      become: true
+      shell: |
+        docker-compose --project-name {{ mailcow__docker_compose_project_name }} up -d
+      args:
+        chdir: "{{ mailcow__install_path }}"

@@ -4,13 +4,13 @@ mailcow__git_version: master
 mailcow__timezone: Europe/Moscow
 mailcow__docker_compose_project_name: mailcow
 mailcow__theme: lumen
-mailcow__config_http_port: 80
+mailcow__config_http_port: 5080
 mailcow__config_http_bind: 0.0.0.0
-mailcow__config_https_port: 443
+mailcow__config_https_port: 5443
 mailcow__config_https_bind: 0.0.0.0
 mailcow__config_acl_anyone: disallow
 mailcow__config_maildir_gc_time: 1440
 mailcow__config_additional_san: []
 mailcow__config_additional_server_names: []
-mailcow__config_skip_lets_encrypt: false
+mailcow__config_skip_lets_encrypt: true
 mailcow__config_enable_ssl_sni: true

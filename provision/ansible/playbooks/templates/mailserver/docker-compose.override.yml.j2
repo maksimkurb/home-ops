@@ -1,0 +1,9 @@
+services:
+    nginx-mailcow:
+      labels:
+        traefik.enable: "true"
+        traefik.http.services.nginx-mailcow.loadbalancer.server.port: "{{ mailcow__config_http_port }}"
+        traefik.http.routers.nginx-mailcow.rule: "Host(`{{ mail_hostname }}`)"
+        traefik.http.routers.nginx-mailcow.entrypoints: websecure
+        traefik.http.routers.nginx-mailcow.tls.certresolver: le
+        traefik.http.routers.nginx-mailcow.tls: "true"

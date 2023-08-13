@@ -1,7 +1,8 @@
 # Docker configuration backend
 providers:
   docker:
-    defaultRule: 'Host(`{% raw %}{{ trimPrefix "/" .Name }}{% endraw %}.{{ base_domain }}`)'
+    defaultRule: 'Host(`{% raw %}{{ trimPrefix "/" .Name }}{% endraw %}.{{ traefik_base_domain }}`)'
+    exposedByDefault: false
 
 # API and dashboard configuration
 api:

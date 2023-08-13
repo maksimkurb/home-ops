@@ -40,6 +40,7 @@ kubernetes
 !provision/ansible/inventory/group_vars/kubernetes
 provision/ansible/roles/*
 !provision/ansible/roles/ubuntu
+!provision/ansible/roles/ubuntu-external
 provision/kubeconfig
 talos/cni/charts
 .monokle

@@ -1,0 +1,8 @@
+---
+- include: docker.yaml
+  tags:
+    - docker
+
+- include: traefik.yaml
+  tags:
+    - traefik

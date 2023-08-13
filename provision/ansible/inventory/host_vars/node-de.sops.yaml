@@ -1,6 +1,6 @@
 kind: Secret
 ansible_host: ENC[AES256_GCM,data:QJ6Wu03JToA6FxA3TLpHNA==,iv:5A+IliSVQliG+fgmjzbiytSs1Sq1DiaJpLhJZI0Zk0M=,tag:Aad1BqP2f9Knc3UC4cjX/w==,type:str]
-base_domain: ENC[AES256_GCM,data:1mi8Ak94GnWiYeqdQiVlIw==,iv:16nRlFSSr82Y3utLD2RU5lbgIaWI1POdJYst+KUzYXk=,tag:P8G+TGTpiSdIhNN1fVqAqA==,type:str]
+traefik_base_domain: ENC[AES256_GCM,data:jAc26qw43D2gOcWsygKvlQ==,iv:SuDSWOYF2s/E8ARhKWVabgH80oah3lhdoaz5PFX9DQk=,tag:wx1Vq/l3yQslndxdUsCaFQ==,type:str]
 internal_ip: ENC[AES256_GCM,data:mPPacFxcMFkf,iv:NgjjhnZ33vHjnce8RCaVXYtiVhqkyyDotvu74SS2TvU=,tag:ABBxbQtntF3KuOF+4gdqCQ==,type:str]
 wg_server_privkey: ENC[AES256_GCM,data:h4cn9T+/VXJB4zgdL0cg+KdeDvZuMXzOW8JTz8uokBxlcjhUF5GglKtsYN4=,iv:aUMwu57tvzr/qDwKTS0n0qZm7iTm36mJozpuxAimmHY=,tag:CA47BsODZb6JGeP+M+md2A==,type:str]
 wg_server_pubkey: ENC[AES256_GCM,data:iE1LkOPAgGnXJ1X0GzpRcHSuipId2avygy3PwaBZtt6PGF9SRKzJ6fZmwXU=,iv:qonIYRukcgVrFA1FbYbOHOkwH5/nLAo4m67HdwCx2r4=,tag:EIYca/Ia4Qu/+dq5W/syRQ==,type:str]
@@ -51,8 +51,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-06-08T13:49:48Z"
-    mac: ENC[AES256_GCM,data:SaoeyppHhPudvt+DZFfyz9TlvhcPrSIXGw9/OKRIWcFs0XvrZm7Dq78AHX6jmcjuWEWAjC3rJdqbss2pRntLHjxMkQ8WmTEhqYLtNZYFM/Li81Gnj79uxxmiQdndOemCLvYzezVV45/ojDABrWxfN+pPhyviIe0i9zgCcFzzsX4=,iv:/cfrSDd2WfgV+YJCSQAkvK+nJrgo5U5sjhvCTvYAEqI=,tag:kMXaMwIlNKh+oGkY7PrQyQ==,type:str]
+    lastmodified: "2023-08-13T14:29:22Z"
+    mac: ENC[AES256_GCM,data:xl0MabLtOlpSox9fIW0xuIF4GJfnW2R0uBPiDarY6aGIOLq/G69KyCU8cyYwI+Z8nArr6o2D5IacG8iVQHzE+wz9f3NLlgwiMbqQqNTAPWSbfuHq2aCWj15yLMrBsYT4/oKSNc9R53nMGk/2o8E8cgfuaQS/B6QCYv0tpXFgByY=,iv:aWwyocDqaggCunhNtJGgStTi5LRJhGNpARMIjVgjsR8=,tag:G3aITiBGzT6eI7BebuJJ3g==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

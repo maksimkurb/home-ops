@@ -29,3 +29,7 @@ vpn:
 mail:
   hosts:
     node-contabo: {}
+
+cctv:
+  hosts:
+    node-contabo: {}

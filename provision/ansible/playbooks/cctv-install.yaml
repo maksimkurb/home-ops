@@ -1,0 +1,54 @@
+---
+
+- hosts:
+    - cctv
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - ubuntu-external
+
+- hosts:
+    - cctv
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tasks:
+    - name: Ingress / Create Frigate config directory
+      file:
+        path: "/opt/frigate"
+        state: directory
+
+    - name: Ingress / Create Frigate config
+      copy:
+        dest: /opt/frigate/config.yml
+        content: "{{ frigate_config_yaml }}"
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Pull Frigate Container
+      community.docker.docker_image:
+        name: "ghcr.io/blakeblackshear/frigate:stable"
+        source: pull
+
+    - name: CCTV / Create Frigate Container
+      community.docker.docker_container:
+        name: "frigate"
+        image: "ghcr.io/blakeblackshear/frigate:stable"
+        restart_policy: unless-stopped
+        shm_size: 64M
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+          - /opt/frigate/config.yml:/config/config.yml
+          - /opt/frigate/media:/media/frigate
+        ports:
+          - "8123:8123"
+        labels:
+          traefik.enable: "true"
+          traefik.http.services.cctv-frigate.loadbalancer.server.port: "5000"
+          traefik.http.routers.cctv-frigate.entrypoints: websecure
+          traefik.http.routers.cctv-frigate.tls.certresolver: le
+          traefik.http.routers.cctv-frigate.tls: "true"
+          traefik.http.routers.cctv-frigate.middlewares: "auth"
+        state: started

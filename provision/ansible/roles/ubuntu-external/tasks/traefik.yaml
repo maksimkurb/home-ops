@@ -1,0 +1,40 @@
+---
+- name: Ingress / Create Traefik config directory
+  file:
+    path: "/opt/traefik"
+    state: directory
+
+- name: Ingress / Create Traefik config
+  template:
+    dest: /opt/traefik/traefik.yml
+    src: traefik.yaml.j2
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: VPN / Create Traefik container
+  community.docker.docker_container:
+    name: "traefik"
+    image: "traefik:v2.10"
+    restart_policy: unless-stopped
+    etc_hosts:
+      host.docker.internal: host-gateway
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/traefik:/etc/traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.traefik.loadbalancer.server.port: "8080"
+      traefik.http.routers.traefik.entrypoints: websecure
+      traefik.http.routers.traefik.tls.certresolver: le
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.routers.traefik.middlewares: "auth"
+      traefik.http.middlewares.auth.basicauth.users: "{{ traefik_users }}"
+    networks:
+      - name: bridge
+      - name: mailcow_mailcow-network
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    state: started

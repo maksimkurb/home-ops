@@ -27,6 +27,12 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-install.yaml"
 
+  playbook:cctv-install:
+    desc: Prepare CCTV node
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/cctv-install.yaml"
+
   playbook:mail-install:
     desc: Prepare Mail node
     dir: provision/ansible
