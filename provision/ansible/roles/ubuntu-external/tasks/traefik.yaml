@@ -35,6 +35,5 @@
       - name: mailcow_mailcow-network
     ports:
       - "80:80"
-      - "8080:8080"
       - "443:443"
     state: started
