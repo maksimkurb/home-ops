@@ -19,7 +19,7 @@
         path: "/opt/frigate"
         state: directory
 
-    - name: Ingress / Create Frigate config
+    - name: CCTV / Create Frigate config
       copy:
         dest: /opt/frigate/config.yml
         content: "{{ frigate_config_yaml }}"
@@ -27,7 +27,7 @@
         group: root
         mode: '0600'
 
-    - name: Pull Frigate Container
+    - name: CCTV / Pull Frigate Container
       community.docker.docker_image:
         name: "ghcr.io/blakeblackshear/frigate:stable"
         source: pull
@@ -42,8 +42,6 @@
           - /etc/localtime:/etc/localtime:ro
           - /opt/frigate/config.yml:/config/config.yml
           - /opt/frigate/media:/media/frigate
-        ports:
-          - "8123:8123"
         labels:
           traefik.enable: "true"
           traefik.http.services.cctv-frigate.loadbalancer.server.port: "5000"
@@ -51,4 +49,31 @@
           traefik.http.routers.cctv-frigate.tls.certresolver: le
           traefik.http.routers.cctv-frigate.tls: "true"
           traefik.http.routers.cctv-frigate.middlewares: "auth"
+        state: started
+
+    - name: CCTV / Create Uptime Kuma config directory
+      file:
+        path: "/opt/uptime-kuma"
+        state: directory
+
+    - name: CCTV / Pull Uptime Kuma Container
+      community.docker.docker_image:
+        name: "louislam/uptime-kuma:1"
+        source: pull
+
+    - name: CCTV / Create Uptime Kuma Container
+      community.docker.docker_container:
+        name: "uptime-kuma"
+        image: "louislam/uptime-kuma:1"
+        restart_policy: unless-stopped
+        shm_size: 64M
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+          - /opt/uptime-kuma:/app/data
+        labels:
+          traefik.enable: "true"
+          traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"
+          traefik.http.routers.uptime-kuma.entrypoints: websecure
+          traefik.http.routers.uptime-kuma.tls.certresolver: le
+          traefik.http.routers.uptime-kuma.tls: "true"
         state: started

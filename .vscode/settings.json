@@ -27,6 +27,11 @@
     "explorer.autoReveal": false,
     "cSpell.language": "en,en-US",
     "cSpell.words": [
-        "traefik"
+        "certresolver",
+        "entrypoints",
+        "kuma",
+        "localtime",
+        "traefik",
+        "websecure"
     ]
 }
