@@ -31,6 +31,8 @@ spec:
       darkTheme: tron
       namespaceSelector:
         matchNames:
+          - default
+          - home
           - downloads
           - kube-system
           - media

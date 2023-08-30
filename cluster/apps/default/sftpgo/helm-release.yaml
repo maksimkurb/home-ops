@@ -70,6 +70,8 @@ spec:
           nginx.ingress.kubernetes.io/custom-http-errors: "599" # Disable custom HTTP errors for this endpoint
           nginx.ingress.kubernetes.io/configuration-snippet: |
             chunked_transfer_encoding off;
+          hajimari.io/appName: "File Manager (SFTPGo)"
+          hajimari.io/icon: file-cloud
         hosts:
           - host: &host f.${SECRET_DOMAIN}
             paths:

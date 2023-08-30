@@ -62,7 +62,7 @@ spec:
           nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hajimari.io/appName: "Immich"
-          hajimari.io/icon: heroicons:photo
+          hajimari.io/icon: image
         hosts:
           - host: &host "photos.${SECRET_DOMAIN}"
             paths:
