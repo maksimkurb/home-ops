@@ -73,32 +73,35 @@ spec:
             - name: Devhints
               url: "https://devhints.io"
               icon: fluent-mdl2:hint-text
-        - group: Media
+        - group: External services
           bookmarks:
-            - name: Spotify
-              url: "http://open.spotify.com"
-              icon: mdi:spotify
-            - name: YouTube
-              url: "https://youtube.com/feed/subscriptions"
-              icon: mdi:youtube
-        - group: Reading
+            - name: Mail @ kurb.me
+              url: "https://mail.kurb.me"
+              icon: email-variant
+            - name: External CCTV
+              url: "https://frigate.svc.kurb.me"
+              icon: cctv
+        - group: Status
           bookmarks:
-            - name: VC
-              url: "https://vc.ru/"
-              icon: https://vc.ru/static/build/vc.ru/favicons/favicon.ico
-            - name: Pikabu
-              url: "https://pikabu.ru/"
-              icon: https://cs.pikabu.ru/assets/favicon.ico
-            - name: Medium
-              url: "http://medium.com"
-              icon: "https://miro.medium.com/1*m-R_BkNf1Qjr1YbyOIJY2w.png"
-            - name: Reddit
-              url: "http://reddit.com"
-              icon: https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png
+            - name: Status (Freshping)
+              url: "https://status.cubly.ru"
+              icon: check-decagram-outline
+            - name: Status (Internal)
+              url: "https://uptime-kuma.cubly.ru/status/public"
+              icon: check-decagram-outline
+            - name: Status (External)
+              url: "https://uptime-kuma.svc.kurb.me/status/public"
+              icon: check-decagram-outline
+            - name: Uptime (Internal)
+              url: "https://uptime-kuma.cubly.ru"
+              icon: checkbox-multiple-marked-circle-outline
+            - name: Uptime (External)
+              url: "https://uptime-kuma.svc.kurb.me"
+              icon: checkbox-multiple-marked-circle-outline
         - group: My resources
           bookmarks:
             - name: Personal Website @maksimkurb
-              url: https://cubly.ru
+              url: https://kurb.me
               icon: mdi:resume
             - name: LinkedIn @maksimkurb
               url: https://www.linkedin.com/in/maxim-kurbatov/
