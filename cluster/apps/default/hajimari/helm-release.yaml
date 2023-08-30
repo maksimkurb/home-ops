@@ -77,27 +77,27 @@ spec:
           bookmarks:
             - name: Mail @ kurb.me
               url: "https://mail.kurb.me"
-              icon: email-variant
+              icon: mdi:email-variant
             - name: External CCTV
               url: "https://frigate.svc.kurb.me"
-              icon: cctv
+              icon: mdi:cctv
         - group: Status
           bookmarks:
             - name: Status (Freshping)
               url: "https://status.cubly.ru"
-              icon: check-decagram-outline
+              icon: mdi:check-decagram-outline
             - name: Status (Internal)
               url: "https://uptime-kuma.cubly.ru/status/public"
-              icon: check-decagram-outline
+              icon: mdi:check-decagram-outline
             - name: Status (External)
               url: "https://uptime-kuma.svc.kurb.me/status/public"
-              icon: check-decagram-outline
+              icon: mdi:check-decagram-outline
             - name: Uptime (Internal)
               url: "https://uptime-kuma.cubly.ru"
-              icon: checkbox-multiple-marked-circle-outline
+              icon: mdi:checkbox-multiple-marked-circle-outline
             - name: Uptime (External)
               url: "https://uptime-kuma.svc.kurb.me"
-              icon: checkbox-multiple-marked-circle-outline
+              icon: mdi:checkbox-multiple-marked-circle-outline
         - group: My resources
           bookmarks:
             - name: Personal Website @maksimkurb
