@@ -8,4 +8,5 @@ resources:
   - hajimari
   - kopia
   - minio
+  - uptime-kuma
   - theme-park
