@@ -49,7 +49,7 @@ spec:
         reloader.stakater.com/auto: "true"
     image:
       repository: ghcr.io/immich-app/immich-machine-learning
-      tag: v1.77.0
+      tag: v1.78.0
       # repository: docker.io/maksimkurb/immich-machine-learning-cuda
       # tag: v1.57.1
     envFrom:
