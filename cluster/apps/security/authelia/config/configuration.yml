@@ -66,8 +66,7 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - https://f.${SECRET_PUBLIC_DOMAIN}/
-          - https://f.${SECRET_PUBLIC_DOMAIN}/*
+          - https://f.${SECRET_PUBLIC_DOMAIN}/web/oidc/redirect
         userinfo_signing_algorithm: none
 
       - id: nodered
