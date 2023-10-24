@@ -6,7 +6,7 @@ metadata:
   name: kube-cleanup-operator
   namespace: kube-system
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://charts.lwolf.org
@@ -16,7 +16,6 @@ spec:
         kind: HelmRepository
         name: lwolf-charts
         namespace: flux-system
-      interval: 5m
   values:
     rbac:
       create: true

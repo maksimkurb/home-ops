@@ -6,7 +6,7 @@ metadata:
   name: falco-exporter
   namespace: falco-system
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://falcosecurity.github.io/charts
@@ -16,7 +16,6 @@ spec:
         kind: HelmRepository
         name: falco-security-charts
         namespace: flux-system
-      interval: 5m
   values:
     serviceMonitor:
       enabled: true

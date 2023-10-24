@@ -6,7 +6,7 @@ metadata:
   name: nvidia-device-plugin
   namespace: kube-system
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: nvidia-device-plugin
@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: nvidia-dvp-charts
         namespace: flux-system
-      interval: 15m
   values:
     image:
       repository: nvcr.io/nvidia/k8s-device-plugin

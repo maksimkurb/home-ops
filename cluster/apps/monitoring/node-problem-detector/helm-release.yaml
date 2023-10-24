@@ -6,7 +6,7 @@ metadata:
   name: node-problem-detector
   namespace: monitoring
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: node-problem-detector
@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: deliveryhero-charts
         namespace: flux-system
-      interval: 15m
   install:
     createNamespace: true
     remediation:

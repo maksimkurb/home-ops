@@ -6,7 +6,7 @@ metadata:
   name: thanos
   namespace: monitoring
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: thanos
@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: bitnami-charts
         namespace: flux-system
-      interval: 15m
   install:
     createNamespace: true
     remediation:

@@ -6,7 +6,7 @@ metadata:
   name: mailu
   namespace: mail
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://mailu.github.io/helm-charts
@@ -16,7 +16,6 @@ spec:
         kind: HelmRepository
         name: mailu-charts
         namespace: flux-system
-      interval: 5m
   values:
     certmanager:
       issuerName: letsencrypt-production

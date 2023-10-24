@@ -11,7 +11,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: cilium
@@ -20,7 +20,6 @@ spec:
         kind: HelmRepository
         name: cilium-charts
         namespace: flux-system
-      interval: 15m
   install:
     createNamespace: true
     remediation:

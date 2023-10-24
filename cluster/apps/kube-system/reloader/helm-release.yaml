@@ -6,7 +6,7 @@ metadata:
   name: &app reloader
   namespace: kube-system
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: reloader
@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: stakater-charts
         namespace: flux-system
-      interval: 15m
   install:
     createNamespace: true
     remediation:

@@ -6,7 +6,7 @@ metadata:
   name: &app descheduler
   namespace: kube-system
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       # renovate: registryUrl=https://kubernetes-sigs.github.io/descheduler
@@ -16,7 +16,6 @@ spec:
         kind: HelmRepository
         name: kubernetes-sigs-descheduler-charts
         namespace: flux-system
-      interval: 15m
   install:
     createNamespace: true
     remediation:

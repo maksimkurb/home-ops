@@ -20,7 +20,7 @@ metadata:
   name: sealed-secrets
   namespace: kube-system
 spec:
-  interval: 5m
+  interval: 30m
   chart:
     spec:
       chart: sealed-secrets
@@ -29,7 +29,6 @@ spec:
         kind: HelmRepository
         name: sealed-secrets-charts
         namespace: flux-system
-      interval: 5m
   values:
     ingress:
       enabled: false
