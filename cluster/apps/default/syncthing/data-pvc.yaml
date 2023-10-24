@@ -7,7 +7,7 @@ spec:
   storageClassName: syncthing-nfs-immich
   capacity:
     storage: 1Mi
-  accessModes: ["ReadOnlyMany"]
+  accessModes: ["ReadWriteMany"]
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
@@ -20,7 +20,7 @@ metadata:
   name: syncthing-nfs-immich
   namespace: default
 spec:
-  accessModes: ["ReadOnlyMany"]
+  accessModes: ["ReadWriteMany"]
   storageClassName: syncthing-nfs-immich
   resources:
     requests:

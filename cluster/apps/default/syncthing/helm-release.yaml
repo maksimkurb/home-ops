@@ -98,7 +98,8 @@ spec:
           - hosts:
               - *host
     persistence:
-      library:
+      immich:
         enabled: true
         existingClaim: syncthing-nfs-immich
         mountPath: /data/immich
+        readOnly: true
