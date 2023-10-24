@@ -100,5 +100,5 @@ spec:
     persistence:
       library:
         enabled: true
-        existingClaim: immich-nfs
+        existingClaim: syncthing-nfs-immich
         mountPath: /data/immich
