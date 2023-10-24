@@ -18,7 +18,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: syncthing-nfs-immich
-  namespace: media
+  namespace: default
 spec:
   accessModes: ["ReadOnlyMany"]
   storageClassName: syncthing-nfs-immich
