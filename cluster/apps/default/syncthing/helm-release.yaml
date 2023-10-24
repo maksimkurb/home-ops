@@ -98,6 +98,11 @@ spec:
           - hosts:
               - *host
     persistence:
+      config:
+        enabled: true
+        existingClaim: syncthing-config
+        globalMounts:
+          - path: /var/syncthing
       immich:
         enabled: true
         existingClaim: syncthing-nfs-immich
