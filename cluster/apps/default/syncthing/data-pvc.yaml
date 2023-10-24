@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: syncthing-nfs-immich
+spec:
+  storageClassName: syncthing-nfs-immich
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadOnlyMany"]
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "${NFS_PROXMOX_ADDR}"
+    path: "${NFS_PROXMOX_MEDIA}/01_media/immich/"
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-nfs-immich
+  namespace: media
+spec:
+  accessModes: ["ReadOnlyMany"]
+  storageClassName: syncthing-nfs-immich
+  resources:
+    requests:
+      storage: 1Mi
