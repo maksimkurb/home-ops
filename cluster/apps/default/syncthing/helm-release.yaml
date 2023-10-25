@@ -48,8 +48,7 @@ spec:
       listen:
         controller: main
         type: LoadBalancer
-        externalIPs:
-          - ${SVC_SYNCTHING_ADDR}
+        loadBalancerIP: ${SVC_SYNCTHING_ADDR_LISTEN}
         externalTrafficPolicy: Local
         ports:
           listen:
@@ -60,8 +59,7 @@ spec:
       discovery:
         controller: main
         type: LoadBalancer
-        externalIPs:
-          - ${SVC_SYNCTHING_ADDR}
+        loadBalancerIP: ${SVC_SYNCTHING_ADDR_DISCOVERY}
         externalTrafficPolicy: Local
         ports:
           discovery:
