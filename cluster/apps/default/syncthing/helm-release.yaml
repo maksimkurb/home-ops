@@ -51,10 +51,15 @@ spec:
         loadBalancerIP: ${SVC_SYNCTHING_ADDR}
         externalTrafficPolicy: Local
         ports:
-          listen:
+          tcp:
             enabled: true
             port: 22000
             protocol: TCP
+            targetPort: 22000
+          udp:
+            enabled: true
+            port: 22000
+            protocol: UDP
             targetPort: 22000
           discovery:
             enabled: true
