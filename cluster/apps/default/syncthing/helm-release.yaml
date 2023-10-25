@@ -48,7 +48,7 @@ spec:
       listen:
         controller: main
         type: LoadBalancer
-        loadBalancerIP: ${SVC_SYNCTHING_ADDR_LISTEN}
+        loadBalancerIP: ${SVC_SYNCTHING_ADDR}
         externalTrafficPolicy: Local
         ports:
           listen:
@@ -56,12 +56,6 @@ spec:
             port: 22000
             protocol: TCP
             targetPort: 22000
-      discovery:
-        controller: main
-        type: LoadBalancer
-        loadBalancerIP: ${SVC_SYNCTHING_ADDR_DISCOVERY}
-        externalTrafficPolicy: Local
-        ports:
           discovery:
             enabled: true
             port: 21027
