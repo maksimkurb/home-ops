@@ -32,7 +32,7 @@ spec:
       nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/jellyfin
-      tag: 10.8.11@sha256:ff19aea84c7ee2bf95c5ef40ea08c6b14e085b35bd02ac3a0ee89d6dc64e6f92
+      tag: 10.8.11@sha256:acb5ea8fa8c9f3b893e870cefe539629af9e33ff84a7bcf1283a094883d2b7ff
     env:
       TZ: "${TIMEZONE}"
     service:
