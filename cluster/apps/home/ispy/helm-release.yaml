@@ -31,8 +31,8 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     image:
-      repository: doitandbedone/ispyagentdvr
-      tag: "5.0.7.0"
+      repository: ghcr.io/maksimkurb/ispyagentdvr-docker
+      tag: "latest"
     env:
       TZ: "${TIMEZONE}"
     service:
