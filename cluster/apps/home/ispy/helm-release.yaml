@@ -80,25 +80,94 @@ spec:
             port: 50010
             protocol: UDP
     ingress:
+      internal:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/server-snippet: |
+            location /_internal_rewrite {
+              set $namespace      "home";
+              set $ingress_name   "ispy";
+              set $service_name   "ispy";
+              set $service_port   "8090";
+              set $location_path  "/";
+              set $global_rate_limit_exceeding n;
+              rewrite_by_lua_block {
+                      lua_ingress.rewrite({
+                              force_ssl_redirect = false,
+                              ssl_redirect = true,
+                              force_no_ssl_redirect = false,
+                              preserve_trailing_slash = false,
+                              use_port_in_redirects = false,
+                              global_throttle = { namespace = "", limit = 0, window_size = 0, key = { }, ignored_cidrs = { } },
+                      })
+                      balancer.rewrite()
+                      plugins.run()
+              }
+              header_filter_by_lua_block {
+                      lua_ingress.header()
+                      plugins.run()
+              }
+              body_filter_by_lua_block {
+                      plugins.run()
+              }
+              log_by_lua_block {
+                      balancer.log()
+                      monitor.call()
+                      plugins.run()
+              }
+              port_in_redirect off;
+              set $balancer_ewma_score -1;
+              set $proxy_upstream_name "home-ispy-8090";
+              set $proxy_host          $proxy_upstream_name;
+              set $pass_access_scheme  $scheme;
+              set $pass_server_port    $server_port;
+              set $best_http_host      $http_host;
+              set $pass_port           $pass_server_port;
+              set $proxy_alternative_upstream_name "";
+              # this location requires authentication
+              add_header          Set-Cookie $auth_cookie;
+              set_escape_uri $escaped_request_uri $request_uri;
+              client_max_body_size                    100M;
+              proxy_set_header Host                   $best_http_host;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $connection_upgrade;
+              proxy_set_header Host $host;
+              proxy_set_header Proxy                  "";
+              proxy_connect_timeout                   5s;
+              proxy_send_timeout                      60s;
+              proxy_read_timeout                      60s;
+              proxy_buffering                         off;
+              proxy_buffer_size                       4k;
+              proxy_buffers                           4 4k;
+              proxy_max_temp_file_size                1024m;
+              proxy_request_buffering                 on;
+              proxy_http_version                      1.1;
+              proxy_cookie_domain                     off;
+              proxy_cookie_path                       off;
+              # In case of errors try the next upstream server before returning an error
+              proxy_next_upstream                     error timeout;
+              proxy_next_upstream_timeout             0;
+              proxy_next_upstream_tries               3;
+              rewrite /_internal_rewrite/(.*) /$1 break;
+              proxy_pass http://upstream_balancer;
+              proxy_redirect                          off;
+            }
+        hosts:
+          - host: "ispy-internal.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "ispy-internal.${SECRET_DOMAIN}"
+            secretName: "ispy-tls"
       main:
         enabled: true
         ingressClassName: "nginx"
         annotations:
-          # ForwardAuth start
-          nginx.ingress.kubernetes.io/auth-method: GET
-          nginx.ingress.kubernetes.io/auth-url: |-
-            http://authelia.security.svc.cluster.local:8000/api/verify
-          nginx.ingress.kubernetes.io/auth-signin: |-
-            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
-          nginx.ingress.kubernetes.io/auth-response-headers: |-
-            Remote-User,Remote-Name,Remote-Groups,Remote-Email
-          nginx.ingress.kubernetes.io/auth-snippet: |
-            proxy_set_header X-Forwarded-Method $request_method;
-          # ForwardAuth end
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
-          hajimari.io/icon: "mdi:cctv"
-          hajimari.io/group: "Home"
         hosts:
           - host: "ispy.${SECRET_DOMAIN}"
             paths:
