@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: ispy
+  name: codeproject-ai
   namespace: home
 spec:
   interval: 30m
@@ -64,7 +64,7 @@ spec:
         tls:
           - hosts:
               - "cpai.${SECRET_DOMAIN}"
-            secretName: "ispy-tls"
+            secretName: "codeproject-ai-tls"
     persistence:
       config:
         enabled: true
