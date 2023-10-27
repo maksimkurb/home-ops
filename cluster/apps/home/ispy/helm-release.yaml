@@ -124,7 +124,7 @@ spec:
         retain: true
       media:
         enabled: true
-        existingClaim: frigispy-media-nfs
+        existingClaim: ispy-media-nfs
         mountPath: /agent/Media/WebServerRoot/Media
         readOnly: false
     resources:
