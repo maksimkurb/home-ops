@@ -10,5 +10,8 @@ configMapGenerator:
   - name: cloudflare-proxied-networks
     files:
       - cloudflare-proxied-networks.txt
+  - name: nginx-config-template
+    files:
+      - nginx.tmpl
 generatorOptions:
   disableNameSuffixHash: true
