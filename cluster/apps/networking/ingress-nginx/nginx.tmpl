@@ -1416,26 +1416,35 @@ stream {
             {{ end }}
 
             {{/* MOD START */}}
-            # {{ $proxySetHeader }} X-Request-ID           $req_id;
-            # {{ $proxySetHeader }} X-Real-IP              $remote_addr;
-            # {{ if and $all.Cfg.UseForwardedHeaders $all.Cfg.ComputeFullForwardedFor }}
-            # {{ $proxySetHeader }} X-Forwarded-For        $full_x_forwarded_for;
-            # {{ else }}
-            # {{ $proxySetHeader }} X-Forwarded-For        $remote_addr;
-            # {{ end }}
-            # {{ $proxySetHeader }} X-Forwarded-Host       $best_http_host;
-            # {{ $proxySetHeader }} X-Forwarded-Port       $pass_port;
-            # {{ $proxySetHeader }} X-Forwarded-Proto      $pass_access_scheme;
-            # {{ $proxySetHeader }} X-Forwarded-Scheme     $pass_access_scheme;
-            # {{ if $all.Cfg.ProxyAddOriginalURIHeader }}
-            # {{ $proxySetHeader }} X-Original-URI         $request_uri;
-            # {{ end }}
-            # {{ $proxySetHeader }} X-Scheme               $pass_access_scheme;
+            set $setProxyHeaders true;
+
+            {{/* Add any additional configuration defined */}}
+            {{/* $location.ConfigurationSnippet */}}
+
+            if ($setProxyHeaders) {
+            {{/* MOD END */}}
+
+            {{ $proxySetHeader }} X-Request-ID           $req_id;
+            {{ $proxySetHeader }} X-Real-IP              $remote_addr;
+            {{ if and $all.Cfg.UseForwardedHeaders $all.Cfg.ComputeFullForwardedFor }}
+            {{ $proxySetHeader }} X-Forwarded-For        $full_x_forwarded_for;
+            {{ else }}
+            {{ $proxySetHeader }} X-Forwarded-For        $remote_addr;
+            {{ end }}
+            {{ $proxySetHeader }} X-Forwarded-Host       $best_http_host;
+            {{ $proxySetHeader }} X-Forwarded-Port       $pass_port;
+            {{ $proxySetHeader }} X-Forwarded-Proto      $pass_access_scheme;
+            {{ $proxySetHeader }} X-Forwarded-Scheme     $pass_access_scheme;
+            {{ if $all.Cfg.ProxyAddOriginalURIHeader }}
+            {{ $proxySetHeader }} X-Original-URI         $request_uri;
+            {{ end }}
+            {{ $proxySetHeader }} X-Scheme               $pass_access_scheme;
 
             # Pass the original X-Forwarded-For
-            # {{ $proxySetHeader }} X-Original-Forwarded-For {{ buildForwardedFor $all.Cfg.ForwardedForHeader }};
+            {{ $proxySetHeader }} X-Original-Forwarded-For {{ buildForwardedFor $all.Cfg.ForwardedForHeader }};
 
-            set $addForwardedHeaders true;
+            {{/* MOD START */}}
+            }
             {{/* MOD END */}}
 
             # mitigate HTTPoxy Vulnerability
@@ -1468,30 +1477,11 @@ stream {
             proxy_next_upstream_timeout             {{ $location.Proxy.NextUpstreamTimeout }};
             proxy_next_upstream_tries               {{ $location.Proxy.NextUpstreamTries }};
 
-            {{/* Add any additional configuration defined */}}
-            {{ $location.ConfigurationSnippet }}
-
             {{/* MOD START */}}
-            if ($addForwardedHeaders) {
-                {{ $proxySetHeader }} X-Request-ID           $req_id;
-                {{ $proxySetHeader }} X-Real-IP              $remote_addr;
-                {{ if and $all.Cfg.UseForwardedHeaders $all.Cfg.ComputeFullForwardedFor }}
-                {{ $proxySetHeader }} X-Forwarded-For        $full_x_forwarded_for;
-                {{ else }}
-                {{ $proxySetHeader }} X-Forwarded-For        $remote_addr;
-                {{ end }}
-                {{ $proxySetHeader }} X-Forwarded-Host       $best_http_host;
-                {{ $proxySetHeader }} X-Forwarded-Port       $pass_port;
-                {{ $proxySetHeader }} X-Forwarded-Proto      $pass_access_scheme;
-                {{ $proxySetHeader }} X-Forwarded-Scheme     $pass_access_scheme;
-                {{ if $all.Cfg.ProxyAddOriginalURIHeader }}
-                {{ $proxySetHeader }} X-Original-URI         $request_uri;
-                {{ end }}
-                {{ $proxySetHeader }} X-Scheme               $pass_access_scheme;
 
-                # Pass the original X-Forwarded-For
-                {{ $proxySetHeader }} X-Original-Forwarded-For {{ buildForwardedFor $all.Cfg.ForwardedForHeader }};
-            }
+            {{/* Add any additional configuration defined */}}
+            {{/* $location.ConfigurationSnippet */}}
+
             {{/* MOD END */}}
 
             {{ if not (empty $all.Cfg.LocationSnippet) }}
