@@ -61,6 +61,8 @@ spec:
         proxy-body-size: "100M"
         ssl-protocols: "TLSv1.3 TLSv1.2"
         use-forwarded-headers: "true"
+        plugins:
+          - drop_x_headers
       metrics:
         enabled: true
         serviceMonitor:
@@ -81,19 +83,12 @@ spec:
       podAnnotations:
         configmap.reloader.stakater.com/reload: "cloudflare-proxied-networks"
       extraVolumeMounts:
-        - name: plugins
-          mountPath: /etc/nginx/lua/plugins/
+        - name: nginx-plugin-drop-x-headers
+          mountPath: /etc/nginx/lua/plugins/drop_x_headers
       extraVolumes:
-        - name: plugins
+        - name: nginx-plugin-drop-x-headers
           configMap:
-            name: nginx-ingress-configs
-            items:
-              - key: dropXHeaders.lua
-                path: dropXHeaders.lua
-          type: configMap
-          subPath: dropXHeaders.lua
-          mountPath: /config/repository.config
-          readOnly: true
+            name: nginx-plugin-drop-x-headers
       resources:
         requests:
           cpu: 10m

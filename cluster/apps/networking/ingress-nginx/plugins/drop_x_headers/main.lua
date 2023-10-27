@@ -2,7 +2,7 @@ local ngx = ngx
 
 local _M = {}
 
-function _M.header_filter()
+function _M.rewrite()
   if not ngx.var.dropXHeaders then
     return
   end
