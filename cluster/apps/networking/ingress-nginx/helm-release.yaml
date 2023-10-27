@@ -36,9 +36,9 @@ spec:
       extraEnvs:
         - name: TZ
           value: "${TIMEZONE}"
-      customTemplate:
-        configMapName: "nginx-config-template"
-        configMapKey: "nginx.tmpl"
+      # customTemplate:
+      #   configMapName: "nginx-config-template"
+      #   configMapKey: "nginx.tmpl"
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
         externalTrafficPolicy: Local
@@ -80,6 +80,20 @@ spec:
               app.kubernetes.io/component: controller
       podAnnotations:
         configmap.reloader.stakater.com/reload: "cloudflare-proxied-networks"
+      extraVolumeMounts:
+        - name: plugins
+          mountPath: /etc/nginx/lua/plugins/
+      extraVolumes:
+        - name: plugins
+          configMap:
+            name: nginx-ingress-configs
+            items:
+              - key: dropXHeaders.lua
+                path: dropXHeaders.lua
+          type: configMap
+          subPath: dropXHeaders.lua
+          mountPath: /config/repository.config
+          readOnly: true
       resources:
         requests:
           cpu: 10m
