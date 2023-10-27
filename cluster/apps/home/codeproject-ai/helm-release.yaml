@@ -1,0 +1,93 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ispy
+  namespace: home
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
+      chart: app-template
+      version: 1.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                  operator: In
+                  values:
+                    - "true"
+    runtimeClassName: nvidia
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    image:
+      repository: codeproject/ai-server
+      tag: "gpu-2.2.4"
+    env:
+      TZ: "${TIMEZONE}"
+    service:
+      main:
+        ports:
+          http:
+            port: 32168
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+        hosts:
+          - host: "cpai.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - "cpai.${SECRET_DOMAIN}"
+            secretName: "ispy-tls"
+    persistence:
+      config:
+        enabled: true
+        type: pvc
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        mountPath: /etc/codeproject/ai
+        storageClass: nfs-proxmox
+        retain: true
+      modules:
+        enabled: true
+        type: pvc
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        mountPath: /app/modules
+        storageClass: nfs-proxmox
+        retain: true
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+        nvidia.com/gpu: "1"
+      limits:
+        cpu: 2000m
+        memory: 1500Mi
+        nvidia.com/gpu: "1"
