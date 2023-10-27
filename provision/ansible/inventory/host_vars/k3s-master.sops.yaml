@@ -1,6 +1,8 @@
 kind: Secret
 ansible_become_pass: ENC[AES256_GCM,data:Js6ygQRxkbBO9r/qssg6qvE=,iv:6dj6PFU7Po3rIgFYEu6iUaXOwZ+zl8+G0WnKOffh4jA=,tag:sFquZnffidj3cz/H7U5CBA==,type:str]
 node_ip: ENC[AES256_GCM,data:baUUyo+zX4bEUoI=,iv:4ijc1iOODTkofCdK45sb0wmypzEmlP/RTmHClPxttws=,tag:P+loh4FNCbD304/BqQN23Q==,type:str]
+ntp_primary_server: ENC[AES256_GCM,data:8RNoLaea1ofiL6Av,iv:5hQr54fzV2Pv1zuE+OpWTI7ZG/qWaU1ijrJjEalR7g0=,tag:5LR+423llT515YV2eOvQOw==,type:str]
+ntp_secondary_server: ENC[AES256_GCM,data:ZCTu/O8VIkaN3mJt,iv:eQ1xpLKsZXLXyS1VBHpxepT7UHc3g9SgKIXchR2MVpI=,tag:Nagt6Y3jk2D732EFDKepnw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -16,8 +18,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-05-06T23:28:49Z"
-    mac: ENC[AES256_GCM,data:/q4XiDr4z3/k3iY/PqrezRNcHfBTd6eLpZ6qSiTKdLtGYU9TiIvinX75WLDsWkxlsW0TNzOElw2Mbq5QHI5QEGRYrg7cl+Yfv50PuFmBXhZsia67FV5ITHjTdCXtepTBKyvKEJ65I0A4we5mWQ0K50zhFhuG9o0zkOwiNTO//aY=,iv:GA8VL9JQ213Gb99AXaZtKnoZNNPubdmgZYEApXwBrbU=,tag:eGrpgEPBXYi8IW4+NoYNlg==,type:str]
+    lastmodified: "2023-10-27T19:33:10Z"
+    mac: ENC[AES256_GCM,data:d7K6n/isXsIEvWbEXU3oS2Cs6bPaVlBHt7hgh11rX3dwPu8aRVn0Y72rAgKRiu7bMxy8V3bpVRPjoTfW5wPmmFR07NmS7x1JeqYaTeAbTxliV8QlI8M4I/qei43smfUIv2+lpIczdZpLzKVCBzgxH7Cm3yuAzP+wqnl5PWQSHHY=,iv:9dVhl6oZTsWrQ7XpUVTSgu5L0cpsp5bgkgjpP5zZEis=,tag:gtUjh7RuCjqEFgadc65+Nw==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

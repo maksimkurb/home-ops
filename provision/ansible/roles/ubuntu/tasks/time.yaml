@@ -1,0 +1,14 @@
+---
+- name: Update NTP config
+  template:
+    dest: "/etc/systemd/timesyncd.conf"
+    src: "timesyncd.j2"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Start systemd-timesyncd service
+  ansible.builtin.systemd:
+    name: systemd-timesyncd
+    enabled: true
+    state: restarted
