@@ -2,6 +2,8 @@ local ngx = ngx
 
 local _M = {}
 
+-- Do not working with proxy_set_header sadly
+
 function _M.rewrite()
   if not ngx.var.dropXHeaders then
     return

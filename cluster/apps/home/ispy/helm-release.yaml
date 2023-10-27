@@ -85,6 +85,18 @@ spec:
         ingressClassName: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/configuration-snippet: |
+            set $xRequestId "";
+            set $xRealIp "";
+            set $xForwardedFor "";
+            set $xForwardedHost "";
+            set $xForwardedPort "";
+            set $xForwardedProto "";
+            set $xForwardedScheme "";
+            set $xOriginalUri "";
+            set $xOriginalUri "";
+            set $xScheme "";
+            set $xOriginalForwardedFor "";
+
             access_by_lua_block {
               if not ngx.var.request_uri or
                 not string.match(ngx.var.request_uri, "cmd.json")

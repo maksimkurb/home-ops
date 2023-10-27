@@ -36,9 +36,9 @@ spec:
       extraEnvs:
         - name: TZ
           value: "${TIMEZONE}"
-      # customTemplate:
-      #   configMapName: "nginx-config-template"
-      #   configMapKey: "nginx.tmpl"
+      customTemplate:
+        configMapName: "nginx-ingress-configs"
+        configMapKey: "nginx.tmpl"
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
         externalTrafficPolicy: Local
@@ -61,7 +61,7 @@ spec:
         proxy-body-size: "100M"
         ssl-protocols: "TLSv1.3 TLSv1.2"
         use-forwarded-headers: "true"
-        plugins: "drop_x_headers"
+        plugins: ""
       metrics:
         enabled: true
         serviceMonitor:
