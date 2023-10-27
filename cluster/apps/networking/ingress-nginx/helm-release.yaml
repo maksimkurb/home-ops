@@ -61,8 +61,7 @@ spec:
         proxy-body-size: "100M"
         ssl-protocols: "TLSv1.3 TLSv1.2"
         use-forwarded-headers: "true"
-        plugins:
-          - drop_x_headers
+        plugins: "drop_x_headers"
       metrics:
         enabled: true
         serviceMonitor:
