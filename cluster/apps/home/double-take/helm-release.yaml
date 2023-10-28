@@ -31,7 +31,7 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     image:
-      repository: docker pull ghcr.io/skrashevich/double-take
+      repository: ghcr.io/skrashevich/double-take
       tag: "latest"
     env:
       TZ: "${TIMEZONE}"
