@@ -36,9 +36,9 @@ spec:
       extraEnvs:
         - name: TZ
           value: "${TIMEZONE}"
-      customTemplate:
-        configMapName: "nginx-ingress-configs"
-        configMapKey: "nginx.tmpl"
+      # customTemplate:
+      #   configMapName: "nginx-ingress-configs"
+      #   configMapKey: "nginx.tmpl"
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
         externalTrafficPolicy: Local
