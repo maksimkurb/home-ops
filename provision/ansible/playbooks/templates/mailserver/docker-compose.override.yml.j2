@@ -3,7 +3,23 @@ services:
       labels:
         traefik.enable: "true"
         traefik.http.services.nginx-mailcow.loadbalancer.server.port: "{{ mailcow__config_http_port }}"
-        traefik.http.routers.nginx-mailcow.rule: "Host(`{{ mail_hostname }}`)"
+        traefik.http.routers.nginx-mailcow.rule: "Host(`mail.{{ main_hostname }}`) || Host(`autoconfig.{{ main_hostname }}`) || Host(`autodiscover.{{ main_hostname }}`)"
         traefik.http.routers.nginx-mailcow.entrypoints: websecure
         traefik.http.routers.nginx-mailcow.tls.certresolver: le
         traefik.http.routers.nginx-mailcow.tls: "true"
+    certdumper:
+      image: ghcr.io/kereis/traefik-certs-dumper:edge
+      command: --restart-containers ${COMPOSE_PROJECT_NAME}_postfix-mailcow_1,${COMPOSE_PROJECT_NAME}_nginx-mailcow_1,${COMPOSE_PROJECT_NAME}_dovecot-mailcow_1
+      network_mode: none
+      volumes:
+        # Mount the volume which contains Traefik's `acme.json' file
+        #   Configure the external name in the volume definition
+        - /opt/traefik:/traefik:ro
+        # Mount mailcow's SSL folder
+        - ./data/assets/ssl/:/output:rw
+        # Mount docker socket to restart containers
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+      restart: always
+      environment:
+        # only change this, if you're using another domain for mailcow's web frontend compared to the standard config
+        - DOMAIN={{ mail_hostname }}
