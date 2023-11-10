@@ -40,7 +40,7 @@ spec:
                     - "true"
     image:
       repository: ghcr.io/home-assistant/home-assistant
-      tag: 2023.11.1
+      tag: 2023.11.2
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
