@@ -70,6 +70,7 @@ spec:
             }
           nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
           hajimari.io/appName: "Immich"
           hajimari.io/icon: image
         hosts:
