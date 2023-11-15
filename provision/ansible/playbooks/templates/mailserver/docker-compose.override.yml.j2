@@ -23,3 +23,16 @@ services:
       environment:
         # only change this, if you're using another domain for mailcow's web frontend compared to the standard config
         - DOMAIN={{ mail_hostname }}
+    dovecot-mailcow:
+      ports:
+        - '[{{ external_ipv6 }}]:143:143'
+        - '[{{ external_ipv6 }}]:993:993'
+        - '[{{ external_ipv6 }}]:110:110'
+        - '[{{ external_ipv6 }}]:995:995'
+        - '[{{ external_ipv6 }}]:4190:4190'
+
+    postfix-mailcow:
+      ports:
+        - '[{{ external_ipv6 }}]:25:25'
+        - '[{{ external_ipv6 }}]:465:465'
+        - '[{{ external_ipv6 }}]:587:587'
