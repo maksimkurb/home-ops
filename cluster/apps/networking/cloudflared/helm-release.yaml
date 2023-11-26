@@ -27,7 +27,7 @@ spec:
   uninstall:
     keepHistory: false
   dependsOn:
-    - name: ingress-nginx-controller
+    - name: ingress-nginx
       namespace: networking
   values:
     controllers:
