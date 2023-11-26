@@ -6,6 +6,7 @@ resources:
   - ./secret.sops.yaml
   - ./helm-release.yaml
 
+namespace: networking
 configMapGenerator:
   - name: cloudflared-configmap
     files:
