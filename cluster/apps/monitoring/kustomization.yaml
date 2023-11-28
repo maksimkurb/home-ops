@@ -8,7 +8,7 @@ resources:
   # - grafana
   # - intel-gpu-exporter
   # - kube-prometheus-stack
-  #- loki
+  - loki
   # - node-problem-detector
   # - snmp-exporter
   # - speedtest-exporter
