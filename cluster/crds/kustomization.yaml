@@ -8,3 +8,4 @@ resources:
   - kube-prometheus-stack
   - kyverno
   - zalando
+  - victoria-metrics

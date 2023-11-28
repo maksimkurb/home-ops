@@ -1,0 +1,30 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: victoria-metrics-k8s-stack-source
+  namespace: flux-system
+spec:
+  interval: 12h
+  url: https://github.com/VictoriaMetrics/helm-charts.git
+  ref:
+    # renovate: registryUrl=https://github.com/VictoriaMetrics/helm-charts chart=victoria-metrics-k8s-stack
+    tag: victoria-metrics-k8s-stack-0.18.8
+  ignore: |
+    # exclude all
+    /*
+    # include crd directory
+    !/charts/victoria-metrics-k8s-stack/charts/crds
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: crds-victoria-metrics-k8s-stack
+  namespace: flux-system
+spec:
+  interval: 30m
+  prune: false
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: victoria-metrics-k8s-stack-source
