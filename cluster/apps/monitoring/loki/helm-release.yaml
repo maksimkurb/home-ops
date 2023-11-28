@@ -118,7 +118,7 @@ spec:
       replicas: 2
       persistence:
         size: 10Gi
-        storageClass: ceph-block
+        storageClass: nfs-proxmox
     read:
       replicas: 2
       extraVolumeMounts:
