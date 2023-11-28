@@ -5,10 +5,25 @@ metadata:
   name: pve-node-exporter-external
   namespace: monitoring
 spec:
-  type: ExternalName
-  externalName: ${PVE_HOST_IP}
+  selector:
+    app.kubernetes.io/instance: pve-node-exporter
+    app.kubernetes.io/name: pve-node-exporter
   ports:
     - name: metrics
       protocol: TCP
       port: 9100
       targetPort: 9100
+---
+apiVersion: v1
+kind: Endpoints
+labels:
+  app.kubernetes.io/instance: pve-node-exporter
+  app.kubernetes.io/name: pve-node-exporter
+metadata:
+  name: pve-node-exporter-external
+  namespace: monitoring
+subsets:
+  - addresses:
+      - ip: ${PVE_HOST_IP}
+    ports:
+      - port: 9100
