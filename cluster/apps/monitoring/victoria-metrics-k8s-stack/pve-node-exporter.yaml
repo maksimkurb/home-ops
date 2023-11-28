@@ -12,7 +12,7 @@ spec:
     - name: metrics
       protocol: TCP
       port: 9100
-      targetPort: 9100
+      targetPort: metrics
 ---
 apiVersion: v1
 kind: Endpoints
@@ -27,3 +27,4 @@ subsets:
       - ip: ${PVE_HOST_IP}
     ports:
       - port: 9100
+        name: metrics
