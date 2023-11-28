@@ -16,12 +16,12 @@ spec:
 ---
 apiVersion: v1
 kind: Endpoints
-labels:
-  app.kubernetes.io/instance: pve-node-exporter
-  app.kubernetes.io/name: pve-node-exporter
 metadata:
   name: pve-node-exporter-external
   namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: pve-node-exporter
+    app.kubernetes.io/name: pve-node-exporter
 subsets:
   - addresses:
       - ip: ${PVE_HOST_IP}
