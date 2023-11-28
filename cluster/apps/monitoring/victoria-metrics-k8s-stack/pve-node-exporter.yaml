@@ -5,9 +5,6 @@ metadata:
   name: pve-node-exporter-external
   namespace: monitoring
 spec:
-  selector:
-    app.kubernetes.io/instance: pve-node-exporter
-    app.kubernetes.io/name: pve-node-exporter
   ports:
     - name: metrics
       protocol: TCP
@@ -19,9 +16,6 @@ kind: Endpoints
 metadata:
   name: pve-node-exporter-external
   namespace: monitoring
-  labels:
-    app.kubernetes.io/instance: pve-node-exporter
-    app.kubernetes.io/name: pve-node-exporter
 subsets:
   - addresses:
       - ip: ${PVE_HOST_IP}
