@@ -90,7 +90,7 @@ spec:
         datasources:
           - name: Prometheus
             type: prometheus
-            url: http://vector-aggregator:9090
+            url: http://vmsingle-vm-k8s-stack.monitoring.svc:8429
             access: proxy
             isDefault: true
           - name: Loki
