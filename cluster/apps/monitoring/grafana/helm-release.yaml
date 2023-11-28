@@ -68,7 +68,7 @@ spec:
         name_attribute_path: name
         use_pkce: true
         role_attribute_path: |
-          contains(groups[*], 'monitor-admins') && 'Admin' || contains(groups[*], 'monitor-editors') && 'Editor' || contains(groups[*], 'monitor-viewers') && 'Viewer'
+          contains(groups[*], 'admins') && 'Admin'
     dashboardProviders:
       dashboardproviders.yaml:
         apiVersion: 1
@@ -93,7 +93,7 @@ spec:
         datasources:
           - name: Prometheus
             type: prometheus
-            url: http://thanos-query:9090
+            url: http://vector-aggregator:9090
             access: proxy
             isDefault: true
           - name: Loki
