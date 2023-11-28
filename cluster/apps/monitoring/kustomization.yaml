@@ -9,6 +9,7 @@ resources:
   # - intel-gpu-exporter
   # - kube-prometheus-stack
   - loki
+  - nodeexporter
   # - node-problem-detector
   # - snmp-exporter
   # - speedtest-exporter
