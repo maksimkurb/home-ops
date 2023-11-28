@@ -9,7 +9,7 @@ resources:
   - home
   - kube-system
   - media
-  # - monitoring
+  - monitoring
   - networking
   - security
   # - vpn-gateway

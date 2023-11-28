@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: vector
-      version: 0.21.1
+      version: 0.29.0
       sourceRef:
         kind: HelmRepository
         name: vector-charts
@@ -28,7 +28,7 @@ spec:
   values:
     image:
       repository: timberio/vector
-      tag: 0.29.1-debian
+      tag: 0.34.1-distroless-libc
     role: Agent
     customConfig:
       data_dir: /vector-data-dir

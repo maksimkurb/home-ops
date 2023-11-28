@@ -1,0 +1,44 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: victoria-metrics-stack
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: victoria-metrics-stack
+      version: 0.18.8
+      sourceRef:
+        kind: HelmRepository
+        name: victoria-metrics-k8s-stack-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    grafana:
+      enabled: false
+    vmagent:
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - &vmagent-host "vmagent.${SECRET_DOMAIN}"
+        tls:
+          - hosts:
+              - *vmagent-host
+    vmsingle:
+      spec:
+        storage:
+          storageClassName: "nfs-proxmox"
+          resources:
+            requests:
+              storage: 30Gi
+    prometheus-node-exporter:
+      enabled: false

@@ -1,0 +1,13 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: scrape-all-services
+  namespace: monitoring
+spec:
+  discoveryRole: "endpoints"
+  jobLabel: "app.kubernetes.io/name"
+  endpoints:
+    - port: metrics
+  namespaceSelector:
+    any: true
+  selector: {}

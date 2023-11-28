@@ -1,0 +1,35 @@
+---
+# https://github.com/VictoriaMetrics/VictoriaMetrics/issues/1033#issuecomment-773238961
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: pod-scrape-all
+  namespace: monitoring
+spec:
+  podMetricsEndpoints:
+    - scheme: http
+      relabelConfigs:
+        - sourceLabels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+          action: keep
+          regex: "true"
+        - sourceLabels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+          action: replace
+          targetLabel: __scheme__
+          regex: (https?)
+        - sourceLabels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_path
+          action: replace
+          targetLabel: __metrics_path__
+          regex: (.+)
+        - sourceLabels:
+            - __address__
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          action: replace
+          targetLabel: __address__
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+  selector: {}
+  namespaceSelector:
+    any: true
