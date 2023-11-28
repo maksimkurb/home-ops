@@ -138,7 +138,7 @@ spec:
           emptyDir: {}
       persistence:
         size: 10Gi
-        storageClass: ceph-block
+        storageClass: nfs-proxmox
     monitoring:
       selfMonitoring:
         enabled: false
