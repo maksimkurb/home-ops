@@ -24,6 +24,7 @@ spec:
   values:
     grafana:
       enabled: false
+    fullnameOverride: "vm-k8s-stack"
     vmagent:
       ingress:
         enabled: true
