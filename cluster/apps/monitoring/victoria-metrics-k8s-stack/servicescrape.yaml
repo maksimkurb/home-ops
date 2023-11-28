@@ -8,7 +8,7 @@ spec:
   jobLabel: "app.kubernetes.io/name"
   endpoints:
     - port: metrics
-      relabelings:
+      relabelConfigs:
         - action: replace
           regex: (.*)
           replacement: $1
