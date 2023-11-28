@@ -166,8 +166,8 @@
           "2405:8100::/32",
           "2a06:98c0::/29",
           "2c0f:f248::/32",
-          "192.168.42.5",
-          "1.5.0.1"
+          "${PVE_HOST_IP}",
+          "${SVC_NGINX_ADDR}"
         ],
         "client_ip_proxy_header": "X-Real-IP",
         "client_ip_header_depth": 0,
@@ -300,8 +300,8 @@
           "2405:8100::/32",
           "2a06:98c0::/29",
           "2c0f:f248::/32",
-          "192.168.42.5",
-          "1.5.0.1"
+          "${PVE_HOST_IP}",
+          "${SVC_NGINX_ADDR}"
         ],
         "client_ip_proxy_header": "X-Real-Ip",
         "client_ip_header_depth": 0,
