@@ -82,9 +82,6 @@ spec:
             options:
               path: /var/lib/grafana/dashboards/default
     datasources:
-      deleteDatasources:
-        - name: Loki
-          orgId: 1
       datasources.yaml:
         apiVersion: 1
         deleteDatasources:
