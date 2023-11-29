@@ -34,7 +34,7 @@ spec:
       main:
         ports:
           http:
-            port: &port 3128
+            port: &port 8888
 
     resources:
       requests:
