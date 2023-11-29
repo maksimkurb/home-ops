@@ -41,5 +41,13 @@ spec:
           resources:
             requests:
               storage: 30Gi
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - &vmsingle-host "vmsingle.${SECRET_DOMAIN}"
+        tls:
+          - hosts:
+              - *vmsingle-host
     prometheus-node-exporter:
       enabled: false
