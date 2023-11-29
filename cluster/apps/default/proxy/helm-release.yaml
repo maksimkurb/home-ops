@@ -33,7 +33,7 @@ spec:
     service:
       main:
         ports:
-          proxy:
+          http:
             port: &port 3128
 
     persistence:
