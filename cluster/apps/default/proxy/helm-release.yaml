@@ -61,7 +61,7 @@ spec:
               VPN_INTERFACE: wg0
             envFrom:
               - secretRef:
-                  name: squid-vpn-v1
+                  name: gluetun-vpn-v1
             # Configure the container-specific securityContext
             securityContext:
               capabilities:
