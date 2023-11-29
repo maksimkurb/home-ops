@@ -1,0 +1,86 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app proxy
+  namespace: default
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+
+    podAnnotations:
+      setGateway: "true"
+
+    env:
+      TZ: "${TIMEZONE}"
+
+    service:
+      main:
+        ports:
+          proxy:
+            port: &port 3128
+
+    persistence:
+      config:
+        enabled: true
+        type: secret
+        name: squid-config-v1
+        advancedMounts:
+          main: # the controller with the "main" identifier
+            main: # the container with the "main" identifier
+              - path: /etc/squid/squid.conf
+                readOnly: true
+                subPath: squid.conf
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 500Mi
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ubuntu/squid
+              tag: 6.1-23.10_beta
+      gluetun:
+        dependsOn: main
+        image:
+          # -- image repository
+          repository: ghcr.io/qdm12/gluetun
+          # -- image tag
+          # this example is not automatically updated, so be sure to use the latest image
+          tag: latest
+        # -- environment variables.
+        # See [image docs](https://github.com/qdm12/gluetun-wiki) for more details on how to configure
+        # your VPN and how to set up port-forwarding.
+        env:
+          VPN_TYPE: wireguard
+          VPN_INTERFACE: wg0
+        envFrom:
+          - secretRef:
+              name: squid-vpn-v1
+        # Configure the container-specific securityContext
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
