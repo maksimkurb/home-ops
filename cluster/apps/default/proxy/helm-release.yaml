@@ -62,25 +62,25 @@ spec:
             image:
               repository: ubuntu/squid
               tag: 6.1-23.10_beta
-      gluetun:
-        dependsOn: main
-        image:
-          # -- image repository
-          repository: ghcr.io/qdm12/gluetun
-          # -- image tag
-          # this example is not automatically updated, so be sure to use the latest image
-          tag: latest
-        # -- environment variables.
-        # See [image docs](https://github.com/qdm12/gluetun-wiki) for more details on how to configure
-        # your VPN and how to set up port-forwarding.
-        env:
-          VPN_TYPE: wireguard
-          VPN_INTERFACE: wg0
-        envFrom:
-          - secretRef:
-              name: squid-vpn-v1
-        # Configure the container-specific securityContext
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
+          gluetun:
+            dependsOn: main
+            image:
+              # -- image repository
+              repository: ghcr.io/qdm12/gluetun
+              # -- image tag
+              # this example is not automatically updated, so be sure to use the latest image
+              tag: latest
+            # -- environment variables.
+            # See [image docs](https://github.com/qdm12/gluetun-wiki) for more details on how to configure
+            # your VPN and how to set up port-forwarding.
+            env:
+              VPN_TYPE: wireguard
+              VPN_INTERFACE: wg0
+            envFrom:
+              - secretRef:
+                  name: squid-vpn-v1
+            # Configure the container-specific securityContext
+            securityContext:
+              capabilities:
+                add:
+                  - NET_ADMIN
