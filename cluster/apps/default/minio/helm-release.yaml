@@ -64,7 +64,7 @@ spec:
           hajimari.io/appName: "MinIO"
           hajimari.io/icon: progress-upload
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
-          nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+          nginx.ingress.kubernetes.io/proxy-body-size: 200g
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/configuration-snippet: |
             chunked_transfer_encoding off;
