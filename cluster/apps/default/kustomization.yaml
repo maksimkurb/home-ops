@@ -7,7 +7,7 @@ resources:
   - syncthing
   # - filestash
   - hajimari
-  - proxy
+  - gluetun
   - kopia
   - minio
   - uptime-kuma
