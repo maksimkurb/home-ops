@@ -36,18 +36,6 @@ spec:
           http:
             port: &port 3128
 
-    persistence:
-      config:
-        enabled: true
-        type: secret
-        name: squid-config-v1
-        advancedMounts:
-          main: # the controller with the "main" identifier
-            main: # the container with the "main" identifier
-              - path: /etc/squid/squid.conf
-                readOnly: true
-                subPath: squid.conf
-
     resources:
       requests:
         cpu: 10m
@@ -59,11 +47,6 @@ spec:
       main:
         containers:
           main:
-            image:
-              repository: ubuntu/squid
-              tag: 6.1-23.10_beta
-          gluetun:
-            dependsOn: main
             image:
               # -- image repository
               repository: ghcr.io/qdm12/gluetun
