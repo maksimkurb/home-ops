@@ -57,6 +57,7 @@ spec:
             # See [image docs](https://github.com/qdm12/gluetun-wiki) for more details on how to configure
             # your VPN and how to set up port-forwarding.
             env:
+              HTTPPROXY: "on"
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
             envFrom:
