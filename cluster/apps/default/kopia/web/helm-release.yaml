@@ -92,20 +92,20 @@ spec:
           - path: /config/repository.config
       source:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         existingClaim: kopia-data-nfs
         readOnly: true
         globalMounts:
           - path: /data
       restore:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         existingClaim: kopia-data-nfs-rw
         globalMounts:
           - path: /data-rw
       snapshots:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         existingClaim: kopia-snapshots-nfs
         globalMounts:
           - path: /snapshots
