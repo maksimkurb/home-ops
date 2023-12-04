@@ -86,10 +86,12 @@ spec:
         enabled: true
         type: configMap
         name: *app
-        subPath: repository.config
         readOnly: true
-        globalMounts:
-          - path: /config/repository.config
+        advancedMounts:
+          main:
+            main:
+              - path: /config/repository.config
+                subPath: repository.config
       source:
         enabled: true
         type: persistentVolumeClaim
