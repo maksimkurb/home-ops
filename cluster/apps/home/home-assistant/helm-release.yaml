@@ -44,6 +44,7 @@ spec:
             port: 8123
       codeserver:
         enabled: true
+        controller: main
         ports:
           http:
             port: 8080
