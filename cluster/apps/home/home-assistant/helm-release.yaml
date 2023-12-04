@@ -112,16 +112,15 @@ spec:
         enabled: true
         type: secret
         name: home-assistant-secrets-yaml
-        readOnly: true
         advancedMounts:
           main:
             main:
-              - path: secrets_yaml
+              - subPath: secrets_yaml
                 readOnly: true
-                mountPath: /config/secrets.yaml
-              - path: auth_oicd_ini
+                path: /config/secrets.yaml
+              - subPath: auth_oicd_ini
                 readOnly: true
-                mountPath: /config/scripts/auth-oidc.ini
+                path: /config/scripts/auth-oidc.ini
       usb:
         enabled: true
         type: hostPath
