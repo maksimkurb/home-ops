@@ -65,6 +65,16 @@ fs.readFile(fileName, "utf8", (err, data) => {
   )
 
   move(
+    ["spec", "values", "affinity"],
+    ["spec", "values", "defaultPodOptions", "affinity"]
+  )
+
+  move(
+    ["spec", "values", "runtimeClassName"],
+    ["spec", "values", "defaultPodOptions", "runtimeClassName"]
+  )
+
+  move(
     ["spec", "values", "podSecurityContext"],
     ["spec", "values", "defaultPodOptions", "securityContext"]
   )
