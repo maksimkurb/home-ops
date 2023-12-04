@@ -53,6 +53,7 @@ spec:
 
     ingress:
       main:
+        enabled: true
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
