@@ -13,17 +13,17 @@ if (!fileName) {
 
 function assertInstanceOf(actual, type, message) {
   if (!actual instanceof type) {
-    console.error(message);
-    console.error(`actual: ${typeof actual}, expected: ${type}`);
-    process.exit(1);
+    console.error(message)
+    console.error(`actual: ${typeof actual}, expected: ${type}`)
+    process.exit(1)
   }
 }
 
 function assertEquals(actual, expected, message) {
   if (actual !== expected) {
-    console.error(message);
-    console.error(`actual: ${actual}, expected: ${expected}`);
-    process.exit(1);
+    console.error(message)
+    console.error(`actual: ${actual}, expected: ${expected}`)
+    process.exit(1)
   }
 }
 
@@ -36,122 +36,145 @@ fs.readFile(fileName, "utf8", (err, data) => {
   }
 
   // Parse the YAML data
-  let obj = parseDocument(data);
+  let obj = parseDocument(data)
 
-  assertInstanceOf(obj, YAMLMap, "Yaml document must be a map");
-
-  let kind = obj.get("kind");
-  assertEquals(kind, "HelmRelease", "You must provide HelmRelease file");
-
-  let chart = obj.getIn(["spec", "chart", "spec", "chart"]);
-  assertEquals(chart, "app-template", "Unexpected chart name");
-
-  let version = obj.getIn(["spec", "chart", "spec", "version"]);
-  assertEquals(version, "1.5.1", "Unexpected chart version");
-
-  obj.setIn(["spec", "chart", "spec", "version"], "2.3.0");
-
-  let securityContext = obj.getIn(["spec", "values", "podSecurityContext"]);
-  if (securityContext != null) {
-    obj.setIn(["spec", "values", "defaultPodOptions", "securityContext"], securityContext);
-    obj.deleteIn(["spec", "values", "podSecurityContext"]);
-  }
-
-  let image = obj.getIn(["spec", "values", "image"]);
-  if (image != null) {
-    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "image"], image);
-    obj.deleteIn(["spec", "values", "image"]);
-  }
-
-  let args = obj.getIn(["spec", "values", "args"]);
-  if (args != null) {
-    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "args"], args);
-    obj.deleteIn(["spec", "values", "args"]);
-  }
-
-  let command = obj.getIn(["spec", "values", "command"]);
-  if (command != null) {
-    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "command"], command);
-    obj.deleteIn(["spec", "values", "command"]);
-  }
-
-  let env = obj.getIn(["spec", "values", "env"]);
-  if (env != null) {
-    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "env"], env);
-    obj.deleteIn(["spec", "values", "env"]);
-  }
-
-  let probes = obj.getIn(["spec", "values", "probes"]);
-  if (probes != null) {
-    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "probes"], probes);
-    obj.deleteIn(["spec", "values", "probes"]);
-  }
-
-  let services = obj.getIn(["spec", "values", "service"]);
-  let mainServiceName = "main";
-  let mainPortName = "http";
-  if (services != null && services instanceof YAMLMap) {
-    let mainService = services.items.at(0);
-    mainServiceName = mainService.key;
-    if (mainService.value.get("ports") != null) {
-      mainPortName = mainService.value.get("ports").items.at(0).key;
+  function move(from, to) {
+    let value = obj.getIn(from)
+    if (value != null) {
+      obj.setIn(to, value)
+      obj.deleteIn(from)
     }
   }
 
-  let ingress = obj.getIn(["spec", "values", "ingress"]);
+  assertInstanceOf(obj, YAMLMap, "Yaml document must be a map")
+
+  let kind = obj.get("kind")
+  assertEquals(kind, "HelmRelease", "You must provide HelmRelease file")
+
+  let chart = obj.getIn(["spec", "chart", "spec", "chart"])
+  assertEquals(chart, "app-template", "Unexpected chart name")
+
+  let version = obj.getIn(["spec", "chart", "spec", "version"])
+  assertEquals(version, "1.5.1", "Unexpected chart version")
+
+  obj.setIn(["spec", "chart", "spec", "version"], "2.3.0")
+
+  move(
+    ["spec", "values", "podAnnotations"],
+    ["spec", "values", "defaultPodOptions", "annotations"]
+  )
+
+  move(
+    ["spec", "values", "podSecurityContext"],
+    ["spec", "values", "defaultPodOptions", "securityContext"]
+  )
+
+  move(
+    ["spec", "values", "image"],
+    ["spec", "values", "controllers", "main", "containers", "main", "image"]
+  )
+
+  move(
+    ["spec", "values", "args"],
+    ["spec", "values", "controllers", "main", "containers", "main", "args"]
+  )
+
+  move("spec", "values", "command", [
+    "spec",
+    "values",
+    "controllers",
+    "main",
+    "containers",
+    "main",
+    "command",
+  ])
+
+  move(
+    ["spec", "values", "env"],
+    ["spec", "values", "controllers", "main", "containers", "main", "env"]
+  )
+
+  move(
+    ["spec", "values", "envFrom"],
+    ["spec", "values", "controllers", "main", "containers", "main", "envFrom"]
+  )
+
+  move(
+    ["spec", "values", "probes"],
+    ["spec", "values", "controllers", "main", "containers", "main", "probes"]
+  )
+
+  let services = obj.getIn(["spec", "values", "service"])
+  let mainServiceName = "main"
+  let mainPortName = "http"
+  if (services != null && services instanceof YAMLMap) {
+    let mainService = services.items.at(0)
+    mainServiceName = mainService.key
+    if (mainService.value.get("ports") != null) {
+      mainPortName = mainService.value.get("ports").items.at(0).key
+    }
+  }
+
+  let ingress = obj.getIn(["spec", "values", "ingress"])
   if (ingress != null && ingress instanceof YAMLMap) {
     ingress.items.forEach((item) => {
-      let ingressClassName = item.value.get("ingressClassName");
+      let ingressClassName = item.value.get("ingressClassName")
       if (ingressClassName != null) {
-        item.value.set("className", ingressClassName);
-        item.value.delete("ingressClassName");
+        item.value.set("className", ingressClassName)
+        item.value.delete("ingressClassName")
       }
 
-      let hosts = item.value.get("hosts");
+      let hosts = item.value.get("hosts")
 
       if (hosts != null && hosts instanceof YAMLSeq) {
         hosts.items.forEach((host) => {
-          let paths = host.get("paths");
+          let paths = host.get("paths")
           if (paths != null && paths instanceof YAMLSeq) {
             paths.items.forEach((path) => {
               path.set("service", {
                 name: "main",
-                port: mainPortName
-              });
-            });
+                port: mainPortName,
+              })
+            })
           }
-        });
+        })
       }
-    });
+    })
   }
 
-  let persistences = obj.getIn(["spec", "values", "persistence"]);
+  let persistences = obj.getIn(["spec", "values", "persistence"])
   if (persistences != null && persistences instanceof YAMLMap) {
     persistences.items.forEach((persistence) => {
-      let mountPath = persistence.value.get("mountPath");
+      let mountPath = persistence.value.get("mountPath")
 
       if (mountPath != null) {
-        let subPath = persistence.value.get("subPath");
+        let subPath = persistence.value.get("subPath")
 
         if (subPath != null) {
-          persistence.value.setIn(["advancedMounts", "main", "main", 0, "path"], mountPath);
-          persistence.value.setIn(["advancedMounts", "main", "main", 0, "subPath"], subPath);
-          persistence.value.delete("subPath");
+          persistence.value.setIn(
+            ["advancedMounts", "main", "main", 0, "path"],
+            mountPath
+          )
+          persistence.value.setIn(
+            ["advancedMounts", "main", "main", 0, "subPath"],
+            subPath
+          )
+          persistence.value.delete("subPath")
         } else {
-          persistence.value.setIn(["globalMounts", 0, "path"], mountPath);
+          persistence.value.setIn(["globalMounts", 0, "path"], mountPath)
         }
 
-        persistence.value.delete("mountPath");
+        persistence.value.delete("mountPath")
       }
 
-      let type = persistence.value.get("type");
+      let type = persistence.value.get("type")
       if (type === "pvc") {
-        persistence.value.set("type", "persistentVolumeClaim");
+        persistence.value.set("type", "persistentVolumeClaim")
       }
-    });
+    })
   }
 
-  obj.getIn(["spec", "values"]).items.forEach(item => {
+  obj.getIn(["spec", "values"]).items.forEach((item) => {
     item.value.comment = "\n"
   })
 
