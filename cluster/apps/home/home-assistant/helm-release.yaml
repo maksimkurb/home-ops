@@ -178,7 +178,7 @@ spec:
               - --extensions-dir
               - "/config/.vscode"
         initContainers:
-          checkDbReady:
+          check-db-ready:
             name: check-db-ready
             image:
               repository: postgres
