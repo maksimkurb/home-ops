@@ -36,10 +36,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - router.ext.${SECRET_DOMAIN}
-      secretName: ext-svc-router-tls
+        - ext-router.${SECRET_DOMAIN}
+      secretName: ext-svc-router-tls-2
   rules:
-    - host: router.ext.${SECRET_DOMAIN}
+    - host: ext-router.${SECRET_DOMAIN}
       http:
         paths:
           - path: /
