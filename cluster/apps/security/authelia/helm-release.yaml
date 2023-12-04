@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -28,61 +28,10 @@ spec:
     - name: authelia-redis
       namespace: security
   values:
+
     global:
       nameOverride: *app
-    controller:
-      replicas: 2
-      strategy: RollingUpdate
-      rollingUpdate:
-        surge: 1
-        unavailable: 1
-    image:
-      repository: docker.io/authelia/authelia
-      tag: 4.37.5
-    env:
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: custom
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: "ldap://glauth:3893"
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_TIMEOUT: "5s"
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN: dc=glauth,dc=com
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_ADDITIONAL_USERS_DN: ou=users
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERS_FILTER: "(&({username_attribute}={input})(objectClass=posixAccount))"
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERNAME_ATTRIBUTE: cn
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_MAIL_ATTRIBUTE: mail
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_DISPLAY_NAME_ATTRIBUTE: givenName
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUPS_FILTER: "(&(memberUid={username})(objectClass=posixGroup))"
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUP_NAME_ATTRIBUTE: ou
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USER: cn=authelia-user,dc=glauth,dc=com
-      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PERMIT_UNAUTHENTICATED_BIND: "false"
-      AUTHELIA_AUTHENTICATION_BACKEND_PASSWORD_RESET_DISABLE: "true"
-      AUTHELIA_DEFAULT_REDIRECTION_URL: "https://start.${SECRET_PUBLIC_DOMAIN}"
-      AUTHELIA_DUO_API_DISABLE: "true"
-      AUTHELIA_LOG_LEVEL: debug
-      AUTHELIA_NOTIFIER_SMTP_HOST: ${SMTP_HOST}
-      AUTHELIA_NOTIFIER_SMTP_PORT: 587
-      AUTHELIA_NOTIFIER_SMTP_SENDER: "Authelia <${SMTP_EMAIL}>"
-      AUTHELIA_SERVER_DISABLE_HEALTHCHECK: "true"
-      AUTHELIA_SERVER_PORT: 8000
-      AUTHELIA_SESSION_DOMAIN: "${SECRET_PUBLIC_DOMAIN}"
-      AUTHELIA_TELEMETRY_METRICS_ADDRESS: "tcp://0.0.0.0:8080"
-      AUTHELIA_TELEMETRY_METRICS_ENABLED: "true"
-      AUTHELIA_TOTP_DISABLE: "true"
-      AUTHELIA_WEBAUTHN_DISABLE: "true"
-      AUTHELIA_SESSION_REDIS_HOST: authelia-redis
-      AUTHELIA_SESSION_REDIS_PORT: 6379
-      AUTHELIA_NOTIFIER_SMTP_USERNAME: "${SMTP_EMAIL}"
-      AUTHELIA_NOTIFIER_SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
-      AUTHELIA_STORAGE_POSTGRES_DATABASE: authelia
-      AUTHELIA_STORAGE_POSTGRES_USERNAME: authelia
-      AUTHELIA_STORAGE_POSTGRES_HOST: homelab-pgsql.database
-      AUTHELIA_SESSION_REDIS_PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: authelia-redis
-            key: REDIS_PASSWORD
-    envFrom:
-      - secretRef:
-          name: *app
-    enableServiceLinks: false
+
     service:
       main:
         ports:
@@ -91,10 +40,10 @@ spec:
           metrics:
             enabled: true
             port: 8080
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -103,35 +52,102 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-    podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: "OnRootMismatch"
+        className: nginx
+
     persistence:
       config:
         enabled: true
         type: configMap
         name: *app
-        subPath: configuration.yml
-        mountPath: /config/configuration.yml
         readOnly: false
-    podAnnotations:
-      configmap.reloader.stakater.com/reload: *app
-      secret.reloader.stakater.com/reload: *app
-    topologySpreadConstraints:
-      - maxSkew: 1
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: *app
-    resources:
-      requests:
-        cpu: 10m
-        memory: 50Mi
-      limits:
-        memory: 250Mi
+        advancedMounts:
+          main:
+            main:
+              - path: /config/configuration.yml
+                subPath: configuration.yml
+
+    defaultPodOptions:
+      enableServiceLinks: false
+      annotations:
+        configmap.reloader.stakater.com/reload: *app
+        secret.reloader.stakater.com/reload: *app
+      securityContext:
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: "OnRootMismatch"
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: *app
+
+    controllers:
+      main:
+        replicas: 2
+        strategy: RollingUpdate
+        rollingUpdate:
+          surge: 1
+          unavailable: 1
+        containers:
+          main:
+            image:
+              repository: docker.io/authelia/authelia
+              tag: 4.37.5
+            env:
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: custom
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: "ldap://glauth:3893"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_TIMEOUT: "5s"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN: dc=glauth,dc=com
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_ADDITIONAL_USERS_DN: ou=users
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERS_FILTER: "(&({username_attribute}={input})(objectClass=posixAccount))"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERNAME_ATTRIBUTE: cn
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_MAIL_ATTRIBUTE: mail
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_DISPLAY_NAME_ATTRIBUTE: givenName
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUPS_FILTER: "(&(memberUid={username})(objectClass=posixGroup))"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUP_NAME_ATTRIBUTE: ou
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USER: cn=authelia-user,dc=glauth,dc=com
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PERMIT_UNAUTHENTICATED_BIND: "false"
+              AUTHELIA_AUTHENTICATION_BACKEND_PASSWORD_RESET_DISABLE: "true"
+              AUTHELIA_DEFAULT_REDIRECTION_URL: "https://start.${SECRET_PUBLIC_DOMAIN}"
+              AUTHELIA_DUO_API_DISABLE: "true"
+              AUTHELIA_LOG_LEVEL: debug
+              AUTHELIA_NOTIFIER_SMTP_HOST: ${SMTP_HOST}
+              AUTHELIA_NOTIFIER_SMTP_PORT: 587
+              AUTHELIA_NOTIFIER_SMTP_SENDER: "Authelia <${SMTP_EMAIL}>"
+              AUTHELIA_SERVER_DISABLE_HEALTHCHECK: "true"
+              AUTHELIA_SERVER_PORT: 8000
+              AUTHELIA_SESSION_DOMAIN: "${SECRET_PUBLIC_DOMAIN}"
+              AUTHELIA_TELEMETRY_METRICS_ADDRESS: "tcp://0.0.0.0:8080"
+              AUTHELIA_TELEMETRY_METRICS_ENABLED: "true"
+              AUTHELIA_TOTP_DISABLE: "true"
+              AUTHELIA_WEBAUTHN_DISABLE: "true"
+              AUTHELIA_SESSION_REDIS_HOST: authelia-redis
+              AUTHELIA_SESSION_REDIS_PORT: 6379
+              AUTHELIA_NOTIFIER_SMTP_USERNAME: "${SMTP_EMAIL}"
+              AUTHELIA_NOTIFIER_SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
+              AUTHELIA_STORAGE_POSTGRES_DATABASE: authelia
+              AUTHELIA_STORAGE_POSTGRES_USERNAME: authelia
+              AUTHELIA_STORAGE_POSTGRES_HOST: homelab-pgsql.database
+              AUTHELIA_SESSION_REDIS_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: authelia-redis
+                    key: REDIS_PASSWORD
+            envFrom:
+              - secretRef:
+                  name: *app
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 250Mi
