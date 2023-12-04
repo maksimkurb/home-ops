@@ -113,20 +113,12 @@ spec:
         globalMounts:
           - path: /snapshots
 
-    podAnnotations:
-      configmap.reloader.stakater.com/reload: *app
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 100Mi
-      limits:
-        memory: 500Mi
-
     defaultPodOptions:
       securityContext:
         supplementalGroups:
           - 777
+      annotations:
+        configmap.reloader.stakater.com/reload: *app
 
     controllers:
       main:
@@ -149,3 +141,9 @@ spec:
               - --metrics-listen-addr
               - 0.0.0.0:8080
               - --without-password
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 500Mi

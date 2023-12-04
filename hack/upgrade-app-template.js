@@ -70,6 +70,11 @@ fs.readFile(fileName, "utf8", (err, data) => {
   )
 
   move(
+    ["spec", "values", "topologySpreadConstraints"],
+    ["spec", "values", "defaultPodOptions", "topologySpreadConstraints"]
+  )
+
+  move(
     ["spec", "values", "image"],
     ["spec", "values", "controllers", "main", "containers", "main", "image"]
   )
@@ -102,6 +107,11 @@ fs.readFile(fileName, "utf8", (err, data) => {
   move(
     ["spec", "values", "probes"],
     ["spec", "values", "controllers", "main", "containers", "main", "probes"]
+  )
+
+  move(
+    ["spec", "values", "resources"],
+    ["spec", "values", "controllers", "main", "containers", "main", "resources"]
   )
 
   let services = obj.getIn(["spec", "values", "service"])
