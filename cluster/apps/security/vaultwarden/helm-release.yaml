@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -24,37 +24,19 @@ spec:
     remediation:
       retries: 5
   values:
+
     global:
       nameOverride: *app
-    image:
-      repository: docker.io/vaultwarden/server
-      tag: 1.30.1
-    env:
-      DATA_FOLDER: "config"
-      SIGNUPS_ALLOWED: false
-      DOMAIN: https://bitwarden.${SECRET_DOMAIN}
-      ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
-      SMTP_HOST: "${SMTP_HOST}"
-      SMTP_FROM: "${SMTP_EMAIL}"
-      SMTP_FROM_NAME: "Vaultwarden"
-      SMTP_SSL: true
-      SMTP_PORT: 587
-      SMTP_USERNAME: "${SMTP_EMAIL}"
-      SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
-      DATABASE_URL:
-        valueFrom:
-          secretKeyRef:
-            name: vaultwarden-postgres
-            key: DATABASE_URL
+
     service:
       main:
         ports:
           http:
             port: &port 80
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -65,11 +47,41 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *port
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
+        className: nginx
+
     persistence:
       config:
         enabled: true
         existingClaim: vaultwarden-config-v1
+        globalMounts:
+          - path: /config
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: docker.io/vaultwarden/server
+              tag: 1.30.1
+            env:
+              DATA_FOLDER: "config"
+              SIGNUPS_ALLOWED: false
+              DOMAIN: https://bitwarden.${SECRET_DOMAIN}
+              ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
+              SMTP_HOST: "${SMTP_HOST}"
+              SMTP_FROM: "${SMTP_EMAIL}"
+              SMTP_FROM_NAME: "Vaultwarden"
+              SMTP_SSL: true
+              SMTP_PORT: 587
+              SMTP_USERNAME: "${SMTP_EMAIL}"
+              SMTP_PASSWORD: "${SECRET_SMTP_PASSWORD}"
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: vaultwarden-postgres
+                    key: DATABASE_URL

@@ -41,9 +41,12 @@ spec:
         enabled: true
         type: secret
         name: *app
-        items:
-          - key: server.toml
-            path: server.toml
+        advancedMounts:
+          main:
+            main:
+              - path: /config/server.toml
+                readOnly: true
+                subPath: server.toml
 
     defaultPodOptions:
       annotations:
@@ -66,7 +69,6 @@ spec:
             image:
               repository: docker.io/glauth/glauth
               tag: v2.3.0
-
             command:
               - "/app/glauth"
               - "-c"
