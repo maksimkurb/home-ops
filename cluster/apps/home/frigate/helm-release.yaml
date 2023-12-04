@@ -11,33 +11,17 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
   values:
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: feature.node.kubernetes.io/custom-nvidia-gpu
-                  operator: In
-                  values:
-                    - "true"
-    runtimeClassName: nvidia
+
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
-    image:
-      repository: ghcr.io/blakeblackshear/frigate
-      tag: "0.12.1-tensorrt"
-    env:
-      TZ: "${TIMEZONE}"
-    envFrom:
-      - secretRef:
-          name: frigate-secret
+
     service:
       main:
         type: LoadBalancer
@@ -54,10 +38,10 @@ spec:
             enable: true
             port: 8554
             protocol: TCP
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -79,42 +63,79 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - "frigate.${SECRET_DOMAIN}"
             secretName: "frigate-tls"
+        className: nginx
+
     persistence:
       data:
         enabled: true
-        type: pvc
+        type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 5Gi
-        mountPath: /data
         storageClass: nfs-proxmox
         retain: true
+        globalMounts:
+          - path: /data
       config-file:
         enabled: true
         type: secret
         name: frigate-config
-        subPath: config_yaml
-        mountPath: /config/config.yml
         readOnly: true
+        advancedMounts:
+          main:
+            main:
+              - path: /config/config.yml
+                subPath: config_yaml
       dshm:
         enabled: true
         type: emptyDir
         medium: Memory
-        sizeLimit: 200Mi
+        sizeLimit: 300Mi
+        globalMounts:
+          - path: /dev/shm
       media:
         enabled: true
         existingClaim: frigate-media-nfs
-        mountPath: /media/frigate
         readOnly: false
-    resources:
-      requests:
-        cpu: 200m
-        memory: 100Mi
-        nvidia.com/gpu: "1"
-      limits:
-        cpu: 4000m
-        memory: 3000Mi
-        nvidia.com/gpu: "1"
+        globalMounts:
+          - path: /media/frigate
+
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                    operator: In
+                    values:
+                      - "true"
+      runtimeClassName: nvidia
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/blakeblackshear/frigate
+              tag: "0.12.1-tensorrt"
+            env:
+              TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: frigate-secret
+            resources:
+              requests:
+                cpu: 200m
+                memory: 100Mi
+                nvidia.com/gpu: "1"
+              limits:
+                cpu: 4000m
+                memory: 3000Mi
+                nvidia.com/gpu: "1"
