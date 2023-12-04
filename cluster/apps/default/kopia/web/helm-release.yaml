@@ -117,11 +117,11 @@ spec:
       securityContext:
         supplementalGroups:
           - 777
-      annotations:
-        configmap.reloader.stakater.com/reload: *app
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           main:
             image:

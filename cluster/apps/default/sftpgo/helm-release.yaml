@@ -28,10 +28,6 @@ spec:
     keepHistory: false
   values:
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
-
     command:
       - sftpgo
       - serve
@@ -119,6 +115,8 @@ spec:
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           main:
             image:

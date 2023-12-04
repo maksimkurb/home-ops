@@ -30,10 +30,6 @@ spec:
       namespace: home
   values:
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
-
     service:
       main:
         type: LoadBalancer
@@ -148,6 +144,8 @@ spec:
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           main:
             image:

@@ -18,10 +18,6 @@ spec:
         namespace: flux-system
   values:
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
-
     service:
       main:
         ports:
@@ -71,6 +67,8 @@ spec:
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           main:
             image:
