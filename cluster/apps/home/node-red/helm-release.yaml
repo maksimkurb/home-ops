@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -29,41 +29,21 @@ spec:
     - name: home-assistant
       namespace: home
   values:
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                # Stick to the same node as Home Assistant
-                - key: feature.node.kubernetes.io/custom-zigbee
-                  operator: In
-                  values:
-                    - "true"
+
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
-    image:
-      repository: docker.io/nodered/node-red
-      tag: 3.1.1
-    env:
-      TZ: "${TIMEZONE}"
-      NODE_RED_ENABLE_PROJECTS: "true"
-      NODE_RED_ENABLE_SAFE_MODE: "false"
-      REDBOT_ENABLE_MISSION_CONTROL: "true"
-    podSecurityContext:
-      runAsUser: 777
-      runAsGroup: 777
-      fsGroup: 777
-      fsGroupChangePolicy: "OnRootMismatch"
+
     service:
       main:
         ports:
           http:
             port: 1880
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
+        className: nginx
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -74,59 +54,76 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - "nodered.${SECRET_DOMAIN}"
             secretName: "node-red-tls"
+
     persistence:
       config:
         enabled: true
         existingClaim: node-red-config
-        mountPath: "/data"
+        globalMounts:
+          - path: /data
+
       passwd:
         enabled: true
         type: configMap
         name: nodered-passwd
-        readOnly: true
-        subPath: nodered-passwd
-        mountPath: /etc/nodered-passwd
+        advancedMounts:
+          main:
+            main:
+              - path: /etc/nodered-passwd
+                subPath: nodered-passwd
+                readOnly: true
+
       settingsjs:
         enabled: true
         type: secret
         name: nodered-config
-        readOnly: true
-        subPath:
-          - path: settingsjs
-            mountPath: /data/settings.js
-    resources:
-      requests:
-        cpu: 200m
-        memory: 100Mi
-      limits:
-        cpu: 1000m
-        memory: 1500Mi
-    probes:
-      liveness:
-        type: HTTP
-        path: /
-        spec:
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-          failureThreshold: 3
-      readiness:
-        type: HTTP
-        path: /
-        spec:
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-          failureThreshold: 3
-      startup:
-        type: HTTP
-        path: /
-        spec:
-          initialDelaySeconds: 0
-          timeoutSeconds: 1
-          periodSeconds: 5
-          failureThreshold: 30
+        advancedMounts:
+          main:
+            main:
+              - path: /data/settings.js
+                subPath: settingsjs
+                readOnly: true
+
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  # Stick to the same node as Home Assistant
+                  - key: feature.node.kubernetes.io/custom-zigbee
+                    operator: In
+                    values:
+                      - "true"
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: docker.io/nodered/node-red
+              tag: 3.1.1
+            env:
+              TZ: "${TIMEZONE}"
+              NODE_RED_ENABLE_PROJECTS: "true"
+              NODE_RED_ENABLE_SAFE_MODE: "false"
+              REDBOT_ENABLE_MISSION_CONTROL: "true"
+            resources:
+              requests:
+                cpu: 200m
+                memory: 100Mi
+              limits:
+                cpu: 1000m
+                memory: 1500Mi
