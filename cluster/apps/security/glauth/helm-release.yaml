@@ -59,6 +59,8 @@ spec:
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         replicas: 2
         strategy: RollingUpdate
         rollingUpdate:
