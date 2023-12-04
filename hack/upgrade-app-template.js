@@ -63,6 +63,24 @@ fs.readFile(fileName, "utf8", (err, data) => {
     obj.deleteIn(["spec", "values", "image"]);
   }
 
+  let args = obj.getIn(["spec", "values", "args"]);
+  if (args != null) {
+    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "args"], args);
+    obj.deleteIn(["spec", "values", "args"]);
+  }
+
+  let command = obj.getIn(["spec", "values", "command"]);
+  if (command != null) {
+    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "command"], command);
+    obj.deleteIn(["spec", "values", "command"]);
+  }
+
+  let env = obj.getIn(["spec", "values", "env"]);
+  if (env != null) {
+    obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "env"], env);
+    obj.deleteIn(["spec", "values", "env"]);
+  }
+
   let probes = obj.getIn(["spec", "values", "probes"]);
   if (probes != null) {
     obj.setIn(["spec", "values", "controllers", "main", "containers", "main", "probes"], probes);
@@ -75,7 +93,9 @@ fs.readFile(fileName, "utf8", (err, data) => {
   if (services != null && services instanceof YAMLMap) {
     let mainService = services.items.at(0);
     mainServiceName = mainService.key;
-    mainPortName = mainService.value.get("ports").items.at(0).key;
+    if (mainService.value.get("ports") != null) {
+      mainPortName = mainService.value.get("ports").items.at(0).key;
+    }
   }
 
   let ingress = obj.getIn(["spec", "values", "ingress"]);
@@ -86,8 +106,6 @@ fs.readFile(fileName, "utf8", (err, data) => {
         item.value.set("className", ingressClassName);
         item.value.delete("ingressClassName");
       }
-
-      item.value.delete("enabled");
 
       let hosts = item.value.get("hosts");
 
@@ -111,9 +129,24 @@ fs.readFile(fileName, "utf8", (err, data) => {
   if (persistences != null && persistences instanceof YAMLMap) {
     persistences.items.forEach((persistence) => {
       let mountPath = persistence.value.get("mountPath");
+
       if (mountPath != null) {
-        persistence.value.setIn(["globalMounts", 0, "path"], mountPath);
+        let subPath = persistence.value.get("subPath");
+
+        if (subPath != null) {
+          persistence.value.setIn(["advancedMounts", "main", "main", 0, "path"], mountPath);
+          persistence.value.setIn(["advancedMounts", "main", "main", 0, "subPath"], subPath);
+          persistence.value.delete("subPath");
+        } else {
+          persistence.value.setIn(["globalMounts", 0, "path"], mountPath);
+        }
+
         persistence.value.delete("mountPath");
+      }
+
+      let type = persistence.value.get("type");
+      if (type === "pvc") {
+        persistence.value.set("type", "persistentVolumeClaim");
       }
     });
   }
