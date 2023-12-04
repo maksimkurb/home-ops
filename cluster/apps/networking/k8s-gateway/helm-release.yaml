@@ -28,9 +28,6 @@ spec:
     keepHistory: false
   values:
 
-    controller:
-      replicas: 2
-
     service:
       main:
         type: LoadBalancer
@@ -83,6 +80,7 @@ spec:
 
     controllers:
       main:
+        replicas: 2
         containers:
           main:
             image:
