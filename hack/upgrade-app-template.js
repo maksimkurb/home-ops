@@ -75,6 +75,21 @@ fs.readFile(fileName, "utf8", (err, data) => {
   )
 
   move(
+    ["spec", "values", "hostNetwork"],
+    ["spec", "values", "defaultPodOptions", "hostNetwork"]
+  )
+
+  move(
+    ["spec", "values", "dnsPolicy"],
+    ["spec", "values", "defaultPodOptions", "dnsPolicy"]
+  )
+
+  move(
+    ["spec", "values", "securityContext"],
+    ["spec", "values", "defaultPodOptions", "securityContext"]
+  )
+
+  move(
     ["spec", "values", "podSecurityContext"],
     ["spec", "values", "defaultPodOptions", "securityContext"]
   )
