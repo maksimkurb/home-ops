@@ -95,8 +95,8 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
-                  port: codeserver
+                  name: codeserver
+                  port: http
         tls:
           - hosts:
               - "hass-config.${SECRET_DOMAIN}"
