@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -27,26 +27,15 @@ spec:
   uninstall:
     keepHistory: false
   values:
+
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
-    image:
-      repository: ghcr.io/drakkan/sftpgo
-      tag: v2.5-distroless-slim
-      command:
-        - sftpgo
-        - initprovider
-      envFrom:
-        - secretRef:
-            name: *app
-    env:
-      TZ: "${TIMEZONE}"
-    envFrom:
-      - secretRef:
-          name: *app
+
     command:
       - sftpgo
       - serve
+
     service:
       main:
         type: ClusterIP
@@ -57,10 +46,10 @@ spec:
             port: 8088
           sftp:
             port: 2022
+
     ingress:
       main:
         enabled: true
-        ingressClassName: nginx
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -79,46 +68,77 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  port: 8080
+                  name: main
+                  port: http
               - path: /dav
                 pathType: Prefix
                 service:
-                  port: 8088
+                  name: main
+                  port: dav
         tls:
           - hosts:
               - *host
             secretName: sftpgo-tls
-    podSecurityContext:
-      runAsUser: 777
-      runAsGroup: 777
-      fsGroup: 777
-      fsGroupChangePolicy: "OnRootMismatch"
+        className: nginx
+
     persistence:
       config:
         enabled: true
         type: configMap
         name: *app
-        subPath: config.json
-        mountPath: /etc/sftpgo/sftpgo.json
         readOnly: true
+        advancedMounts:
+          main:
+            main:
+              - path: /etc/sftpgo/sftpgo.json
+                subPath: config.json
       media:
         enabled: true
         existingClaim: sftpgo-nfs-media
-        mountPath: /data/media
+        globalMounts:
+          - path: /data/media
       filehosting:
         enabled: true
         existingClaim: sftpgo-nfs-filehosting
-        mountPath: /data/filehosting
-    probes:
-      liveness:
-        enabled: true
-      readiness:
-        enabled: true
-      startup:
-        enabled: false
+        globalMounts:
+          - path: /data/filehosting
+
     resources:
       requests:
         cpu: 10m
         memory: 10Mi
       limits:
         memory: 200Mi
+
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/drakkan/sftpgo
+              tag: v2.5-distroless-slim
+              command:
+                - sftpgo
+                - initprovider
+              envFrom:
+                - secretRef:
+                    name: *app
+            env:
+              TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: *app
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: false
