@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -23,24 +23,19 @@ spec:
     remediation:
       retries: 5
   values:
+
     global:
       nameOverride: *app
-    image:
-      repository: ghcr.io/sct/overseerr
-      tag: 1.33.2
-    env:
-      TZ: "${TIMEZONE}"
-      LOG_LEVEL: "info"
-      PORT: &port 80
+
     service:
       main:
         ports:
           http:
-            port: *port
+            port: 80
+
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -53,31 +48,47 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
-          - host: &host-custom "requests.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host-release
-              - *host-custom
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
+        className: nginx
+
     persistence:
       config:
         enabled: true
         existingClaim: overseerr-config-v1
-        mountPath: /app/config
+        globalMounts:
+          - path: /app/config
       cache:
         enabled: true
         type: emptyDir
-        mountPath: /app/.next/cache
-    resources:
-      requests:
-        cpu: 10m
-        memory: 250Mi
-      limits:
-        memory: 500Mi
+        globalMounts:
+          - path: /app/.next/cache
+
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/sct/overseerr
+              tag: 1.33.2
+            env:
+              TZ: "${TIMEZONE}"
+              LOG_LEVEL: "info"
+              PORT: 80
+            resources:
+              requests:
+                cpu: 10m
+                memory: 250Mi
+              limits:
+                memory: 500Mi
