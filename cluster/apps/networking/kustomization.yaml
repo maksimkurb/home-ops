@@ -8,3 +8,4 @@ resources:
   - ingress-nginx
   - external-dns
   - k8s-gateway
+  - speedtest
