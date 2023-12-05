@@ -72,7 +72,7 @@ spec:
         advancedMounts:
           main:
             main:
-              - path: /etc/nodered-passwd
+              - path: /etc/passwd
                 subPath: nodered-passwd
                 readOnly: true
 
