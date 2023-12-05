@@ -60,7 +60,7 @@ spec:
           main:
             image:
               repository: ghcr.io/librespeed/speedtest
-              tag: v2.0.4
+              tag: latest
             env:
               MODE: standalone
             resources:
