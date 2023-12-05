@@ -31,7 +31,7 @@ spec:
       main:
         ports:
           http:
-            port: &port 3000
+            port: 80
 
     ingress:
       main:
@@ -59,8 +59,10 @@ spec:
         containers:
           main:
             image:
-              repository: openspeedtest/latest
+              repository: ghcr.io/librespeed/speedtest
               tag: v2.0.4
+            env:
+              MODE: standalone
             resources:
               requests:
                 cpu: 10m
