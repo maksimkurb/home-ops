@@ -99,9 +99,9 @@ spec:
                     values:
                       - "true"
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
         fsGroupChangePolicy: "OnRootMismatch"
 
     controllers:
