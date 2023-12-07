@@ -38,7 +38,7 @@ spec:
             port: 8000
           healthcheck:
             enabled: true
-            port: 8888
+            port: 9999
           proxy:
             enabled: true
             port: 8888
