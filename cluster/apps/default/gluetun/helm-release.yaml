@@ -34,7 +34,11 @@ spec:
       main:
         ports:
           http:
-            port: &port 8888
+            port: 8000
+          healthcheck:
+            port: 8888
+          proxy:
+            port: 8888
 
     resources:
       requests:
@@ -69,3 +73,16 @@ spec:
               capabilities:
                 add:
                   - NET_ADMIN
+            probes:
+              liveness:
+                type: HTTP
+                path: /
+                port: 8888
+              readiness:
+                type: HTTP
+                path: /
+                port: 8888
+              startup:
+                type: HTTP
+                path: /
+                port: 8888
