@@ -68,6 +68,7 @@ spec:
               HTTPPROXY: "on"
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
+              HEALTH_SERVER_ADDRESS: 0.0.0.0:9999
             envFrom:
               - secretRef:
                   name: gluetun-vpn-v1
@@ -80,12 +81,12 @@ spec:
               liveness:
                 type: HTTP
                 path: /
-                port: 8888
+                port: 9999
               readiness:
                 type: HTTP
                 path: /
-                port: 8888
+                port: 9999
               startup:
                 type: HTTP
                 path: /
-                port: 8888
+                port: 9999
