@@ -120,12 +120,12 @@ spec:
       usb:
         enabled: true
         type: hostPath
-        hostPath: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+        hostPath: /dev/ttyACM0
         hostPathType: CharDevice
         advancedMounts:
           main:
             main:
-              - path: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+              - path: /dev/ttyACM0
 
     defaultPodOptions:
       affinity:
