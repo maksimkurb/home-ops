@@ -14,6 +14,8 @@ spec:
     - "0.0.0.0/0"
   postgresql:
     version: "15"
+    parameters:
+      shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vectors'
   users:
     operator:
       - superuser
