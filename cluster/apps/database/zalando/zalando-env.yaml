@@ -19,3 +19,4 @@ data:
   WALE_S3_ENDPOINT: "https+path://minio.default:9000"
   AWS_REGION: default
   AWS_S3_FORCE_PATH_STYLE: "true"
+  USE_PGVECTO_RS: "true"
