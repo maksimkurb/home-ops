@@ -18,7 +18,6 @@ spec:
 
   dependsOn:
     - name: immich-server
-    - name: immich-typesense
   maxHistory: 3
   install:
     createNamespace: true
