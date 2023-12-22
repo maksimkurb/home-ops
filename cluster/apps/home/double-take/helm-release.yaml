@@ -60,11 +60,10 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  - key: workload-type
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
                     operator: In
                     values:
-                      - "gpu"
-      runtimeClassName: nvidia
+                      - "true"
 
     controllers:
       main:
