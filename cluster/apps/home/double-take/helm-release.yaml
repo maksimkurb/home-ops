@@ -64,6 +64,7 @@ spec:
                     operator: In
                     values:
                       - "true"
+      runtimeClassName: nvidia
 
     controllers:
       main:
