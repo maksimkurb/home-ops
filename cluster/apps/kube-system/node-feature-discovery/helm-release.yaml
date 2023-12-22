@@ -45,7 +45,7 @@ spec:
           effect: NoSchedule
       config:
         core:
-          sources:
+          labelSources:
             - custom
             - pci
             - usb
@@ -74,22 +74,29 @@ spec:
               - device
           custom:
             - name: zigbee
-              matchOn:
-                - usbId:
-                    class: ["02"]
-                    vendor: ["0451"]
-                    device: ["16c8"]
+              labels:
+                "feature.node.kubernetes.io/custom-zigbee": "true"
+              matchFeatures:
+                - feature: usb.device
+                  matchExpressions:
+                    class: {op: In, value: ["02"]}
+                    vendor: {op: In, value: ["0451"]}
+                    device: {op: In, value: ["16c8"]}
             - name: ups
-              matchOn:
-                - usbId:
-                    class: ["03"]
-                    vendor: ["0665"]
-                    device: ["5161"]
+              matchFeatures:
+                - feature: usb.device
+                  matchExpressions:
+                    class: {op: In, value: ["03"]}
+                    vendor: {op: In, value: ["0665"]}
+                    device: {op: In, value: ["5161"]}
             - name: nvidia-gpu
-              matchOn:
-                - pciId:
-                    class: ["0300"]
-                    vendor: ["10de"]
+              labels:
+                "feature.node.kubernetes.io/custom-nvidia-gpu": "true"
+              matchFeatures:
+                - feature: pci.device
+                  matchExpressions:
+                    class: {op: In, value: ["0300"]}
+                    vendor: {op: In, value: ["10de"]}
             # - name: coral-tpu
             #   matchOn:
             #     - usbId:
