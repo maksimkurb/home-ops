@@ -40,7 +40,7 @@ spec:
           main:
             image:
               repository: public.ecr.aws/docker/library/redis
-              tag: 7.2.3
+              tag: 7.2.4
             command:
               - "redis-server"
               - "--requirepass"
