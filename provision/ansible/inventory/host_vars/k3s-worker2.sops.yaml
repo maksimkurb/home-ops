@@ -9,7 +9,7 @@ apt_packages:
 k3s_agent:
     node-label:
         - ENC[AES256_GCM,data:P9uUfYXYoTawDwMXD/J+Leg=,iv:boIppfP4hL94i9Yi3v45iRSHjAeHToSSQufvY+GtD2w=,tag:klhNBQolBugDTsV37mqr9A==,type:str]
-ntp_primary_server: ENC[AES256_GCM,data:EDcR9LGrw0lYAOgc,iv:skejT+GArareQwCX27L2KNwsCR6LZf++ugJYgl7vU/4=,tag:6rqnv1zWf8WCL2nqmVJelQ==,type:str]
+ntp_primary_server: ENC[AES256_GCM,data:IOr6edt7atFe4rtJ,iv:YDx+poXKx3dXhBgE5cBrV2yypWpC/0HuPoKfZO/DKNg=,tag:gmusLUVX+LFX2bnkpBjd8g==,type:str]
 ntp_secondary_server: ENC[AES256_GCM,data:2NCvC5R1xWrpeQZj,iv:Wj2biNwedPRDkwuNzWEz4ySKJTObp4iVD0kHSX6hU4Y=,tag:fuoicMDezIGmBRInbwuT8g==,type:str]
 sops:
     kms: []
@@ -26,8 +26,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-10-27T19:33:19Z"
-    mac: ENC[AES256_GCM,data:+L6ogGwjrybwho13vqhcBN7MUyEMeqwg8ajb5LqTBBbsi8ATj+Rr5A1aa3WLfCMsN0HwO9RSx5HXT907ComRkBlPCwgf43ts30zgs2bSktPZM8IbKVqNAlRoiTTalfjUOVoiGWKPMGrRYumSE3osBb7tc0hxWWiKq82K2U8yjhs=,iv:fljtCpg2PdQt8Rknrg7UwEt/GpXdA+GpeWqwxYKPFw8=,tag:JEfCH2inZLnzPXinG0BIRA==,type:str]
+    lastmodified: "2024-01-04T15:56:38Z"
+    mac: ENC[AES256_GCM,data:YT0xm5XR29K8rZqpmHSxi/ENXS2LrlY7hP7bTRWVv+pIeuf/b3pkjbf8fV+rmgpJXr3RmmKTOMpdyTPEVIwlZcLF/VvI2g60XL0R1hURiRjYbYTUZYeX9sLJeY3ByywmwDqaX6F3uaSqEuVoJLwoOsrRxqsBa7XM6EfYLPhPOeM=,iv:+qtzKm4IIJY6Dp62dRCKlvybUCc9YJ5GdnySYTGypI0=,tag:EcI9eryHJL6Utmzjv9SCQg==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

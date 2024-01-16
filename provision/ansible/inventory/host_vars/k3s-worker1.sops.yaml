@@ -4,7 +4,7 @@ node_ip: ENC[AES256_GCM,data:oGUiimsz9Osj5sE=,iv:O+n1T6L5JMgWQ7rIJx2vfWEyPJyFvZP
 k3s_agent:
     node-label:
         - ENC[AES256_GCM,data:wQKEtVEm6DgQIeuUqwKhmxQz,iv:F9GpV374QQlbDSm4lD14VPCndR5qPF5vHEVRMnj1/P8=,tag:hrvXVz4XUY0Axm43Fne+Eg==,type:str]
-ntp_primary_server: ENC[AES256_GCM,data:zdZVIDI4VCPJKDfp,iv:IhmgfH4rwUWTIDG187kSq1rAZEbpE2cqmeORDj0g/Us=,tag:oKXhs5lOxnNszOxd2F0qEw==,type:str]
+ntp_primary_server: ENC[AES256_GCM,data:Yr9xVRXh67NPLcl/,iv:4DoSL8D86XcTCRJuW6PzHLZp24VNANir2p4GhVOVXBw=,tag:XRxDqR9VdsEXh/m0iCMdYA==,type:str]
 ntp_secondary_server: ENC[AES256_GCM,data:cc2smS1/tiysnTD4,iv:bZsO2lVnXI1IiGQuq1NtidW+jOFpvpibcZ1H1OnDh1U=,tag:LYFz5yOp6zvyy33PXILzZg==,type:str]
 sops:
     kms: []
@@ -21,8 +21,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-10-27T19:33:16Z"
-    mac: ENC[AES256_GCM,data:jHubSASKYs6DFmkdgWZOtSfdmHEzE4fkN4DY4duub71uwxbM3U3862GDIxvPWkaD39NeLGea35sp8Rez8eWQuOJ8wDAXK1lpCu9sCwUI+WNjfkKQ1NqRd6TwYwkvP0nH6rPolOx6H1IDr7zmlFRCufz5smKVErAUAuV8tCUq3lo=,iv:B4KPuIpqkdgNnIcAo9I8x+qWRmMjQgn50V9N8mAapc8=,tag:iqgVn4Jn9bKPRW4mRUaFJQ==,type:str]
+    lastmodified: "2024-01-04T15:56:23Z"
+    mac: ENC[AES256_GCM,data:VkoxXjjJVZrSBox2iONT5NFlVKTB2fKNEI/A3PM34k75JGuvgW/18uWK8KOCcnTcNfka40LzPSm4hpZgKnuDPIxW7gplC5vMU8s3c2K6yZ96jUj7LupGZ8cu5NTLbHLxYKdZoHNoWTNExNqAS45/ZDbXidhlqS8WBxucw7XXle8=,iv:izAngllcYSu1QfwXGPf+MBTBOIlJjO0H2QZa0m0ip5s=,tag:NIQ56KYUMeL/fHWKK2ihdA==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

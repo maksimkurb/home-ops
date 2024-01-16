@@ -4,21 +4,21 @@ kubernetes:
     master:
       hosts:
         k3s-master:
-          ansible_host: 192.168.42.111
+          ansible_host: 192.168.41.11
           ansible_user: k3s
     worker:
       hosts:
         k3s-worker1:
-          ansible_host: 192.168.42.112
+          ansible_host: 192.168.41.12
           ansible_user: k3s
         k3s-worker2:
-          ansible_host: 192.168.42.113
+          ansible_host: 192.168.41.13
           ansible_user: k3s
 
 nvidia:
   hosts:
     k3s-worker2:
-      ansible_host: 192.168.42.113
+      ansible_host: 192.168.41.13
       ansible_user: k3s
 
 vpn:

@@ -7,10 +7,11 @@ k3s_control_node: true
 
 # (dict) k3s settings for all control-plane nodes
 k3s_server:
-  node-ip: "{{ ansible_host }}"
+  node-ip: "{{ node_ip }}"
   tls-san:
     # kube-vip
     - 10.75.40.10
+    - "{{ node_domain }}"
   # Disable Docker - this will use the default containerd CRI
   docker: false
   flannel-backend: "none" # This needs to be in quotes
@@ -35,8 +36,7 @@ k3s_server:
   kubelet-arg:
     # Enables the kubelet to gracefully evict pods during a node shutdown
     - "feature-gates=GracefulNodeShutdown=true"
-    # Allow k8s services to contain TCP and UDP on the same port
-    - "feature-gates=MixedProtocolLBService=true"
+    - "resolv-conf=/run/systemd/resolve/resolv.conf"
   # Required to monitor kube-controller-manager with kube-prometheus-stack
   kube-controller-manager-arg:
     - "bind-address=0.0.0.0"
