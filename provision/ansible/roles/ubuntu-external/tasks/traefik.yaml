@@ -15,10 +15,18 @@
 - name: VPN / Determine port openings
   set_fact:
     traefik_ports:
-      - "{{ (external_ipv6 is defined) | ternary('[' + external_ipv6 + ']:80:80','') }}"
-      - "{{ (external_ipv6 is defined) | ternary('[' + external_ipv6 + ']:443:443','') }}"
+      - "{{ '[' + external_ipv6 + ']:80:80' }}"
+      - "{{ '[' + external_ipv6 + ']:443:443' }}"
       - "80:80"
       - "443:443"
+  when: external_ipv6 is defined
+
+- name: VPN / Determine port openings
+  set_fact:
+    traefik_ports:
+      - "80:80"
+      - "443:443"
+  when: external_ipv6 is undefined
 
 - name: VPN / Create Traefik container
   community.docker.docker_container:
@@ -37,9 +45,7 @@
       traefik.http.routers.traefik.tls.certresolver: le
       traefik.http.routers.traefik.tls: "true"
       traefik.http.routers.traefik.middlewares: "auth"
-      traefik.http.middlewares.auth.basicauth.users: "{{ traefik_users }}"
-    networks:
-      - name: bridge
-      - name: mailcow_mailcow-network
+      traefik.http.middlewares.auth.basicauth.users: "{{ traefik_users | default(omit) }}"
+    networks: "{{ traefik_networks | default(omit) }}"
     ports: "{{ traefik_ports }}"
     state: started
