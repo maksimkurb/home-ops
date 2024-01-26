@@ -8,7 +8,7 @@ collections:
     version: 1.5.4
 roles:
   - src: xanmanning.k3s
-    version: v3.4.2
+    version: v3.4.4
   - src: mrlesmithjr.netplan
     version: v0.3.0
   - src: mailcow.mailcow
