@@ -38,6 +38,8 @@ spec:
         ports:
           http:
             port: 8123
+          debug:
+            port: 5678
       codeserver:
         enabled: true
         controller: main
