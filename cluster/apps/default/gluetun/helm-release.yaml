@@ -68,6 +68,8 @@ spec:
               HTTPPROXY: "on"
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
+              FIREWALL_INPUT_PORTS: "8000,9999,8888"
+              HTTPPROXY_LOG: "on"
             envFrom:
               - secretRef:
                   name: gluetun-vpn-v1

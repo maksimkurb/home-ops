@@ -118,6 +118,8 @@ spec:
               NODE_RED_ENABLE_PROJECTS: "true"
               NODE_RED_ENABLE_SAFE_MODE: "false"
               REDBOT_ENABLE_MISSION_CONTROL: "true"
+              HTTP_PROXY: "http://gluetun.default:8888"
+              HTTPS_PROXY: "http://gluetun.default:8888"
             resources:
               requests:
                 cpu: 200m
