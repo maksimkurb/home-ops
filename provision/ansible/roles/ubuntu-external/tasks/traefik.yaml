@@ -28,6 +28,12 @@
       - "443:443"
   when: external_ipv6 is undefined
 
+- name: VPN / Pull Traefik container
+  community.docker.docker_image:
+    name: "traefik:v2.11"
+    source: pull
+    force_source: yes
+
 - name: VPN / Create Traefik container
   community.docker.docker_container:
     name: "traefik"

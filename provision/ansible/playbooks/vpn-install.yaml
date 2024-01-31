@@ -45,6 +45,7 @@
       community.docker.docker_image:
         name: "ghcr.io/h44z/wg-portal:v1.0.18"
         source: pull
+        force_source: yes
 
     - name: VPN / Create WireGuard Portal Container
       community.docker.docker_container:

@@ -31,6 +31,7 @@
       community.docker.docker_image:
         name: "ghcr.io/blakeblackshear/frigate:stable"
         source: pull
+        force_source: yes
 
     - name: CCTV / Create Frigate Container
       community.docker.docker_container:
@@ -60,6 +61,7 @@
       community.docker.docker_image:
         name: "louislam/uptime-kuma:1"
         source: pull
+        force_source: yes
 
     - name: CCTV / Create Uptime Kuma Container
       community.docker.docker_container:
