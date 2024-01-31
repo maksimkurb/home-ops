@@ -11,6 +11,5 @@ resources:
   - gluetun
   - kopia
   - minio
-  - pod-gateway
   - uptime-kuma
   - theme-park
