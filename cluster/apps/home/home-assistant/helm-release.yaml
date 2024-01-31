@@ -146,6 +146,7 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
+          setGateway: "true"
         containers:
           main:
             image:
