@@ -81,7 +81,7 @@ spec:
         storageClass: nfs-proxmox
         retain: true
         globalMounts:
-          - path: /data
+          - path: /config
       config-file:
         enabled: true
         type: secret
@@ -141,3 +141,25 @@ spec:
                 cpu: 4000m
                 memory: 6000Mi
                 nvidia.com/gpu: "1"
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 0
+                  periodSeconds: 5
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 0
+                  periodSeconds: 5
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                spec:
+                  initialDelaySeconds: 0
+                  periodSeconds: 5
+                  timeoutSeconds: 1
+                  failureThreshold: 90
