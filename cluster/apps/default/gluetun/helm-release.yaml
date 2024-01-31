@@ -69,6 +69,7 @@ spec:
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
               FIREWALL_INPUT_PORTS: "8000,9999,8888"
+              FIREWALL_OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
               HTTPPROXY_LOG: "on"
             envFrom:
               - secretRef:
