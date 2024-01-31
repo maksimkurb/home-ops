@@ -38,6 +38,9 @@
       ansible.builtin.apt:
         name:
           - nvidia-container-toolkit
+          - nvidia-headless-535-server
+          - libnvidia-decode-535-server
+          - nvidia-utils-535-server
         install_recommends: false
         update_cache: true
         cache_valid_time: 3600
