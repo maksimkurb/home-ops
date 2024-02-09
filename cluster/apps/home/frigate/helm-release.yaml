@@ -30,6 +30,10 @@ spec:
         ports:
           http:
             port: 5000
+          go2rtc:
+            enable: true
+            port: 1984
+            protocol: TCP
           rtmp:
             enable: true
             port: 1935
