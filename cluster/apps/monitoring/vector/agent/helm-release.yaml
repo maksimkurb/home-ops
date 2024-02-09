@@ -36,9 +36,6 @@ spec:
         enabled: false
       # Sources
       sources:
-        journal_logs:
-          type: journald
-          journal_directory: /var/log/journal
         kubernetes_logs:
           type: kubernetes_logs
           pod_annotation_fields:
@@ -51,12 +48,6 @@ spec:
           type: internal_metrics
       # Sinks
       sinks:
-        loki_journal_sink:
-          type: vector
-          inputs:
-            - journal_logs
-          address: vector-aggregator:6000
-          version: "2"
         loki_kubernetes_sink:
           type: vector
           inputs:
