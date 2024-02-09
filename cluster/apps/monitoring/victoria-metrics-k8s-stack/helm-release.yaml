@@ -29,7 +29,7 @@ spec:
       spec:
         externalLabels:
           cluster: cluster-name
-        scrapeInterval: 25s
+        scrapeInterval: 60s
       ingress:
         enabled: true
         ingressClassName: "nginx"
@@ -63,7 +63,7 @@ spec:
       spec:
         scheme: "https"
         honorLabels: true
-        interval: "30s"
+        interval: "60s"
         scrapeTimeout: "5s"
         tlsConfig:
           insecureSkipVerify: true
