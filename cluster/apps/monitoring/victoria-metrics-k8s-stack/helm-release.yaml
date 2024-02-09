@@ -26,6 +26,9 @@ spec:
       enabled: false
     fullnameOverride: "vm-k8s-stack"
     vmagent:
+      spec:
+        externalLabels:
+          cluster: cluster-name
       ingress:
         enabled: true
         ingressClassName: "nginx"

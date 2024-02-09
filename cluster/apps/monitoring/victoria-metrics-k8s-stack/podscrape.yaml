@@ -9,28 +9,28 @@ spec:
   podMetricsEndpoints:
     - scheme: http
       relabelConfigs:
-        - sourceLabels:
+        - source_labels:
             - __meta_kubernetes_pod_annotation_prometheus_io_scrape
           action: keep
           regex: "true"
-        - sourceLabels:
+        - source_labels:
             - __meta_kubernetes_pod_annotation_prometheus_io_scheme
           action: replace
-          targetLabel: __scheme__
+          target_label: __scheme__
           regex: (https?)
-        - sourceLabels:
+        - source_labels:
             - __meta_kubernetes_pod_annotation_prometheus_io_path
           action: replace
-          targetLabel: __metrics_path__
+          target_label: __metrics_path__
           regex: (.+)
-        - sourceLabels:
+        - source_labels:
             - __address__
             - __meta_kubernetes_pod_annotation_prometheus_io_port
           action: replace
-          targetLabel: __address__
+          target_label: __address__
           regex: ([^:]+)(?::\d+)?;(\d+)
           replacement: $1:$2
-        - targetLabel: cluster
+        - target_label: cluster
           replacement: cluster-name
   selector: {}
   namespaceSelector:

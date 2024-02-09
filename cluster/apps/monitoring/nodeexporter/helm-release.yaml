@@ -32,21 +32,23 @@ spec:
           - action: replace
             regex: (.*)
             replacement: $1
-            sourceLabels:
+            source_labels:
               - __meta_kubernetes_pod_node_name
-            targetLabel: kubernetes_node
+            target_label: kubernetes_node
           - action: replace
             regex: (.*)
             replacement: $1
-            sourceLabels:
+            source_labels:
               - __meta_kubernetes_pod_node_name
-            targetLabel: nodename
+            target_label: nodename
           - action: replace
             regex: (.*)
-            replacement: $1.bjw-s.casa:9100
-            sourceLabels:
+            replacement: $1.k8s.cubly.ru:9100
+            source_labels:
               - kubernetes_node
-            targetLabel: instance
+            target_label: instance
+          - target_label: cluster
+            replacement: cluster-name
 
     resources:
       requests:
