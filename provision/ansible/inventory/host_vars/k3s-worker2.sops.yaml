@@ -2,9 +2,9 @@ kind: Secret
 ansible_become_pass: ENC[AES256_GCM,data:Js6ygQRxkbBO9r/qssg6qvE=,iv:6dj6PFU7Po3rIgFYEu6iUaXOwZ+zl8+G0WnKOffh4jA=,tag:sFquZnffidj3cz/H7U5CBA==,type:str]
 node_ip: ENC[AES256_GCM,data:yJDZShpW7Gg+2oc=,iv:ad2Gn8SF2woqGMDKXpWUKL+CW3zOHS9HybLT+SS0+Cc=,tag:BavZdY/IaSNBWmYY+4Ef0Q==,type:str]
 apt_packages:
-    - ENC[AES256_GCM,data:5Gs64TynnSf0m43wGkWAUkThMfnMOX4mq/k=,iv:cU2V8/H1Fq7A4snFPcU7evZG6/DjFxrGlIx3BFRa/DY=,tag:LF7r7yrL8eSFKf4xaxeqqw==,type:str]
-    - ENC[AES256_GCM,data:lmXMYUJs1z8wLA9srVE6CBTiCqVVw3E=,iv:KFn79PmzyiIWo5+yHZhirlXv5dLr1w5nH8vTS/UgVcE=,tag:DfKKuWx+MvJn+kS87IX8ig==,type:str]
-    - ENC[AES256_GCM,data:hpx0N3ezWcnK3pNPc8tg9Z9GpHKQlLM2eZ/7,iv:oLZvlwiXhEF71+kmh298TXOJbEKpV/bql8t0aesDk24=,tag:gEUjXKz+mJH/06H11vbYNg==,type:str]
+    - ENC[AES256_GCM,data:8QBtktNon/XOpIwvYSY64OLoJFwYmRKBqWA=,iv:bhVHAIFk9G88T+NwA5378EA+WxCiGJAsRNZdrwgV2Bg=,tag:TPGBPn00eA7PJfysf2A/qQ==,type:str]
+    - ENC[AES256_GCM,data:gPDjTuZ64Y6fuMF6UhRKHnHwgQWI/nY=,iv:GvdClus/tyu/hNs7hcI0irjB2EJrFQMgcCiZzqLMnWs=,tag:yN59smuZKfu4Szasm2mfjg==,type:str]
+    - ENC[AES256_GCM,data:Qr7ONKonwtbLt8zyDLvbE8aXNuVMuUgqbrkA,iv:QsSn2/W63y1yUjJREgbgN6xPy+IADsch/XTeQ2+BK/Y=,tag:GxicwS53IDQSFrT4/OGHCw==,type:str]
     - ENC[AES256_GCM,data:HpAoIf0=,iv:GVo4Tjj2ftZdNgvdPaz4W5mbr29ZW83V9BNRngPkagY=,tag:pwmXfuo0l/uPqD5aFxiMLg==,type:str]
 k3s_agent:
     node-label:
@@ -26,8 +26,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-01-04T15:56:38Z"
-    mac: ENC[AES256_GCM,data:YT0xm5XR29K8rZqpmHSxi/ENXS2LrlY7hP7bTRWVv+pIeuf/b3pkjbf8fV+rmgpJXr3RmmKTOMpdyTPEVIwlZcLF/VvI2g60XL0R1hURiRjYbYTUZYeX9sLJeY3ByywmwDqaX6F3uaSqEuVoJLwoOsrRxqsBa7XM6EfYLPhPOeM=,iv:+qtzKm4IIJY6Dp62dRCKlvybUCc9YJ5GdnySYTGypI0=,tag:EcI9eryHJL6Utmzjv9SCQg==,type:str]
+    lastmodified: "2024-02-09T20:00:43Z"
+    mac: ENC[AES256_GCM,data:fu8pqWB6O+5SgiX911g0SpK7MZ+fEqCjUZjsKHAwIpfb6uGbamRtwb8AyRFNPT9Q8Fe7kc9iGgJH/Krt1qicsjCntZtuA9UGjUWdX8/e2bMKN+1k3/X6cjGdocRdIR1kz5EZCXd9qb4U0Z6wqsdOnTW8Hf2CsXe04SUxnr5BPCM=,iv:8HlL2J4LpUTQeMcd22vb9LnhQE+2Alv6MaPbMs7AkBM=,tag:cipXQjCbdP1ycic8yM5JhQ==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

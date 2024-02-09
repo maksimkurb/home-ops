@@ -30,6 +30,8 @@ spec:
           targetLabel: __address__
           regex: ([^:]+)(?::\d+)?;(\d+)
           replacement: $1:$2
+        - target_label: cluster
+          replacement: cluster-name
   selector: {}
   namespaceSelector:
     any: true
