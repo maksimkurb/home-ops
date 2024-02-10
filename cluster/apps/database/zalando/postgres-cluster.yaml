@@ -31,6 +31,7 @@ spec:
     immich: []
     prowlarr: []
     radarr: []
+    compreface: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -45,6 +46,7 @@ spec:
     prowlarr_log: prowlarr
     radarr: radarr
     radarr_log: radarr
+    compreface: compreface
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
