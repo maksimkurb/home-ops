@@ -85,7 +85,7 @@ spec:
           main:
             image:
               repository: docker.io/exadel/compreface
-              tag: "1.2.0-arcface-r100-gpu"
+              tag: "1.2.0-arcface-r100"
             env:
               TZ: "${TIMEZONE}"
               POSTGRES_DB: compreface
