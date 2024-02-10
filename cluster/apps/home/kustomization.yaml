@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - codeproject-ai
-  - compreface
+  # - compreface
   - double-take
   - frigate
   - home-assistant
