@@ -130,7 +130,7 @@ spec:
           main:
             image:
               repository: ghcr.io/blakeblackshear/frigate
-              tag: "0.13.1-tensorrt"
+              tag: "0.13.2-tensorrt"
             env:
               TZ: "${TIMEZONE}"
             envFrom:
