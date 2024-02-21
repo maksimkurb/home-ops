@@ -12,6 +12,8 @@ spec:
   numberOfInstances: 1
   allowedSourceRanges:
     - "0.0.0.0/0"
+  masterServiceAnnotations:
+
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:

@@ -99,7 +99,3 @@ spec:
           tls:
             - hosts:
                 - *host
-    bgp:
-      enabled: true
-      announce:
-        loadbalancerIP: true
