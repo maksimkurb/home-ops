@@ -22,7 +22,7 @@ spec:
       main:
         ports:
           http:
-            port: 32168
+            port: 80
 
     ingress:
       main:
@@ -97,6 +97,7 @@ spec:
               tag: "cuda12_2-2.5.4"
             env:
               TZ: "${TIMEZONE}"
+              CPAI_PORT: 80
             resources:
               requests:
                 cpu: 1m
