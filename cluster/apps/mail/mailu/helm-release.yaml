@@ -50,7 +50,7 @@ spec:
     roundcube:
       resources:
         requests:
-          cpu: 200m
+          cpu: 1m
         limits:
           cpu: 400m
   postRenderers:

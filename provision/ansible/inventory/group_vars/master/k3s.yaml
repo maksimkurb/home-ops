@@ -9,8 +9,6 @@ k3s_control_node: true
 k3s_server:
   node-ip: "{{ node_ip }}"
   tls-san:
-    # kube-vip
-    - 10.75.40.10
     - "{{ node_domain }}"
   # Disable Docker - this will use the default containerd CRI
   docker: false

@@ -123,7 +123,7 @@ spec:
               QBITTORRENT__BT_PORT: ${SECRET_VPN_FORWARDED_PORT_1}
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 250Mi
               limits:
                 memory: 6000Mi

@@ -22,6 +22,8 @@
       - qemu-guest-agent
       - htop
       - vim
+      - linux-image-generic-hwe-22.04
+      - linux-headers-generic-hwe-22.04
     install_recommends: false
     update_cache: true
     cache_valid_time: 3600

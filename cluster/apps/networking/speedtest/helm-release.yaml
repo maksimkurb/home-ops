@@ -65,7 +65,7 @@ spec:
               MODE: standalone
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 50Mi
               limits:
                 memory: 150Mi

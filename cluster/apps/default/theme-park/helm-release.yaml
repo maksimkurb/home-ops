@@ -77,7 +77,7 @@ spec:
               tag: v1.13.1
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 50Mi
               limits:
                 memory: 150Mi

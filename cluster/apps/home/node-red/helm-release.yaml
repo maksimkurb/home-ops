@@ -122,7 +122,7 @@ spec:
               HTTPS_PROXY: "http://gluetun.default:8888"
             resources:
               requests:
-                cpu: 200m
+                cpu: 1m
                 memory: 100Mi
               limits:
                 cpu: 1000m

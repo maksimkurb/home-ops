@@ -89,7 +89,7 @@ spec:
               tag: 1.23.11
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 50Mi
               limits:
                 memory: 350Mi

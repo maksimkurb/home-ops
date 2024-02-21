@@ -96,7 +96,7 @@ spec:
                   name: compreface-secret
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 100Mi
                 nvidia.com/gpu: "1"
               limits:

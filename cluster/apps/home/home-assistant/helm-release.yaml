@@ -163,7 +163,7 @@ spec:
                   name: home-assistant
             resources:
               requests:
-                cpu: 50m
+                cpu: 1m
                 memory: 100Mi
               limits:
                 cpu: 1000m

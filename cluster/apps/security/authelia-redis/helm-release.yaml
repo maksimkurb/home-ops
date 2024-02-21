@@ -52,7 +52,7 @@ spec:
                   name: *app
             resources:
               requests:
-                cpu: 10m
+                cpu: 1m
                 memory: 10Mi
               limits:
                 memory: 100Mi

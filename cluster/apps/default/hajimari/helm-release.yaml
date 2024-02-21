@@ -154,5 +154,5 @@ spec:
         existingClaim: hajimari-data-v1
     resources:
       requests:
-        cpu: 100m
+        cpu: 1m
         memory: 128M

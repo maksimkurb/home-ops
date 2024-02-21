@@ -65,7 +65,7 @@ spec:
               tag: 2.0.18
             resources:
               requests:
-                cpu: 5m
+                cpu: 1m
                 memory: 10M
               limits:
                 memory: 100M

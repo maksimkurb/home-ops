@@ -70,7 +70,7 @@ spec:
                 enabled: false
             resources:
               requests:
-                cpu: 5m
+                cpu: 1m
                 memory: 128M
               limits:
                 memory: 256M
