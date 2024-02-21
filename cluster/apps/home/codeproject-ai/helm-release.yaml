@@ -94,7 +94,7 @@ spec:
           main:
             image:
               repository: codeproject/ai-server
-              tag: "gpu-2.2.4"
+              tag: "cuda12_2-2.5.4"
             env:
               TZ: "${TIMEZONE}"
             resources:
