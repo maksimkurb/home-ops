@@ -36,8 +36,9 @@ spec:
     resources:
       requests:
         cpu: 200m
+        memory: 1Gi
       limits:
-        memory: 3Gi
+        memory: 5Gi
     securityContext:
       runAsUser: &uid 777
       fsGroup: *uid
@@ -63,7 +64,7 @@ spec:
       type: SPIGOT
       forceReDownload: true
       jvmXXOpts: "-XX:MaxRAMPercentage=75"
-      memory: 3072M
+      memory: 4096M
       difficulty: normal
       spawnProtection: 0
       maxTickTime: -1
