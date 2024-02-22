@@ -102,7 +102,7 @@ spec:
             type: ClusterIP
             port: 8123
           ingress:
-            ingressClassName: external
+            ingressClassName: nginx
             enabled: true
             hosts:
               - name: &host "mcsrv-map.${SECRET_DOMAIN}"
