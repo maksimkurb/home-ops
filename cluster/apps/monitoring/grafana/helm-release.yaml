@@ -32,8 +32,12 @@ spec:
       GF_SECURITY_ALLOW_EMBEDDING: true
       GF_SECURITY_COOKIE_SAMESITE: grafana
       DS_PROMETHEUS: Prometheus
+    envFromSecrets:
+      - name: grafana-secrets
     admin:
-      existingSecret: grafana-admin-creds
+      existingSecret: grafana-secrets
+      passwordKey: adminPassword
+      userKey: adminUser
     grafana.ini:
       server:
         root_url: "https://grafana.${SECRET_PUBLIC_DOMAIN}"
@@ -56,8 +60,6 @@ spec:
       auth.generic_oauth:
         enabled: true
         name: 56k
-        client_id: "grafana"
-        client_secret: "${SECRET_GRAFANA_OAUTH_CLIENT_SECRET}"
         scopes: "openid profile email groups"
         empty_scopes: false
         auth_url: https://auth.${SECRET_DOMAIN}/api/oidc/authorization
