@@ -5,7 +5,7 @@ resources:
   - namespace.yaml
   # - generic-rules
   # - goldilocks
-  - grafana
+  # - grafana
   # - intel-gpu-exporter
   # - kube-prometheus-stack
   - loki

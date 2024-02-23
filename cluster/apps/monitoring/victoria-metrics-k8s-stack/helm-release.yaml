@@ -23,7 +23,91 @@ spec:
       retries: 3
   values:
     grafana:
-      enabled: false
+      enabled: true
+      ingress:
+        ingressClassName: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+          nginx.ingress.kubernetes.io/affinity: "cookie"
+          nginx.ingress.kubernetes.io/session-cookie-name: "grafana"
+          nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+          nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+        hosts:
+          - &host "grafana.${SECRET_PUBLIC_DOMAIN}"
+        tls:
+          - hosts:
+              - *host
+        env:
+          GF_EXPLORE_ENABLED: true
+          GF_PANELS_DISABLE_SANITIZE_HTML: true
+          GF_LOG_FILTERS: rendering:debug
+          GF_DATE_FORMATS_FULL_DATE: "MMM Do, YYYY hh:mm:ss a"
+          GF_SECURITY_ALLOW_EMBEDDING: true
+          GF_SECURITY_COOKIE_SAMESITE: grafana
+          DS_PROMETHEUS: VictoriaMetrics
+        envFromSecrets:
+          - name: grafana-secrets
+        admin:
+          existingSecret: grafana-secrets
+          passwordKey: adminPassword
+          userKey: adminUser
+        grafana.ini:
+          server:
+            root_url: "https://grafana.${SECRET_PUBLIC_DOMAIN}"
+          paths:
+            data: /var/lib/grafana/data
+            logs: /var/log/grafana
+            plugins: /var/lib/grafana/plugins
+            provisioning: /etc/grafana/provisioning
+          analytics:
+            check_for_updates: false
+          log:
+            mode: console
+          grafana_net:
+            url: https://grafana.net
+          auth:
+            signout_redirect_url: "https://auth.${SECRET_DOMAIN}/logout"
+            oauth_auto_login: true
+          auth.basic:
+            disable_login_form: false
+          auth.generic_oauth:
+            enabled: true
+            name: 56k
+            scopes: "openid profile email groups"
+            empty_scopes: false
+            auth_url: https://auth.${SECRET_DOMAIN}/api/oidc/authorization
+            token_url: https://auth.${SECRET_DOMAIN}/api/oidc/token
+            api_url: https://auth.${SECRET_DOMAIN}/api/oidc/userinfo
+            login_attribute_path: preferred_username
+            groups_attribute_path: groups
+            name_attribute_path: name
+            use_pkce: true
+            role_attribute_path: |
+              contains(groups[*], 'admins') && 'Admin' || 'Viewer'
+      dashboards:
+        default:
+          # Ref: https://grafana.com/grafana/dashboards/1860
+          nodeexporter:
+            gnetId: 1860
+            revision: 22
+            datasource: VictoriaMetrics
+          # Ref: https://grafana.com/grafana/dashboards/7845
+          zfs:
+            gnetId: 7845
+            revision: 4
+            datasource: VictoriaMetrics
+          # Ref: https://grafana.com/grafana/dashboards/13502
+          minio:
+            gnetId: 13502
+            revision: 10
+            datasource: VictoriaMetrics
+      defaultDashboardsTimezone: "${TIMEZONE}"
+      persistence:
+        enabled: true
+        storageClassName: "nfs-proxmox"
+        size: 1Gi
+        accessModes:
+          - ReadWriteOnce
     fullnameOverride: "vm-k8s-stack"
     vmagent:
       spec:
@@ -96,7 +180,7 @@ spec:
               - severity = "warning"
             equal: ["alertname", "namespace"]
         route:
-          group_by: ['alertname', 'job']
+          group_by: ["alertname", "job"]
           group_wait: 30s
           group_interval: 5m
           repeat_interval: 6h
