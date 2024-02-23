@@ -71,8 +71,8 @@ spec:
       gameMode: survival
       pvp: false
       onlineMode: false
-      whitelist: null
-      ops: null
+      whitelist: kurb,Ghost,WannaPitsa
+      ops: kurb
       motd: "Cubly Mine"
       worldSaveName: Vibecraft
       viewDistance: 12
