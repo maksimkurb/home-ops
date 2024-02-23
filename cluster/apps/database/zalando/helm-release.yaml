@@ -23,10 +23,10 @@ spec:
     remediation:
       retries: 5
   values:
-
     # general configuration parameters
     configGeneral:
-      docker_image: ghcr.io/maksimkurb/spilo-15:3.1-p1-pgvecto.rs-3
+      # Spilo image with pgvecto.rs 0.2.0 support
+      docker_image: ghcr.io/maksimkurb/spilo-15:3.1-p1-pgvecto.rs-0.2.0-2
 
       # min number of instances in Postgres cluster. -1 = no limit
       min_instances: -1
@@ -119,7 +119,7 @@ spec:
       storage_resize_mode: off # We do not need to increase PVC size as it is NFS anyways
 
       # operator watches for postgres objects in the given namespace
-      watched_namespace: "*"  # listen to all namespaces
+      watched_namespace: "*" # listen to all namespaces
 
     # configure resource requests for the Postgres pods
     configPostgresPodResources:
@@ -350,7 +350,6 @@ spec:
     serviceAccount:
       # Specifies whether a ServiceAccount should be created
       create: true
-
 
     podServiceAccount:
       # The name of the ServiceAccount to be used by postgres cluster pods
