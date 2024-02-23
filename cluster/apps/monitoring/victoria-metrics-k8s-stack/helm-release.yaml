@@ -87,3 +87,40 @@ spec:
             replacement: "kubelet"
           - targetLabel: "cluster"
             replacement: "cluster-name"
+    alertmanager:
+      config:
+        inhibit_rules:
+          - source_matchers:
+              - severity = "critical"
+            target_matchers:
+              - severity = "warning"
+            equal: ["alertname", "namespace"]
+        route:
+          group_by: ['alertname', 'job']
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 6h
+          receiver: discord
+          routes:
+            - receiver: "null"
+              matchers:
+                - alertname =~ "InfoInhibitor|Watchdog"
+            - receiver: "discord"
+              continue: true
+              matchers:
+                - severity = "critical"
+        receivers:
+          - name: "null"
+          - name: "discord"
+            discord_configs:
+              - webhook_url: "${SECRET_ALERT_MANAGER_DISCORD_WEBHOOK}"
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+        hosts:
+          - &vmalertmanager-host "vmalertmanager.${SECRET_DOMAIN}"
+        tls:
+          - hosts:
+              - *vmalertmanager-host
