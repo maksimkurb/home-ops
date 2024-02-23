@@ -105,7 +105,6 @@ spec:
             annotations:
               external-dns.alpha.kubernetes.io/enabled: "true"
               external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
-              external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             ingressClassName: nginx
             enabled: true
             hosts:
