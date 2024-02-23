@@ -47,9 +47,9 @@ spec:
         GF_SECURITY_COOKIE_SAMESITE: grafana
         DS_PROMETHEUS: VictoriaMetrics
       envFromSecrets:
-        - name: grafana-secrets
+        - name: victoria-metrics-grafana-secrets
       admin:
-        existingSecret: grafana-secrets
+        existingSecret: victoria-metrics-grafana-secrets
         passwordKey: adminPassword
         userKey: adminUser
       grafana.ini:
