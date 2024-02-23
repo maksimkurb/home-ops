@@ -9,7 +9,7 @@ spec:
   url: https://github.com/VictoriaMetrics/helm-charts.git
   ref:
     # renovate: registryUrl=https://github.com/VictoriaMetrics/helm-charts chart=victoria-metrics-k8s-stack
-    tag: victoria-metrics-k8s-stack-0.18.8
+    tag: victoria-metrics-k8s-stack-0.19.1
   ignore: |
     # exclude all
     /*

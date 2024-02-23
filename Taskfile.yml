@@ -16,4 +16,3 @@ includes:
   precommit: .taskfiles/PreCommitTasks.yml
   restore: .taskfiles/RestoreTasks.yml
   rook: .taskfiles/RookTasks.yml
-  talos: .taskfiles/TalosTasks.yml
