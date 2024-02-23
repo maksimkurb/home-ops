@@ -27,11 +27,6 @@ spec:
   uninstall:
     keepHistory: false
   values:
-
-    command:
-      - sftpgo
-      - serve
-
     service:
       main:
         type: ClusterIP
@@ -117,6 +112,17 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          - name: migrate-db
+            image: ghcr.io/drakkan/sftpgo:v2.5-distroless-slim
+            command:
+              - sftpgo
+              - initprovider
+            env:
+              TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: *app
         containers:
           main:
             image:
