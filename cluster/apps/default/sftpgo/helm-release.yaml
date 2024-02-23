@@ -113,7 +113,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          - name: migrate-db
+          migrate-db:
             image:
               repository: ghcr.io/drakkan/sftpgo
               tag: v2.5-distroless-slim
