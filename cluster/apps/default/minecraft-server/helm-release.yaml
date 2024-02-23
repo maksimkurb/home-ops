@@ -62,7 +62,7 @@ spec:
       eula: true
       version: 1.20.4
       type: SPIGOT
-      forceReDownload: true
+      forceReDownload: false
       jvmXXOpts: "-XX:MaxRAMPercentage=75"
       memory: 4096M
       difficulty: normal
