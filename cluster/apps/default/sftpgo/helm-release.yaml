@@ -114,7 +114,9 @@ spec:
           reloader.stakater.com/auto: "true"
         initContainers:
           - name: migrate-db
-            image: ghcr.io/drakkan/sftpgo:v2.5-distroless-slim
+            image:
+              repository: ghcr.io/drakkan/sftpgo
+              tag: v2.5-distroless-slim
             command:
               - sftpgo
               - initprovider
@@ -128,12 +130,6 @@ spec:
             image:
               repository: ghcr.io/drakkan/sftpgo
               tag: v2.5-distroless-slim
-              command:
-                - sftpgo
-                - initprovider
-              envFrom:
-                - secretRef:
-                    name: *app
             env:
               TZ: "${TIMEZONE}"
             envFrom:
