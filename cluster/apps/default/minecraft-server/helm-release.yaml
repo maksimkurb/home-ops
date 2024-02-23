@@ -63,12 +63,12 @@ spec:
       version: 1.20.4
       type: PURPUR
       forceReDownload: false
-      jvmXXOpts: "-XX:MaxRAMPercentage=75"
+      jvmXXOpts: "-XX:MaxRAM=4g"
       memory: 4096M
-      difficulty: normal
+      difficulty: hard
       spawnProtection: 0
       maxTickTime: -1
-      gameMode: survival
+      gameMode: hard
       pvp: false
       onlineMode: false
       whitelist: kurb,Ghost,WannaPitsa
