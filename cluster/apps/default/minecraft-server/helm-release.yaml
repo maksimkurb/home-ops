@@ -71,7 +71,7 @@ spec:
       gameMode: hard
       pvp: false
       onlineMode: false
-      whitelist: kurb,Ghost,WannaPitsa
+      whitelist: kurb,Ghost,WannaPitsa,lunanott
       ops: kurb
       motd: "Cubly Mine"
       worldSaveName: Vibecraft
