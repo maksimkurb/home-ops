@@ -112,8 +112,6 @@ spec:
     fullnameOverride: "vm-k8s-stack"
     vmagent:
       spec:
-        extraArgs:
-          dedup.minScrapeInterval: "60s"
         externalLabels:
           cluster: cluster-name
         scrapeInterval: 60s
