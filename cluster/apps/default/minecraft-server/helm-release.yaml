@@ -77,8 +77,7 @@ spec:
       motd: "Cubly Mine"
       worldSaveName: Vibecraft
       viewDistance: 12
-      spigetResources:
-        - 36618 #Prom Exporter
+      spigetResources: []
       rcon:
         enabled: true
         serviceType: ClusterIP
