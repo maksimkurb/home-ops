@@ -38,6 +38,12 @@ spec:
         tls:
           - hosts:
               - *host
+      sidecar:
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+          labelValue: "true"
+          searchNamespace: "ALL"
       env:
         GF_EXPLORE_ENABLED: true
         GF_PANELS_DISABLE_SANITIZE_HTML: true
