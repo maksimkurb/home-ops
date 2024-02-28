@@ -42,7 +42,7 @@ spec:
         dashboards:
           enabled: true
           label: grafana_dashboard
-          labelValue: "true"
+          labelValue: ""
           searchNamespace: "ALL"
       env:
         GF_EXPLORE_ENABLED: true
