@@ -98,16 +98,6 @@ spec:
             gnetId: 1860
             revision: 22
             datasource: VictoriaMetrics
-          # Ref: https://grafana.com/grafana/dashboards/7845
-          zfs:
-            gnetId: 7845
-            revision: 4
-            datasource: VictoriaMetrics
-          # Ref: https://grafana.com/grafana/dashboards/13502
-          minio:
-            gnetId: 13502
-            revision: 10
-            datasource: VictoriaMetrics
       defaultDashboardsTimezone: "${TIMEZONE}"
       persistence:
         enabled: true
