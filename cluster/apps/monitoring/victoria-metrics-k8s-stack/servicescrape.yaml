@@ -8,6 +8,26 @@ spec:
   jobLabel: "app.kubernetes.io/name"
   endpoints:
     - port: metrics
+      scheme: http
+      path: /metrics
+      relabelConfigs:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          source_labels:
+            - __meta_kubernetes_pod_node_name
+          target_label: kubernetes_node
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          source_labels:
+            - __meta_kubernetes_pod_node_name
+          target_label: nodename
+        - target_label: cluster
+          replacement: cluster-name
+    - port: http-prom
+      scheme: http
+      path: /metrics
       relabelConfigs:
         - action: replace
           regex: (.*)
