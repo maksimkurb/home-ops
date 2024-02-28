@@ -1,34 +1,62 @@
+# IMPORTANT: This file is not tracked by flux and should never be. Its
+# purpose is to only install the Flux components & CRDs into your cluster.
 ---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/fluxcd/flux2//manifests/install?ref=v2.2.3
+  - github.com/fluxcd/flux2/manifests/install?ref=v2.2.3
 patches:
-  - target:
-      kind: Deployment
-      labelSelector: control-plane=controller
-    patch: |-
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: not-used
-      spec:
-        template:
-          spec:
-            containers:
-              - name: manager
-                resources:
-                  requests:
-                    memory: 512Mi
-                  limits:
-                    memory: "2Gi"
+  # Remove the built-in network policies
   - target:
       group: networking.k8s.io
-      version: v1
       kind: NetworkPolicy
-    patch: |-
+    patch: |
       $patch: delete
       apiVersion: networking.k8s.io/v1
       kind: NetworkPolicy
       metadata:
         name: not-used
+  # Resources renamed to match those installed by oci://ghcr.io/fluxcd/flux-manifests
+  - target:
+      kind: ResourceQuota
+      name: critical-pods
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: critical-pods-flux-system
+  - target:
+      kind: ClusterRoleBinding
+      name: cluster-reconciler
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: cluster-reconciler-flux-system
+  - target:
+      kind: ClusterRoleBinding
+      name: crd-controller
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: crd-controller-flux-system
+  - target:
+      kind: ClusterRole
+      name: crd-controller
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: crd-controller-flux-system
+  - target:
+      kind: ClusterRole
+      name: flux-edit
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: flux-edit-flux-system
+  - target:
+      kind: ClusterRole
+      name: flux-view
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: flux-view-flux-system
