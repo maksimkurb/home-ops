@@ -1,0 +1,21 @@
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Add Git SSH key to agent",
+      "type": "shell",
+      "command": "ssh-agent-add-id",
+      "args": ["${userHome}/.ssh/id_rsa"],
+      "presentation": {
+        "panel": "new",
+        "revealProblems": "onProblem",
+        "close": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
