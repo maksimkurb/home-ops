@@ -7,7 +7,9 @@ metadata:
   namespace: monitoring
 spec:
   podMetricsEndpoints:
-    - scheme: http
+    - port: metrics
+      scheme: http
+      path: /metrics
       relabelConfigs:
         - source_labels:
             - __meta_kubernetes_pod_annotation_prometheus_io_scrape
