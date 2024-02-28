@@ -19,7 +19,7 @@ export FLUX_KEY_FP=772154FFF783DE317KLCA0EC77149AC618D75581
 ### 2. Verify cluster is ready for Flux
 
 ```sh
-flux --kubeconfig=./kubeconfig check --pre
+flux check --pre
 # ► checking prerequisites
 # ✔ kubectl 1.21.0 >=1.18.0-0
 # ✔ Kubernetes 1.20.5+k3s1 >=1.16.0-0
@@ -28,13 +28,13 @@ flux --kubeconfig=./kubeconfig check --pre
 ### 3. Pre-create the `flux-system` namespace
 
 ```sh
-kubectl --kubeconfig=./kubeconfig create namespace flux-system --dry-run=client -o yaml | kubectl --kubeconfig=./kubeconfig apply -f -
+kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
 ```
 ### 4. Add the Flux GPG key in-order for Flux to decrypt SOPS secrets
 
 ```sh
 gpg --export-secret-keys --armor "${FLUX_KEY_FP}" |
-kubectl --kubeconfig=./kubeconfig create secret generic sops-gpg \
+kubectl create secret generic sops-gpg \
     --namespace=flux-system \
     --from-file=sops.asc=/dev/stdin
 ```
@@ -43,7 +43,7 @@ kubectl --kubeconfig=./kubeconfig create secret generic sops-gpg \
 !!! warning "Due to race conditions with the Flux CRDs you will have to run the below command twice. There should be no errors on this second run."
 
 ```sh
-kubectl --kubeconfig=./kubeconfig apply --kustomize=./cluster/base/flux-system
+kubectl apply --kustomize=./cluster/base/flux-system
 # namespace/flux-system configured
 # customresourcedefinition.apiextensions.k8s.io/alerts.notification.toolkit.fluxcd.io created
 # customresourcedefinition.apiextensions.k8s.io/buckets.source.toolkit.fluxcd.io created
