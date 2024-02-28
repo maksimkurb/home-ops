@@ -153,7 +153,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-assistant/home-assistant
-              tag: 2024.2.4
+              tag: 2024.2.5
             env:
               TZ: "${TIMEZONE}"
               HTTP_PROXY: "http://gluetun.default:8888"
