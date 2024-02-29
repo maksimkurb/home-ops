@@ -9,7 +9,6 @@ spec:
   capacity:
     storage: 10Gi
   accessModes: ["ReadWriteOnce"]
-  storageClassName: homelab-pgsql-data
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
