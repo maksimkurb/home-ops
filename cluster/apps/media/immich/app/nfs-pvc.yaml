@@ -12,7 +12,7 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: "${NFS_PROXMOX_MEDIA}/01_media/immich/"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

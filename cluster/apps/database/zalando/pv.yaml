@@ -13,4 +13,4 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: "${NFS_PROXMOX_POSTGRES}/database-pgdata-homelab-pgsql-0"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]

@@ -12,7 +12,7 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: /tank/media
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -41,7 +41,7 @@ spec:
   nfs:
     server: "${NFS_PROXMOX_ADDR}"
     path: /tank/filehosting
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
