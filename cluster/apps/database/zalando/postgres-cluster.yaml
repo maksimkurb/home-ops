@@ -8,7 +8,7 @@ spec:
   teamId: "homelab"
   volume:
     size: 10Gi
-    storageClass: nfs-postgres
+    storageClass: homelab-pgsql-data
   numberOfInstances: 1
   allowedSourceRanges:
     - "0.0.0.0/0"

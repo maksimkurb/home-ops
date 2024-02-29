@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: homelab-pgsql-data
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes: ["ReadWriteMany"]
+  storageClassName: homelab-pgsql-data
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "${NFS_PROXMOX_ADDR}"
+    path: "${NFS_PROXMOX_POSTGRES}/database-pgdata-homelab-pgsql-0"
+  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "noatime"]
