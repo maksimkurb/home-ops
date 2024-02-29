@@ -8,7 +8,10 @@ spec:
   teamId: "homelab"
   volume:
     size: 10Gi
-    storageClass: homelab-pgsql-data
+    # storageClass: homelab-pgsql-data
+    selector:
+      matchLabels:
+        pg-volume: homelab-pgsql-data
   numberOfInstances: 1
   allowedSourceRanges:
     - "0.0.0.0/0"
