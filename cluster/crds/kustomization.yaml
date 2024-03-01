@@ -6,6 +6,5 @@ resources:
   - external-snapshotter
   # - ext-postgres-operator
   - kube-prometheus-stack
-  # - kyverno
   - zalando
   - victoria-metrics
