@@ -61,6 +61,7 @@ spec:
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
-  clone:
-    cluster: "homelab-pgsql"  # Inplace restore when having the same cluster name as the source
-    timestamp: "2024-02-27T18:00:00+04:00"  # timezone required (offset relative to UTC, see RFC 3339 section 5.6)
+  # clone:
+  #   cluster: "homelab-pgsql"  # Inplace restore when having the same cluster name as the source
+  #   uid: "<original_UID>"
+  #   timestamp: "2024-02-27T18:00:00+04:00"  # timezone required (offset relative to UTC, see RFC 3339 section 5.6)

@@ -17,6 +17,6 @@ data:
   WALG_BUCKET_SCOPE_PREFIX: ""
   AWS_ENDPOINT: "http://minio.default:9000"
   WALE_S3_ENDPOINT: "https+path://minio.default:9000"
-  AWS_REGION: default
+  AWS_REGION: ""
   AWS_S3_FORCE_PATH_STYLE: "true"
   USE_PGVECTO_RS: "true"
