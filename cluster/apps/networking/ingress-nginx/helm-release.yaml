@@ -41,6 +41,8 @@ spec:
       #   configMapKey: "nginx.tmpl"
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_NGINX_ADDR}"
         externalTrafficPolicy: Local
       publishService:
         enabled: true

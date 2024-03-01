@@ -27,6 +27,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_FRIGATE_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_FRIGATE_ADDR}"
         ports:
           http:
             port: 5000

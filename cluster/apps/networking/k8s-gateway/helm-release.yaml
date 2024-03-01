@@ -33,6 +33,8 @@ spec:
         type: LoadBalancer
         externalIPs:
           - "${SVC_K8S_GATEWAY_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_K8S_GATEWAY_ADDR}"
         externalTrafficPolicy: Local
         ports:
           http:

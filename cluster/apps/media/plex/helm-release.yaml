@@ -36,6 +36,8 @@ spec:
       main:
         type: LoadBalancer
         loadBalancerIP: "${SVC_PLEX_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_PLEX_ADDR}"
         externalTrafficPolicy: Local
         ports:
           http:

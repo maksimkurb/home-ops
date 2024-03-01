@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: homelab-pgsql-external
   namespace: database
+  annotations:
+    io.cilium/lb-ipam-ips: "${SVC_DATABASE_ADDR}"
 spec:
   selector:
     application: spilo
