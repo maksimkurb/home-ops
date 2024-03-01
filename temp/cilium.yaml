@@ -1,0 +1,69 @@
+externalIPs:
+  enabled: true
+socketLB:
+  enabled: true
+nodePort:
+  enabled: true
+hostPort:
+  enabled: true
+bgpControlPlane:
+  enabled: true
+bpf:
+  masquerade: true
+cluster:
+  name: "cluster01"
+  id: "1"
+rollOutCiliumPods: true
+localRedirectPolicy: true
+kubeProxyReplacement: "strict"
+kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
+ipv4NativeRoutingCIDR: 172.22.0.0/16
+k8sServiceHost: 10.75.40.21
+k8sServicePort: 6443
+loadBalancer:
+  algorithm: "maglev"
+  mode: "dsr"
+tunnel: "disabled"
+routingMode: "native"
+autoDirectNodeRoutes: true
+endpointRoutes:
+  enabled: true
+ipam:
+  mode: "kubernetes"
+operator:
+  rollOutPods: true
+containerRuntime:
+  integration: containerd
+securityContext:
+  privileged: true
+hubble:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+  metrics:
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - http
+  relay:
+    enabled: true
+    rollOutPods: true
+  ui:
+    enabled: true
+    rollOutPods: true
+    ingress:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+        hajimari.io/enable: "true"
+        hajimari.io/appName: hubble
+        hajimari.io/icon: lan
+      hosts:
+        - &host "hubble.cubly.ru"
+      tls:
+        - hosts:
+            - *host

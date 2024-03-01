@@ -34,22 +34,17 @@ spec:
     vaultwarden: []
     firefly: []
     homeassistant: []
-    keycloak: []
     authelia: []
-    coder: []
     sftpgo: []
     photoview: []
     immich: []
     prowlarr: []
     radarr: []
-    compreface: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
     homeassistant: homeassistant
-    keycloak: keycloak
     authelia: authelia
-    coder: coder
     sftpgo: sftpgo
     photoview: photoview
     immich: immich
@@ -57,10 +52,19 @@ spec:
     prowlarr_log: prowlarr
     radarr: radarr
     radarr_log: radarr
-    compreface: compreface
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
+  additionalVolumes:
+    - name: custom-launch-sh
+      mountPath: /launch.sh
+      subPath: launch.sh
+      targetContainers:
+        - postgres
+      volumeSource:
+        configMap:
+          name: postgres-files
+
   # clone:
   #   cluster: "homelab-pgsql"  # Inplace restore when having the same cluster name as the source
   #   uid: "<original_UID>"
