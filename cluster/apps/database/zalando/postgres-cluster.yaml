@@ -23,6 +23,13 @@ spec:
               operator: In
               values:
                 - k3s-worker1
+  resources:
+    requests:
+      cpu: 100mi
+      memory: 100Mi
+    limits:
+      cpu: '2'
+      memory: 1000Mi
   postgresql:
     version: "15"
     parameters:
