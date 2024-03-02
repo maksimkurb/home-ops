@@ -94,6 +94,11 @@ spec:
             image:
               repository: louislam/uptime-kuma
               tag: 1.23.11
+            env:
+              - name: PUID
+                value: "777"
+              - name: PGID
+                value: "777"
             resources:
               requests:
                 cpu: 1m
