@@ -36,10 +36,7 @@ spec:
     homeassistant: []
     authelia: []
     sftpgo: []
-    photoview: []
     immich: []
-    prowlarr: []
-    radarr: []
     tianji: []
   databases:
     vaultwarden: vaultwarden
@@ -47,12 +44,7 @@ spec:
     homeassistant: homeassistant
     authelia: authelia
     sftpgo: sftpgo
-    photoview: photoview
     immich: immich
-    prowlarr: prowlarr
-    prowlarr_log: prowlarr
-    radarr: radarr
-    radarr_log: radarr
     tianji: tianji
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
@@ -66,8 +58,7 @@ spec:
       volumeSource:
         configMap:
           name: postgres-files
-
   # clone:
-  #   cluster: "homelab-pgsql"  # Inplace restore when having the same cluster name as the source
-  #   uid: "<original_UID>"
+  #   cluster: "homelab-restore-pgsql"  # Inplace restore when having the same cluster name as the source
+  #   uid: "08f22d43-b36d-4930-a888-3e5516a20a03"
   #   timestamp: "2024-02-27T18:00:00+04:00"  # timezone required (offset relative to UTC, see RFC 3339 section 5.6)
