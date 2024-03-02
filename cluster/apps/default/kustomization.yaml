@@ -12,6 +12,6 @@ resources:
   - kopia
   - minecraft-server
   - minio
-  - uptime-kuma
+  # - uptime-kuma
   - theme-park
   - tianji
