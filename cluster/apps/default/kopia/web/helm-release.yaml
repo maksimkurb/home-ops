@@ -115,6 +115,10 @@ spec:
 
     defaultPodOptions:
       securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
         supplementalGroups:
           - 777
 
