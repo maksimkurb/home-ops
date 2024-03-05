@@ -24,7 +24,8 @@ spec:
   values:
     grafana:
       enabled: true
-      initChownData: false
+      initChownData:
+        enabled: false
       ingress:
         enabled: true
         ingressClassName: "nginx"
