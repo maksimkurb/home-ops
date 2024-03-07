@@ -1,45 +1,12 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM",
-      "label": "grafanacloud-unifiedmetrics-prom",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "8.2.7"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -59,8 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 14756,
   "graphTooltip": 1,
-  "id": null,
-  "iteration": 1639238407503,
+  "id": 74,
   "links": [
     {
       "asDropdown": false,
@@ -103,7 +69,10 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -112,11 +81,23 @@
       },
       "id": 54,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Overview",
       "type": "row"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "displayName": "Servers",
@@ -140,7 +121,8 @@
               }
             ]
           },
-          "unit": "Servers"
+          "unit": "Servers",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -165,12 +147,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "count(minecraft_players_count{job=~\"^$job$\",instance=~\"^$instance$\"})",
           "instant": true,
@@ -180,12 +168,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
@@ -210,7 +199,8 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "s",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -235,12 +225,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "time()-avg(process_start_time_seconds{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": true,
@@ -250,12 +246,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "displayName": "Players",
@@ -279,7 +276,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -304,12 +302,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "sum(minecraft_players_count{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -319,12 +323,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "displayName": "Entities",
@@ -348,7 +353,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -373,12 +379,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "sum(minecraft_world_entities_count{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -388,12 +400,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "displayName": "Chunks",
@@ -417,7 +430,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -442,12 +456,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "sum(minecraft_world_loaded_chunks{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -457,12 +477,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "fieldConfig": {
         "defaults": {
           "displayName": "Worlds",
@@ -486,7 +507,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -511,12 +533,18 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "count(minecraft_world_loaded_chunks{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -526,12 +554,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -589,7 +617,8 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "none",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -614,12 +643,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "avg(irate(minecraft_tick_duration_seconds_count{instance=~\"^$instance$\",job=~\"^$job$\"}[$__rate_interval]))",
           "instant": false,
@@ -629,12 +663,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -675,7 +709,8 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "s",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -700,12 +735,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "histogram_quantile(0.5, sum(rate(minecraft_tick_duration_seconds_bucket{instance=~\"^$instance$\",job=~\"^$job$\"}[$__rate_interval])) by (le))",
           "instant": false,
@@ -715,12 +755,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -761,7 +801,8 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "percentunit",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -786,12 +827,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "avg(process_cpu_load_ratio{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -801,12 +847,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -847,7 +893,8 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "s",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -872,12 +919,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "sum(irate(process_cpu_seconds_total{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval]))",
           "instant": false,
@@ -887,12 +939,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -920,7 +972,8 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "decbytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -945,12 +998,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "sum(jvm_memory_bytes_used{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -960,12 +1018,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -993,7 +1051,8 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "decbytes",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1018,12 +1077,17 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "text": {},
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.2.7",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "sum(jvm_memory_bytes_max{instance=~\"^$instance$\",job=~\"^$job$\"} - jvm_memory_bytes_used{instance=~\"^$instance$\",job=~\"^$job$\"})",
           "instant": false,
@@ -1033,13 +1097,14 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "type": "stat"
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1048,17 +1113,31 @@
       },
       "id": 62,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "Server",
       "type": "row"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -1071,6 +1150,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1102,7 +1182,8 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "short",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1122,15 +1203,20 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "irate(minecraft_tick_duration_seconds_count{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval])",
           "interval": "",
@@ -1138,19 +1224,22 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "TPS",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1162,6 +1251,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1193,7 +1283,8 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "s",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1213,15 +1304,20 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "histogram_quantile(0.5, sum(rate(minecraft_tick_duration_seconds_bucket{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval])) by (le))",
           "hide": false,
@@ -1230,6 +1326,9 @@
           "refId": "D"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "histogram_quantile(0.75, sum(rate(minecraft_tick_duration_seconds_bucket{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval])) by (le))",
           "hide": false,
@@ -1238,6 +1337,9 @@
           "refId": "C"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "histogram_quantile(0.95, sum(rate(minecraft_tick_duration_seconds_bucket{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval])) by (le))",
           "hide": false,
@@ -1246,6 +1348,9 @@
           "refId": "B"
         },
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "histogram_quantile(0.99, sum(rate(minecraft_tick_duration_seconds_bucket{instance=~\"^$instance$\",job=~\"^$job$\"}[$__interval])) by (le))",
           "interval": "",
@@ -1253,19 +1358,22 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "MSPT",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1277,6 +1385,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1307,7 +1416,8 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "short",
+          "unitScale": true
         },
         "overrides": []
       },
@@ -1327,15 +1437,20 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "minecraft_players_count{instance=~\"^$instance$\",job=~\"^$job$\"}",
           "interval": "",
@@ -1343,19 +1458,22 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Players",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1367,6 +1485,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1393,7 +1512,8 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "short",
+          "unitScale": true
         },
         "overrides": [
           {
@@ -1430,20 +1550,24 @@
       },
       "id": 18,
       "interval": "$interval",
-      "maxDataPoints": null,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "minecraft_players_count{instance=~\"^$instance$\",job=~\"^$job$\"} - minecraft_players_count{instance=~\"^$instance$\",job=~\"^$job$\"} offset $__interval",
           "format": "time_series",
@@ -1453,14 +1577,15 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Player flow",
       "type": "timeseries"
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1470,11 +1595,23 @@
       "id": 29,
       "panels": [],
       "repeat": "world",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "World [$world]",
       "type": "row"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1514,8 +1651,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1542,7 +1678,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -1551,6 +1688,10 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "minecraft_world_loaded_chunks{instance=~\"^$instance$\",job=~\"^$job$\",world=\"$world\"}",
           "interval": "",
@@ -1558,13 +1699,14 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Chunks",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1604,8 +1746,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1632,7 +1773,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -1641,6 +1783,10 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "minecraft_world_entities_count{instance=~\"^$instance$\",job=~\"^$job$\",world=\"$world\"}",
           "interval": "",
@@ -1648,6 +1794,10 @@
           "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
           "exemplar": true,
           "expr": "minecraft_world_players_count{instance=~\"^$instance$\",job=~\"^$job$\",world=\"$world\"}",
           "hide": false,
@@ -1656,14 +1806,15 @@
           "refId": "B"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Entities",
       "type": "timeseries"
     },
     {
       "collapsed": false,
-      "datasource": "${DS_GRAFANACLOUD-UNIFIEDMETRICS-PROM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1672,11 +1823,22 @@
       },
       "id": 22,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "JVM: Computation",
       "type": "row"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1715,8 +1877,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1744,7 +1905,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -1753,6 +1915,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "process_cpu_load_ratio{instance=~\"^$instance$\",job=~\"^$job$\"}",
           "interval": "",
@@ -1760,13 +1925,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "CPU Usage",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1805,8 +1970,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1834,7 +1998,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -1843,6 +2008,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "irate(process_cpu_seconds_total{instance=~\"^$instance$\",job=~\"^$job$\"}[$__rate_interval])",
           "interval": "",
@@ -1850,13 +2018,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "CPU Seconds",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1895,8 +2063,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1924,7 +2091,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -1933,6 +2101,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "jvm_threads_current_count{instance=~\"^$instance$\",job=~\"^$job$\"}",
           "interval": "",
@@ -1940,13 +2111,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Threads",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1985,8 +2156,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2014,7 +2184,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2023,6 +2194,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "jvm_threads_daemon_count{instance=~\"^$instance$\",job=~\"^$job$\"}",
           "interval": "",
@@ -2030,13 +2204,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Daemons",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2075,8 +2249,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2104,7 +2277,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2113,6 +2287,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "jvm_threads_started_total{instance=~\"^$instance$\",job=~\"^$job$\"} - jvm_threads_started_total{instance=~\"^$instance$\",job=~\"^$job$\"} offset $__interval",
           "interval": "",
@@ -2120,14 +2297,15 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Threads started",
       "type": "timeseries"
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2136,11 +2314,22 @@
       },
       "id": 71,
       "panels": [],
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P4169E866C3094E38"
+          },
+          "refId": "A"
+        }
+      ],
       "title": "JVM: Memory",
       "type": "row"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2179,8 +2368,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2208,7 +2396,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2217,6 +2406,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "jvm_memory_bytes_used{instance=~\"^$instance$\",job=~\"^$job$\",area=\"heap\"}",
           "interval": "",
@@ -2224,13 +2416,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Heap Memory",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2269,8 +2461,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2298,7 +2489,8 @@
             "min"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2307,6 +2499,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "jvm_memory_bytes_used{instance=~\"^$instance$\",job=~\"^$job$\",area=\"nonheap\"}",
           "interval": "",
@@ -2314,13 +2509,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Nonheap Memory",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2359,8 +2554,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2386,7 +2580,8 @@
             "max"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2395,6 +2590,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "avg by(gc) (jvm_gc_duration_seconds_sum{instance=~\"^$instance$\",job=~\"^$job$\"} - jvm_gc_duration_seconds_sum{instance=~\"^$instance$\",job=~\"^$job$\"} offset $__interval)",
           "interval": "",
@@ -2402,13 +2600,13 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "GC Duration (Mean)",
       "type": "timeseries"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "uid": "$datasource"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2447,8 +2645,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2474,7 +2671,8 @@
             "max"
           ],
           "displayMode": "table",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "multi"
@@ -2483,6 +2681,9 @@
       "pluginVersion": "8.0.4",
       "targets": [
         {
+          "datasource": {
+            "uid": "$datasource"
+          },
           "exemplar": true,
           "expr": "sum by(gc) (jvm_gc_freed_bytes_sum{instance=~\"^$instance$\",job=~\"^$job$\"} - jvm_gc_freed_bytes_sum{instance=~\"^$instance$\",job=~\"^$job$\"} offset $__interval)",
           "interval": "",
@@ -2491,15 +2692,12 @@
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "GC Freed (Total)",
       "type": "timeseries"
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 32,
-  "style": "dark",
+  "schemaVersion": 39,
   "tags": [
     "minecraft"
   ],
@@ -2508,14 +2706,11 @@
       {
         "current": {
           "selected": false,
-          "text": "grafanacloud-unifiedmetrics-prom",
-          "value": "grafanacloud-unifiedmetrics-prom"
+          "text": "VictoriaMetrics",
+          "value": "P4169E866C3094E38"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "datasource",
         "options": [],
@@ -2527,15 +2722,17 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
-        "current": {},
-        "datasource": "$datasource",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "uid": "$datasource"
+        },
         "definition": "query_result(minecraft_players_count)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "job",
         "options": [],
@@ -2553,15 +2750,17 @@
         "useTags": false
       },
       {
-        "allValue": null,
-        "current": {},
-        "datasource": "$datasource",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "uid": "$datasource"
+        },
         "definition": "query_result(up{job=~\"^$job$\"})",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "instance",
         "options": [],
@@ -2587,10 +2786,7 @@
           "text": "30s",
           "value": "30s"
         },
-        "description": null,
-        "error": null,
         "hide": 0,
-        "label": null,
         "name": "interval",
         "options": [
           {
@@ -2661,15 +2857,17 @@
         "type": "interval"
       },
       {
-        "allValue": null,
-        "current": {},
-        "datasource": "$datasource",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "uid": "$datasource"
+        },
         "definition": "query_result(minecraft_world_entities_count{instance=~\"$instance\",job=~\"$job\"})",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": null,
         "multi": true,
         "name": "world",
         "options": [],
