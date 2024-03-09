@@ -75,7 +75,7 @@ spec:
       overrideServerProperties: true
       pvp: false
       onlineMode: false
-      whitelist: kurb,Ghost,WannaPitsa,lunanott
+      whitelist: kurb,Ghost,WannaPitsa,lunanott,Loulaytik
       ops: kurb
       motd: "Cubly Mine"
       worldSaveName: Vibecraft
