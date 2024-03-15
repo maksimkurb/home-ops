@@ -100,7 +100,7 @@ spec:
           main:
             image:
               repository: docker.io/authelia/authelia
-              tag: 4.38.1
+              tag: 4.38.2
             env:
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: custom
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: "ldap://glauth:3893"
