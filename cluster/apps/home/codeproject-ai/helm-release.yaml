@@ -60,7 +60,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 100Mi
-        storageClass: nfs-proxmox
+        storageClass: local-path
         retain: true
         globalMounts:
           - path: /etc/codeproject/ai
@@ -69,7 +69,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 100Mi
-        storageClass: nfs-proxmox
+        storageClass: local-path
         retain: true
         globalMounts:
           - path: /app/modules

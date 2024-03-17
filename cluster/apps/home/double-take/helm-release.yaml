@@ -50,7 +50,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 100Mi
-        storageClass: nfs-proxmox
+        storageClass: local-path
         globalMounts:
           - path: /.storage
 

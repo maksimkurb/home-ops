@@ -103,7 +103,7 @@ spec:
       defaultDashboardsTimezone: "${TIMEZONE}"
       persistence:
         enabled: true
-        storageClassName: "nfs-proxmox"
+        storageClassName: "local-path"
         size: 1Gi
         accessModes:
           - ReadWriteOnce
@@ -128,7 +128,7 @@ spec:
         extraArgs:
           dedup.minScrapeInterval: "60s"
         storage:
-          storageClassName: "nfs-proxmox"
+          storageClassName: "local-path"
           resources:
             requests:
               storage: 30Gi

@@ -4,6 +4,7 @@
 
 # (bool) Specify if a host (or host group) are part of the control plane
 k3s_control_node: true
+k3s_build_cluster: false
 
 # (dict) k3s settings for all control-plane nodes
 k3s_server:
@@ -12,17 +13,12 @@ k3s_server:
     - "{{ node_domain }}"
   # Disable Docker - this will use the default containerd CRI
   docker: false
-  flannel-backend: "none" # This needs to be in quotes
+  flannel-backend: "host-gw" # This needs to be in quotes
   disable:
-    # Disable flannel - replaced with Cilium
-    - flannel
     # Disable traefik - using NginX
     - traefik
-    # Disable servicelb - replaced with Cilium
-    - servicelb
     # Disable metrics-server - installed with Flux
     - metrics-server
-    - local-storage
   disable-network-policy: true
   disable-cloud-controller: true
   disable-kube-proxy: true

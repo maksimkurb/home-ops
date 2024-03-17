@@ -14,4 +14,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: nfs-proxmox
+  storageClassName: local-path

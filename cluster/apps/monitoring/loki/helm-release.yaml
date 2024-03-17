@@ -118,7 +118,7 @@ spec:
       replicas: 2
       persistence:
         size: 10Gi
-        storageClass: nfs-proxmox
+        storageClass: local-path
     read:
       replicas: 2
       extraVolumeMounts:
@@ -138,7 +138,7 @@ spec:
           emptyDir: {}
       persistence:
         size: 10Gi
-        storageClass: nfs-proxmox
+        storageClass: local-path
     monitoring:
       selfMonitoring:
         enabled: false
