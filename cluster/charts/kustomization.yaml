@@ -6,6 +6,7 @@ resources:
   - bjw-s-charts.yaml
   - bitnami-charts.yaml
   - cilium-charts.yaml
+  - democratic-csi-charts.yaml
   - external-dns-charts.yaml
   - fairwinds-charts.yaml
   - grafana-charts.yaml
