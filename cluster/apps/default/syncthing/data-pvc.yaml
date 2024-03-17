@@ -11,6 +11,14 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   local:
     path: "${NFS_PROXMOX_MEDIA}/01_media/immich/"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

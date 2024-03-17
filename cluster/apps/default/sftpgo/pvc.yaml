@@ -12,6 +12,14 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   local:
     path: /tank/media
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -40,6 +48,14 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   local:
     path: /tank/filehosting
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
