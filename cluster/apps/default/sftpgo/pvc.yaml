@@ -60,12 +60,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sftpgo-nfs-filehosting
+  name: sftpgo-filehosting
   namespace: default
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: sftpgo-nfs-filehosting
+  storageClassName: sftpgo-filehosting
   resources:
     requests:
       storage: 1Mi
