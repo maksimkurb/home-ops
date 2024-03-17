@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: database
 resources:
   - pv.yaml
+  - files-cm.yaml
   - helm-release.yaml
   - zalando-env.yaml
   - secret.sops.yaml
