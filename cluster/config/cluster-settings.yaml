@@ -35,7 +35,6 @@ data:
   NFS_PROXMOX_POD_DATA: /tank/pod-data
   NFS_PROXMOX_MEDIA: /tank/media
   NFS_PROXMOX_CCTV: /tank/media/03_cctv
-  NFS_PROXMOX_CCTV_ISPY: /tank/media/03_cctv_ispy
   NFS_PROXMOX_POSTGRES: /tank/postgres
   NFS_BACKUP_ADDR: 192.168.102.102
   NFS_BACKUP_SNAPSHOTS: "/backup/kopia/cluster0"

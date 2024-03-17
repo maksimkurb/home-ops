@@ -88,12 +88,12 @@ spec:
                 subPath: config.json
       media:
         enabled: true
-        existingClaim: sftpgo-nfs-media
+        existingClaim: sftpgo-media
         globalMounts:
           - path: /data/media
       filehosting:
         enabled: true
-        existingClaim: sftpgo-nfs-filehosting
+        existingClaim: sftpgo-filehosting
         globalMounts:
           - path: /data/filehosting
 

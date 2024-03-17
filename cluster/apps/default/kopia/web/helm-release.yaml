@@ -96,14 +96,14 @@ spec:
       source:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: kopia-data-nfs
+        existingClaim: kopia-data
         readOnly: true
         globalMounts:
           - path: /data
       restore:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: kopia-data-nfs-rw
+        existingClaim: kopia-data-rw
         globalMounts:
           - path: /data-rw
       snapshots:

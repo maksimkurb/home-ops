@@ -109,7 +109,7 @@ spec:
           - path: /var/syncthing
       immich:
         enabled: true
-        existingClaim: syncthing-nfs-immich
+        existingClaim: syncthing-immich
         globalMounts:
           - path: /data/immich
             readOnly: true

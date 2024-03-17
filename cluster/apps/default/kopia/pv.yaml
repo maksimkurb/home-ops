@@ -5,26 +5,24 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: kopia-data-nfs
+  name: kopia-data
 spec:
   capacity:
     storage: 1Mi
   accessModes: ["ReadOnlyMany"]
-  storageClassName: kopia-data-nfs
+  storageClassName: kopia-data
   persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  local:
     path: "${NFS_PROXMOX_POD_DATA}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kopia-data-nfs
+  name: kopia-data
   namespace: default
 spec:
   accessModes: ["ReadOnlyMany"]
-  storageClassName: kopia-data-nfs
+  storageClassName: kopia-data
   resources:
     requests:
       storage: 1Mi
@@ -36,26 +34,24 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: kopia-data-nfs-rw
+  name: kopia-data-rw
 spec:
   capacity:
     storage: 1Mi
   accessModes: ["ReadWriteMany"]
-  storageClassName: kopia-data-nfs-rw
+  storageClassName: kopia-data-rw
   persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  local:
     path: "${NFS_PROXMOX_POD_DATA}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kopia-data-nfs-rw
+  name: kopia-data-rw
   namespace: default
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: kopia-data-nfs-rw
+  storageClassName: kopia-data-rw
   resources:
     requests:
       storage: 1Mi

@@ -107,7 +107,7 @@ spec:
           - path: /dev/shm
       media:
         enabled: true
-        existingClaim: frigate-media-nfs
+        existingClaim: frigate-media
         readOnly: false
         globalMounts:
           - path: /media/frigate

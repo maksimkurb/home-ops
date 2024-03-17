@@ -10,7 +10,5 @@ spec:
     storage: 10Gi
   accessModes: ["ReadWriteOnce"]
   persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  local:
     path: "${NFS_PROXMOX_POSTGRES}/homelab-pgsql-data"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "hard", "retrans=5", "timeo=60", "noatime"]

@@ -2,27 +2,26 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sftpgo-nfs-media
+  name: sftpgo-media
 spec:
   capacity:
     storage: 1Mi
   accessModes:
     - ReadWriteMany
-  storageClassName: sftpgo-nfs-media
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  storageClassName: sftpgo-media
+  persistentVolumeReclaimPolicy: Retain
+  local:
     path: /tank/media
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sftpgo-nfs-media
+  name: sftpgo-media
   namespace: default
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: sftpgo-nfs-media
+  storageClassName: sftpgo-media
   resources:
     requests:
       storage: 1Mi
@@ -31,17 +30,16 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sftpgo-nfs-filehosting
+  name: sftpgo-filehosting
 spec:
   capacity:
     storage: 1Mi
   accessModes:
     - ReadWriteMany
-  storageClassName: sftpgo-nfs-filehosting
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  storageClassName: sftpgo-filehosting
+  persistentVolumeReclaimPolicy: Retain
+  local:
     path: /tank/filehosting
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "retrans=5", "timeo=100", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -2,26 +2,24 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: frigate-media-nfs
+  name: frigate-media
 spec:
   capacity:
     storage: 1Mi
   accessModes: ["ReadWriteMany"]
-  storageClassName: frigate-media-nfs
+  storageClassName: frigate-media
   persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${NFS_PROXMOX_ADDR}"
+  local:
     path: "${NFS_PROXMOX_CCTV}"
-  mountOptions: ["nfsvers=4.2", "nconnect=16", "soft", "noatime"]
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: frigate-media-nfs
+  name: frigate-media
   namespace: default
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: frigate-media-nfs
+  storageClassName: frigate-media
   resources:
     requests:
       storage: 1Mi
