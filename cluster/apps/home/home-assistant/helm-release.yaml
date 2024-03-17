@@ -141,7 +141,7 @@ spec:
                     operator: In
                     values:
                       - "true"
-      hostNetwork: true
+      hostNetwork: false
       dnsPolicy: ClusterFirstWithHostNet
 
     controllers:
