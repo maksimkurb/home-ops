@@ -5,4 +5,4 @@ resources:
   - cluster-issuers
   # - rook-ceph
   # - nfs-provisioner
-  - add-node-taints.yaml
+  # - add-node-taints.yaml

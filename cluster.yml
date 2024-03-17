@@ -27,14 +27,14 @@ spec:
   enableConnectionPooler: false
   enableLogicalBackup: true
   enableMasterLoadBalancer: true
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - k3s-worker1
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #       - matchExpressions:
+  #           - key: kubernetes.io/hostname
+  #             operator: In
+  #             values:
+  #               - k3s-worker1
   numberOfInstances: 1
   postgresql:
     parameters:

@@ -15,14 +15,14 @@ spec:
   numberOfInstances: 1
   allowedSourceRanges:
     - "0.0.0.0/0"
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - k3s-worker1
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #       - matchExpressions:
+  #           - key: kubernetes.io/hostname
+  #             operator: In
+  #             values:
+  #               - k3s-worker1
   resources:
     requests:
       cpu: 100m
