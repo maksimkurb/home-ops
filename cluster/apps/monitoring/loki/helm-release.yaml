@@ -94,7 +94,7 @@ spec:
           reporting_enabled: false
     gateway:
       enabled: true
-      replicas: 2
+      replicas: 1
       deploymentStrategy:
         type: RollingUpdate
         rollingUpdate:
