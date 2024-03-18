@@ -2,86 +2,38 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: local-path-provisioner
+  name: local-path-provisioner-rancher
   namespace: kube-system
 spec:
   interval: 30m
   chart:
     spec:
-      chart: democratic-csi
-      version: 0.14.5
+      chart: local-path-provisioner
+      version: 0.0.26
       sourceRef:
-        name: democratic-csi-charts
+        name: containeroo-charts
         kind: HelmRepository
         namespace: flux-system
   values:
-    csiDriver:
-      name: "org.democratic-csi.local-hostpath"
-      attachRequired: false
-      storageCapacity: false # With storage capacity tracking, the scheduler filters out nodes which do not have enough capacity.
-      fsGroupPolicy: File # fsGroupChangePolicy
+    replicaCount: 1
 
-    storageClasses:
-      - name: local-path
-        defaultClass: false
-        reclaimPolicy: Delete
-        volumeBindingMode: WaitForFirstConsumer
-        # distributed support is not yet ready for expansion
-        allowVolumeExpansion: false
+    image:
+      repository: rancher/local-path-provisioner
+      tag: v0.0.26
+      pullPolicy: IfNotPresent
 
-    volumeSnapshotClasses:
-      - name: local-path
-        deletionPolicy: Delete
-        parameters:
-          dummy: {}
+    nodePathMap:
+      - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+        paths:
+          - /tank/pod-data/
 
-    controller:
-      enabled: true
-      strategy: node
-      externalAttacher:
-        enabled: false
-      externalProvisioner:
-        enabled: true
-        extraArgs:
-          - --leader-election=false
-          - --node-deployment=true
-          - --node-deployment-immediate-binding=false
-          - --feature-gates=Topology=true
-          - --strict-topology=true
-          - --enable-capacity=true
-          - --capacity-ownerref-level=1
-      externalResizer:
-        enabled: false
-      externalSnapshotter:
-        enabled: true
-        extraArgs:
-          - --leader-election=false
-          - --node-deployment=true
-
-    node:
-      driver:
-        extraVolumeMounts:
-          - name: local-path
-            mountPath: /tank/pod-data
-            mountPropagation: Bidirectional
-
-      extraVolumes:
-        - name: local-path
-          hostPath:
-            path: /tank/pod-data
-            type: DirectoryOrCreate
-
-    driver:
-      config:
-        driver: local-hostpath
-        instance_id:
-        local-hostpath:
-          shareBasePath: "/tank/pod-data"
-          controllerBasePath: "/tank/pod-data"
-          dirPermissionsMode: "0770"
-          dirPermissionsUser: 0
-          dirPermissionsGroup: 0
-        _private:
-          csi:
-            volume:
-              idTemplate: "{{ parameters.[csi.storage.k8s.io/pvc/namespace] }}-{{ parameters.[csi.storage.k8s.io/pvc/name] }}"
+    configmap:
+      name: local-path-config
+      setup: |-
+        #!/bin/sh
+        set -eu
+        mkdir -m 0777 -p "$VOL_DIR"
+      teardown: |-
+        #!/bin/sh
+        set -eu
+        mv "$VOL_DIR" "$VOL_DIR.deleted_$(date +"%Y_%m_%d_%I_%M_%p")"
