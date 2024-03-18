@@ -102,6 +102,7 @@ spec:
               repository: docker.io/authelia/authelia
               tag: 4.38.3
             env:
+              TZ: "${TIMEZONE}"
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: custom
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: "ldap://glauth:3893"
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_TIMEOUT: "5s"
