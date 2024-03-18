@@ -11,7 +11,7 @@ spec:
   accessModes: ["ReadWriteOnce"]
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: "/nvme/postgres/homelab-pgsql"
+    path: "/postgres/homelab-pgsql"
   nodeAffinity:
     required:
       nodeSelectorTerms:
