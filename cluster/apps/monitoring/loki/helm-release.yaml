@@ -115,12 +115,12 @@ spec:
           - hosts:
               - *host
     write:
-      replicas: 2
+      replicas: 1
       persistence:
         size: 10Gi
         storageClass: local-path
     read:
-      replicas: 2
+      replicas: 1
       extraVolumeMounts:
         - name: loki-rules
           mountPath: /rules/fake
