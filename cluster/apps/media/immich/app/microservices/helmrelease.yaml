@@ -43,13 +43,16 @@ spec:
           - path: /usr/src/app/upload
 
     defaultPodOptions:
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: *app
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                    operator: In
+                    values:
+                      - "true"
+      runtimeClassName: nvidia
 
     controllers:
       main:
@@ -74,6 +77,8 @@ spec:
               requests:
                 cpu: 1m
                 memory: 145M
+                nvidia.com/gpu: "1"
               limits:
                 cpu: 2
                 memory: 4000M
+                nvidia.com/gpu: "1"
