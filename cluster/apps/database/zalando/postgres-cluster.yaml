@@ -25,8 +25,8 @@ spec:
   #               - k3s-worker1
   resources:
     requests:
-      cpu: 100m
-      memory: 100Mi
+      cpu: 500m
+      memory: 1000Mi
     limits:
       cpu: '2'
       memory: 1000Mi
@@ -34,6 +34,8 @@ spec:
     version: "15"
     parameters:
       shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vectors'
+      max_connections: '256'
+      max_replication_slots: '32'
   users:
     operator:
       - superuser
