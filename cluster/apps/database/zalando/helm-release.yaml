@@ -336,7 +336,7 @@ spec:
 
     configPatroni:
       # enable Patroni DCS failsafe_mode feature
-      enable_patroni_failsafe_mode: false
+      enable_patroni_failsafe_mode: true
 
     # Zalando's internal CDC stream feature
     enableStreams: false
