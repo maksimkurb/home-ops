@@ -29,7 +29,7 @@ spec:
 
     initContainers:
       wait-for-repo:
-        image: kopia/kopia:0.15
+        image: kopia/kopia:0.16
         command:
           - /bin/bash
           - -c
@@ -126,7 +126,7 @@ spec:
           main:
             image:
               repository: kopia/kopia
-              tag: 0.15
+              tag: 0.16
             env:
               TZ: "${TIMEZONE}"
               KOPIA_CONFIG_PATH: /config/repository.config
