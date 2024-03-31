@@ -100,7 +100,7 @@ spec:
           main:
             image:
               repository: docker.io/authelia/authelia
-              tag: 4.38.6
+              tag: 4.38.7
             env:
               TZ: "${TIMEZONE}"
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: custom
