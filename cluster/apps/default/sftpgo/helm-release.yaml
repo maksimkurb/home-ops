@@ -29,14 +29,24 @@ spec:
   values:
     service:
       main:
-        type: ClusterIP
+        type: LoadBalancer
+        externalTrafficPolicy: Local
         ports:
           http:
-            port: 8080
+            enabled: true
+            port: 13280
+            protocol: TCP
+            targetPort: 8080
           dav:
-            port: 8088
+            enabled: true
+            port: 13288
+            protocol: TCP
+            targetPort: 8088
           sftp:
-            port: 2022
+            enabled: true
+            port: 13222
+            protocol: TCP
+            targetPort: 2022
 
     ingress:
       main:
