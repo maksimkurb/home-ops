@@ -90,7 +90,7 @@ spec:
           main:
             image:
               repository: louislam/uptime-kuma
-              tag: 1.23.12
+              tag: 1.23.13
             env:
               - name: PUID
                 value: "777"
