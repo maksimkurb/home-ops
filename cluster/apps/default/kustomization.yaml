@@ -10,7 +10,7 @@ resources:
   - hajimari
   - gluetun
   - kopia
-  - minecraft-server
+  # - minecraft-server
   - minio
   # - uptime-kuma
   - theme-park
