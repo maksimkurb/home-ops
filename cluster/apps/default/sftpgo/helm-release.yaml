@@ -129,7 +129,7 @@ spec:
           migrate-db:
             image:
               repository: ghcr.io/drakkan/sftpgo
-              tag: v2.5-distroless-slim
+              tag: v2.6-distroless-slim
             command:
               - sftpgo
               - initprovider
@@ -142,7 +142,7 @@ spec:
           main:
             image:
               repository: ghcr.io/drakkan/sftpgo
-              tag: v2.5-distroless-slim
+              tag: v2.6-distroless-slim
             env:
               TZ: "${TIMEZONE}"
             envFrom:
