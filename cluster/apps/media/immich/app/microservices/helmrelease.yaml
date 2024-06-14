@@ -65,9 +65,6 @@ spec:
             image:
               repository: ghcr.io/immich-app/immich-server
               tag: v1.106.4
-            command: /bin/sh
-            args:
-              - ./start-microservices.sh
             envFrom:
               - secretRef:
                   name: immich

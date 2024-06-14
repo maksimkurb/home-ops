@@ -8,7 +8,7 @@ resources:
   - ./configmap.yaml
   - ./nfs-pvc.yaml
   - ./server
-  - ./microservices
+  # - ./microservices
   - ./machine-learning
 labels:
   - pairs:
