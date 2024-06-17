@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: vector-aggregator
@@ -115,11 +115,11 @@ spec:
               topologyKey: kubernetes.io/hostname
   postRenderers:
     - kustomize:
-        patchesJson6902:
+        patches:
           - target:
               kind: Service
               name: vector-aggregator
-            patch:
+            patch: |-
               - op: add
                 path: /spec/loadBalancerIP
                 value: "${SVC_VECTOR_AGGREGATOR_ADDR}"
