@@ -115,11 +115,11 @@ spec:
               topologyKey: kubernetes.io/hostname
   postRenderers:
     - kustomize:
-        patchesJson6902:
+        patches:
           - target:
               kind: Service
               name: vector-aggregator
-            patch:
+            patch: |-
               - op: add
                 path: /spec/loadBalancerIP
                 value: "${SVC_VECTOR_AGGREGATOR_ADDR}"
