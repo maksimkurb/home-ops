@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - cert-manager
-  # - cilium
   - descheduler
   - kube-cleanup-operator
   - metrics-server

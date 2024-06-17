@@ -4,17 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   # - generic-rules
-  # - goldilocks
-  # - grafana
-  # - intel-gpu-exporter
-  # - kube-prometheus-stack
   - loki
   - nodeexporter
-  # - node-problem-detector
-  # - snmp-exporter
-  # - speedtest-exporter
-  #- thanos
-  # - uptimerobot-heartbeat
   - vector
   - victoria-metrics-k8s-stack
-  # - vpa

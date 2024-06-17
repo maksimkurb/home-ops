@@ -6,12 +6,10 @@ resources:
   - external-services
   - sftpgo
   - syncthing
-  # - filestash
   - hajimari
   - gluetun
   - kopia
   # - minecraft-server
   - minio
-  # - uptime-kuma
   - theme-park
   - tianji
