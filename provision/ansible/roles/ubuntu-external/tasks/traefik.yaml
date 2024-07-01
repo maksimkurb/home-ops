@@ -30,14 +30,14 @@
 
 - name: VPN / Pull Traefik container
   community.docker.docker_image:
-    name: "traefik:v2.11"
+    name: "traefik:v3.1"
     source: pull
     force_source: yes
 
 - name: VPN / Create Traefik container
   community.docker.docker_container:
     name: "traefik"
-    image: "traefik:v2.11"
+    image: "traefik:v3.1"
     restart_policy: unless-stopped
     etc_hosts:
       host.docker.internal: host-gateway
