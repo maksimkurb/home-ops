@@ -67,7 +67,7 @@ spec:
           main:
             image:
               repository: docker.io/vaultwarden/server
-              tag: 1.30.5
+              tag: 1.31.0
             env:
               DATA_FOLDER: "config"
               SIGNUPS_ALLOWED: false
