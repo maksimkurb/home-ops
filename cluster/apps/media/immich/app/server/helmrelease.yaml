@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: v1.109.1
+              tag: v1.109.2
             envFrom:
               - secretRef:
                   name: immich
