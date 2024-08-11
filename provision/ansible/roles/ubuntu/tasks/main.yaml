@@ -1,25 +1,25 @@
 ---
-- include: locale.yaml
+- include_tasks: locale.yaml
   tags:
     - locale
 
-- include: packages.yaml
+- include_tasks: packages.yaml
   tags:
     - packages
 
-- include: network.yaml
+- include_tasks: network.yaml
   tags:
     - network
 
-- include: filesystem.yaml
+- include_tasks: filesystem.yaml
   tags:
     - filesystem
 
-- include: user.yaml
+- include_tasks: user.yaml
   tags:
     - user
 
 
-- include: time.yaml
+- include_tasks: time.yaml
   tags:
     - time
