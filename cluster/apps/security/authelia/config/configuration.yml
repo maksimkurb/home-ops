@@ -102,7 +102,7 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - app.immich:/
+          - app.immich:///oauth-callback
           - https://photos.${SECRET_PUBLIC_DOMAIN}/auth/login
           - https://photos.${SECRET_PUBLIC_DOMAIN}/user-settings
         userinfo_signing_algorithm: none
