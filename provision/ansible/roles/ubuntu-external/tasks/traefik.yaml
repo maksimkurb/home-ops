@@ -32,7 +32,11 @@
   community.docker.docker_image:
     name: "traefik:v3.1"
     source: pull
-    force_source: yes
+    force_source: true
+
+- name: VPN / Create Docker network
+  community.docker.docker_network:
+    name: "{{ vpn_network }}"
 
 - name: VPN / Create Traefik container
   community.docker.docker_container:

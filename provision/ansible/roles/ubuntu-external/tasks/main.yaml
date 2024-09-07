@@ -1,8 +1,8 @@
 ---
-- include: docker.yaml
+- import_tasks: docker.yaml
   tags:
     - docker
 
-- include: traefik.yaml
+- import_tasks: traefik.yaml
   tags:
     - traefik

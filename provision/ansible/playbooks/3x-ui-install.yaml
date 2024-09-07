@@ -1,0 +1,96 @@
+---
+
+- hosts:
+    - 3xui
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - ubuntu-external
+
+- hosts:
+    - 3xui
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tasks:
+    - name: 3x-ui / Enable and persist ip forwarding
+      sysctl:
+        name: "{{ item }}"
+        value: "1"
+        state: present
+        sysctl_set: true
+        reload: true
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv6.conf.all.forwarding
+
+    - name: 3x-ui / Pull Image
+      community.docker.docker_image:
+        name: "ghcr.io/mhsanaei/3x-ui:latest"
+        source: pull
+        force_source: true
+
+    - name: 3x-ui / Create Container
+      community.docker.docker_container:
+        name: "3x-ui"
+        hostname: "prx.{{ traefik_base_domain }}"
+        image: "ghcr.io/mhsanaei/3x-ui:latest"
+        restart_policy: unless-stopped
+        capabilities:
+          - NET_ADMIN
+          - SYS_MODULE
+        sysctls:
+          net.ipv4.conf.all.src_valid_mark: "1"
+        devices:
+          - /dev/net/tun
+        volumes:
+          - /opt/3x-ui/db/:/etc/x-ui/
+          - /opt/3x-ui/cert/:/root/cert/
+        networks:
+          - name: "{{ vpn_network }}"
+        ports:
+          - 30017:30017
+          - 30017:30017/udp
+          - 30018:30018
+          - 30018:30018/udp
+          - 30019:30019
+          - 30019:30019/udp
+        tty: true
+        labels:
+          traefik.enable: "true"
+          traefik.docker.network: "{{ vpn_network }}"
+
+          traefik.tcp.routers.xui-proxy.service: xui-proxy
+          traefik.tcp.routers.xui-proxy.entrypoints: websecure
+          traefik.tcp.routers.xui-proxy.rule: "HostSNI(`{{ reality_domain }}`) || HostSNI(`prx.{{ traefik_base_domain }}`)"
+          traefik.tcp.routers.xui-proxy.tls: "true"
+          traefik.tcp.routers.xui-proxy.tls.passthrough: "true"
+          traefik.tcp.services.xui-proxy.loadbalancer.server.port: "443"
+
+          traefik.http.routers.xui-admin.service: xui-admin
+          traefik.http.services.xui-admin.loadbalancer.server.scheme: http
+          traefik.http.services.xui-admin.loadbalancer.server.port: "2053"
+          traefik.http.routers.xui-admin-http.service: "xui-admin"
+          traefik.http.routers.xui-admin-http.rule: "Host(`vadm.{{ traefik_base_domain }}`)"
+          traefik.http.routers.xui-admin-http.entrypoints: "web"
+          traefik.http.routers.xui-admin.rule: "Host(`vadm.{{ traefik_base_domain }}`)"
+          traefik.http.routers.xui-admin.entrypoints: "websecure"
+          traefik.http.routers.xui-admin.tls: "true"
+          traefik.http.routers.xui-admin.tls.certresolver: "le"
+
+          traefik.http.routers.xui-sub.service: "xui-sub"
+          traefik.http.services.xui-sub.loadbalancer.server.scheme: "http"
+          traefik.http.services.xui-sub.loadbalancer.server.port: "2096"
+          traefik.http.routers.xui-sub-http.service: "xui-sub"
+          traefik.http.routers.xui-sub-http.rule: "Host(`vsub.{{ traefik_base_domain }}`)"
+          traefik.http.routers.xui-sub-http.entrypoints: "web"
+          traefik.http.routers.xui-sub.rule: "Host(`vsub.{{ traefik_base_domain }}`)"
+          traefik.http.routers.xui-sub.entrypoints: "websecure"
+          traefik.http.routers.xui-sub.tls: "true"
+          traefik.http.routers.xui-sub.tls.certresolver: "le"
+
+        env:
+          # WireGuard Settings
+          XRAY_VMESS_AEAD_FORCED: "false"
+        state: started
