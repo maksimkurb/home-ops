@@ -1,4 +1,4 @@
-kind: Secret
+traefik_portskind: ENC[AES256_GCM,data:dhdMDd8G,iv:UhNGTp6m4qPyxpSIDvCKAfz+MO99TSPvVZ37n3aHBRs=,tag:rz3cnW5E3eTOf4M3XxWdiQ==,type:str]
 ansible_host: ENC[AES256_GCM,data:q0O8Ft0h9jbCtuZuUQE=,iv:DRyfAc66ttoNnR7Rgs2j1j05YJCY+XbHEz1aZApz7SI=,tag:gc7+3ye3mq3ypKWzQkrZLw==,type:str]
 ansible_user: ENC[AES256_GCM,data:S9wi,iv:ici4JEm1faZwDlUsBd8IAoelM4bl3N1lz+IXWx2kS6k=,tag:9uo47jt6nNTaEtIW5omWlQ==,type:str]
 main_hostname: ENC[AES256_GCM,data:YOVsMHpp/Q==,iv:yfuPC1IF5sz3+AbIuYaheslgQXj7y9ZSeDW82G9yGC4=,tag:39Si4VLKkp/+f0MgAAS2dw==,type:str]
@@ -9,7 +9,6 @@ mailcow__hostname: ENC[AES256_GCM,data:pLPd2d60j50oNa6A,iv:QXQy7LtPNeco2pYc8MwB5
 mailcow__config_watchdog_notify_email: ENC[AES256_GCM,data:vEFRZN6sz3sVxEj+6iwCjmNenrM=,iv:TzYzEZRRZPpk5t1eubrcR5x1o5Zs3HRwe2VVG5XHZ4M=,tag:Qkgl3WK1B0rQ20a3p2EnWg==,type:str]
 mailcow__config_acme_contact: ENC[AES256_GCM,data:vYPAQQnNkQ47NjbZVgxkxCIjDfwJ68JA8vTpeI5OOmA2,iv:A1DklT8qI1ujLaC1CXBqxPVH1uzX+FXeU+dr/jL9L1A=,tag:Q+X9vWz3qrTh9vMa10wzWw==,type:str]
 acme_email: ENC[AES256_GCM,data:EaDOiM4kXYjlZv/T44qNT+IVfZfHJeDrS0kfQbfdQ2lU,iv:CFGrSfF8zWq0nBRcgI/9/Ug0GPGKo2PFuHVfq3RbA9Q=,tag:lwEGu/ZtBQkrfwuB/HGgHA==,type:str]
-external_ipv6: ENC[AES256_GCM,data:TBDfVjkHJogyvolb5rVI8XLP9Exnmg==,iv:uCV5YCmn5O988TQkUnVbk+y8D9PvxkPBbst22pHdQk4=,tag:PzG2lpehgOW2NXdzrE2n6A==,type:str]
 traefik_base_domain: ENC[AES256_GCM,data:CRqbykMTiFk5uGc=,iv:RgpZM11SN1wmf4lSd33UyxO2kVehBVs/ku/pDdFBpsY=,tag:OYsn6vpXcBY8B3oHT7gFsg==,type:str]
 traefik_users_clear: ENC[AES256_GCM,data:ZNPUIHudTBPhg7vEw3mBijEptSdpx+eZLog=,iv:hka9Q/oNvwiLyRA8uf4vYnhILo2358h/SlJgRmPM17o=,tag:ebsbGMCRLNld2dYIkabynw==,type:str]
 traefik_users: ENC[AES256_GCM,data:33QkVDGuJztJrXfGYYDJKgWIrT5Xw7smhtkEERR/l3vLFimgtHFQWlsH,iv:FaMg+XSbUEaET69icwZFfXTnXRjZADuZ8+JI+CbxUMA=,tag:clQkSQ/buKOgGstj87d6ZQ==,type:str]
@@ -35,8 +34,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-09-07T13:33:45Z"
-    mac: ENC[AES256_GCM,data:XVkTQXbUqSnA4mse+kFDw4Nlyh6rYbpeLjGhNzEvPWl5nWuqyOIXryDwvPw1wX7rGaNvQGtvpS8m4h39zIon80xovXVK+DQcAdT6DN37fAMwwqWGoY41MHAJUkav1HVtPv29xua6EXjaVFl0pXUpovMragtrpGi2g5nnjdAjjxg=,iv:wkUJSYoA5WJrE5/0Guuhbsfn4gqIlUwvLNMMrO9FY0I=,tag:zvRPgQvU0vMzoW5KhzwyPQ==,type:str]
+    lastmodified: "2024-09-08T20:42:52Z"
+    mac: ENC[AES256_GCM,data:mCwPbaXEoEzgYoEmLmqGDYuI9sdzuqUR38vYSa3hx5BCmtFwXFnr98/6O4efZH/QROQUc+BjXuWkx8GFfbRDoZOYs5BM4KiNwGdLMTO5z9S5Gh8hGWseB/sIzl0y6lrexuuoBi8gYs243OXNgg0lUg5FqT5a1zkiaZW7T0cuYI4=,iv:ioOOK1fFxtG8BkXzMDkcc1sMJsO0eNzar5FY7yMx7hM=,tag:wz2DzOdTaGe+ioCxT8h4XA==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3
