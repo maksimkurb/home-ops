@@ -41,7 +41,7 @@
 - name: VPN / Create Traefik container
   community.docker.docker_container:
     name: "traefik"
-    image: "traefik:v3.1"
+    image: "traefik:v3.2"
     restart_policy: unless-stopped
     etc_hosts:
       host.docker.internal: host-gateway
