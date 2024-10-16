@@ -1,0 +1,37 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+define RESERVED_IP = {
+    100.64.0.0/10,
+    127.0.0.0/8,
+    169.254.0.0/16,
+    172.16.0.0/12,
+    192.0.0.0/24,
+    224.0.0.0/4,
+    240.0.0.0/4,
+    255.255.255.255/32
+}
+
+table ip sing-box {
+        chain prerouting {
+                type filter hook prerouting priority mangle; policy accept;
+                ip daddr $RESERVED_IP return
+                # Intranet
+                ip daddr {{ intranet_subnet }} tcp dport != 53 return
+                ip daddr {{ intranet_subnet }} udp dport != 53 return
+                # TProxy port
+                ip protocol tcp tproxy to :12345 meta mark set 1
+                ip protocol udp tproxy to :12345 meta mark set 1
+        }
+        chain output {
+                type route hook output priority mangle; policy accept;
+                ip daddr $RESERVED_IP return
+                # Intranet
+                ip daddr {{ intranet_subnet }} tcp dport != 53 return
+                ip daddr {{ intranet_subnet }} udp dport != 53 return
+                meta mark set 1234 return
+                ip protocol tcp meta mark set 1
+                ip protocol udp meta mark set 1
+        }
+}

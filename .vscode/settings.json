@@ -51,5 +51,6 @@
         "vs-kubernetes.local-tunnel-debug-provider": "",
         "checkForMinikubeUpgrade": true,
         "imageBuildTool": "Docker"
-    }
+    },
+    "ansible.python.interpreterPath": "/home/maksimkurb/.asdf/shims/python3"
 }

@@ -1,0 +1,11 @@
+---
+
+- hosts:
+    - vpn-gateway
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - mrlesmithjr.netplan
+    # - ubuntu
+    - vpn-gateway

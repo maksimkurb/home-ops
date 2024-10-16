@@ -27,6 +27,10 @@ nvidia:
       ansible_host: 192.168.41.15
       ansible_user: user
 
+vpn-gateway:
+  hosts:
+    vpn-gateway1: {}
+
 vpn:
   hosts:
     node-de:
