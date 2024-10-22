@@ -1,11 +1,22 @@
 ---
 
-- hosts:
+- name: VPN gateway netplan
+  hosts:
     - vpn-gateway
   become: true
   gather_facts: true
   any_errors_fatal: true
+  tags:
+    - netplan
   roles:
     - mrlesmithjr.netplan
-    # - ubuntu
+- name: VPN gateway config
+  hosts:
+    - vpn-gateway
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tags:
+    - gateway-config
+  roles:
     - vpn-gateway

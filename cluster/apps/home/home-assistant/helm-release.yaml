@@ -149,9 +149,6 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          annotations:
-            setGateway: "true"
         containers:
           main:
             image:

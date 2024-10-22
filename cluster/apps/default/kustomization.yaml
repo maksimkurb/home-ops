@@ -7,7 +7,6 @@ resources:
   - sftpgo
   - syncthing
   - hajimari
-  - gluetun
   - kopia
   # - minecraft-server
   - minio

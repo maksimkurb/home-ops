@@ -100,8 +100,6 @@ spec:
           - path: /media
 
     defaultPodOptions:
-      annotations:
-        setGateway: "true"
       securityContext:
         runAsUser: 568
         runAsGroup: 568
