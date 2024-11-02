@@ -5,7 +5,7 @@ configMapGenerator:
   - name: cert-manager-dashboard
     namespace: kube-system
     files:
-      - cert-manager-dashboard.json=https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
+      - cert-manager-dashboard.json=https://raw.githubusercontent.com/monitoring-mixins/website/6825ac3a6f83f06b1e9f169d82b03b90cbab2a49/assets/cert-manager/dashboards/overview.json
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
