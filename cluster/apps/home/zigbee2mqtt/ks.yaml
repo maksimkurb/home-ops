@@ -23,3 +23,8 @@ spec:
   postBuild:
     substitute:
       APP: *appname
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: cluster-secrets
