@@ -16,11 +16,10 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: home-ops-kubernetes
+    name: flux-cluster
   wait: false
   # dependsOn:
   #   - name: external-secrets-stores
   postBuild:
     substitute:
       APP: *appname
-      VOLSYNC_CLAIM: zigbee2mqtt-data
