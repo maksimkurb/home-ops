@@ -6,7 +6,7 @@ metadata:
   name: &appname zigbee2mqtt
   namespace: flux-system
 spec:
-  targetNamespace: home-automation
+  targetNamespace: home
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
@@ -18,11 +18,8 @@ spec:
     kind: GitRepository
     name: home-ops-kubernetes
   wait: false
-  dependsOn:
-    - name: rook-ceph-cluster
-    - name: volsync
-    - name: external-secrets-stores
-    - name: emqx-cluster
+  # dependsOn:
+  #   - name: external-secrets-stores
   postBuild:
     substitute:
       APP: *appname
