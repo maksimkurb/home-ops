@@ -67,7 +67,8 @@ spec:
               ZIGBEE2MQTT_CONFIG_MQTT_SERVER: "mqtt://mosquitto.home.svc.cluster.local:1883"
               ZIGBEE2MQTT_CONFIG_MQTT_VERSION: 5
               ZIGBEE2MQTT_CONFIG_PERMIT_JOIN: false
-              ZIGBEE2MQTT_CONFIG_SERIAL_PORT: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+              ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER: zstack
+              ZIGBEE2MQTT_CONFIG_SERIAL_PORT: /dev/ttyACM0
               ZIGBEE2MQTT_CONFIG_SERIAL_BAUDRATE: 115200
             resources:
               requests:
@@ -164,7 +165,7 @@ spec:
         advancedMounts:
           zigbee2mqtt:
             app:
-              - path: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+              - path: /dev/ttyACM0
 
     defaultPodOptions:
       affinity:
