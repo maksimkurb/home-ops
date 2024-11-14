@@ -170,7 +170,7 @@ spec:
             name: check-db-ready
             image:
               repository: postgres
-              tag: 15.8
+              tag: 15.9
             command:
               - "sh"
               - "-c"
