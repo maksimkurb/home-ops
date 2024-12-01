@@ -138,6 +138,8 @@ spec:
               tag: 2024.11.3
             env:
               TZ: "${TIMEZONE}"
+              # https://github.com/blakeblackshear/frigate-hass-integration/issues/762
+              PYTHONPATH: /config/deps
             envFrom:
               - secretRef:
                   name: home-assistant
