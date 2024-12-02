@@ -133,6 +133,7 @@ spec:
               KOPIA_PASSWORD: "${SECRET_KOPIA_REPO_PASSWORD}"
             command: kopia
             args:
+              - --log-level=debug
               - server
               - start
               - --insecure
