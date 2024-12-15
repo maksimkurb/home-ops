@@ -54,7 +54,7 @@ spec:
               PAPERLESS_TIKA_ENDPOINT: http://paperless-tika.default.svc.cluster.local:9998
               # Configure DB
               PAPERLESS_DBENGINE: postgresql
-              PAPERLESS_DBHOST: paperless
+              PAPERLESS_DBHOST: homelab-pgsql.database.svc.cluster.local
               PAPERLESS_DBUSER: paperless
               PAPERLESS_DBPASS:
                 valueFrom:
