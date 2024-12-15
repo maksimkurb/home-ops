@@ -94,7 +94,10 @@ spec:
               limits:
                 memory: 6Gi
             securityContext:
-              supplementalGroups: ["568"]
+              runAsGroup: 777
+              fsGroup: 777
+              fsGroupChangePolicy: "OnRootMismatch"
+              supplementalGroups: ["777"]
       gotenburg:
         containers:
           app:
