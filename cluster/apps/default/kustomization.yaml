@@ -12,3 +12,4 @@ resources:
   - minio
   - theme-park
   - tianji
+  - ./paperless/ks.yaml

@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paperless-data
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Mi
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: paperless-docs
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: paperless-docs
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /tank/filehosting/docs
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paperless-docs
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: paperless-docs
+  resources:
+    requests:
+      storage: 1Mi
