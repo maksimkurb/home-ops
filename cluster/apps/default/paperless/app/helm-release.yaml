@@ -155,11 +155,17 @@ spec:
 
     ingress:
       app:
-        className: "internal-nginx"
+        enabled: true
+        className: "nginx"
+        annotations:
+          hajimari.io/icon: "mdi:file"
+          hajimari.io/group: "Home"
+          hajimari.io/appName: "Paperless"
         hosts:
           - host: paperless.${SECRET_DOMAIN}
             paths:
               - path: /
+                pathType: Prefix
                 service:
                   identifier: app
                   port: http
