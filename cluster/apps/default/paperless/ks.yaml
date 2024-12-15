@@ -6,7 +6,7 @@ metadata:
   name: &appname paperless
   namespace: flux-system
 spec:
-  targetNamespace: selfhosted
+  targetNamespace: default
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
