@@ -47,6 +47,7 @@ spec:
     sftpgo: []
     immich: []
     tianji: []
+    paperless: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -55,6 +56,7 @@ spec:
     sftpgo: sftpgo
     immich: immich
     tianji: tianji
+    paperless: paperless
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
