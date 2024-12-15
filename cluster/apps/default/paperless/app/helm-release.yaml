@@ -41,7 +41,7 @@ spec:
               PAPERLESS_TASK_WORKERS: "2"
               # Configure folders
               PAPERLESS_DATA_DIR: /data/local/data
-              PAPERLESS_MEDIA_ROOT: /data/local/media
+              PAPERLESS_MEDIA_ROOT: /data/docs/media
               PAPERLESS_CONSUMPTION_DIR: /data/docs/incoming
               PAPERLESS_EXPORT_DIR: /data/docs/export
               # Configure folder importer
