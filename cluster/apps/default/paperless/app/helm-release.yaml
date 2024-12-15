@@ -32,7 +32,7 @@ spec:
               PAPERLESS_SECRET_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless
                     key: PAPERLESS_SECRET_KEY
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
               PAPERLESS_PORT: "8000"
@@ -59,7 +59,7 @@ spec:
               PAPERLESS_DBPASS:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless
                     key: PAPERLESS_DBPASS
               # Configure OCR
               PAPERLESS_OCR_LANGUAGES: "rus eng"
@@ -70,12 +70,12 @@ spec:
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless
                     key: PAPERLESS_ADMIN_USER
               PAPERLESS_ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless
                     key: PAPERLESS_ADMIN_PASSWORD
             probes:
               liveness:
