@@ -28,6 +28,8 @@ spec:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.13.5
             env:
+              LANG: C.UTF-8
+              LC_ALL: C.UTF-8
               # Configure application
               PAPERLESS_SECRET_KEY:
                 valueFrom:
@@ -67,7 +69,7 @@ spec:
               PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME: "HTTP_REMOTE_USER"
               PAPERLESS_LOGOUT_REDIRECT_URL: "https://auth.${SECRET_DOMAIN}/logout"
               # Configure OCR
-              PAPERLESS_OCR_LANGUAGES: "rus eng"
+              PAPERLESS_OCR_LANGUAGES: "rus+eng"
               PAPERLESS_OCR_LANGUAGE: rus
               # Configure redis integration
               PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
@@ -110,6 +112,8 @@ spec:
               repository: ghcr.io/mchestr/gotenberg
               tag: 8.14.1
             env:
+              LANG: C.UTF-8
+              LC_ALL: C.UTF-8
               DISABLE_GOOGLE_CHROME: "1"
             securityContext:
               runAsUser: 65534
@@ -120,6 +124,9 @@ spec:
             image:
               repository: ghcr.io/paperless-ngx/tika
               tag: 2.9.1-full
+            env:
+              LANG: C.UTF-8
+              LC_ALL: C.UTF-8
             securityContext:
               runAsUser: 65534
               runAsGroup: 65534
