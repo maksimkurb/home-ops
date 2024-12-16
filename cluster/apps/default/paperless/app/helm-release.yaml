@@ -69,7 +69,7 @@ spec:
               PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME: "HTTP_REMOTE_USER"
               PAPERLESS_LOGOUT_REDIRECT_URL: "https://auth.${SECRET_DOMAIN}/logout"
               # Configure OCR
-              PAPERLESS_OCR_LANGUAGES: "rus+eng"
+              PAPERLESS_OCR_LANGUAGES: "rus eng"
               PAPERLESS_OCR_LANGUAGE: rus
               # Configure redis integration
               PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
