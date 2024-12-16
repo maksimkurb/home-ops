@@ -20,6 +20,14 @@ access_control:
         - "^/.well-known/(.*)$"
         - "^/favicon\\\\.(.*)$"
 
+    - domain: "paperless.${SECRET_DOMAIN}"
+      policy: bypass
+      resources:
+        - "^/manifest.json$"
+        - "^/.well-known/(.*)$"
+        - "^/share/(.*)$"
+        - "^/favicon\\\\.(.*)$"
+
     # - domain: ["*.${SECRET_PUBLIC_DOMAIN}"]
     #   policy: bypass
     #   networks: ["internal"]

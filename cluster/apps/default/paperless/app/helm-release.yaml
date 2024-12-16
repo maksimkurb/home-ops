@@ -28,6 +28,9 @@ spec:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.13.5
             env:
+              # Encoding
+              # WARNING: for German / Russian PDFs it is required to set "PDF" renderer instead of "PDF/A" in paperless-ngx settings
+              # See: https://github.com/ocrmypdf/OCRmyPDF/issues/1297
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
               # Configure application
