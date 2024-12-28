@@ -68,9 +68,14 @@ spec:
                     name: paperless
                     key: PAPERLESS_DBPASS
               # Enable SSO
-              PAPERLESS_ENABLE_HTTP_REMOTE_USER: "true"
-              PAPERLESS_HTTP_REMOTE_USER_HEADER_NAME: "HTTP_REMOTE_USER"
-              PAPERLESS_LOGOUT_REDIRECT_URL: "https://auth.${SECRET_DOMAIN}/logout"
+              PAPERLESS_APPS: "allauth.socialaccount.providers.openid_connect"
+              PAPERLESS_SOCIALACCOUNT_PROVIDERS:
+                valueFrom:
+                  secretKeyRef:
+                    name: paperless
+                    key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
+              PAPERLESS_DISABLE_REGULAR_LOGIN: "true"
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: "true"
               # Configure OCR
               PAPERLESS_OCR_LANGUAGES: "rus eng"
               PAPERLESS_OCR_LANGUAGE: rus
@@ -186,6 +191,10 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
+          nginx.ingress.kubernetes.io/server-snippet: |
+            location /admin/ {
+              deny all;
+            }
           hajimari.io/icon: "mdi:file"
           hajimari.io/group: "Home"
           hajimari.io/appName: "Paperless"
