@@ -108,10 +108,6 @@ identity_validation:
     characters: 8
     require_second_factor: false
     skip_second_factor: false
-  reset_password:
-    jwt_lifespan: '5 minutes'
-    jwt_algorithm: 'HS256'
-    jwt_secret: '{{ env "SECRET_JWT_SECRET" }}'
 
 authentication_backend:
   password_reset:
