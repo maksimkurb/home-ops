@@ -149,8 +149,8 @@ identity_providers:
       - key_id: 'default'
         algorithm: 'RS256'
         use: 'sig'
-        key: '{{ secret "/config/jwks/rsa.2048.pem" | mindent 10 "|" | msquote }}'
-        certificate_chain: '{{ secret "/config/jwks/rsa.2048.cert" | mindent 10 "|" | msquote }}'
+        key: {{ secret "/config/jwks/rsa.2048.pem" | mindent 10 "|" | msquote }}
+        certificate_chain: {{ secret "/config/jwks/rsa.2048.cert" | mindent 10 "|" | msquote }}
     enforce_pkce: public_clients_only
     cors:
       endpoints:
