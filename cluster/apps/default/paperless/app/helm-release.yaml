@@ -74,8 +74,8 @@ spec:
                   secretKeyRef:
                     name: paperless
                     key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
-              PAPERLESS_DISABLE_REGULAR_LOGIN: "true"
-              PAPERLESS_REDIRECT_LOGIN_TO_SSO: "true"
+              PAPERLESS_DISABLE_REGULAR_LOGIN: "false"
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: "false"
               # Configure OCR
               PAPERLESS_OCR_LANGUAGES: "rus eng"
               PAPERLESS_OCR_LANGUAGE: rus
