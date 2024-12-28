@@ -116,6 +116,7 @@ spec:
               tag: 4.38.17
             env:
               TZ: "${TIMEZONE}"
+              X_AUTHELIA_CONFIG_FILTERS: template
               SECRET_REDIS_PASSWORD:
                 valueFrom:
                   secretKeyRef:
