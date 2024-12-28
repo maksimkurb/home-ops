@@ -54,6 +54,10 @@ spec:
               PAPERLESS_CONSUMER_INOTIFY_DELAY: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
+              # Configure Barcode Recognition
+              PAPERLESS_CONSUMER_ENABLE_BARCODES: "true"
+              PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: "true"
+              PAPERLESS_CONSUMER_BARCODE_SCANNER: "zxing"
               # Configure Tika
               PAPERLESS_TIKA_ENABLED: 1
               PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenburg.default.svc.cluster.local:3000
