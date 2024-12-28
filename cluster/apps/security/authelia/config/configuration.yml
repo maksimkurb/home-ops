@@ -1,6 +1,4 @@
 ---
-default_redirection_url: 'https://start.${SECRET_PUBLIC_DOMAIN}'
-
 access_control:
   default_policy: one_factor
   networks:
@@ -158,7 +156,7 @@ identity_providers:
 
     clients:
       - client_id: grafana
-        description: Grafana
+        client_name: Grafana
         client_secret: ${SECRET_GRAFANA_OAUTH_CLIENT_SECRET}
         public: false
         authorization_policy: one_factor
@@ -173,7 +171,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
 
       - client_id: sftpgo
-        description: SFTPGo
+        client_name: SFTPGo
         client_secret: ${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}
         public: false
         authorization_policy: one_factor
@@ -188,7 +186,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
 
       - client_id: nodered
-        description: NodeRED
+        client_name: NodeRED
         client_secret: ${SECRET_NODERED_OAUTH_CLIENT_SECRET}
         public: false
         authorization_policy: one_factor
@@ -204,7 +202,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
 
       - client_id: immich
-        description: Immich
+        client_name: Immich
         client_secret: ${SECRET_IMMICH_OAUTH_CLIENT_SECRET}
         public: false
         authorization_policy: one_factor
@@ -218,10 +216,10 @@ identity_providers:
           - app.immich:///oauth-callback
           - https://photos.${SECRET_PUBLIC_DOMAIN}/auth/login
           - https://photos.${SECRET_PUBLIC_DOMAIN}/user-settings
-        userinfo_signing_algorithm: none
+        userinfo_signed_response_alg: none
 
       - client_id: paperless
-        description: Paperless-ngx
+        client_name: Paperless-ngx
         client_secret: ${SECRET_PAPERLESS_OAUTH_CLIENT_SECRET}
         public: false
         authorization_policy: two_factor
