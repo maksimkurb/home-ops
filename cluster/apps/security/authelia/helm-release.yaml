@@ -72,6 +72,18 @@ spec:
             main:
               - path: /config/configuration.yml
                 subPath: configuration.yml
+      keys:
+        enabled: true
+        type: secret
+        name: authelia-keys
+        readOnly: false
+        advancedMounts:
+          main:
+            main:
+              - path: /config/jwks/rsa.2048.cert
+                subPath: cert
+              - path: /config/jwks/rsa.2048.pem
+                subPath: pem
 
     defaultPodOptions:
       enableServiceLinks: false
