@@ -29,6 +29,22 @@ ntp:
   max_desync: '3s'
   disable_startup_check: true
 
+totp:
+  disable: false
+  issuer: 'auth.${SECRET_PUBLIC_DOMAIN}'
+  algorithm: 'sha1'
+  digits: 6
+  period: 30
+  skew: 1
+  secret_size: 32
+  allowed_algorithms:
+    - 'SHA1'
+  allowed_digits:
+    - 6
+  allowed_periods:
+    - 30
+  disable_reuse_security_policy: false
+
 identity_providers:
   oidc:
     access_token_lifespan: 1h
