@@ -58,7 +58,7 @@ spec:
         controller: scanservjs
         ports:
           http:
-            port: 8000
+            port: 8080
 
     ingress:
       app:
