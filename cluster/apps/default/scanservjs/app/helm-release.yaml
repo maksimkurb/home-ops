@@ -30,6 +30,9 @@ spec:
             command: [node, /usr/lib/scanservjs/server/server.js]
             env:
               TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: scanservjs-env
             probes:
               liveness:
                 enabled: true
@@ -107,3 +110,22 @@ spec:
           scanservjs:
             app:
               - path: /var/lib/scanservjs
+      sane:
+        enabled: true
+        type: configMap
+        name: scanservjs-sane
+        globalMounts:
+          - path: /etc/sane.d/net.conf
+            subPath: net.conf
+      tmp:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+
+    configMaps:
+      sane:
+        enabled: true
+        data:
+          net.conf: |
+            192.168.54.1
