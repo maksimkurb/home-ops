@@ -13,3 +13,4 @@ resources:
   - theme-park
   - tianji
   - ./paperless/ks.yaml
+  - ./scanservjs/ks.yaml

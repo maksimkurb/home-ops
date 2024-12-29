@@ -1,0 +1,109 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: scanservjs
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  values:
+    controllers:
+      scanservjs:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          app:
+            image:
+              repository: sbs20/scanservjs
+              tag: release-v3.0.3
+            command: [node, /usr/lib/scanservjs/server/server.js]
+            env:
+              TZ: "${TIMEZONE}"
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 25m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              runAsGroup: 777
+              fsGroup: 777
+              fsGroupChangePolicy: "OnRootMismatch"
+              supplementalGroups: ["777"]
+              readOnlyRootFilesystem: true
+
+    service:
+      app:
+        controller: scanservjs
+        ports:
+          http:
+            port: 8000
+
+    ingress:
+      app:
+        enabled: true
+        className: "nginx"
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          hajimari.io/icon: "mdi:file"
+          hajimari.io/group: "Home"
+          hajimari.io/appName: "ScanServJS"
+        hosts:
+          - host: scanservjs.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - "scanservjs.${SECRET_DOMAIN}"
+            secretName: "scanservjs-config-tls"
+
+    persistence:
+      config:
+        existingClaim: scanservjs-config
+        advancedMounts:
+          scanservjs:
+            app:
+              - path: /etc/scanservjs
+      docs:
+        existingClaim: scanservjs-docs
+        advancedMounts:
+          scanservjs:
+            app:
+              - path: /var/lib/scanservjs
