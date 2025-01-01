@@ -113,7 +113,7 @@ spec:
           main:
             image:
               repository: docker.io/authelia/authelia
-              tag: 4.38.17
+              tag: 4.38.18
             env:
               TZ: "${TIMEZONE}"
               X_AUTHELIA_CONFIG_FILTERS: template
