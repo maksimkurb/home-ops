@@ -44,6 +44,14 @@ spec:
             enable: true
             port: 8554
             protocol: TCP
+          webrtc:
+            enable: true
+            port: 8555
+            protocol: TCP
+          webrtcudp:
+            enable: true
+            port: 8555
+            protocol: UDP
 
     ingress:
       main:
