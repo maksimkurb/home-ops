@@ -48,6 +48,11 @@ spec:
             enable: true
             port: 8555
             protocol: TCP
+      mainudp:
+        controller: main
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        ports:
           webrtcudp:
             enable: true
             port: 8555
