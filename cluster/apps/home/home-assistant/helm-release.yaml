@@ -156,7 +156,7 @@ spec:
             enabled: true
             image:
               repository: ghcr.io/coder/code-server
-              tag: 4.96.2
+              tag: 4.96.4
             git:
               deployKeySecret: code-server
             workingDir: "/config"
