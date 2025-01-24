@@ -150,3 +150,13 @@ spec:
                 memory: 100Mi
               limits:
                 memory: 3000Mi
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 15
