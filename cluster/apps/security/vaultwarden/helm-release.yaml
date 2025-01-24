@@ -73,7 +73,6 @@ spec:
               DATA_FOLDER: "config"
               SIGNUPS_ALLOWED: false
               DOMAIN: https://bitwarden.${SECRET_DOMAIN}
-              ADMIN_TOKEN: "${SECRET_VAULTWARDEN_ADMIN_TOKEN}"
               SMTP_HOST: "${SMTP_HOST}"
               SMTP_FROM: "${SMTP_EMAIL}"
               SMTP_FROM_NAME: "Vaultwarden"
