@@ -37,9 +37,6 @@ spec:
           nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
         hosts:
           - &host "grafana.${SECRET_PUBLIC_DOMAIN}"
-        tls:
-          - hosts:
-              - *host
       sidecar:
         dashboards:
           enabled: true
@@ -120,9 +117,6 @@ spec:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
           - &vmagent-host "vmagent.${SECRET_DOMAIN}"
-        tls:
-          - hosts:
-              - *vmagent-host
     vmsingle:
       spec:
         extraArgs:
@@ -139,9 +133,6 @@ spec:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
           - &vmsingle-host "vmsingle.${SECRET_DOMAIN}"
-        tls:
-          - hosts:
-              - *vmsingle-host
     vmalert:
       enabled: true
       spec:
@@ -210,6 +201,3 @@ spec:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
           - &vmalertmanager-host "vmalertmanager.${SECRET_DOMAIN}"
-        tls:
-          - hosts:
-              - *vmalertmanager-host

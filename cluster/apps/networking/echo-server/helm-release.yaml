@@ -47,9 +47,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - *host
         className: nginx
       auth:
         enabled: true
@@ -76,9 +73,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - *host
         className: nginx
 
     defaultPodOptions:

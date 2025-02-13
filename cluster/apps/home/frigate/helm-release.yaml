@@ -85,10 +85,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - "frigate.${SECRET_DOMAIN}"
-            secretName: "frigate-tls"
         className: nginx
 
     persistence:

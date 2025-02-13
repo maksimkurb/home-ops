@@ -64,6 +64,3 @@ hubble:
         hajimari.io/icon: lan
       hosts:
         - &host "hubble.cubly.ru"
-      tls:
-        - hosts:
-            - *host

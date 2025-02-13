@@ -66,9 +66,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - *host-release
         className: nginx
       api:
         enabled: true
@@ -82,9 +79,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - *host-release
         className: nginx
 
     persistence:

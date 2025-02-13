@@ -67,10 +67,6 @@ spec:
                 service:
                   name: main
                   port: api
-        tls:
-          - hosts:
-              - *host-console
-              - *host-api
         className: nginx
 
     persistence:

@@ -92,10 +92,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-        tls:
-          - hosts:
-              - "scanservjs.${SECRET_DOMAIN}"
-            secretName: "scanservjs-config-tls"
 
     persistence:
       config:

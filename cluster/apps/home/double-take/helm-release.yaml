@@ -38,10 +38,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - "double-take.${SECRET_DOMAIN}"
-            secretName: "double-take-tls"
         className: nginx
 
     persistence:

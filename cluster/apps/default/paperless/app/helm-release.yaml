@@ -199,10 +199,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-        tls:
-          - hosts:
-              - "paperless.${SECRET_DOMAIN}"
-            secretName: "paperless-config-tls"
 
     persistence:
       data:

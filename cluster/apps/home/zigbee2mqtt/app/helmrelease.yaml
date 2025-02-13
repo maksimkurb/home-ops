@@ -142,11 +142,6 @@ spec:
                 service:
                   identifier: app
                   port: code-server
-        tls:
-          - hosts:
-              - "z2m.${SECRET_DOMAIN}"
-              - "z2m-config.${SECRET_DOMAIN}"
-            secretName: "zigbee2mqtt-config-tls"
 
     persistence:
       data:

@@ -53,10 +53,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - "nodered.${SECRET_DOMAIN}"
-            secretName: "node-red-tls"
 
     persistence:
       config:

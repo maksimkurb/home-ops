@@ -76,10 +76,6 @@ spec:
                 service:
                   name: main
                   port: dav
-        tls:
-          - hosts:
-              - *host
-            secretName: sftpgo-tls
         className: nginx
 
     persistence:

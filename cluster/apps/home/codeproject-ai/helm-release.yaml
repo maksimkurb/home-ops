@@ -48,10 +48,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - "cpai.${SECRET_DOMAIN}"
-            secretName: "codeproject-ai-tls"
         className: nginx
 
     persistence:

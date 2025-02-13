@@ -34,10 +34,6 @@ metadata:
     external-dns.alpha.kubernetes.io/target: tunnel.cubly.ru
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - ext-router.${SECRET_DOMAIN}
-      secretName: ext-svc-router-tls-2
   rules:
     - host: ext-router.${SECRET_DOMAIN}
       http:

@@ -67,10 +67,6 @@ spec:
                 service:
                   name: main
                   port: http
-        tls:
-          - hosts:
-              - "hass.${SECRET_DOMAIN}"
-            secretName: "homeassistant-tls"
 
       codeserver:
         enabled: true
@@ -98,10 +94,6 @@ spec:
                 service:
                   name: codeserver
                   port: http
-        tls:
-          - hosts:
-              - "hass-config.${SECRET_DOMAIN}"
-            secretName: "homeassistant-config-tls"
 
     persistence:
       config:

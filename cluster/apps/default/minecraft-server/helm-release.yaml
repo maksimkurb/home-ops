@@ -113,10 +113,6 @@ spec:
             hosts:
               - name: &host "mcsrv-map.${SECRET_DOMAIN}"
                 path: /
-            tls:
-              - secretName: *host
-                hosts:
-                  - *host
   valuesFrom:
     - kind: Secret
       name: *secret
