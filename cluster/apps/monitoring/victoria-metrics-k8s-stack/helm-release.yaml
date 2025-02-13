@@ -93,13 +93,13 @@ spec:
           use_pkce: true
           role_attribute_path: |
             contains(groups[*], 'admins') && 'Admin' || 'Viewer'
-      dashboards:
-        default:
-          # Ref: https://grafana.com/grafana/dashboards/1860
-          nodeexporter:
-            gnetId: 1860
-            revision: 22
-            datasource: VictoriaMetrics
+      # dashboards:
+      #   default:
+      #     # Ref: https://grafana.com/grafana/dashboards/1860
+      #     nodeexporter:
+      #       gnetId: 1860
+      #       revision: 22
+      #       datasource: VictoriaMetrics
       defaultDashboardsTimezone: "${TIMEZONE}"
       persistence:
         enabled: true
