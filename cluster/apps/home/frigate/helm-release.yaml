@@ -97,16 +97,16 @@ spec:
         retain: true
         globalMounts:
           - path: /config
-      config-file:
-        enabled: true
-        type: secret
-        name: frigate-config
-        readOnly: true
-        advancedMounts:
-          main:
-            main:
-              - path: /config/config.yml
-                subPath: config_yaml
+      # config-file:
+      #   enabled: true
+      #   type: secret
+      #   name: frigate-config
+      #   readOnly: true
+      #   advancedMounts:
+      #     main:
+      #       main:
+      #         - path: /config/config.yml
+      #           subPath: config_yaml
       dshm:
         enabled: true
         type: emptyDir
