@@ -71,7 +71,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  name: app
                   port: 5000
         className: nginx
 
