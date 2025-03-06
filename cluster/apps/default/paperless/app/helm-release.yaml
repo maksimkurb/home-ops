@@ -122,7 +122,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mchestr/gotenberg
-              tag: 8.17.2
+              tag: 8.17.3
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
