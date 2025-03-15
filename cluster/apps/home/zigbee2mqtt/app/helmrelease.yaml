@@ -159,13 +159,13 @@ spec:
       #       app:
       #         - path: /dev/ttyACM0
 
-    defaultPodOptions:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: feature.node.kubernetes.io/custom-zigbee
-                    operator: In
-                    values:
-                      - "true"
+    # defaultPodOptions:
+    #   affinity:
+    #     nodeAffinity:
+    #       requiredDuringSchedulingIgnoredDuringExecution:
+    #         nodeSelectorTerms:
+    #           - matchExpressions:
+    #               - key: feature.node.kubernetes.io/custom-zigbee
+    #                 operator: In
+    #                 values:
+    #                   - "true"
