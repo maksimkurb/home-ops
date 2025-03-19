@@ -57,7 +57,7 @@ spec:
               # Configure Barcode Recognition
               PAPERLESS_CONSUMER_ENABLE_BARCODES: "true"
               PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: "true"
-              PAPERLESS_CONSUMER_BARCODE_SCANNER: "zxing"
+              PAPERLESS_CONSUMER_BARCODE_SCANNER: "ZXING"
               # Configure Tika
               PAPERLESS_TIKA_ENABLED: 1
               PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenburg.default.svc.cluster.local:3000
