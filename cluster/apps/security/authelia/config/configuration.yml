@@ -241,3 +241,21 @@ identity_providers:
           - 'https://paperless.${SECRET_PUBLIC_DOMAIN}/accounts/oidc/authelia/login/callback/'
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_basic'
+
+      - client_id: 'homeassistant'
+        client_name: 'Home Assistant'
+        client_secret: ${SECRET_HASS_OAUTH_CLIENT_SECRET}
+        public: false
+        require_pkce: true
+        claims_policy: 'default'
+        pkce_challenge_method: 'S256'
+        authorization_policy: 'one_factor'
+        redirect_uris:
+          - 'https://hass.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback'
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        id_token_signed_response_alg: 'RS256'
+        token_endpoint_auth_method: 'client_secret_post'
