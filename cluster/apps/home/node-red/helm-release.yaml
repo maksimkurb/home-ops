@@ -87,13 +87,13 @@ spec:
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  # Stick to the same node as Home Assistant
-                  - key: feature.node.kubernetes.io/custom-zigbee
-                    operator: In
-                    values:
-                      - "true"
+            nodeSelectorTerms: []
+              # - matchExpressions:
+              #     # Stick to the same node as Home Assistant
+              #     - key: feature.node.kubernetes.io/custom-zigbee
+              #       operator: In
+              #       values:
+              #         - "true"
       securityContext:
         runAsUser: 777
         runAsGroup: 777
