@@ -28,6 +28,8 @@ spec:
   dependsOn:
     - name: home-assistant
       namespace: home
+    - name: zigbee2mqtt
+      namespace: home
   values:
 
     service:
@@ -67,11 +69,16 @@ spec:
                   port: 8080
 
     persistence:
-      config:
+      hass:
         enabled: true
         existingClaim: home-assistant-config
         globalMounts:
-          - path: /config
+          - path: /config/hass
+      z2m:
+        enabled: true
+        existingClaim: zigbee2mqtt-data
+        globalMounts:
+          - path: /config/z2m
 
     controllers:
       main:
@@ -88,6 +95,6 @@ spec:
               - --auth
               - "none"
               - --user-data-dir
-              - "/config/.vscode"
+              - "/config/hass/.vscode"
               - --extensions-dir
-              - "/config/.vscode"
+              - "/config/hass/.vscode"

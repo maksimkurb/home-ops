@@ -105,6 +105,7 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
+          hajimari.io/icon: zigbee
         hosts:
           - host: z2m.${SECRET_DOMAIN}
             paths:

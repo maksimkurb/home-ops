@@ -42,6 +42,7 @@ spec:
           nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
           nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
           hajimari.io/appName: "Grafana"
+          hajimari.io/icon: view-dashboard
         hosts:
           - "grafana.${SECRET_PUBLIC_DOMAIN}"
       sidecar:
@@ -135,6 +136,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/appName: "VM Agent"
+          hajimari.io/icon: face-agent
         hosts:
           - "vmagent.${SECRET_DOMAIN}"
     vmsingle:
@@ -165,6 +167,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/appName: "VM Single"
+          hajimari.io/icon: database-alert
         hosts:
           - "vmsingle.${SECRET_DOMAIN}"
 
@@ -187,6 +190,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/appName: "VM Alert"
+          hajimari.io/icon: alert-circle-outline
         hosts:
           - 'vmalert.${SECRET_DOMAIN}'
       spec:
@@ -291,6 +295,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
           hajimari.io/appName: "VM Alert Manager"
+          hajimari.io/icon: bell-alert-outline
         hosts:
           - "vmalertmanager.${SECRET_DOMAIN}"
       spec:

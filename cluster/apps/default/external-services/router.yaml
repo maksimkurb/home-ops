@@ -32,6 +32,7 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/enabled: 'true'
     external-dns.alpha.kubernetes.io/target: tunnel.cubly.ru
+    hajimari.io/icon: router-wireless
 spec:
   ingressClassName: nginx
   rules:

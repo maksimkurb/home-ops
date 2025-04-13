@@ -188,7 +188,7 @@ spec:
             location /admin/ {
               deny all;
             }
-          hajimari.io/icon: "mdi:file"
+          hajimari.io/icon: "file-document-multiple"
           hajimari.io/group: "Home"
           hajimari.io/appName: "Paperless"
         hosts:
