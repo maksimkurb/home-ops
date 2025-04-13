@@ -28,6 +28,18 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    kubeControllerManager:
+      endpoints:
+        - ${K3S_HOST_IP}
+    kubeEtcd:
+      endpoints:
+        - ${K3S_HOST_IP}
+    kubeScheduler:
+      endpoints:
+        - ${K3S_HOST_IP}
+    # kubeProxy:
+    #   endpoints:
+    #     - ${K3S_HOST_IP}
     grafana:
       enabled: true
       initChownData:
