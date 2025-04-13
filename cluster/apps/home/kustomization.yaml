@@ -6,7 +6,7 @@ resources:
   # - codeproject-ai
   # - double-take
   - frigate
-  # - home-assistant
+  - ./home-assistant/ks.yaml
   - mosquitto
   - node-red
   - ./zigbee2mqtt/ks.yaml
