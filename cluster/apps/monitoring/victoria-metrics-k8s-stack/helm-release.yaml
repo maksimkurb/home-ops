@@ -135,8 +135,6 @@ spec:
           - &vmsingle-host "vmsingle.${SECRET_DOMAIN}"
     vmalert:
       enabled: true
-      spec:
-        evaluationInterval: "60s"
     prometheus-node-exporter:
       enabled: false
     kubelet:
