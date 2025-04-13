@@ -1,16 +1,16 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app kopia
+  name: ${APP}
   namespace: default
 spec:
   interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.5.1
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -27,7 +27,7 @@ spec:
   values:
 
     global:
-      nameOverride: *app
+      nameOverride: ${APP}
 
     initContainers:
       wait-for-repo:
@@ -46,6 +46,7 @@ spec:
 
     service:
       main:
+        controller: main
         ports:
           http:
             port: 80
@@ -72,33 +73,33 @@ spec:
           hajimari.io/appName: "Kopia backups"
           hajimari.io/icon: "backup-restore"
         hosts:
-          - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
                   name: main
-                  port: http
+                  port: 80
         className: nginx
 
     persistence:
       config:
         enabled: true
         type: configMap
-        name: *app
-        readOnly: true
+        name: ${APP}
         advancedMounts:
           main:
             main:
               - path: /config/repository.config
                 subPath: repository.config
+                readOnly: true
       source:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: kopia-data
-        readOnly: true
         globalMounts:
           - path: /data
+            readOnly: true
       restore:
         enabled: true
         type: persistentVolumeClaim
