@@ -116,7 +116,7 @@ spec:
           check-db-ready:
             image:
               repository: postgres
-              tag: 15.12
+              tag: 17.4
             command:
               - "sh"
               - "-c"
