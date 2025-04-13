@@ -110,13 +110,7 @@ spec:
         globalMounts:
           - path: /data/immich
             readOnly: true
-      immich-writeable:
-        enabled: true
-        existingClaim: syncthing-immich
-        globalMounts:
           - path: /data/immich/.stfolder
-      immich-ignore:
-        enabled: true
-        existingClaim: syncthing-immich-ignore
-        globalMounts:
+            readOnly: false
           - path: /data/immich/.stignore
+            readOnly: false
