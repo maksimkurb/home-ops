@@ -111,6 +111,8 @@ spec:
           - path: /data/immich
             readOnly: true
           - path: /data/immich/.stfolder
+            subPath: .stfolder
             readOnly: false
           - path: /data/immich/.stignore
+            subPath: .stignore
             readOnly: false
