@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   # - generic-rules
-  - loki
+  # - loki
   - nodeexporter
-  - vector
-  - victoria-metrics-k8s-stack
+  # - vector
+  # - victoria-metrics-k8s-stack
