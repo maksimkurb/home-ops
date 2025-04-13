@@ -92,7 +92,7 @@ spec:
           hajimari.io/appName: "Syncthing"
           hajimari.io/icon: "cloud"
         hosts:
-          - host: &host syncthing.${SECRET_PUBLIC_DOMAIN}
+          - host: syncthing.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 service:
@@ -110,3 +110,13 @@ spec:
         globalMounts:
           - path: /data/immich
             readOnly: true
+      immich-writeable:
+        enabled: true
+        existingClaim: syncthing-immich
+        globalMounts:
+          - path: /data/immich/.stfolder
+      immich-ignore:
+        enabled: true
+        existingClaim: syncthing-immich-ignore
+        globalMounts:
+          - path: /data/immich/.stignore

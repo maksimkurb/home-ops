@@ -51,7 +51,7 @@ spec:
           hajimari.io/icon: "shield-key"
           hajimari.io/name: "Authelia (SSO)"
         hosts:
-          - host: &host "auth.${SECRET_PUBLIC_DOMAIN}"
+          - host: "auth.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
