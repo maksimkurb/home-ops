@@ -29,14 +29,17 @@ spec:
     keepHistory: false
   values:
     kubeControllerManager:
+      enabled: true
       endpoints:
-        - ${K3S_HOST_IP}
+        - ${CONTROL_PLANE_ENDPOINT}
     kubeEtcd:
+      enabled: true
       endpoints:
-        - ${K3S_HOST_IP}
+        - ${CONTROL_PLANE_ENDPOINT}
     kubeScheduler:
+      enabled: true
       endpoints:
-        - ${K3S_HOST_IP}
+        - ${CONTROL_PLANE_ENDPOINT}
     # kubeProxy:
     #   endpoints:
     #     - ${K3S_HOST_IP}
