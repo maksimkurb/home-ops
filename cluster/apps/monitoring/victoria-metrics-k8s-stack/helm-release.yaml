@@ -149,7 +149,7 @@ spec:
         enabled: true
         ingressClassName: nginx
         hosts:
-          - 'https://vmalert.${SECRET_DOMAIN}'
+          - 'vmalert.${SECRET_DOMAIN}'
       spec:
         extraArgs:
           external.url: 'https://vmalert.${SECRET_DOMAIN}'
