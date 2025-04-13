@@ -1,9 +1,9 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: home-assistant
+  name: ${APP}
   namespace: home
 spec:
   interval: 30m
@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s.github.io/helm-charts/
       chart: app-template
-      version: 2.6.0
+      version: 3.5.1
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -32,6 +32,7 @@ spec:
 
     service:
       main:
+        controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_HOME_ASSISTANT_ADDR}"
@@ -42,12 +43,6 @@ spec:
             port: 8123
           debug:
             port: 5678
-      codeserver:
-        enabled: true
-        controller: main
-        ports:
-          http:
-            port: 8080
 
     ingress:
       main:
@@ -65,35 +60,8 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
-                  port: http
-
-      codeserver:
-        enabled: true
-        className: "nginx"
-        annotations:
-          # ForwardAuth start
-          nginx.ingress.kubernetes.io/auth-method: GET
-          nginx.ingress.kubernetes.io/auth-url: |-
-            http://authelia.security.svc.cluster.local:8000/api/verify
-          nginx.ingress.kubernetes.io/auth-signin: |-
-            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
-          nginx.ingress.kubernetes.io/auth-response-headers: |-
-            Remote-User,Remote-Name,Remote-Groups,Remote-Email
-          nginx.ingress.kubernetes.io/auth-snippet: |
-            proxy_set_header X-Forwarded-Method $request_method;
-          # ForwardAuth end
-          hajimari.io/icon: "mdi:vs-code"
-          hajimari.io/group: "Home"
-          hajimari.io/appName: "Home Assistant Config"
-        hosts:
-          - host: "hass-config.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  name: codeserver
-                  port: http
+                  identifier: main
+                  port: 8123
 
     persistence:
       config:
@@ -144,24 +112,8 @@ spec:
                 memory: 4000Mi
             securityContext:
               privileged: true
-          codeserver:
-            enabled: true
-            image:
-              repository: ghcr.io/coder/code-server
-              tag: 4.99.2
-            git:
-              deployKeySecret: code-server
-            workingDir: "/config"
-            args:
-              - --auth
-              - "none"
-              - --user-data-dir
-              - "/config/.vscode"
-              - --extensions-dir
-              - "/config/.vscode"
         initContainers:
           check-db-ready:
-            name: check-db-ready
             image:
               repository: postgres
               tag: 15.12
