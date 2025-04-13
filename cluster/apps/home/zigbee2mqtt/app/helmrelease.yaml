@@ -79,23 +79,6 @@ spec:
               capabilities:
                 drop:
                   - ALL
-          code-server:
-            image:
-              repository: ghcr.io/coder/code-server
-              tag: 4.99.2
-            args: [
-              "--auth", "none",
-              "--disable-telemetry", "--disable-update-check",
-              "--user-data-dir", "/data/.code-server",
-              "--extensions-dir", "/data/.code-server",
-              "--port", "12321",
-              "/data"
-            ]
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 512Mi
 
     service:
       app:
@@ -106,8 +89,6 @@ spec:
             port: 8080
           metrics:
             port: 9000
-          code-server:
-            port: 12321
 
     ingress:
       app:
@@ -132,13 +113,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-          - host: z2m-config.${SECRET_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: code-server
 
     persistence:
       data:
@@ -146,8 +120,6 @@ spec:
         advancedMounts:
           zigbee2mqtt:
             app:
-              - path: /data
-            code-server:
               - path: /data
       # usb:
       #   enabled: true

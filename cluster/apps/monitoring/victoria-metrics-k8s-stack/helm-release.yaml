@@ -41,8 +41,9 @@ spec:
           nginx.ingress.kubernetes.io/session-cookie-name: "grafana"
           nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
           nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+          hajimari.io/appName: "Grafana"
         hosts:
-          - &host "grafana.${SECRET_PUBLIC_DOMAIN}"
+          - "grafana.${SECRET_PUBLIC_DOMAIN}"
       sidecar:
         dashboards:
           enabled: true
@@ -121,7 +122,19 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+          hajimari.io/appName: "VM Agent"
         hosts:
           - "vmagent.${SECRET_DOMAIN}"
     vmsingle:
@@ -139,7 +152,19 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+          hajimari.io/appName: "VM Single"
         hosts:
           - "vmsingle.${SECRET_DOMAIN}"
 
@@ -148,6 +173,20 @@ spec:
       ingress:
         enabled: true
         ingressClassName: nginx
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+          hajimari.io/appName: "VM Alert"
         hosts:
           - 'vmalert.${SECRET_DOMAIN}'
       spec:
@@ -239,7 +278,19 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+          hajimari.io/appName: "VM Alert Manager"
         hosts:
           - "vmalertmanager.${SECRET_DOMAIN}"
       spec:
