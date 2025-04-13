@@ -5,7 +5,6 @@ metadata:
   name: victoria-metrics
   namespace: monitoring
 spec:
-  interval: 30m
   chart:
     spec:
       chart: victoria-metrics-k8s-stack
@@ -18,6 +17,12 @@ spec:
     createNamespace: true
     remediation:
       retries: 3
+  interval: 1h
+  maxHistory: 3
+  uninstall:
+    cleanupOnFail: true
+    crds: CreateReplace
+    keepHistory: false
   upgrade:
     remediation:
       retries: 3
@@ -106,6 +111,7 @@ spec:
           - ReadWriteOnce
     fullnameOverride: "vm-k8s-stack"
     vmagent:
+      enabled: true
       spec:
         externalLabels:
           cluster: cluster-name
@@ -116,9 +122,11 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
-          - &vmagent-host "vmagent.${SECRET_DOMAIN}"
+          - "vmagent.${SECRET_DOMAIN}"
     vmsingle:
+      enabled: true
       spec:
+        replicaCount: 1
         extraArgs:
           dedup.minScrapeInterval: "60s"
         storage:
@@ -132,9 +140,19 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
-          - &vmsingle-host "vmsingle.${SECRET_DOMAIN}"
+          - "vmsingle.${SECRET_DOMAIN}"
+
     vmalert:
       enabled: true
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        hosts:
+          - 'https://vmalert.${SECRET_DOMAIN}'
+      spec:
+        extraArgs:
+          external.url: 'https://vmalert.${SECRET_DOMAIN}'
+
     prometheus-node-exporter:
       enabled: false
     kubelet:
@@ -166,29 +184,53 @@ spec:
           - targetLabel: "cluster"
             replacement: "cluster-name"
     alertmanager:
+      enabled: true
       config:
         inhibit_rules:
-          - source_matchers:
+          - equal:
+              - namespace
+              - alertname
+            source_matchers:
               - severity = "critical"
             target_matchers:
+              - severity =~ "warning|info"
+          - equal:
+              - namespace
+              - alertname
+            source_matchers:
               - severity = "warning"
-            equal: ["alertname", "namespace"]
+            target_matchers:
+              - severity = "info"
+          - equal:
+              - namespace
+            source_matchers:
+              - alertname = "InfoInhibitor"
+            target_matchers:
+              - severity = "info"
+          - target_matchers:
+              - alertname = "InfoInhibitor"
         route:
-          group_by: ["alertname", "job"]
-          group_wait: 30s
-          group_interval: 5m
-          repeat_interval: 6h
+          group_by:
+            - job
+            - alertname
+            - severity
+            - name
+            - job_name
+            - instance
+          group_interval: 10m
+          group_wait: 45s
+          repeat_interval: 12h
           receiver: discord
           routes:
-            - receiver: "null"
-              matchers:
-                - alertname =~ "InfoInhibitor|Watchdog"
-            - receiver: "discord"
-              continue: true
-              matchers:
-                - severity = "critical"
+            - matchers:
+                - >-
+                  alertname=~"WatchDog|InfoInhibitor|KubeMemoryOvercommit|CephNodeNetworkPacketDrops|CephNodeNetworkPacketErrors|HostPhysicalComponentTooHot"
+              receiver: blackhole
+            - matchers:
+                - severity=~"warning|critical"
+              receiver: "discord"
         receivers:
-          - name: "null"
+          - name: "blackhole"
           - name: "discord"
             discord_configs:
               - webhook_url: "${SECRET_ALERT_MANAGER_DISCORD_WEBHOOK}"
@@ -198,4 +240,6 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
-          - &vmalertmanager-host "vmalertmanager.${SECRET_DOMAIN}"
+          - "vmalertmanager.${SECRET_DOMAIN}"
+      spec:
+        externalURL: 'https://vmalertmanager.${SECRET_DOMAIN}'
