@@ -31,6 +31,18 @@ spec:
     remediation:
       retries: 3
   values:
+    kubeControllerManager:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
+    kubeEtcd:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
+    kubeScheduler:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
     crds:
       enabled: true
       upgradeJob:
@@ -71,10 +83,6 @@ spec:
               resources:
                 requests:
                   storage: 1Gi
-    kubeEtcd:
-      service:
-        selector:
-          component: kube-apiserver # etcd runs on control plane nodes
     kubeProxy:
       enabled: false
     prometheus:
