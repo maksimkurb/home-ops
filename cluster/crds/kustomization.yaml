@@ -5,6 +5,6 @@ resources:
   - cert-manager
   - external-snapshotter
   # - ext-postgres-operator
-  - kube-prometheus-stack
+  # - kube-prometheus-stack
   - zalando
   - victoria-metrics
