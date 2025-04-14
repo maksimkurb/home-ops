@@ -5,7 +5,7 @@ resources:
   - namespace.yaml
   # - generic-rules
   # - loki
-  - nodeexporter
+  # - nodeexporter
   - ./kube-prometheus-stack/ks.yaml
   # - vector
   # - victoria-metrics-k8s-stack
