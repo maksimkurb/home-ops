@@ -1,0 +1,27 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+    name: grafana-env-secret
+stringData:
+    GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: ENC[AES256_GCM,data:M4+KB5xaaCfcmprfpIxFC1kj7em9qV4/JCBqJal8pJFUS6U=,iv:1WIN1J6tYM6f9sVzJB3j0pRNVBOCiyGDnK3du9ynemY=,tag:vNzPth3MlBjLSO9Lw9Mm5g==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2Zi9OZzkrSUhKYVo3MDBt
+            Y2hraWdqZFJQNU8wWGpSNGxIQ2JVeXFSYm5NCnRTQ0xQK0J0ZXlkVlFJUk9FYnpa
+            aVJHQzlNYUwxdGhwOW1QWlVmVDBzdWMKLS0tIFA4U0pscjJkc0xRbjYzZ3FtY2U1
+            dEwrSXhKTkp3SHlBR0Q0MHhTT0lYa0kKEc1Rw/wYaV2L1MlsMCg4ICBzXs3L/d2D
+            ZIlp+47pyKbYw4mIyb02vgqeoYRIu4cvKWgIjTqkgIwgE/m2Z11P4Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-04-14T19:25:01Z"
+    mac: ENC[AES256_GCM,data:5kiQGYC9pOyK5MoVJFHmdN/h2UVWBMCnVLjCTbmtlQnaEwtijdutQhTmqWhFKTJE214mWgfr7uk0LgWF1QF26z4a1RSSlajLgOLiexFSNNc5CCIvlHGDgP4TdG3tp/2R7VlCBA5zXgPgv57+ZvwhXKzFvUmVelRE3NS6tnyWgUw=,iv:8B5yeroZlNfjqyB10uPjewHfNMWir6xg+y1GBdRyqc0=,tag:hojdtl83OFx+xmwrw2lRVw==,type:str]
+    pgp: []
+    encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
+    version: 3.7.1

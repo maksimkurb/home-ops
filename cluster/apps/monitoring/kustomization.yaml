@@ -7,5 +7,6 @@ resources:
   # - loki
   # - nodeexporter
   - ./kube-prometheus-stack/ks.yaml
+  - ./grafana/ks.yaml
   # - vector
   # - victoria-metrics-k8s-stack
