@@ -4,7 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app kube-prometheus-stack
-  namespace: &namespace monitoring
+  namespace: flux-system
 spec:
   commonMetadata:
     labels:
@@ -15,9 +15,9 @@ spec:
   retryInterval: 2m
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: flux-cluster
     namespace: flux-system
-  targetNamespace: *namespace
+  targetNamespace: monitoring
   timeout: 5m
   wait: false
   decryption:
