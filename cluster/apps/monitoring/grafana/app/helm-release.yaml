@@ -211,6 +211,16 @@ spec:
           gnetId: 7845
           revision: 4
           datasource: Prometheus
+        minio-server:
+          # renovate: depName="MinIO Server Dashboard"
+          gnetId: 13502
+          revision: 26
+          datasource: Prometheus
+        minio-buckets:
+          # renovate: depName="MinIO Buckets Dashboard"
+          gnetId: 19237
+          revision: 2
+          datasource: Prometheus
     sidecar:
       image:
         registry: ghcr.io
