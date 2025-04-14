@@ -15,8 +15,30 @@ spec:
     - port: api
       scheme: http
       path: /minio/v2/metrics/cluster
-      interval: 30s
+      interval: 60s
       scrapeTimeout: 10s
       bearerTokenSecret:
         name: minio-prometheus
         key: token
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: &app minio-bucket
+  namespace: default
+  labels: &labels
+    app.kubernetes.io/instance: *app
+    app.kubernetes.io/name: *app
+spec:
+  selector:
+    matchLabels:
+      <<: *labels
+  endpoints:
+    - port: api
+      scheme: http
+      path: /minio/v2/metrics/bucket
+      interval: 60s
+      scrapeTimeout: 10s
+      bearerTokenSecret:
+        name: minio-prometheus
+        key: bucketToken
