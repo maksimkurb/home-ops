@@ -114,6 +114,7 @@ spec:
         serviceMonitorSelectorNilUsesHelmValues: false
         enableAdminAPI: true
         walCompression: true
+        scrapeInterval: 1m
         enableFeatures:
           - memory-snapshot-on-shutdown
         retention: 14d
