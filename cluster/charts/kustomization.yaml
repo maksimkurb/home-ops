@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - aqua-charts.yaml
   - bjw-s-charts.yaml
-  - bitnami-charts.yaml
+  # - bitnami-charts.yaml
   - cilium-charts.yaml
   - containeroo-charts.yaml
   - external-dns-charts.yaml
