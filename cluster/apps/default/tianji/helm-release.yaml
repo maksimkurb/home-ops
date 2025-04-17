@@ -67,7 +67,7 @@ spec:
           main:
             image:
               repository: moonrailgun/tianji
-              tag: 1.20.1
+              tag: 1.20.2
             env:
               TZ: "${TIMEZONE}"
               ALLOW_REGISTER: "false"
