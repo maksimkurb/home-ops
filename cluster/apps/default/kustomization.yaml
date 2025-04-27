@@ -8,9 +8,7 @@ resources:
   - ./syncthing/ks.yaml
   - ./hajimari/ks.yaml
   - ./kopia/ks.yaml
-  # - minecraft-server
   - ./minio/ks.yaml
-  - theme-park
   - ./tianji/ks.yaml
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
