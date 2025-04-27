@@ -65,7 +65,9 @@ spec:
     prowlarr: prowlarr
     prowlarr_log: prowlarr
     sonarr: sonarr
+    sonarr_log: sonarr
     radarr: radarr
+    radarr_log: radarr
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
