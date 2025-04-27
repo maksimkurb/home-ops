@@ -1,0 +1,111 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app qbittorrent
+  namespace: downloads
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+
+    global:
+      nameOverride: *app
+
+    hostname: qbittorrent
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          hajimari.io/icon: "download-network"
+        hosts:
+          - host: &host-release "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        className: nginx
+      api:
+        enabled: true
+        annotations:
+          hajimari.io/enable: "false"
+        hosts:
+          - host: *host-release
+            paths:
+              - path: /api
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        className: nginx
+
+    persistence:
+      config:
+        existingClaim: qbittorrent-config-v1
+      media:
+        existingClaim: qbittorrent-downloads
+        globalMounts:
+          - path: /media
+      tmp:
+        type: emptyDir
+
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/home-operations/qbittorrent
+              tag: 5.0.4@sha256:25ec4934fd35d5cbfc97a9829806b002253565320b39cec2925d9fa0c70dca9e
+            env:
+              TZ: "${TIMEZONE}"
+              QBITTORRENT__PORT: 80
+              QBT_TORRENTING_PORT: 50401
+            resources:
+              requests:
+                cpu: 1m
+                memory: 250Mi
+              limits:
+                memory: 6000Mi

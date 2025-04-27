@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-config-v1
+  namespace: downloads
+  labels:
+    app.kubernetes.io/name: &name qbittorrent
+    app.kubernetes.io/instance: *name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: qbittorrent-downloads
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: qbittorrent-downloads
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: ${NFS_PROXMOX_MEDIA}/01_media/downloads
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-downloads
+  namespace: downloads
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: qbittorrent-downloads
+  resources:
+    requests:
+      storage: 1Mi
