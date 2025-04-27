@@ -48,6 +48,7 @@ spec:
     immich: []
     tianji: []
     paperless: []
+    maybe-finance: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -57,6 +58,7 @@ spec:
     immich: immich
     tianji: tianji
     paperless: paperless
+    maybe-finance: maybe-finance
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
