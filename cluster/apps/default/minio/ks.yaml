@@ -17,6 +17,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-cluster
+    namespace: flux-system
   wait: false
   decryption:
     provider: sops
