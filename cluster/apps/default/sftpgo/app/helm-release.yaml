@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.7.3/charts/other/app-template/values.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -29,6 +29,7 @@ spec:
   values:
     service:
       main:
+        controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
@@ -83,15 +84,16 @@ spec:
         enabled: true
         type: configMap
         name: *app
-        readOnly: true
         advancedMounts:
           main:
             main:
               - path: /etc/sftpgo/sftpgo.json
                 subPath: config.json
+                readOnly: true
             migrate-db:
               - path: /etc/sftpgo/sftpgo.json
                 subPath: config.json
+                readOnly: true
       media:
         enabled: true
         existingClaim: sftpgo-media
