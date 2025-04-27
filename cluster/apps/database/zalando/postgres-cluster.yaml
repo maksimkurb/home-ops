@@ -49,6 +49,9 @@ spec:
     tianji: []
     paperless: []
     maybe_finance: []
+    prowlarr: []
+    sonarr: []
+    radarr: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -59,6 +62,10 @@ spec:
     tianji: tianji
     paperless: paperless
     maybe_finance: maybe_finance
+    prowlarr: prowlarr
+    prowlarr_log: prowlarr
+    sonarr: sonarr
+    radarr: radarr
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
