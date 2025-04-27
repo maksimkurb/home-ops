@@ -9,7 +9,7 @@ resources:
   - ./hajimari/ks.yaml
   - ./kopia/ks.yaml
   # - minecraft-server
-  - minio
+  - ./minio/ks.yaml
   - theme-park
   - tianji
   - ./paperless/ks.yaml
