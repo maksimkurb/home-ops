@@ -110,6 +110,8 @@ spec:
               RADARR__POSTGRES_MAIN_DB: radarr
               RADARR__POSTGRES_LOG_DB: radarr_log
               RADARR__POSTGRES_USER: radarr
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
             envFrom:
               - secretRef:
                   name: *app
