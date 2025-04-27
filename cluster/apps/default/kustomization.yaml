@@ -6,7 +6,7 @@ resources:
   - external-services
   - sftpgo
   - syncthing
-  - hajimari
+  - ./hajimari/ks.yaml
   - ./kopia/ks.yaml
   # - minecraft-server
   - minio
