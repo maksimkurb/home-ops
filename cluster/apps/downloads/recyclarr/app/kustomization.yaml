@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - secret.sops.yaml
   - config-pvc.yaml
-  - cron-job.yaml
+  - helm-release.yaml
 configMapGenerator:
   - name: recyclarr-configmap
     files:
