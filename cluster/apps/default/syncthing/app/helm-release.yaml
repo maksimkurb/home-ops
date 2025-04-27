@@ -1,22 +1,24 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: syncthing
+  name: &app syncthing
   namespace: default
 spec:
   interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.7.3
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
   maxHistory: 2
   install:
+    createNamespace: true
     remediation:
       retries: 3
   upgrade:
@@ -42,6 +44,7 @@ spec:
                 memory: 1G
     service:
       main:
+        controller: main
         ports:
           http:
             port: 8384
@@ -95,8 +98,9 @@ spec:
           - host: syncthing.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
+                pathType: Prefix
                 service:
-                  name: main
+                  identifier: main
                   port: http
     persistence:
       config:

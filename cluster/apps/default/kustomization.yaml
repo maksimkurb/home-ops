@@ -5,7 +5,7 @@ resources:
   - namespace.yaml
   - external-services
   - ./sftpgo/ks.yaml
-  - syncthing
+  - ./syncthing/ks.yaml
   - ./hajimari/ks.yaml
   - ./kopia/ks.yaml
   # - minecraft-server
