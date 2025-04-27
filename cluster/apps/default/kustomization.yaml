@@ -11,7 +11,7 @@ resources:
   # - minecraft-server
   - ./minio/ks.yaml
   - theme-park
-  - tianji
+  - ./tianji/ks.yaml
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
   - ./maybe-finance/ks.yaml
