@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - external-services
-  - sftpgo
+  - ./sftpgo/ks.yaml
   - syncthing
   - ./hajimari/ks.yaml
   - ./kopia/ks.yaml

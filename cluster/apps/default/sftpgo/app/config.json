@@ -139,7 +139,6 @@
         "tls_cipher_suites": [],
         "prefix": "/dav",
         "proxy_allowed": [
-
           "127.0.0.1",
           "172.16.0.0/12",
           "10.42.0.0/16",
