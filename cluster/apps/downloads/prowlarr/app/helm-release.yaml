@@ -90,10 +90,10 @@ spec:
               PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
               PROWLARR__LOG__DBENABLED: "False"
               PROWLARR__LOG__LEVEL: info
-              PROWLARR__POSTGRES__HOST: homelab-pgsql.database.svc.cluster.local
-              PROWLARR__POSTGRES__MAIN_DB: prowlarr
-              PROWLARR__POSTGRES__LOG_DB: prowlarr_log
-              PROWLARR__POSTGRES__USER: prowlarr
+              PROWLARR__POSTGRES_HOST: homelab-pgsql.database.svc.cluster.local
+              PROWLARR__POSTGRES_MAIN_DB: prowlarr
+              PROWLARR__POSTGRES_LOG_DB: prowlarr_log
+              PROWLARR__POSTGRES_USER: prowlarr
             envFrom:
               - secretRef:
                   name: *app
