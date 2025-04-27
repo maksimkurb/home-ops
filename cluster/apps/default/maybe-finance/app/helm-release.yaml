@@ -29,7 +29,7 @@ spec:
               tag: latest
             env:
               TZ: "${TIMEZONE}"
-              POSTGRES_USER: maybe
+              POSTGRES_USER: maybe_finance
               POSTGRES_DB: maybe_finance
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: "5432"
@@ -75,7 +75,7 @@ spec:
             command: ["bundle", "exec", "sidekiq"]
             env:
               TZ: "${TIMEZONE}"
-              POSTGRES_USER: maybe
+              POSTGRES_USER: maybe_finance
               POSTGRES_DB: maybe_finance
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: "5432"
