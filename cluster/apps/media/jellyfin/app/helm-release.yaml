@@ -26,11 +26,6 @@ spec:
       retries: 5
   uninstall:
     keepHistory: false
-  dependsOn:
-    - name: intel-gpu-plugin
-      namespace: kube-system
-    - name: node-feature-discovery
-      namespace: kube-system
   values:
     service:
       main:
