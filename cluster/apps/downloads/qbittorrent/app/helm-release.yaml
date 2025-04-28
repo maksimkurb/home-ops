@@ -57,6 +57,8 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "qBittorrent"
           hajimari.io/icon: "download-network"
         hosts:
           - host: &host-release "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
