@@ -16,6 +16,7 @@ resources:
   - kubernetes-sigs-descheduler-charts.yaml
   - lwolf-charts.yaml
   - metrics-server-charts.yaml
+  - metallb-charts.yaml
   - minecraft-server-charts.yaml
   - nfs-provisioner-charts.yaml
   - node-feature-discovery-charts.yaml
