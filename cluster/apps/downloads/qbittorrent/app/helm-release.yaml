@@ -37,6 +37,7 @@ spec:
             port: 50400
           bt:
             port: 50401
+        type: LoadBalancer
         loadBalancerIP: "${SVC_QBITTORRENT_ADDR}"
         annotations:
           io.cilium/lb-ipam-ips: "${SVC_QBITTORRENT_ADDR}"
