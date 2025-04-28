@@ -6,10 +6,6 @@ metadata:
   name: &appname jellyseerr
   namespace: flux-system
 spec:
-  patches:
-    - patch: ../../../patches/external-dns.yaml
-      target:
-        kind: Ingress
   targetNamespace: downloads
   commonMetadata:
     labels:

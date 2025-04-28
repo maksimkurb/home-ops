@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
   - config-pvc.yaml
   - helm-release.yaml
+patches:
+  - path: ../../../../patches/external-dns.yaml
+    target:
+      kind: Ingress
