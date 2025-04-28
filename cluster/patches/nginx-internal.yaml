@@ -1,0 +1,4 @@
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/8,172.16.0.0/12,10.5.0.0/22,192.168.0.0/16
