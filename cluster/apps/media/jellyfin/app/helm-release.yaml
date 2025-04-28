@@ -37,6 +37,23 @@ spec:
           http:
             port: 8096
 
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                    operator: In
+                    values:
+                      - "true"
+      runtimeClassName: nvidia
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
     ingress:
       main:
         enabled: true
@@ -67,13 +84,6 @@ spec:
         globalMounts:
           - path: /transcode
 
-    defaultPodOptions:
-      securityContext:
-        runAsUser: 777
-        runAsGroup: 777
-        fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
     controllers:
       main:
         containers:
@@ -83,6 +93,8 @@ spec:
               tag: 10.10.7@sha256:e4d1dc5374344446a3a78e43dd211247f22afba84ea2e5a13cbe1a94e1ff2141
             env:
               TZ: "${TIMEZONE}"
+              NVIDIA_VISIBLE_DEVICES: all
+              NVIDIA_DRIVER_CAPABILITIES: all
             resources:
               requests:
                 nvidia.com/gpu: 1
