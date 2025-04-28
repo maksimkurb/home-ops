@@ -9,3 +9,4 @@ resources:
   - external-dns
   - k8s-gateway
   - speedtest
+  - ./metallb/ks.yaml
