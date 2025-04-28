@@ -12,6 +12,7 @@ sonarr:
       - template: sonarr-v4-custom-formats-web-1080p
     quality_profiles:
       - name: WEB-1080p
+        min_format_score: 0
     custom_formats:
       - trash_ids:
           - 32b367365729d530ca1c124a0b180c64 # Bad Dual Groups
@@ -30,6 +31,7 @@ radarr:
     replace_existing_custom_formats: true
     quality_profiles:
       - name: SQP-1 (2160p)
+        min_format_score: 0
     include:
       - template: radarr-quality-definition-sqp-streaming
       - template: radarr-quality-profile-sqp-1-2160p-default
