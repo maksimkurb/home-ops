@@ -34,8 +34,13 @@ spec:
         controller: main
         ports:
           http:
-            port: 8080
-
+            port: 50400
+          bt:
+            port: 50401
+        loadBalancerIP: "${SVC_QBITTORRENT_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_QBITTORRENT_ADDR}"
+        externalTrafficPolicy: Local
     ingress:
       main:
         enabled: true
@@ -102,7 +107,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               QBT_TORRENTING_PORT: 50401
-              QBT_WEBUI_PORT: 8080
+              QBT_WEBUI_PORT: 50400
             resources:
               requests:
                 cpu: 1m
