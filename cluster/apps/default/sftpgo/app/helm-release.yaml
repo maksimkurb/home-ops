@@ -32,6 +32,7 @@ spec:
         controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_SFTPGO_ADDR}"
         ports:
           http:
             enabled: true
