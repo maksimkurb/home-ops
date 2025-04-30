@@ -10,7 +10,7 @@ spec:
   accessModes: ["ReadWriteMany"]
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: "${NFS_PROXMOX_MEDIA}/01_media/immich/"
+    path: "${NFS_PROXMOX_MEDIA}/04_immich/"
   nodeAffinity:
     required:
       nodeSelectorTerms:
