@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,13 +10,12 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.7.3
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
-  maxHistory: 3
   install:
     createNamespace: true
     remediation:
@@ -30,13 +29,16 @@ spec:
   values:
     service:
       main:
+        controller: main
         ports:
           http:
+            enabled: true
             port: 2283
-
+            protocol: TCP
     ingress:
       main:
         enabled: true
+        className: nginx
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
@@ -56,7 +58,7 @@ spec:
             if ($forwarded_client_ip != "") {
               set $client_ip $forwarded_client_ip;
             }
-          nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
           hajimari.io/appName: "Immich"
           hajimari.io/icon: image
@@ -66,17 +68,14 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: main
                   port: http
-        className: nginx
-
     persistence:
       library:
         enabled: true
         existingClaim: immich
         globalMounts:
           - path: /usr/src/app/upload
-
     defaultPodOptions:
       topologySpreadConstraints:
         - maxSkew: 1
@@ -85,7 +84,6 @@ spec:
           labelSelector:
             matchLabels:
               app.kubernetes.io/name: *app
-
     controllers:
       main:
         replicas: 2
