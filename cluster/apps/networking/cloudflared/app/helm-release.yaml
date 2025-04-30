@@ -96,6 +96,10 @@ spec:
       main:
         enabled: true
         serviceName: main
+        endpoints:
+          - port: http
+            path: /metrics
+            scheme: http
     persistence:
       config:
         enabled: true
