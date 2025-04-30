@@ -6,7 +6,7 @@ metadata:
   name: &appname immich
   namespace: flux-system
 spec:
-  targetNamespace: default
+  targetNamespace: media
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
@@ -40,7 +40,7 @@ metadata:
   name: &appname immich-redis
   namespace: flux-system
 spec:
-  targetNamespace: default
+  targetNamespace: media
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
