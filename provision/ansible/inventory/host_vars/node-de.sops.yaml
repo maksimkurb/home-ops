@@ -1,5 +1,5 @@
 kind: Secret
-ansible_host: ENC[AES256_GCM,data:QJ6Wu03JToA6FxA3TLpHNA==,iv:5A+IliSVQliG+fgmjzbiytSs1Sq1DiaJpLhJZI0Zk0M=,tag:Aad1BqP2f9Knc3UC4cjX/w==,type:str]
+ansible_host: ENC[AES256_GCM,data:0pwA1nSB57FgyUTsISPVvEnP,iv:5AYSOnyzA8+KYd+vkt28UmbKj7psDpKwpvs4Qg5Th50=,tag:a9yh9Z9JEvM3xFqlyLAYWw==,type:str]
 traefik_base_domain: ENC[AES256_GCM,data:jAc26qw43D2gOcWsygKvlQ==,iv:SuDSWOYF2s/E8ARhKWVabgH80oah3lhdoaz5PFX9DQk=,tag:wx1Vq/l3yQslndxdUsCaFQ==,type:str]
 internal_ip: ENC[AES256_GCM,data:mPPacFxcMFkf,iv:NgjjhnZ33vHjnce8RCaVXYtiVhqkyyDotvu74SS2TvU=,tag:ABBxbQtntF3KuOF+4gdqCQ==,type:str]
 wg_server_privkey: ENC[AES256_GCM,data:h4cn9T+/VXJB4zgdL0cg+KdeDvZuMXzOW8JTz8uokBxlcjhUF5GglKtsYN4=,iv:aUMwu57tvzr/qDwKTS0n0qZm7iTm36mJozpuxAimmHY=,tag:CA47BsODZb6JGeP+M+md2A==,type:str]
@@ -132,8 +132,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-10-12T16:48:43Z"
-    mac: ENC[AES256_GCM,data:V46iEavRnZPOxKhczaGgFqZz0MJXT1QHWtZtNj58Kmj363KGNhKRDedEZ4Sp86DdTXH8dpE62d9JEfAwtQ1NX6e1d2cHMSZaXx/YOQPl6XwjrRau0KMEZPSSJRMkh65hGSEPZauAswpKT0mLlGS87O9oWm0BlbchYxv4RsVY5eo=,iv:h+2S+s2ZtoD6salnDZdPXGYvKoT9X2MHd5WoWPanEbY=,tag:q9jmVQbOr6V1A8iiU+/RzA==,type:str]
+    lastmodified: "2025-04-30T20:30:12Z"
+    mac: ENC[AES256_GCM,data:KnrtQf5DRR1nXpJnUdXN1m2rg8acbcMNrYKPEuwry3hODqNIyObsxnQqMVldyENTzakB5U2b+tZ82undYDQR/T17pwIXrCYkGlvghd2OT3MbmFXcwOq3NMpzaRqqd26iiOByUZcqDOhSTu4giNCaLWJXmWzrpe5631nlymIdG8I=,iv:BDQ/mVrvkq7gb9kkwDcDFP1vCKL6D9hzBnMl48oDjCo=,tag:LPLOIZHKuS3DXmbMLRBhGA==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

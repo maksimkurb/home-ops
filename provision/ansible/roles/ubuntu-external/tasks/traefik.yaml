@@ -12,6 +12,14 @@
     group: root
     mode: '0600'
 
+- name: Ingress / Create Traefik config
+  template:
+    dest: /opt/traefik/traefik-static.yaml
+    src: traefik-static.yaml.j2
+    owner: root
+    group: root
+    mode: '0600'
+
 - name: VPN / Determine port openings
   set_fact:
     traefik_ports:

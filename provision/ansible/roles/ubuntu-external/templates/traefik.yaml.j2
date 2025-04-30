@@ -3,6 +3,9 @@ providers:
   docker:
     defaultRule: 'Host(`{% raw %}{{ trimPrefix "/" .Name }}{% endraw %}.{{ traefik_base_domain }}`)'
     exposedByDefault: false
+  file:
+    filename: /etc/traefik/traefik-static.yaml
+    watch: true
 
 # API and dashboard configuration
 api:
