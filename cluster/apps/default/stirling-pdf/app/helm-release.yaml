@@ -34,9 +34,6 @@ spec:
         controller: main
         ports:
           http:
-            port: 80
-          metrics:
-            enabled: true
             port: 8080
 
     ingress:
@@ -64,7 +61,7 @@ spec:
                 pathType: Prefix
                 service:
                   identifier: main
-                  port: 80
+                  port: 8080
         className: nginx
 
     persistence:
