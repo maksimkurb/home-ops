@@ -1,0 +1,123 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  namespace: default
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+    timeout: 15m0s
+  upgrade:
+    remediation:
+      retries: 5
+    timeout: 15m0s
+  values:
+
+    global:
+      nameOverride: ${APP}
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+          metrics:
+            enabled: true
+            port: 8080
+
+    ingress:
+      main:
+        enabled: true
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "Stirling PDF"
+          hajimari.io/icon: "pdf"
+        hosts:
+          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: 80
+        className: nginx
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ${APP}-config
+        globalMounts:
+          - path: /configs
+      logs:
+        enabled: true
+        type: emptyDir
+      tmp:
+        enabled: true
+        type: emptyDir
+      tessdata:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /usr/share/tessdata
+
+    defaultPodOptions:
+      securityContext:
+        supplementalGroups:
+          - 777
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/stirling-tools/s-pdf
+              tag: 0.45.6@sha256:fc53d48a018cc36446a4b1373db633be51301b828755e312c386b7700cdf2318
+            env:
+              TZ: "${TIMEZONE}"
+              DOCKER_ENABLE_SECURITY: "false"
+              SECURITY_ENABLE_LOGIN: "false"
+              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "true"
+            resources:
+              requests:
+                cpu: 1m
+                memory: 100Mi
+              limits:
+                memory: 1Gi
+            probes:
+              liveness: &probe
+                enabled: true
+                type: HTTP
+                path: /api/v1/info/status
+              readiness: *probe
+              startup:
+                <<: *probe
+                spec:
+                  failureThreshold: 90
+                  periodSeconds: 5

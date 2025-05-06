@@ -13,3 +13,4 @@ resources:
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
   - ./maybe-finance/ks.yaml
+  - ./stirling-pdf/ks.yaml
