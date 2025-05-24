@@ -21,4 +21,4 @@ data:
   AWS_S3_FORCE_PATH_STYLE: "true"
   USE_PGVECTO_RS: "true"
   USE_VECTORCHORD: "true"
-  LOG_S3_TAGS: "postgres-logs"
+  LOG_S3_TAGS: "{}"
