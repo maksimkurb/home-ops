@@ -223,7 +223,8 @@ identity_providers:
           - app.immich:///oauth-callback
           - https://photos.${SECRET_PUBLIC_DOMAIN}/auth/login
           - https://photos.${SECRET_PUBLIC_DOMAIN}/user-settings
-        userinfo_signed_response_alg: none
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_post'
 
       - client_id: paperless
         client_name: Paperless-ngx
