@@ -89,7 +89,7 @@ spec:
             type: prometheus
             uid: prometheus
             access: proxy
-            url: http://prometheus-operated.monitoring.svc.cluster.local:9090
+            url: http://vmsingle-vm-k8s-stack.monitoring.svc.cluster.local:8429
             isDefault: true
           # - name: Loki
           #   type: loki
@@ -102,7 +102,7 @@ spec:
             type: alertmanager
             uid: alertmanager
             access: proxy
-            url: http://alertmanager-operated.monitoring.svc.cluster.local:9093
+            url: http://vmalert-vm-k8s-stack.monitoring.svc.cluster.local:8080
             jsonData:
               implementation: prometheus
     dashboardProviders:
