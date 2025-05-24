@@ -6,7 +6,7 @@ resources:
   # - generic-rules
   # - loki
   # - nodeexporter
-  - ./kube-prometheus-stack/ks.yaml
+  # - ./kube-prometheus-stack/ks.yaml
   - ./grafana/ks.yaml
   # - vector
-  # - victoria-metrics-k8s-stack
+  - ./victoria-metrics-k8s-stack/ks.yaml

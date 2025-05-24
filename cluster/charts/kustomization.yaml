@@ -26,5 +26,4 @@ resources:
   - stakater-charts.yaml
   - hajimari-charts.yaml
   - vector-charts.yaml
-  - victoria-metrics-k8s-stack-charts.yaml
   - zalando-postgres-operator-charts.yaml

@@ -1,0 +1,250 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: victoria-metrics-k8s-stack
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.48.1
+  url: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-agent
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics
+  namespace: monitoring
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics-k8s-stack
+  maxHistory: 3
+  install:
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    kubeControllerManager:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
+    kubeEtcd:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
+    kubeScheduler:
+      enabled: true
+      endpoints:
+        - ${CONTROL_PLANE_ENDPOINT}
+    # kubeProxy:
+    #   endpoints:
+    #     - ${K3S_HOST_IP}
+    grafana:
+      enabled: false
+      forceDeployDashboards: true
+    fullnameOverride: "vm-k8s-stack"
+    vmagent:
+      enabled: true
+      spec:
+        externalLabels:
+          cluster: cluster-name
+        scrapeInterval: 60s
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "VM Agent"
+          hajimari.io/icon: face-agent
+        hosts:
+          - "vmagent.${SECRET_DOMAIN}"
+    vmsingle:
+      enabled: true
+      spec:
+        replicaCount: 1
+        extraArgs:
+          dedup.minScrapeInterval: "60s"
+        storage:
+          storageClassName: "local-path"
+          resources:
+            requests:
+              storage: 30Gi
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "VM Single"
+          hajimari.io/icon: database-alert
+        hosts:
+          - "vmsingle.${SECRET_DOMAIN}"
+
+    vmalert:
+      enabled: true
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "VM Alert"
+          hajimari.io/icon: alert-circle-outline
+        hosts:
+          - 'vmalert.${SECRET_DOMAIN}'
+      spec:
+        extraArgs:
+          external.url: 'https://vmalert.${SECRET_DOMAIN}'
+
+    # -- Provide custom recording or alerting rules to be deployed into the cluster.
+    additionalVictoriaMetricsMap:
+      dockerhub-rules:
+        groups:
+          - name: dockerhub
+            rules:
+              - alert: DockerhubRateLimitRisk
+                annotations:
+                  summary: Kubernetes cluster Dockerhub rate limit risk
+                expr: count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 25
+                labels:
+                  severity: critical
+      oom-rules:
+        groups:
+          - name: oom
+            rules:
+              - alert: OomKilled
+                annotations:
+                  summary: Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
+                expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
+                labels:
+                  severity: critical
+      zfs-rules:
+        groups:
+          - name: zfs
+            rules:
+              - alert: ZfsUnexpectedPoolState
+                annotations:
+                  summary: ZFS pool {{$labels.zpool}} on {{$labels.instance}} is in a unexpected state {{$labels.state}}
+                expr: node_zfs_zpool_state{state!="online"} > 0
+                labels:
+                  severity: critical
+
+    prometheus-node-exporter:
+      fullnameOverride: node-exporter
+      prometheus:
+        monitor:
+          enabled: true
+          relabelings:
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              sourceLabels:
+                - __meta_kubernetes_pod_node_name
+              targetLabel: kubernetes_node
+    # kubelet:
+    #   spec:
+    #     scheme: "https"
+    #     honorLabels: true
+    #     interval: "60s"
+    #     scrapeTimeout: "5s"
+    #     tlsConfig:
+    #       insecureSkipVerify: true
+    #       caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    #     bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    #     # drop high cardinality label and useless metrics for cadvisor and kubelet
+    #     metricRelabelConfigs:
+    #       - action: labeldrop
+    #         regex: (uid)
+    #       - action: labeldrop
+    #         regex: (id|name)
+    #       - action: drop
+    #         source_labels: [__name__]
+    #         regex: (rest_client_request_duration_seconds_bucket|rest_client_request_duration_seconds_sum|rest_client_request_duration_seconds_count)
+    #     relabelConfigs:
+    #       - action: labelmap
+    #         regex: __meta_kubernetes_node_label_(.+)
+    #       - sourceLabels: [__metrics_path__]
+    #         targetLabel: metrics_path
+    #       - targetLabel: "job"
+    #         replacement: "kubelet"
+    #       - targetLabel: "cluster"
+    #         replacement: "cluster-name"
+    alertmanager:
+      enabled: true
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "VM Alert Manager"
+          hajimari.io/icon: bell-alert-outline
+        hosts:
+          - "alertmanager.${SECRET_DOMAIN}"
+      config:
+        global:
+          resolveTimeout: 10m
+      spec:
+        externalURL: 'https://alertmanager.${SECRET_DOMAIN}'
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: local-path
+              resources:
+                requests:
+                  storage: 1Gi
