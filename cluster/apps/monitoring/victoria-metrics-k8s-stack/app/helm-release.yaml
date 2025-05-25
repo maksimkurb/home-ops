@@ -250,6 +250,7 @@ spec:
           - "alertmanager.${SECRET_DOMAIN}"
       spec:
         externalURL: 'https://alertmanager.${SECRET_DOMAIN}'
+        disableNamespaceMatcher: true
         storage:
           volumeClaimTemplate:
             spec:
