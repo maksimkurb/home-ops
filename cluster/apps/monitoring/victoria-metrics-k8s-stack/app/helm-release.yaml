@@ -42,14 +42,26 @@ spec:
       enabled: true
       endpoints:
         - ${CONTROL_PLANE_ENDPOINT}
+      service:
+        enabled: true
+        port: 10257
+        targetPort: 10257
     kubeEtcd:
       enabled: true
       endpoints:
         - ${CONTROL_PLANE_ENDPOINT}
+      service:
+        enabled: true
+        port: 2381
+        targetPort: 2381
     kubeScheduler:
       enabled: true
       endpoints:
         - ${CONTROL_PLANE_ENDPOINT}
+      service:
+        enabled: true
+        port: 10259
+        targetPort: 10259
     # kubeProxy:
     #   endpoints:
     #     - ${K3S_HOST_IP}
