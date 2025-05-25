@@ -236,9 +236,6 @@ spec:
           hajimari.io/icon: bell-alert-outline
         hosts:
           - "alertmanager.${SECRET_DOMAIN}"
-      config:
-        global:
-          resolveTimeout: 10m
       spec:
         externalURL: 'https://alertmanager.${SECRET_DOMAIN}'
         storage:
