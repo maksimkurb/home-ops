@@ -6,5 +6,6 @@ resources:
   - helm-release.yaml
   - podscrape.yaml
   - servicescrape.yaml
-  - secret.sops.yaml
+  - alertmanager-secret.sops.yaml
+  - grafana-secret.sops.yaml
   - pve-node-exporter.yaml
