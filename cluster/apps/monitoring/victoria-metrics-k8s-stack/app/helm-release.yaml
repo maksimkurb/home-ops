@@ -284,7 +284,7 @@ spec:
                   key: ALERTMANAGER_HEARTBEAT_URL
           - name: discord
             discord_configs:
-              - api_url:
+              - webhook_url_secret:
                   name: *secret
                   key: DISCORD_WEBHOOK_URL
       spec:
