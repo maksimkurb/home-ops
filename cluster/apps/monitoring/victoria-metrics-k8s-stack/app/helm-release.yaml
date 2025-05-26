@@ -46,6 +46,19 @@ spec:
         enabled: true
         port: 10257
         targetPort: 10257
+      vmScrape:
+        spec:
+          jobLabel: jobLabel
+          namespaceSelector:
+            matchNames:
+              - kube-system
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: http-metrics
+              scheme: https
+              tlsConfig:
+                caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecureSkipVerify: true
     kubeEtcd:
       enabled: true
       endpoints:
@@ -54,6 +67,15 @@ spec:
         enabled: true
         port: 2381
         targetPort: 2381
+      vmScrape:
+        spec:
+          jobLabel: jobLabel
+          namespaceSelector:
+            matchNames: [kube-system]
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: http-metrics
+              scheme: http
     kubeScheduler:
       enabled: true
       endpoints:
@@ -62,6 +84,18 @@ spec:
         enabled: true
         port: 10259
         targetPort: 10259
+      vmScrape:
+        spec:
+          jobLabel: jobLabel
+          namespaceSelector:
+            matchNames: [kube-system]
+          endpoints:
+            - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+              port: http-metrics
+              scheme: https
+              tlsConfig:
+                caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecureSkipVerify: true
     # kubeProxy:
     #   endpoints:
     #     - ${K3S_HOST_IP}
@@ -155,16 +189,16 @@ spec:
 
     # -- Provide custom recording or alerting rules to be deployed into the cluster.
     additionalVictoriaMetricsMap:
-      dockerhub-rules:
-        groups:
-          - name: dockerhub
-            rules:
-              - alert: DockerhubRateLimitRisk
-                annotations:
-                  summary: Kubernetes cluster Dockerhub rate limit risk
-                expr: count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 25
-                labels:
-                  severity: critical
+      # dockerhub-rules:
+      #   groups:
+      #     - name: dockerhub
+      #       rules:
+      #         - alert: DockerhubRateLimitRisk
+      #           annotations:
+      #             summary: Kubernetes cluster Dockerhub rate limit risk
+      #           expr: count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 25
+      #           labels:
+      #             severity: critical
       oom-rules:
         groups:
           - name: oom
