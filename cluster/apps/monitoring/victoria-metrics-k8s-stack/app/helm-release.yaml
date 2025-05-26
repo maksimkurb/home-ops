@@ -251,40 +251,40 @@ spec:
       useManagedConfig: true
       config:
         route:
-          groupBy: ["alertname", "job"]
-          groupInterval: 10m
-          groupWait: 1m
+          group_by: ["alertname", "job"]
+          group_interval: 10m
+          group_wait: 1m
           receiver: discord
-          repeatInterval: 12h
+          repeat_interval: 12h
           routes:
             - receiver: "null"
               matchers:
                 - alertname="InfoInhibitor"
             - receiver: heartbeat
-              groupInterval: 5m
-              groupWait: 0s
-              repeatInterval: 5m
+              group_interval: 5m
+              group_wait: 0s
+              repeat_interval: 5m
               matchers:
                 - alertname="Watchdog"
             - receiver: discord
               matchers:
                 - severity="critical"
-        inhibitRules:
+        inhibit_rules:
           - equal: ["alertname", "namespace"]
-            sourceMatchers:
+            source_matchers:
               - "severity = critical"
-            targetMatchers:
+            target_matchers:
               - "severity = warning"
         receivers:
           - name: "null"
           - name: heartbeat
-            webhookConfigs:
-              - urlSecret:
+            webhook_configs:
+              - url_secret:
                   name: &secret alertmanager-secret
                   key: ALERTMANAGER_HEARTBEAT_URL
           - name: discord
-            discordConfigs:
-              - apiURL:
+            discord_configs:
+              - api_url:
                   name: *secret
                   key: DISCORD_WEBHOOK_URL
       spec:
