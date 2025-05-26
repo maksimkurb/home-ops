@@ -24,6 +24,7 @@ spec:
 
     service:
       main:
+        controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_MQTT_ADDR}"
