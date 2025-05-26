@@ -92,6 +92,10 @@ spec:
             enabled: true
             port: 8080
             protocol: TCP
+          metrics:
+            enabled: true
+            port: 20241
+            protocol: TCP
     serviceMonitor:
       main:
         enabled: true
