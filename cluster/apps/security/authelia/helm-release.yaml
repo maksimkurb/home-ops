@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -34,9 +34,10 @@ spec:
 
     service:
       main:
+        controller: main
         ports:
           http:
-            port: 8000
+            port: &port 8000
           metrics:
             enabled: true
             port: 8080
@@ -57,7 +58,7 @@ spec:
                 pathType: Prefix
                 service:
                   name: main
-                  port: http
+                  port: *port
         className: nginx
 
     persistence:
@@ -65,24 +66,25 @@ spec:
         enabled: true
         type: configMap
         name: *app
-        readOnly: false
         advancedMounts:
           main:
             main:
               - path: /config/configuration.yml
                 subPath: configuration.yml
+                readOnly: true
       keys:
         enabled: true
         type: secret
         name: authelia-keys
-        readOnly: false
         advancedMounts:
           main:
             main:
               - path: /config/jwks/rsa.2048.cert
                 subPath: cert
+                readOnly: true
               - path: /config/jwks/rsa.2048.pem
                 subPath: pem
+                readOnly: true
 
     defaultPodOptions:
       enableServiceLinks: false
