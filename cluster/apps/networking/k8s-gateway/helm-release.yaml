@@ -57,6 +57,7 @@ spec:
             interval: 1m
             scrapeTimeout: 10s
 
+
     persistence:
       config:
         enabled: true
@@ -80,6 +81,8 @@ spec:
 
     controllers:
       main:
+        serviceAccount:
+          identifier: *app
         replicas: 2
         containers:
           main:
@@ -104,3 +107,6 @@ spec:
                     port: 8080
               startup:
                 enabled: false
+
+    serviceAccount:
+      k8s-gateway: {}
