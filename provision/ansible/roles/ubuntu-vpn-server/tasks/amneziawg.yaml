@@ -30,6 +30,18 @@
     state: present
   become: true
 
+- name: Enable IPv4 and IPv6 forward
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      net.ipv4.ip_forward = 1
+      net.ipv6.conf.all.forwarding = 1
+  become: true
+
+- name: Reload sysctl
+  command: sysctl -p /etc/sysctl.conf
+  become: true
+
 - name: Add AmneziaWG repository
   apt_repository:
     repo: "ppa:amnezia/ppa"
@@ -56,6 +68,21 @@
     line: 'amneziawg'
     create: yes
   become: true
+
+- name: Get absolute path to this Git repository
+  delegate_to: localhost
+  become: false
+  run_once: true
+  ansible.builtin.command: "git rev-parse --show-toplevel"
+  register: repo_abs_path
+
+- name: Create directory for client configs
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: "{{ repo_abs_path.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
+    state: directory
+    mode: '0700'
 
 - name: Configure AmneziaWG for each interface
   include_tasks: configure_interface.yaml

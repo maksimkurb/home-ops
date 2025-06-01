@@ -1,0 +1,35 @@
+services:
+  gatus:
+    image: twinproduction/gatus:latest
+    pull_policy: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.gatus.loadbalancer.server.port=8080"
+      - "traefik.http.routers.gatus.rule=Host(`gatus.{{ traefik_base_domain }}`)"
+      - "traefik.http.routers.gatus.entrypoints=websecure"
+      - "traefik.http.routers.gatus.tls.certresolver=le"
+      - "traefik.http.routers.gatus.tls=true"
+      - "traefik.http.routers.gatus.middlewares=basic-auth"
+    networks:
+      - traefik
+    volumes:
+      - gatus-config:/config
+      - gatus-data:/data
+    restart: always
+volumes:
+  gatus-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/gatus/config
+  gatus-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/gatus/data
+networks:
+  traefik:
+    external: true
+    name: {{ traefik_network_name }}

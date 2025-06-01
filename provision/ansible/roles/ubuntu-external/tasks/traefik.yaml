@@ -29,3 +29,8 @@
   community.docker.docker_compose_v2:
     project_src: "/opt/traefik"
     state: present
+
+- name: Traefik / Restart with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/traefik"
+    state: restarted

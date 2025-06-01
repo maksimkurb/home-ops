@@ -1,0 +1,7 @@
+{% if gatus_custom_storage is not defined %}
+storage:
+  type: sqlite
+  path: /data/data.db
+{% endif %}
+
+{{ gatus_config }}

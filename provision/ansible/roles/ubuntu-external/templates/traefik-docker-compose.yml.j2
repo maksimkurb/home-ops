@@ -1,6 +1,7 @@
 services:
   traefik:
     image: traefik:{{ traefik_version }}
+    pull_policy: always
     restart: always
     security_opt:
       - no-new-privileges:true

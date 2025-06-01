@@ -1,0 +1,50 @@
+---
+- name: Gatus / Create config directory
+  file:
+    path: "/opt/gatus"
+    state: directory
+    mode: '0755'
+
+- name: Gatus / Create config directory
+  file:
+    path: "/opt/gatus/config"
+    state: directory
+    mode: '0755'
+
+- name: Gatus / Create data directory
+  file:
+    path: "/opt/gatus/data"
+    state: directory
+    mode: '0755'
+
+- name: Gatus / Create config file
+  template:
+    src: gatus-config.yaml.j2
+    dest: "/opt/gatus/config/config.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Gatus / Create docker-compose.yml file
+  template:
+    src: gatus-docker-compose.yml.j2
+    dest: "/opt/gatus/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Gatus / Create data directory
+  file:
+    path: "/opt/gatus/data"
+    state: directory
+    mode: '0755'
+
+- name: Gatus / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/gatus"
+    state: present
+
+- name: Gatus / Restart with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/gatus"
+    state: restarted

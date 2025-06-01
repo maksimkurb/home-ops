@@ -7,6 +7,7 @@
   tags:
     - traefik
 
-- import_tasks: tianji.yaml
+- import_tasks: gatus.yaml
   tags:
-    - tianji
+    - gatus
+  when: gatus_config is defined

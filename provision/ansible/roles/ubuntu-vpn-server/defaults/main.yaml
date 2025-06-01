@@ -10,8 +10,12 @@ amneziawg_interfaces:
     private_key: ""  # Server private key
     public_key: ""   # Server public key
     mtu: 1412
-    address_v4: "10.8.0.1/24"  # IPv4 address and subnet
-    address_v6: "fd42:42:42::1/64"  # IPv6 address and subnet
+    address_v4: "10.8.0.1"  # IPv4 address and subnet
+    subnet_v4: 24
+    clients_subnet_v4: 32
+    address_v6: "fd42:42:42::1"  # IPv6 address and subnet
+    subnet_v6: 48
+    clients_subnet_v6: 56
     public_interface: "eth0"  # Public interface for NAT
     private_interface: "awg0"  # Private interface name (same as name)
     # Obfuscation parameters
@@ -31,4 +35,6 @@ amneziawg_interfaces:
     #   - name: "client1"
     #     public_key: "client_public_key_here"
     #     private_key: "client_private_key_here"
-    #     allowed_ips: "10.8.0.2/32, fd42:42:42::2/128"
+    #     address_v4: "10.8.0.2"
+    #     address_v6: "fd42:42:42::2"
+    #     allowed_ips: "128.0.0.0/0, 8000::/0, 0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1"

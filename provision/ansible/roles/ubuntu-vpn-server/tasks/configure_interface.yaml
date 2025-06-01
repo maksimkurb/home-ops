@@ -15,19 +15,19 @@
     enabled: yes
   become: true
 
-- name: Restart AmneziaWG service for {{ interface.name }}
-  systemd:
-    name: "awg-quick@{{ interface.name }}"
-    state: restarted
-  become: true
-  when: config_changed.changed
-
 - name: Start AmneziaWG service for {{ interface.name }} if not running
   systemd:
     name: "awg-quick@{{ interface.name }}"
     state: started
   become: true
   when: not config_changed.changed
+
+- name: Restart AmneziaWG service for {{ interface.name }}
+  systemd:
+    name: "awg-quick@{{ interface.name }}"
+    state: restarted
+  become: true
+  when: config_changed.changed
 
 - name: Wait for AmneziaWG service to be active for {{ interface.name }}
   systemd:
@@ -39,51 +39,13 @@
   delay: 5
   become: true
 
-- name: Get absolute path to this Git repository
+- name: Generate client config for {{ peer.name }}
   delegate_to: localhost
   become: false
-  run_once: true
-  ansible.builtin.command: "git rev-parse --show-toplevel"
-  register: repo_abs_path
-
-- name: Create directory for peer configs
-  delegate_to: localhost
-  become: false
-  ansible.builtin.file:
-    path: "{{ repo_abs_path.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
-    state: directory
-    mode: '0700'
-
-- name: Write AmneziaWG wireguard config for each peer to a file
-  delegate_to: localhost
-  become: false
-  copy:
+  template:
+    src: awg-client.conf.j2
     dest: "{{ repo_abs_path.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ peer.name }}.conf"
-    content: |
-      # For importing into Keenetic router, run this command after import:
-      # interface WireguardX wireguard asc {{ interface.jc }} {{ interface.jmin }} {{ interface.jmax }} {{ interface.s1 }} {{ interface.s2 }} {{ interface.h1 }} {{ interface.h2 }} {{ interface.h3 }} {{ interface.h4 }}
-
-      [Interface]
-      Address = {{ peer.allowed_ips | split(',') | first | trim }}
-      PrivateKey = {{ peer.private_key }}
-      DNS = 8.8.8.8
-      MTU = {{ interface.mtu }}
-      Jc = {{ interface.jc }}
-      Jmin = {{ interface.jmin }}
-      Jmax = {{ interface.jmax }}
-      S1 = {{ interface.s1 }}
-      S2 = {{ interface.s2 }}
-      H1 = {{ interface.h1 }}
-      H2 = {{ interface.h2 }}
-      H3 = {{ interface.h3 }}
-      H4 = {{ interface.h4 }}
-
-      [Peer]
-      PublicKey = {{ interface.public_key }}
-      AllowedIPs = 0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1
-      Endpoint = {{ interface.public_host }}:{{ interface.port }}
-      PersistentKeepalive = 60
-
+    mode: '0600'
   loop: "{{ interface.peers }}"
   loop_control:
     loop_var: peer
