@@ -10,5 +10,4 @@ roles:
   - src: xanmanning.k3s
     version: v3.4.4
   - src: mrlesmithjr.netplan
-    version: v0.4.1
-  - src: mailcow.mailcow
+    version: v0.4.2

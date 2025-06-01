@@ -38,7 +38,7 @@
       run_once: true
       ansible.builtin.fetch:
         src: "/etc/rancher/k3s/k3s.yaml"
-        dest: "{{ repo_abs_path.stdout }}/provision/kubeconfig"
+        dest: "{{ repo_abs_path.stdout }}/provision/{{ ansible_host }}.kubeconfig"
         flat: true
       when:
         - k3s_control_node is defined
@@ -49,7 +49,7 @@
       become: false
       run_once: true
       ansible.builtin.replace:
-        path: "{{ repo_abs_path.stdout }}/provision/kubeconfig"
+        path: "{{ repo_abs_path.stdout }}/provision/{{ ansible_host }}.kubeconfig"
         regexp: "https://127.0.0.1:6443"
         replace: "https://{{ ansible_host }}:6443"
 

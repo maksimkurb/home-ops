@@ -18,12 +18,12 @@
       - curl
       - nfs-common
       - inetutils-ping
-      - netcat
+      - netcat-openbsd
       - qemu-guest-agent
       - htop
       - vim
-      - linux-image-generic-hwe-22.04
-      - linux-headers-generic-hwe-22.04
+      - linux-image-generic-hwe-{{ ansible_distribution_version }}
+      - linux-headers-generic-hwe-{{ ansible_distribution_version }}
     install_recommends: false
     update_cache: true
     cache_valid_time: 3600
@@ -65,6 +65,13 @@
           "${distro_id} stable";
           "${distro_id} ${distro_codename}-security";
           "${distro_id} ${distro_codename}-updates";
+      };
+      Unattended-Upgrade::Package-Blacklist {
+          "nvidia-container-toolkit";
+          "nvidia-headless-\\d+-server";
+          "libnvidia-encode-\\d+-server";
+          "libnvidia-decode-\\d+-server";
+          "nvidia-utils-\\d+-server";
       };
 
 - name: Start unattended-upgrades service

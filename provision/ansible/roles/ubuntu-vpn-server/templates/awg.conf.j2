@@ -1,0 +1,27 @@
+[Interface]
+PrivateKey = {{ interface.private_key }}
+#_PublicKey = {{ interface.public_key }}
+
+Address = {{ interface.address_v4 }}, {{ interface.address_v6 }}
+ListenPort = {{ interface.port }}
+Jc = {{ interface.jc }}
+Jmin = {{ interface.jmin }}
+Jmax = {{ interface.jmax }}
+S1 = {{ interface.s1 }}
+S2 = {{ interface.s2 }}
+H1 = {{ interface.h1 }}
+H2 = {{ interface.h2 }}
+H3 = {{ interface.h3 }}
+H4 = {{ interface.h4 }}
+
+PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50; iptables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50; ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; ip6tables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+
+PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50; iptables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50; ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; ip6tables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+
+{% for peer in interface.peers %}
+[Peer]
+# _Name = {{ peer.name }}
+# _PrivateKey = {{ peer.private_key }}
+PublicKey = {{ peer.public_key }}
+AllowedIPs = {{ peer.allowed_ips }}
+{% endfor %}

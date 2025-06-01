@@ -1,0 +1,25 @@
+---
+- name: Tianji / Create config directory
+  file:
+    path: "/opt/tianji"
+    state: directory
+    mode: '0755'
+
+- name: Tianji / Create docker-compose.yml file
+  template:
+    src: tianji-docker-compose.yml.j2
+    dest: "/opt/tianji/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Tianji / Create data directory
+  file:
+    path: "/opt/tianji/data"
+    state: directory
+    mode: '0755'
+
+- name: Tianji / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/tianji"
+    state: present

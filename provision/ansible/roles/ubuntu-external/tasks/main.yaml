@@ -6,3 +6,7 @@
 - import_tasks: traefik.yaml
   tags:
     - traefik
+
+- import_tasks: tianji.yaml
+  tags:
+    - tianji

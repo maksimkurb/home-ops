@@ -1,0 +1,34 @@
+---
+# Default values for AmnesiaWG VPN Server
+# These can be overridden in group_vars or host_vars
+
+# List of AmnesiaWG interfaces to configure
+amneziawg_interfaces:
+  - name: awg0  # Interface name
+    port: 51820  # UDP port to listen on
+    public_host: "" # Public hostname or IP
+    private_key: ""  # Server private key
+    public_key: ""   # Server public key
+    mtu: 1412
+    address_v4: "10.8.0.1/24"  # IPv4 address and subnet
+    address_v6: "fd42:42:42::1/64"  # IPv6 address and subnet
+    public_interface: "eth0"  # Public interface for NAT
+    private_interface: "awg0"  # Private interface name (same as name)
+    # Obfuscation parameters
+    jc: 3
+    jmin: 2
+    jmax: 6
+    s1: 1
+    s2: 2
+    h1: 3
+    h2: 4
+    h3: 5
+    h4: 6
+    # List of peers (clients)
+    peers: []
+    # Example peer configuration:
+    # peers:
+    #   - name: "client1"
+    #     public_key: "client_public_key_here"
+    #     private_key: "client_private_key_here"
+    #     allowed_ips: "10.8.0.2/32, fd42:42:42::2/128"

@@ -1,0 +1,6 @@
+---
+# Default values for Frigate CCTV
+# These can be overridden in group_vars or host_vars
+
+frigate_config_yaml: |
+  # Default frigate config

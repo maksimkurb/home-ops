@@ -1,0 +1,66 @@
+---
+- name: Create amnezia directory
+  file:
+    path: /etc/amnezia/amneziawg
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Enable deb-src for APT sources
+  replace:
+    path: /etc/apt/sources.list.d/ubuntu.sources
+    regexp: '^Types: deb$'
+    replace: 'Types: deb deb-src'
+  become: true
+
+- name: Update APT cache
+  apt:
+    update_cache: true
+  become: true
+
+- name: Install required packages
+  apt:
+    name:
+      - curl
+      - gnupg
+      - lsb-release
+      - apt-transport-https
+      - ca-certificates
+      - linux-headers-{{ ansible_kernel }}
+    state: present
+  become: true
+
+- name: Add AmneziaWG repository
+  apt_repository:
+    repo: "ppa:amnezia/ppa"
+    state: present
+    filename: amnezia
+  become: true
+
+- name: Install AmneziaWG
+  apt:
+    name: amneziawg
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Load the amneziawg kernel module
+  modprobe:
+    name: amneziawg
+    state: present
+  become: true
+
+- name: Add amneziawg to auto-startup kernel modules
+  lineinfile:
+    dest: /etc/modules-load.d/amnezia.conf
+    line: 'amneziawg'
+    create: yes
+  become: true
+
+- name: Configure AmneziaWG for each interface
+  include_tasks: configure_interface.yaml
+  loop: "{{ amneziawg_interfaces_combined | default(amneziawg_interfaces) }}"
+  loop_control:
+    loop_var: interface
+  no_log: true
+  when: amneziawg_interfaces_combined is defined or amneziawg_interfaces is defined

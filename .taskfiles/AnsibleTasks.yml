@@ -21,35 +21,17 @@ tasks:
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --list-hosts"
 
-  playbook:vpn-install:
-    desc: Prepare VPN node
+  playbook:vpn-server-install:
+    desc: Configure VPN Server
     dir: provision/ansible
     cmds:
-      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-install.yaml"
-
-  playbook:3x-ui-install:
-    desc: Prepare VPN node
-    dir: provision/ansible
-    cmds:
-      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/3x-ui-install.yaml"
-
-  playbook:vpn-gateway-install:
-    desc: Prepare VPN node
-    dir: provision/ansible
-    cmds:
-      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-gateway-install.yaml"
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-server-install.yaml"
 
   playbook:cctv-install:
     desc: Prepare CCTV node
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/cctv-install.yaml"
-
-  playbook:mail-install:
-    desc: Prepare Mail node
-    dir: provision/ansible
-    cmds:
-      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/mail-install.yaml"
 
   playbook:ubuntu-prepare:
     desc: Prepare all the k8s nodes for running k3s

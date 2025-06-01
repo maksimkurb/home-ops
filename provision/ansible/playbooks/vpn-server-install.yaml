@@ -1,10 +1,10 @@
 ---
 
 - hosts:
-    - cctv-server
+    - vpn-server
   become: true
   gather_facts: true
   any_errors_fatal: true
   roles:
     - ubuntu-external
-    - frigate-cctv
+    - ubuntu-vpn-server

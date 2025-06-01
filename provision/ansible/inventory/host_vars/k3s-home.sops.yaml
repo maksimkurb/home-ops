@@ -1,9 +1,9 @@
 kind: Secret
+ansible_host: ENC[AES256_GCM,data:O4/Qo8H+Gt8Gz2TY8g==,iv:hKaXhX6ZqJ4nUjDJ0Hv3CUANruzV0ABrEogTQ6WHpfU=,tag:LLdK1IwA6kdnPy3USQn+1w==,type:str]
+ansible_user: ENC[AES256_GCM,data:+c2gww==,iv:Ib0hfZR2gbmgYmsJPBxSsgo5sefwGMzqfOzmZvBc3QU=,tag:JwnTgIooHGrChTa41zp3UQ==,type:str]
 ansible_become_pass: ENC[AES256_GCM,data:Js6ygQRxkbBO9r/qssg6qvE=,iv:6dj6PFU7Po3rIgFYEu6iUaXOwZ+zl8+G0WnKOffh4jA=,tag:sFquZnffidj3cz/H7U5CBA==,type:str]
 node_ip: ENC[AES256_GCM,data:baUUyo+zX4bEUoI=,iv:4ijc1iOODTkofCdK45sb0wmypzEmlP/RTmHClPxttws=,tag:P+loh4FNCbD304/BqQN23Q==,type:str]
-ntp_primary_server: ENC[AES256_GCM,data:qLaNBHvaRCD+WVG2,iv:nFGdXaThF/6NtVNN84bMnOXgpZaqE7WqFOzqMwWFTV0=,tag:OJ2z6SBucZym2G1tBaFNrg==,type:str]
-ntp_secondary_server: ENC[AES256_GCM,data:ZCTu/O8VIkaN3mJt,iv:eQ1xpLKsZXLXyS1VBHpxepT7UHc3g9SgKIXchR2MVpI=,tag:Nagt6Y3jk2D732EFDKepnw==,type:str]
-node_domain: ENC[AES256_GCM,data:7MgNK+f5Oy9cOJajjAu9jpSAQg==,iv:SKgF5Tx08fyS3b6J3eyKrv2rJv9s/wBRn8e+hz8hgxU=,tag:973JFyl8uG1TABqy72E0rg==,type:str]
+node_domain: ENC[AES256_GCM,data:NnHVzSPNDybHW8WX7mHG/j529w==,iv:Uf4u4vUO5K+15Lq8VBu3YINCMDWeoTy+03n+VY2zbNU=,tag:P65oIuyEEAKriIS0GwoBMw==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -19,8 +19,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-01-04T15:56:46Z"
-    mac: ENC[AES256_GCM,data:ESabfKu9gNW1Ulu2KguVinht8r+b5/2mfCLnd2lwofd4yLwHV2qGJm7zNHTVu6MK5jU4qw22v2UF7Rm1rme/uuQbU6aEaGEaZ+iXCKFPDNv3Bwkm153qcaNN8W/ppdGv3q07ukumZkjUhzsqN7MZVz9CfqhVvHw3Rl/FGoLuMC8=,iv:8hU8HpTvlj5zxNX5Ay0ht+n5/BCT+ba/J6pqFmI9OZ4=,tag:HJX9mRVgCV4uwsnH5SOzpA==,type:str]
+    lastmodified: "2025-05-31T16:26:22Z"
+    mac: ENC[AES256_GCM,data:9UWrJtskA3aWSdrByD6GKk6kYLyUDilREUzXFCGxeHEtPSikJMEhx7kaPM9B5+PGljA+NE74qToqcOJayuzOmU186KE8LVM2tB4AO/X7OSA4ANx1eeUB3neOtp9Wf2B9Qg4qC3BPSkprqSt8qzE/DtHA92CxM6GOGSBH5h+SN+U=,iv:Wa9lSMmB8/XD9q3n58kEIVVAIH+YSvIP30+mE0i6y6U=,tag:O1QeUZje/VDzG/KbbiJTZg==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

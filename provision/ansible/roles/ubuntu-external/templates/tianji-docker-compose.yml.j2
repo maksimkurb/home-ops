@@ -1,0 +1,49 @@
+services:
+  tianji:
+    image: moonrailgun/tianji
+    environment:
+      DATABASE_URL: postgresql://tianji:tianji@postgres:5432/tianji
+      JWT_SECRET: "{{ tianji_jwt_secret }}"
+      ALLOW_REGISTER: "false"
+      ALLOW_OPENAPI: "true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.tianji.loadbalancer.server.port=12345"
+      - "traefik.http.routers.tianji.rule=Host(`tianji.{{ traefik_base_domain }}`)"
+      - "traefik.http.routers.tianji.entrypoints=websecure"
+      - "traefik.http.routers.tianji.tls.certresolver=le"
+      - "traefik.http.routers.tianji.tls=true"
+    networks:
+      - tianji
+      - traefik
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    image: postgres:15.4-alpine
+    environment:
+      POSTGRES_DB: tianji
+      POSTGRES_USER: tianji
+      POSTGRES_PASSWORD: tianji
+    volumes:
+      - tianji-db-data:/var/lib/postgresql/data
+    networks:
+      - tianji
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  tianji-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/tianji/data
+networks:
+  tianji:
+  traefik:
+    external: true
+    name: {{ traefik_network_name }}

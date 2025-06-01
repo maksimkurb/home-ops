@@ -19,7 +19,7 @@ bin
 .task/
 # Ansible
 ansible/inventory/e2e/hosts.yml
-xanmanning.k3s*
+provision/vpn-server-awg-configs
 nvidia.nvidia_driver*
 node_modules
 # Terraform
@@ -39,11 +39,8 @@ config.xml
 *.pid
 kubernetes
 !provision/ansible/inventory/group_vars/kubernetes
-provision/ansible/roles/*
-!provision/ansible/roles/ubuntu
-!provision/ansible/roles/ubuntu-external
-!provision/ansible/roles/vpn-gateway
 provision/kubeconfig
+provision/*.kubeconfig
 talos/cni/charts
 .monokle
 talos/pkgs/

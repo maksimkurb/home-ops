@@ -1,69 +1,31 @@
 ---
-- name: Ingress / Create Traefik config directory
+- name: Traefik / Create config directory
   file:
     path: "/opt/traefik"
     state: directory
+    mode: '0755'
 
-- name: Ingress / Create Traefik config
-  template:
-    dest: /opt/traefik/traefik.yml
-    src: traefik.yaml.j2
-    owner: root
-    group: root
-    mode: '0600'
-
-- name: Ingress / Create Traefik config
-  template:
-    dest: /opt/traefik/traefik-static.yaml
-    src: traefik-static.yaml.j2
-    owner: root
-    group: root
-    mode: '0600'
-
-- name: VPN / Determine port openings
+- name: Traefik / Determine port openings with IPv6
   set_fact:
-    traefik_ports:
+    traefik_ipv6_ports: |
       - "{{ '[' + external_ipv6 + ']:80:80' }}"
       - "{{ '[' + external_ipv6 + ']:443:443' }}"
-      - "80:80"
-      - "443:443"
   when: external_ipv6 is defined
 
-- name: VPN / Determine port openings
+- name: Traefik / Set default port openings
   set_fact:
-    traefik_ports:
-      - "80:80"
-      - "443:443"
+    traefik_ipv6_ports: ""
   when: external_ipv6 is undefined
 
-- name: VPN / Pull Traefik container
-  community.docker.docker_image:
-    name: "traefik:v3.1"
-    source: pull
-    force_source: true
+- name: Traefik / Create docker-compose.yml file
+  template:
+    src: traefik-docker-compose.yml.j2
+    dest: "/opt/traefik/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
 
-- name: VPN / Create Docker network
-  community.docker.docker_network:
-    name: "{{ vpn_network }}"
-
-- name: VPN / Create Traefik container
-  community.docker.docker_container:
-    name: "traefik"
-    image: "traefik:v3.4"
-    restart_policy: unless-stopped
-    etc_hosts:
-      host.docker.internal: host-gateway
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/traefik:/etc/traefik
-    labels:
-      traefik.enable: "true"
-      traefik.http.services.traefik.loadbalancer.server.port: "8080"
-      traefik.http.routers.traefik.entrypoints: websecure
-      traefik.http.routers.traefik.tls.certresolver: le
-      traefik.http.routers.traefik.tls: "true"
-      traefik.http.routers.traefik.middlewares: "auth"
-      traefik.http.middlewares.auth.basicauth.users: "{{ traefik_users | default(omit) }}"
-    networks: "{{ traefik_networks | default(omit) }}"
-    ports: "{{ traefik_ports }}"
-    state: started
+- name: Traefik / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/traefik"
+    state: present

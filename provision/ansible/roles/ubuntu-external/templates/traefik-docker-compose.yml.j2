@@ -1,0 +1,98 @@
+services:
+  traefik:
+    image: traefik:{{ traefik_version }}
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      # Core configuration
+      - "--global.sendanonymoususage=false"
+      - "--global.checknewversion=false"
+      - "--ping=true"
+
+      # Log configuration
+      - "--log.level=INFO"
+      - "--log.format=json"
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--accesslog.bufferingsize=100"
+
+      # API and dashboard configuration
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+
+      # Entrypoints configuration
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+
+      # Docker provider configuration
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network={{ traefik_network_name }}"
+      - "--providers.docker.defaultrule=Host(`{% raw %}{{ trimPrefix \"/\" .Name }}{% endraw %}.{{ traefik_base_domain }}`)"
+
+      # Certificate resolver configuration
+      - "--certificatesresolvers.le.acme.email={{ acme_email }}"
+      - "--certificatesresolvers.le.acme.storage=/acme.json"
+      - "--certificatesresolvers.le.acme.tlschallenge=true"
+
+    environment:
+      - TZ={{ timezone | default('UTC') }}
+
+    labels:
+      # Enable Traefik for this container
+      - "traefik.enable=true"
+
+      # Dashboard configuration
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.{{ traefik_base_domain }}`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.tls.certresolver=le"
+      - "traefik.http.routers.dashboard.middlewares=basic-auth"
+
+      # Basic auth middleware
+      - "traefik.http.middlewares.basic-auth.basicauth.users={{ traefik_users | default('') | replace('$', '$$') }}"
+
+      # Health check
+      - "traefik.http.routers.traefik-health.rule=Host(`traefik.{{ traefik_base_domain }}`) && Path(`/ping`)"
+      - "traefik.http.routers.traefik-health.service=ping@internal"
+      - "traefik.http.routers.traefik-health.entrypoints=websecure"
+      - "traefik.http.routers.traefik-health.tls=true"
+      - "traefik.http.routers.traefik-health.tls.certresolver=le"
+
+      # Custom labels
+{% if traefik_custom_labels is defined %}
+{% for label in traefik_custom_labels %}
+      - "{{ label }}"
+{% endfor %}
+{% endif %}
+    ports:
+      - "80:80"
+      - "443:443"
+{% if external_ipv6 is defined %}
+      {{ traefik_ipv6_ports }}
+{% endif %}
+    networks:
+{% if traefik_networks is defined %}
+{% for network in traefik_networks %}
+      - {{ network.name }}
+{% endfor %}
+{% endif %}
+
+networks:
+{% if traefik_networks is defined %}
+{% for network in traefik_networks %}
+  {{ network.name }}:
+    external: true
+    name: {{ network.name }}
+{% endfor %}
+{% endif %}

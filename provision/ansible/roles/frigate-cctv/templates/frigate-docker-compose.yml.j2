@@ -1,0 +1,26 @@
+services:
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    restart: unless-stopped
+    shm_size: 200M
+    ports:
+      - "8555:8555"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/frigate/config.yml:/config/config.yml
+      - /opt/frigate/media:/media/frigate
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.cctv-frigate.loadbalancer.server.port=5000"
+      - "traefik.http.routers.cctv-frigate.rule=Host(`frigate.{{ traefik_base_domain }}`)"
+      - "traefik.http.routers.cctv-frigate.entrypoints=websecure"
+      - "traefik.http.routers.cctv-frigate.tls.certresolver=le"
+      - "traefik.http.routers.cctv-frigate.tls=true"
+      - "traefik.http.routers.cctv-frigate.middlewares=basic-auth"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
+    name: {{ traefik_network_name }}
