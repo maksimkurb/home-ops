@@ -1,0 +1,129 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app capacitor
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.0.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      capacitor:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/gimlet-io/capacitor
+              tag: v0.4.8@sha256:c999a42cccc523b91086547f890466d09be4755bf05a52763b0d14594bf60782
+            resources:
+              requests:
+                memory: 1Gi
+                ephemeral-storage: 128Mi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    serviceAccount:
+      capacitor: {}
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            enabled: true
+            port: 9000
+    ingress:
+      app:
+        enabled: true
+        className: "nginx"
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ipv4.${SECRET_PUBLIC_DOMAIN}
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          hajimari.io/icon: "cog-sync-outline"
+          hajimari.io/group: "monitoring"
+          hajimari.io/appName: "Capacitor"
+        hosts:
+          - host: capacitor.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+    rbac:
+      roles:
+        capacitor:
+          type: ClusterRole
+          rules:
+            - apiGroups: ["networking.k8s.io", "apps", ""]
+              resources:
+                [
+                  "pods",
+                  "pods/log",
+                  "ingresses",
+                  "deployments",
+                  "services",
+                  "secrets",
+                  "events",
+                  "configmaps",
+                ]
+              verbs: ["get", "watch", "list"]
+            - apiGroups:
+                [
+                  "source.toolkit.fluxcd.io",
+                  "kustomize.toolkit.fluxcd.io",
+                  "helm.toolkit.fluxcd.io",
+                  "infra.contrib.fluxcd.io",
+                ]
+              resources:
+                [
+                  "gitrepositories",
+                  "ocirepositories",
+                  "buckets",
+                  "helmrepositories",
+                  "helmcharts",
+                  "kustomizations",
+                  "helmreleases",
+                  "terraforms",
+                ]
+              verbs: ["get", "watch", "list", "patch"]
+      bindings:
+        capacitor:
+          type: ClusterRoleBinding
+          roleRef:
+            identifier: capacitor
+          subjects:
+            - kind: ServiceAccount
+              name: capacitor
+              namespace: flux-system

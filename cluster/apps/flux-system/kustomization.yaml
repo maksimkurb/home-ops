@@ -7,3 +7,4 @@ resources:
   - monitoring
   - notifications
   - webhook
+  - ./capacitor/ks.yaml

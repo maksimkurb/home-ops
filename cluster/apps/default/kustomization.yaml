@@ -12,6 +12,5 @@ resources:
   - ./tianji/ks.yaml
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
-  - ./maybe-finance/ks.yaml
   - ./stirling-pdf/ks.yaml
   - ./firefly-iii/ks.yaml
