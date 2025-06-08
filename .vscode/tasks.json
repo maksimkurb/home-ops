@@ -5,8 +5,8 @@
     {
       "label": "Add Git SSH key to agent",
       "type": "shell",
-      "command": "ssh-agent-add-id",
-      "args": ["${userHome}/.ssh/id_rsa"],
+      "command": "ssh-add",
+      "args": ["${userHome}/.ssh/id_ed25519"],
       "presentation": {
         "panel": "new",
         "revealProblems": "onProblem",
