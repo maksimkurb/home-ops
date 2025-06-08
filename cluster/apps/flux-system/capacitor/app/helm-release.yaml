@@ -28,6 +28,9 @@ spec:
     controllers:
       capacitor:
         strategy: RollingUpdate
+        serviceAccount:
+          name: capacitor
+          namespace: flux-system
         containers:
           app:
             image:

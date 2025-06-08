@@ -6,6 +6,7 @@
         "oderwat.indent-rainbow",
         "signageos.signageos-vscode-sops",
         "usernamehw.errorlens",
-        "fcrespo82.markdown-table-formatter"
+        "fcrespo82.markdown-table-formatter",
+        "redhat.vscode-yaml"
     ]
 }
