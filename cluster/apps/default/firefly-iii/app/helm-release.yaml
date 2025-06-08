@@ -31,7 +31,7 @@ spec:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
               APP_URL: https://firefly.${SECRET_DOMAIN}
-              TRUSTED_PROXIES: "172.22.0.0/16"
+              TRUSTED_PROXIES: "**"
               MAIL_MAILER: smtp
               MAIL_HOST: "${SMTP_HOST}"
               MAIL_PORT: "${SMTP_PORT}"
