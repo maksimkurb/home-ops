@@ -80,7 +80,7 @@ spec:
               - name: STATIC_CRON_TOKEN
                 valueFrom:
                   secretKeyRef:
-                    name: firefly-iii-env
+                    name: firefly-iii-cron
                     key: STATIC_CRON_TOKEN
     service:
       main:
