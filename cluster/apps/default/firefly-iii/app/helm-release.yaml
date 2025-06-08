@@ -30,6 +30,15 @@ spec:
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
+              APP_URL: https://firefly.${SECRET_DOMAIN}
+              TRUSTED_PROXIES: "172.22.0.0/16"
+              MAIL_MAILER: smtp
+              MAIL_HOST: "${SMTP_HOST}"
+              MAIL_PORT: "${SMTP_PORT}"
+              MAIL_ENCRYPTION: tls
+              MAIL_USERNAME: ${SMTP_EMAIL}
+              MAIL_PASSWORD: ${SECRET_SMTP_PASSWORD}
+              MAIL_FROM_ADDRESS: ${SMTP_EMAIL}
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: "5432"
               DB_CONNECTION: pgsql
@@ -54,6 +63,25 @@ spec:
               fsGroup: 777
               fsGroupChangePolicy: "OnRootMismatch"
               supplementalGroups: ["777"]
+          cronjob:
+            image:
+              repository: alpine
+              tag: 3.21.3
+              pullPolicy: IfNotPresent
+            command:
+              - sh
+            args:
+              - -c
+              - >-
+                echo "0 */3 * * * wget -qO- http://firefly-iii:8080/api/v1/cron/$(STATIC_CRON_TOKEN)"
+                | crontab -
+                && crond -f -L /dev/stdout
+            env:
+              - name: STATIC_CRON_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: firefly-iii-env
+                    key: STATIC_CRON_TOKEN
     service:
       main:
         controller: main
