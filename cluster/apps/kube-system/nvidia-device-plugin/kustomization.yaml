@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - runtime-class.yaml
   - helm-release.yaml
+  - restart-cronjob.yaml
