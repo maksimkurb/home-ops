@@ -37,8 +37,8 @@ spec:
               MAIL_PORT: "${SMTP_PORT}"
               MAIL_ENCRYPTION: tls
               MAIL_USERNAME: ${SMTP_EMAIL}
+              MAIL_FROM: ${SMTP_EMAIL}
               MAIL_PASSWORD: ${SECRET_SMTP_PASSWORD}
-              MAIL_FROM_ADDRESS: ${SMTP_EMAIL}
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: "5432"
               DB_CONNECTION: pgsql
