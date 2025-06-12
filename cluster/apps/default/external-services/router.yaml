@@ -40,7 +40,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ext-router.${SECRET_DOMAIN}
+    - host: ext-router.${SECRET_PUBLIC_DOMAIN}
       http:
         paths:
           - path: /

@@ -131,7 +131,7 @@ spec:
           hajimari.io/group: "Finance"
           hajimari.io/appName: "Maybe Finance"
         hosts:
-          - host: finance.${SECRET_DOMAIN}
+          - host: finance.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix

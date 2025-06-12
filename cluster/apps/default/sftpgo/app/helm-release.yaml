@@ -67,7 +67,7 @@ spec:
           hajimari.io/appName: "File Manager (SFTPGo)"
           hajimari.io/icon: file-cloud
         hosts:
-          - host: &host f.${SECRET_DOMAIN}
+          - host: &host f.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix

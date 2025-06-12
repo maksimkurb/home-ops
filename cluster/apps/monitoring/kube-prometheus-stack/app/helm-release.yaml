@@ -53,7 +53,7 @@ spec:
       ingress:
         enabled: true
         ingressClassName: nginx
-        hosts: ["alertmanager.${SECRET_DOMAIN}"]
+        hosts: ["alertmanager.${SECRET_PRIVATE_DOMAIN}"]
         pathType: Prefix
         annotations:
           # ForwardAuth start
@@ -75,7 +75,7 @@ spec:
           name: alertmanager
           global:
             resolveTimeout: 5m
-        externalUrl: https://alertmanager.${SECRET_DOMAIN}
+        externalUrl: https://alertmanager.${SECRET_PRIVATE_DOMAIN}
         storage:
           volumeClaimTemplate:
             spec:
@@ -89,7 +89,7 @@ spec:
       ingress:
         enabled: true
         ingressClassName: nginx
-        hosts: ["prometheus.${SECRET_DOMAIN}"]
+        hosts: ["prometheus.${SECRET_PRIVATE_DOMAIN}"]
         pathType: Prefix
         annotations:
           # ForwardAuth start

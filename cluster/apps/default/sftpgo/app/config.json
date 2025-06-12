@@ -310,8 +310,8 @@
         "oidc": {
           "client_id": "sftpgo",
           "client_secret": "${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}",
-          "config_url": "https://auth.${SECRET_DOMAIN}",
-          "redirect_base_url": "https://f.${SECRET_DOMAIN}",
+          "config_url": "https://auth.${SECRET_PUBLIC_DOMAIN}",
+          "redirect_base_url": "https://f.${SECRET_PUBLIC_DOMAIN}",
           "scopes": [
             "openid",
             "profile",
@@ -355,7 +355,7 @@
     "cors": {
       "enabled": true,
       "allowed_origins": [
-        "https://f.${SECRET_DOMAIN}"
+        "https://f.${SECRET_PUBLIC_DOMAIN}"
       ],
       "allowed_methods": [
         "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "PROPFIND", "PROPPATCH", "MKCOL", "COPY", "MOVE", "LOCK", "UNLOCK"

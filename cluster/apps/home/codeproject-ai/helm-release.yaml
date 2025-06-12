@@ -42,7 +42,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
         hosts:
-          - host: "cpai.${SECRET_DOMAIN}"
+          - host: "cpai.${SECRET_PRIVATE_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

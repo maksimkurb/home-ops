@@ -30,7 +30,7 @@ spec:
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
-              APP_URL: https://firefly.${SECRET_DOMAIN}
+              APP_URL: https://firefly.${SECRET_PUBLIC_DOMAIN}
               TRUSTED_PROXIES: "**"
               MAIL_MAILER: smtp
               MAIL_HOST: "${SMTP_HOST}"
@@ -99,7 +99,7 @@ spec:
           hajimari.io/group: "Home"
           hajimari.io/appName: "Firefly III"
         hosts:
-          - host: firefly.${SECRET_DOMAIN}
+          - host: firefly.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix

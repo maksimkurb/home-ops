@@ -44,7 +44,7 @@ spec:
           nginx.ingress.kubernetes.io/custom-http-errors: "599" # Disable custom HTTP errors for this endpoint
           hajimari.io/icon: "form-textbox-password"
         hosts:
-          - host: &host "bitwarden.${SECRET_DOMAIN}"
+          - host: &host "bitwarden.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -70,7 +70,7 @@ spec:
             env:
               DATA_FOLDER: "config"
               SIGNUPS_ALLOWED: false
-              DOMAIN: https://bitwarden.${SECRET_DOMAIN}
+              DOMAIN: https://bitwarden.${SECRET_PUBLIC_DOMAIN}
               SMTP_HOST: "${SMTP_HOST}"
               SMTP_FROM: "${SMTP_EMAIL}"
               SMTP_FROM_NAME: "Vaultwarden"

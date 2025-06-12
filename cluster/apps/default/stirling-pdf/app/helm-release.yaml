@@ -53,7 +53,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           hajimari.io/appName: "Stirling PDF"
           hajimari.io/icon: "pdf"
         hosts:

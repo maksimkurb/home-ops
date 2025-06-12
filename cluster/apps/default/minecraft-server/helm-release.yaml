@@ -57,7 +57,7 @@ spec:
         existingClaim: minecraft-server-world-data
     serviceAnnotations:
       io.cilium/lb-ipam-ips: "${SVC_MINECRAFT_ADDR}"
-      mc-router.itzg.me/externalServerName: "mcsrv.${SECRET_DOMAIN}"
+      mc-router.itzg.me/externalServerName: "mcsrv.${SECRET_PUBLIC_DOMAIN}"
     minecraftServer:
       eula: true
       version: 1.20.4
@@ -111,7 +111,7 @@ spec:
             ingressClassName: nginx
             enabled: true
             hosts:
-              - name: &host "mcsrv-map.${SECRET_DOMAIN}"
+              - name: &host "mcsrv-map.${SECRET_PUBLIC_DOMAIN}"
                 path: /
   valuesFrom:
     - kind: Secret

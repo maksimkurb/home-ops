@@ -63,7 +63,7 @@ spec:
           hajimari.io/appName: "Immich"
           hajimari.io/icon: image
         hosts:
-          - host: &host "photos.${SECRET_DOMAIN}"
+          - host: &host "photos.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

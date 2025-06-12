@@ -39,7 +39,7 @@ spec:
                   secretKeyRef:
                     name: paperless
                     key: PAPERLESS_SECRET_KEY
-              PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              PAPERLESS_URL: https://paperless.${SECRET_PUBLIC_DOMAIN}
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: "${TIMEZONE}"
               PAPERLESS_WEBSERVER_WORKERS: "2"
@@ -192,7 +192,7 @@ spec:
           hajimari.io/group: "Home"
           hajimari.io/appName: "Paperless"
         hosts:
-          - host: paperless.${SECRET_DOMAIN}
+          - host: paperless.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix

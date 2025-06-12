@@ -95,7 +95,7 @@ spec:
           hajimari.io/appName: "Syncthing"
           hajimari.io/icon: "cloud"
         hosts:
-          - host: syncthing.${SECRET_PUBLIC_DOMAIN}
+          - host: syncthing.${SECRET_PRIVATE_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix

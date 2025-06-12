@@ -128,7 +128,7 @@ spec:
           hajimari.io/appName: "VM Agent"
           hajimari.io/icon: face-agent
         hosts:
-          - "vmagent.${SECRET_DOMAIN}"
+          - "vmagent.${SECRET_PRIVATE_DOMAIN}"
     vmsingle:
       enabled: true
       spec:
@@ -159,7 +159,7 @@ spec:
           hajimari.io/appName: "VM Single"
           hajimari.io/icon: database-alert
         hosts:
-          - "vmsingle.${SECRET_DOMAIN}"
+          - "vmsingle.${SECRET_PRIVATE_DOMAIN}"
 
     vmalert:
       enabled: true
@@ -182,10 +182,10 @@ spec:
           hajimari.io/appName: "VM Alert"
           hajimari.io/icon: alert-circle-outline
         hosts:
-          - 'vmalert.${SECRET_DOMAIN}'
+          - 'vmalert.${SECRET_PRIVATE_DOMAIN}'
       spec:
         extraArgs:
-          external.url: 'https://vmalert.${SECRET_DOMAIN}'
+          external.url: 'https://vmalert.${SECRET_PRIVATE_DOMAIN}'
 
     # -- Provide custom recording or alerting rules to be deployed into the cluster.
     additionalVictoriaMetricsMap:
@@ -281,7 +281,7 @@ spec:
           hajimari.io/appName: "VM Alert Manager"
           hajimari.io/icon: bell-alert-outline
         hosts:
-          - "alertmanager.${SECRET_DOMAIN}"
+          - "alertmanager.${SECRET_PRIVATE_DOMAIN}"
       useManagedConfig: true
       config:
         route:
@@ -322,7 +322,7 @@ spec:
                   name: *secret
                   key: DISCORD_WEBHOOK_URL
       spec:
-        externalURL: 'https://alertmanager.${SECRET_DOMAIN}'
+        externalURL: 'https://alertmanager.${SECRET_PRIVATE_DOMAIN}'
         disableNamespaceMatcher: true
         storage:
           volumeClaimTemplate:
