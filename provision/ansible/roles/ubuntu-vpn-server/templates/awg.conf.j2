@@ -15,9 +15,23 @@ H2 = {{ interface.h2 }}
 H3 = {{ interface.h3 }}
 H4 = {{ interface.h4 }}
 
-PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50; iptables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50; ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; ip6tables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50
+PostUp = iptables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostUp = iptables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+PostUp = ip6tables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50
+PostUp = ip6tables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostUp = ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostUp = ip6tables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
 
-PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50; iptables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; iptables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50; ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50; ip6tables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50
+PostDown = iptables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostDown = iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostDown = iptables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
+PostDown = ip6tables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10 --wait-interval 50
+PostDown = ip6tables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10 --wait-interval 50
+PostDown = ip6tables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10 --wait-interval 50
 
 {% for peer in interface.peers %}
 
@@ -25,6 +39,6 @@ PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --
 # _Name = {{ peer.name }}
 # _PrivateKey = {{ peer.private_key }}
 PublicKey = {{ peer.public_key }}
-AllowedIPs = {{ peer.address_v4 }}/{{ interface.clients_subnet_v4 | default('32') }}{% if peer.address_v6 is defined %}, {{ peer.address_v6 }}/{{ interface.subnet_v6 }}{% endif %}
+AllowedIPs = {{ peer.address_v4 }}/{{ interface.clients_subnet_v4 | default('32') }}{% if peer.address_v6 is defined %}, {{ peer.address_v6 }}/{{ interface.clients_subnet_v6 | default('128') }}{% endif %}
 
 {% endfor %}
