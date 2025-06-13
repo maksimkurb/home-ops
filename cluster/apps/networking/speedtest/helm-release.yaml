@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.7.3/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -45,9 +45,16 @@ spec:
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          nginx.ingress.kubernetes.io/custom-http-errors: "599" # Disable custom HTTP errors for this endpoint
+          nginx.ingress.kubernetes.io/custom-http-errors: "599"
           nginx.ingress.kubernetes.io/configuration-snippet: |
+            gzip off;
             chunked_transfer_encoding off;
+            client_max_body_size 256M;
+          nginx.ingress.kubernetes.io/upstream-keepalive-connections: "32"
+          nginx.ingress.kubernetes.io/proxy-set-headers: "default/proxy-headers"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+          nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
         hosts:
           - host: &host "speedtest.${SECRET_PUBLIC_DOMAIN}"
             paths:
@@ -59,14 +66,20 @@ spec:
       internal:
         enabled: true
         className: nginx
-        nameOverride: internal
         annotations:
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          nginx.ingress.kubernetes.io/custom-http-errors: "599" # Disable custom HTTP errors for this endpoint
+          nginx.ingress.kubernetes.io/custom-http-errors: "599"
           nginx.ingress.kubernetes.io/configuration-snippet: |
+            gzip off;
             chunked_transfer_encoding off;
+            client_max_body_size 256M;
+          nginx.ingress.kubernetes.io/upstream-keepalive-connections: "32"
+          nginx.ingress.kubernetes.io/proxy-set-headers: "default/proxy-headers"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+          nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
           nginx.ingress.kubernetes.io/whitelist-source-range: "${NGINX_INTERNAL_WHITELIST}"
         hosts:
           - host: &host "speedtest.${SECRET_PRIVATE_DOMAIN}"
