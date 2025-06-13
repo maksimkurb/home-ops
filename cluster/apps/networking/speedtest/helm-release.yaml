@@ -59,7 +59,7 @@ spec:
       internal:
         enabled: true
         className: nginx
-        suffix: internal
+        nameOverride: internal
         annotations:
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
