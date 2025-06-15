@@ -7,6 +7,7 @@
 REMOTE_HOST=""
 REMOTE_USER=""
 REMOTE_PASS=""
+REMOTE_PORT="22"
 OUTPUT_FILE="running-config-$(date +%Y%m%d-%H%M%S).txt"
 CRONITOR_URL=""
 
@@ -17,6 +18,7 @@ usage() {
     echo "  -h  Remote host IP or hostname"
     echo "  -u  SSH username"
     echo "  -p  SSH password"
+    echo "  -P  SSH port (optional, default: 22)"
     echo "  -o  Output file (optional, default: running-config-TIMESTAMP.txt)"
     echo "  -c  Cronitor URL (optional, for job monitoring)"
     exit 1
@@ -31,13 +33,14 @@ call_cronitor() {
 }
 
 # Parse command line arguments
-while getopts "h:u:p:o:c:" opt; do
+while getopts "h:u:p:o:c:P:" opt; do
     case $opt in
         h) REMOTE_HOST="$OPTARG";;
         u) REMOTE_USER="$OPTARG";;
         p) REMOTE_PASS="$OPTARG";;
         o) OUTPUT_FILE="$OPTARG";;
         c) CRONITOR_URL="$OPTARG";;
+        P) REMOTE_PORT="$OPTARG";;
         *) usage;;
     esac
 done
@@ -54,7 +57,7 @@ call_cronitor "run"
 echo "Connecting to $REMOTE_HOST as $REMOTE_USER..."
 
 # Execute SSH command with no host key checking and save output
-sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
     "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE" 2>/dev/null
 
 # Check if the command was successful

@@ -19,6 +19,7 @@ BACKUP_SCRIPT="/app/backup-keenetic-router.sh"
 BASE_OUTPUT_DIR="/data"
 DATE_DIR="$(date +%Y-%m-%d)"
 OUTPUT_DIR="${BASE_OUTPUT_DIR}/${DATE_DIR}"
+SSH_PORT=1122
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
@@ -53,14 +54,14 @@ backup_router() {
     fi
 
     # Generate output filename
-    local timestamp=$(date +%H%M%S)
+    local timestamp=$(date +%H-%M-%S)
     local output_file="${OUTPUT_DIR}/${ip}-${timestamp}.txt"
 
     echo "=== Backing up router $router_num: $ip ==="
     echo "Output file: $output_file"
 
     # Build command arguments
-    local cmd_args="-h $ip -u $user -p $pass -o $output_file"
+    local cmd_args="-h \"$ip\" -u \"$user\" -p \"$pass\" -P \"$SSH_PORT\" -o \"$output_file\""
 
     # Add cronitor URL if provided
     if [ -n "$cronitor_url" ]; then
