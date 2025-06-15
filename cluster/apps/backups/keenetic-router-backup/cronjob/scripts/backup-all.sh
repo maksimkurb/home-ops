@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Backup All Routers Script
 # This script calls backup-keenetic-router.sh for multiple routers and manages the overall backup process
@@ -26,22 +26,29 @@ mkdir -p "$OUTPUT_DIR"
 # Track overall success
 OVERALL_SUCCESS=0
 
-# Function to backup a single router
+# Function to backup a single router using case statement
 backup_router() {
     local router_num=$1
-    local ip_var="ROUTER_${router_num}_IP"
-    local user_var="ROUTER_${router_num}_USER"
-    local pass_var="ROUTER_${router_num}_PASS"
-    local cronitor_var="ROUTER_${router_num}_CRONITOR_URL"
+    local ip user pass cronitor_url
 
-    local ip="${!ip_var}"
-    local user="${!user_var}"
-    local pass="${!pass_var}"
-    local cronitor_url="${!cronitor_var}"
+    # Get router-specific variables using case statement
+    case $router_num in
+        1) ip="$ROUTER_1_IP"; user="$ROUTER_1_USER"; pass="$ROUTER_1_PASS"; cronitor_url="$ROUTER_1_CRONITOR_URL" ;;
+        2) ip="$ROUTER_2_IP"; user="$ROUTER_2_USER"; pass="$ROUTER_2_PASS"; cronitor_url="$ROUTER_2_CRONITOR_URL" ;;
+        3) ip="$ROUTER_3_IP"; user="$ROUTER_3_USER"; pass="$ROUTER_3_PASS"; cronitor_url="$ROUTER_3_CRONITOR_URL" ;;
+        4) ip="$ROUTER_4_IP"; user="$ROUTER_4_USER"; pass="$ROUTER_4_PASS"; cronitor_url="$ROUTER_4_CRONITOR_URL" ;;
+        5) ip="$ROUTER_5_IP"; user="$ROUTER_5_USER"; pass="$ROUTER_5_PASS"; cronitor_url="$ROUTER_5_CRONITOR_URL" ;;
+        6) ip="$ROUTER_6_IP"; user="$ROUTER_6_USER"; pass="$ROUTER_6_PASS"; cronitor_url="$ROUTER_6_CRONITOR_URL" ;;
+        7) ip="$ROUTER_7_IP"; user="$ROUTER_7_USER"; pass="$ROUTER_7_PASS"; cronitor_url="$ROUTER_7_CRONITOR_URL" ;;
+        8) ip="$ROUTER_8_IP"; user="$ROUTER_8_USER"; pass="$ROUTER_8_PASS"; cronitor_url="$ROUTER_8_CRONITOR_URL" ;;
+        9) ip="$ROUTER_9_IP"; user="$ROUTER_9_USER"; pass="$ROUTER_9_PASS"; cronitor_url="$ROUTER_9_CRONITOR_URL" ;;
+        10) ip="$ROUTER_10_IP"; user="$ROUTER_10_USER"; pass="$ROUTER_10_PASS"; cronitor_url="$ROUTER_10_CRONITOR_URL" ;;
+        *) echo "Router $router_num not supported (max 10 routers)"; return 1 ;;
+    esac
 
     # Skip if required variables are not set
     if [ -z "$ip" ] || [ -z "$user" ] || [ -z "$pass" ]; then
-        echo "Skipping router $router_num: Missing required environment variables ($ip_var, $user_var, $pass_var)"
+        echo "Skipping router $router_num: Missing required environment variables (ROUTER_${router_num}_IP, ROUTER_${router_num}_USER, ROUTER_${router_num}_PASS)"
         return 0
     fi
 
@@ -73,17 +80,25 @@ backup_router() {
 # Function to get the number of configured routers
 get_router_count() {
     local count=0
-    local router_num=1
 
-    while true; do
-        local ip_var="ROUTER_${router_num}_IP"
-        local ip="${!ip_var}"
+    # Check each router using case statement
+    for router_num in 1 2 3 4 5 6 7 8 9 10; do
+        local ip
+        case $router_num in
+            1) ip="$ROUTER_1_IP" ;;
+            2) ip="$ROUTER_2_IP" ;;
+            3) ip="$ROUTER_3_IP" ;;
+            4) ip="$ROUTER_4_IP" ;;
+            5) ip="$ROUTER_5_IP" ;;
+            6) ip="$ROUTER_6_IP" ;;
+            7) ip="$ROUTER_7_IP" ;;
+            8) ip="$ROUTER_8_IP" ;;
+            9) ip="$ROUTER_9_IP" ;;
+            10) ip="$ROUTER_10_IP" ;;
+        esac
 
         if [ -n "$ip" ]; then
             count=$((count + 1))
-            router_num=$((router_num + 1))
-        else
-            break
         fi
     done
 
@@ -101,7 +116,7 @@ if [ $ROUTER_COUNT -eq 0 ]; then
     echo "Error: No routers configured. Please set environment variables:"
     echo "  ROUTER_1_IP, ROUTER_1_USER, ROUTER_1_PASS"
     echo "  ROUTER_2_IP, ROUTER_2_USER, ROUTER_2_PASS (optional)"
-    echo "  etc."
+    echo "  etc. (up to ROUTER_10_*)"
     exit 1
 fi
 
