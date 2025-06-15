@@ -8,7 +8,10 @@ resources:
 configMapGenerator:
   - name: keenetic-router-backup
     files:
-      - scripts/backup-keenetic-router.sh
-      - scripts/backup-all.sh
+      - backup-keenetic-router.sh=scripts/backup-keenetic-router.sh
+      - backup-all.sh=scripts/backup-all.sh
+    options:
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
 generatorOptions:
   disableNameSuffixHash: true
