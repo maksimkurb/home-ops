@@ -33,6 +33,7 @@ spec:
         enabled: true
         type: configMap
         name: ${APP}
+        defaultMode: 0555
         globalMounts:
           - path: /app/backup-all.sh
             subPath: backup-all.sh
