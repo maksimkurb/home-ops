@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ${APP}
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ${APP}
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /tank/filehosting/personal/keenetic-router-backup
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ${APP}
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ${APP}
+  resources:
+    requests:
+      storage: 1Mi
