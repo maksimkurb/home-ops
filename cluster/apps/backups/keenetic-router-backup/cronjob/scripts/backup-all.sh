@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Backup All Routers Script
 # This script calls backup-keenetic-router.sh for multiple routers and manages the overall backup process
