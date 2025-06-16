@@ -10,27 +10,51 @@ REMOTE_PASS=""
 REMOTE_PORT="22"
 OUTPUT_FILE="running-config-$(date +%Y%m%d-%H%M%S).txt"
 CRONITOR_URL=""
+# Flag to track if the main logic succeeded
+SUCCESS=false
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 -h <host> -u <username> -p <password> [-o <output_file>] [-c <cronitor_url>]"
-    echo "Options:"
-    echo "  -h  Remote host IP or hostname"
-    echo "  -u  SSH username"
-    echo "  -p  SSH password"
-    echo "  -P  SSH port (optional, default: 22)"
-    echo "  -o  Output file (optional, default: running-config-TIMESTAMP.txt)"
-    echo "  -c  Cronitor URL (optional, for job monitoring)"
+    cat <<EOF
+Usage: $0 -h <host> -u <username> -p <password> [-o <output_file>] [-c <cronitor_url>] [-P <port>]
+Options:
+  -h  Remote host IP or hostname (required)
+  -u  SSH username (required)
+  -p  SSH password (required)
+  -P  SSH port (default: 22)
+  -o  Output file (default: running-config-TIMESTAMP.txt)
+  -c  Cronitor URL (for job monitoring)
+EOF
     exit 1
+}
+
+# Centralized cleanup and monitoring function
+cleanup() {
+    # Always clean up temporary files
+    rm -f "$OUTPUT_FILE.tmp"
+
+    if [ "$SUCCESS" = true ]; then
+        echo "Success! Configuration saved to: $OUTPUT_FILE"
+        echo "File size: $(wc -c < "$OUTPUT_FILE") bytes"
+        call_cronitor "complete"
+    else
+        echo "Error: Script failed. See previous messages for details."
+        # Remove potentially incomplete/invalid output file
+        rm -f "$OUTPUT_FILE"
+        call_cronitor "fail"
+    fi
 }
 
 # Function to call Cronitor
 call_cronitor() {
     local state=$1
     if [ -n "$CRONITOR_URL" ]; then
-        curl -s "${CRONITOR_URL}?state=${state}" >/dev/null 2>&1 || true
+        curl -s --fail "${CRONITOR_URL}?state=${state}" >/dev/null || echo "Warning: Cronitor ping failed for state '${state}'." >&2
     fi
 }
+
+# Trap calls the cleanup function on any script exit (normal, error, or interrupt)
+trap cleanup EXIT
 
 # Parse command line arguments
 while getopts "h:u:p:o:c:P:" opt; do
@@ -47,56 +71,42 @@ done
 
 # Validate required parameters
 if [ -z "$REMOTE_HOST" ] || [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_PASS" ]; then
-    echo "Error: Missing required parameters"
+    echo "Error: Missing required parameters."
     usage
 fi
 
 # Signal job start to Cronitor
 call_cronitor "run"
 
-echo "Connecting to $REMOTE_HOST as $REMOTE_USER..."
+echo "Connecting to $REMOTE_HOST to back up configuration..."
 
-# Create directory for output file
+# Create directory for output file if it doesn't exist
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 
-# Execute SSH command with no host key checking and save output
-if sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-    "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE.tmp" 2>/dev/null; then
+# Core Logic: SSH to host, strip ANSI escape codes and start from ! $$$, save to temp file
+sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "ConnectTimeout=15" \
+    -T \
+    "$REMOTE_USER@$REMOTE_HOST" "show running-config" | \
+    sed 's/\x1b\[[0-9;]*[A-Za-z]//g' | \
+    awk '/! \$\$\$/ {f=1} f' > "$OUTPUT_FILE.tmp"
 
-    # Strip everything before the first "! $$$" line
-    sed '1,/^! \$\$\$/{ /^! \$\$\$/!d; }' "$OUTPUT_FILE.tmp" > "$OUTPUT_FILE"
-    rm -f "$OUTPUT_FILE.tmp"
-
-    SSH_SUCCESS=0
-else
-    rm -f "$OUTPUT_FILE.tmp"
-    SSH_SUCCESS=1
-fi
-
-# Check if the command was successful
-if [ $SSH_SUCCESS -eq 0 ]; then
-    # Validate backup contains model information
-    if grep -q "\$\$\$ Model:" "$OUTPUT_FILE"; then
-        echo "Success! Configuration saved to: $OUTPUT_FILE"
-        echo "File size: $(wc -c < "$OUTPUT_FILE") bytes"
-        # Signal successful completion to Cronitor
-        call_cronitor "complete"
-    else
-        echo "Error: Backup file is invalid (missing model information)"
-        rm -f "$OUTPUT_FILE"
-        # Signal failure to Cronitor
-        call_cronitor "fail"
-        exit 1
-    fi
-else
-    echo "Error: Failed to retrieve configuration from $REMOTE_HOST"
-    # Clean up empty file if created
-    [ -s "$OUTPUT_FILE" ] || rm -f "$OUTPUT_FILE"
-
-    # Signal failure to Cronitor
-    call_cronitor "fail"
+# Validate the backup file
+if ! grep -q "\$\$\$ Model:" "$OUTPUT_FILE.tmp"; then
+    echo "Error: Backup file is invalid (missing model information)."
+    echo "---- (first 5 lines of invalid output) ----"
+    head -n 5 "$OUTPUT_FILE.tmp"
+    echo "-----------------------------------------"
     exit 1
 fi
+
+# Move temp file to final output only after validation
+mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
+
+# If we reach here, all steps were successful
+SUCCESS=true
 
 # Optional: Display first few lines of the saved config
 echo ""
