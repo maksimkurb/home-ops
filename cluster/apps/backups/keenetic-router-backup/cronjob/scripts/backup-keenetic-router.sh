@@ -64,7 +64,7 @@ if sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -
     "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE.tmp" 2>/dev/null; then
 
     # Strip everything before the first "! $$$" line
-    sed 's/.*\(! \$\$\$.*\)/\1/' "$OUTPUT_FILE.tmp" > "$OUTPUT_FILE"
+    sed '1,/^! \$\$\$/{ /^! \$\$\$/!d; }' "$OUTPUT_FILE.tmp" > "$OUTPUT_FILE"
     rm -f "$OUTPUT_FILE.tmp"
 
     SSH_SUCCESS=0
