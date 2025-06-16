@@ -67,11 +67,21 @@ echo "Connecting to $REMOTE_HOST as $REMOTE_USER..."
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 # Execute SSH command with no host key checking and save output
-sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-    "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE"
+if sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+    "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE.tmp" 2>/dev/null; then
+
+    # Strip everything before the first "! $$$" line
+    sed -n '/^! \$\$\$/,$p' "$OUTPUT_FILE.tmp" > "$OUTPUT_FILE"
+    rm -f "$OUTPUT_FILE.tmp"
+
+    SSH_SUCCESS=0
+else
+    rm -f "$OUTPUT_FILE.tmp"
+    SSH_SUCCESS=1
+fi
 
 # Check if the command was successful
-if [ $? -eq 0 ]; then
+if [ $SSH_SUCCESS -eq 0 ]; then
     # Validate backup contains model information
     if grep -q "\$\$\$ Model:" "$OUTPUT_FILE"; then
         echo "Success! Configuration saved to: $OUTPUT_FILE"
