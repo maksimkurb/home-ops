@@ -60,7 +60,7 @@ backup_router() {
     echo "Output file: $output_file"
 
     # Build command arguments
-    local cmd_args="-h \"$ip\" -u \"$user\" -p \"$pass\" -P \"$SSH_PORT\" -o \"$output_file\""
+    local cmd_args="-h $ip -u $user -p $pass -P $SSH_PORT -o $output_file"
 
     # Add cronitor URL if provided
     if [ -n "$cronitor_url" ]; then
