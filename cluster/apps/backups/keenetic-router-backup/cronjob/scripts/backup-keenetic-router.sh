@@ -51,13 +51,6 @@ if [ -z "$REMOTE_HOST" ] || [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_PASS" ]; then
     usage
 fi
 
-# Check if backup already exists
-if [ -f "$OUTPUT_FILE" ]; then
-    echo "Backup file $OUTPUT_FILE already exists, skipping backup"
-    call_cronitor "complete"
-    exit 0
-fi
-
 # Signal job start to Cronitor
 call_cronitor "run"
 
