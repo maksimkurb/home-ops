@@ -43,7 +43,7 @@ spec:
             readOnly: true
       backups:
         enabled: true
-        existingClaim: ${APP}
+        existingClaim: ${APP}-data
         type: persistentVolumeClaim
         globalMounts:
           - path: /data

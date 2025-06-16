@@ -16,9 +16,7 @@ echo ""
 
 # Configuration
 BACKUP_SCRIPT="/app/backup-keenetic-router.sh"
-BASE_OUTPUT_DIR="/data"
-DATE_DIR="$(date +%Y-%m-%d)"
-OUTPUT_DIR="${BASE_OUTPUT_DIR}/${DATE_DIR}"
+OUTPUT_DIR="/data"
 SSH_PORT=1122
 
 # Create output directory if it doesn't exist
