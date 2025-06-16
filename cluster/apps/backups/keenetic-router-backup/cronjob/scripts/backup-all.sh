@@ -54,8 +54,7 @@ backup_router() {
     fi
 
     # Generate output filename
-    local timestamp=$(date +%H-%M-%S)
-    local output_file="${OUTPUT_DIR}/${ip}-${timestamp}.txt"
+    local output_file="${OUTPUT_DIR}/${ip}.txt"
 
     echo "=== Backing up router $router_num: $ip ==="
     echo "Output file: $output_file"

@@ -51,10 +51,20 @@ if [ -z "$REMOTE_HOST" ] || [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_PASS" ]; then
     usage
 fi
 
+# Check if backup already exists
+if [ -f "$OUTPUT_FILE" ]; then
+    echo "Backup file $OUTPUT_FILE already exists, skipping backup"
+    call_cronitor "complete"
+    exit 0
+fi
+
 # Signal job start to Cronitor
 call_cronitor "run"
 
 echo "Connecting to $REMOTE_HOST as $REMOTE_USER..."
+
+# Create directory for output file
+mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 # Execute SSH command with no host key checking and save output
 sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
@@ -62,11 +72,19 @@ sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o U
 
 # Check if the command was successful
 if [ $? -eq 0 ]; then
-    echo "Success! Configuration saved to: $OUTPUT_FILE"
-    echo "File size: $(wc -c < "$OUTPUT_FILE") bytes"
-
-    # Signal successful completion to Cronitor
-    call_cronitor "complete"
+    # Validate backup contains model information
+    if grep -q "\$\$\$ Model:" "$OUTPUT_FILE"; then
+        echo "Success! Configuration saved to: $OUTPUT_FILE"
+        echo "File size: $(wc -c < "$OUTPUT_FILE") bytes"
+        # Signal successful completion to Cronitor
+        call_cronitor "complete"
+    else
+        echo "Error: Backup file is invalid (missing model information)"
+        rm -f "$OUTPUT_FILE"
+        # Signal failure to Cronitor
+        call_cronitor "fail"
+        exit 1
+    fi
 else
     echo "Error: Failed to retrieve configuration from $REMOTE_HOST"
     # Clean up empty file if created
