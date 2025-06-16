@@ -167,7 +167,7 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - https://grafana.${SECRET_PUBLIC_DOMAIN}/login/generic_oauth
+          - https://grafana.${SECRET_PRIVATE_DOMAIN}/login/generic_oauth
         userinfo_signed_response_alg: 'none'
 
       - client_id: sftpgo
@@ -200,7 +200,7 @@ identity_providers:
           - groups
           - email
         redirect_uris:
-          - https://nodered.${SECRET_PUBLIC_DOMAIN}/auth/strategy/callback
+          - https://nodered.${SECRET_PRIVATE_DOMAIN}/auth/strategy/callback
         userinfo_signed_response_alg: 'none'
 
       - client_id: immich
