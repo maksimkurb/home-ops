@@ -68,7 +68,7 @@ mkdir -p "$(dirname "$OUTPUT_FILE")"
 
 # Execute SSH command with no host key checking and save output
 sshpass -p "$REMOTE_PASS" ssh -p "$REMOTE_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-    "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE" 2>/dev/null
+    "$REMOTE_USER@$REMOTE_HOST" "show running-config" > "$OUTPUT_FILE"
 
 # Check if the command was successful
 if [ $? -eq 0 ]; then
