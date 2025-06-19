@@ -9,10 +9,6 @@
     resources Ingress
     fallthrough
   }
-  k8s_gateway ${SECRET_PRIVATE_DOMAIN} {
-    resources Ingress
-    fallthrough
-  }
   forward . 1.1.1.1 1.0.0.1
   prometheus 0.0.0.0:9153
   loadbalance
