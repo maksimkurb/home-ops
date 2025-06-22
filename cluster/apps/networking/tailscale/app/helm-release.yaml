@@ -44,7 +44,7 @@ spec:
           sysctler:
             image:
               repository: ghcr.io/tailscale/tailscale
-              tag: v1.84.0
+              tag: v1.84.2
             securityContext:
               privileged: true
             command: ["/bin/sh"]
@@ -59,7 +59,7 @@ spec:
           main:
             image:
               repository: ghcr.io/tailscale/tailscale
-              tag: v1.84.0
+              tag: v1.84.2
             securityContext:
               privileged: true
             env:
