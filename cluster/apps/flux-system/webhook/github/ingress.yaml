@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
   annotations:
     external-dns.alpha.kubernetes.io/enabled: "true"
-    external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}
+    external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
 spec:
   ingressClassName: "nginx"
   rules:
