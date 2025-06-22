@@ -41,8 +41,7 @@ spec:
       image:
         repository: ghcr.io/tailscale/k8s
         tag: v1.84.2
-      defaultTags:
-        - "tag:k8s"
+      defaultTags: "tag:k8s"
     operatorConfig:
       image:
         repository: ghcr.io/tailscale/k8s-operator
