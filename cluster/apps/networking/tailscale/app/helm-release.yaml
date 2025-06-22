@@ -31,6 +31,12 @@ spec:
   driftDetection:
     mode: enabled
   values:
+    oauthSecretVolume:
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: tailscale-operator-secret
     proxyConfig:
       image:
         repository: ghcr.io/tailscale/k8s
@@ -46,12 +52,3 @@ spec:
         - "tag:k8s-operator"
     apiServerProxyConfig:
       mode: "false"
-  valuesFrom:
-    - kind: Secret
-      name: tailscale-operator-secret
-      valuesKey: client_id
-      targetPath: oauth.clientId
-    - kind: Secret
-      name: tailscale-operator-secret
-      valuesKey: client_secret
-      targetPath: oauth.clientSecret
