@@ -2,17 +2,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tailscale-ingress-funnel
+  name: vaultwarden-tailscale-funnel
   namespace: networking
   annotations:
     tailscale.com/funnel: "true"
 spec:
   defaultBackend:
     service:
-      name: ingress-nginx-controller
+      name: vaultwarden
       port:
         number: 80
   ingressClassName: tailscale
   tls:
     - hosts:
-        - tailscale-ingress-funnel
+        - vaultwarden

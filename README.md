@@ -89,7 +89,7 @@ Without much engineering of DNS @home, these options have made my `VyOS` router 
 
 ### External DNS
 
-[external-dns](https://github.com/kubernetes-sigs/external-dns) is deployed in my cluster and configured to sync DNS records to [Cloudflare](https://www.cloudflare.com/). The only ingresses `external-dns` looks at to gather DNS records to put in `Cloudflare` are ones where I explicitly set an annotation of `external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}`
+[external-dns](https://github.com/kubernetes-sigs/external-dns) is deployed in my cluster and configured to sync DNS records to [Cloudflare](https://www.cloudflare.com/). The only ingresses `external-dns` looks at to gather DNS records to put in `Cloudflare` are ones where I explicitly set an annotation of `external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}`
 
 ---
 
