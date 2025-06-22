@@ -2,9 +2,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: zalando-postgres-operator-charts
+  name: lwolf-charts
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+  url: https://pkgs.tailscale.com/helmcharts
   timeout: 3m

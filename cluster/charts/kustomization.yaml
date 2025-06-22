@@ -27,3 +27,4 @@ resources:
   - hajimari-charts.yaml
   - vector-charts.yaml
   - zalando-postgres-operator-charts.yaml
+  - tailscale-charts.yaml
