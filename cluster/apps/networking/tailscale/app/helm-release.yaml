@@ -33,22 +33,40 @@ spec:
   values:
     controllers:
       main:
-        replicas: 1
+        replicas: 2
         strategy: RollingUpdate
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         serviceAccount:
           name: tailscale
+        initContainers:
+          sysctler:
+            image:
+              repository: ghcr.io/tailscale/tailscale
+              tag: v1.84.0
+            securityContext:
+              privileged: true
+            command: ["/bin/sh"]
+            args:
+              - -c
+              - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
+            resources:
+              requests:
+                cpu: 1m
+                memory: 1Mi
         containers:
           main:
             image:
               repository: ghcr.io/tailscale/tailscale
               tag: v1.84.0
+            securityContext:
+              privileged: true
             env:
               TZ: ${TZ}
-              NO_AUTOUPDATE: true
-              TS_USERSPACE: true
+              NO_AUTOUPDATE: "true"
+              TS_DEST_IP: "${SVC_NGINX_ADDR}"
+              TS_USERSPACE: "false"
               TS_KUBE_SECRET:
                 valueFrom:
                   fieldRef:
