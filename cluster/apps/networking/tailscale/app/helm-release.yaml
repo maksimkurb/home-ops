@@ -1,0 +1,97 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.1.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  namespace: networking
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.1.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  dependsOn:
+    - name: ingress-nginx
+      namespace: networking
+  driftDetection:
+    mode: enabled
+  values:
+    controllers:
+      main:
+        replicas: 2
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        serviceAccount:
+          name: tailscale
+        containers:
+          main:
+            image:
+              repository: ghcr.io/tailscale/tailscale
+              tag: v1.84.0
+            env:
+              TZ: ${TZ}
+              NO_AUTOUPDATE: true
+              TS_USERSPACE: true
+              TS_KUBE_SECRET: ""
+              TS_ROUTES: 192.168.40.0/23
+              TS_EXTRA_ARGS: --advertise-tags=tag:servers
+              TS_TAILSCALED_EXTRA_ARGS: --debug=0.0.0.0:2000
+            envFrom:
+              - secretRef:
+                  name: ${APP}-secret
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources:
+              requests:
+                cpu: 1m
+                memory: 128M
+              limits:
+                memory: 512M
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: ${APP}
+    serviceAccount:
+      tailscale: {}
+    service:
+      debug:
+        controller: main
+        ports:
+          http:
+            enabled: true
+            port: 2000
+            protocol: TCP
+    serviceMonitor:
+      main:
+        enabled: true
+        serviceName: debug
+        endpoints:
+          - port: http
+            path: /debug/metrics
+            scheme: http
