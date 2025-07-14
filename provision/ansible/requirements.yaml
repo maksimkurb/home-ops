@@ -8,6 +8,6 @@ collections:
     version: 1.5.4
 roles:
   - src: xanmanning.k3s
-    version: v3.4.4
+    version: v3.5.0
   - src: mrlesmithjr.netplan
     version: v0.4.2
