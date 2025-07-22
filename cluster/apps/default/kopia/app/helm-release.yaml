@@ -95,7 +95,7 @@ spec:
                 readOnly: true
       key:
         enabled: true
-        type: configMap
+        type: secret
         name: ${APP}-keys
         advancedMounts:
           main:
