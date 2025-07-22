@@ -12,6 +12,6 @@ configMapGenerator:
 secretGenerator:
   - name: kopia-keys
     files:
-      - service-key.sops.json
+      - rclone.sops.conf
 generatorOptions:
   disableNameSuffixHash: true

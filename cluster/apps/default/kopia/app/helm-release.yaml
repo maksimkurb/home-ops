@@ -100,8 +100,8 @@ spec:
         advancedMounts:
           main:
             main:
-              - path: /config/service-key.json
-                subPath: service-key.sops.json
+              - path: /app/rclone/rclone.conf
+                subPath: rclone.sops.conf
                 readOnly: true
       source:
         enabled: true
