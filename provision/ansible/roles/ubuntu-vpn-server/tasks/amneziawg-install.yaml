@@ -69,26 +69,3 @@
     line: 'amneziawg'
     create: yes
   become: true
-
-- name: Get absolute path to this Git repository
-  delegate_to: localhost
-  become: false
-  run_once: true
-  ansible.builtin.command: "git rev-parse --show-toplevel"
-  register: repo_abs_path
-
-- name: Create directory for client configs
-  delegate_to: localhost
-  become: false
-  ansible.builtin.file:
-    path: "{{ repo_abs_path.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
-    state: directory
-    mode: '0700'
-
-- name: Configure AmneziaWG for each interface
-  include_tasks: configure_interface.yaml
-  loop: "{{ amneziawg_interfaces_combined | default(amneziawg_interfaces) }}"
-  loop_control:
-    loop_var: interface
-  no_log: true
-  when: amneziawg_interfaces_combined is defined or amneziawg_interfaces is defined

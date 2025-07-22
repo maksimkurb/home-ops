@@ -1,4 +1,7 @@
 ---
-- import_tasks: amneziawg.yaml
+- import_tasks: amneziawg-install.yaml
   tags:
-    - amneziawg
+    - amneziawg-install
+- import_tasks: amneziawg-configure.yaml
+  tags:
+    - amneziawg-configure
