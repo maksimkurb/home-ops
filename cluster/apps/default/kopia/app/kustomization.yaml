@@ -9,5 +9,9 @@ configMapGenerator:
   - name: kopia
     files:
       - repository.config
+secretGenerator:
+  - name: kopia-keys
+    files:
+      - service-key.sops.json
 generatorOptions:
   disableNameSuffixHash: true

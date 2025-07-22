@@ -93,6 +93,16 @@ spec:
               - path: /config/repository.config
                 subPath: repository.config
                 readOnly: true
+      key:
+        enabled: true
+        type: configMap
+        name: ${APP}-keys
+        advancedMounts:
+          main:
+            main:
+              - path: /config/service-key.json
+                subPath: service-key.sops.json
+                readOnly: true
       source:
         enabled: true
         type: persistentVolumeClaim

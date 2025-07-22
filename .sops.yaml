@@ -18,3 +18,7 @@ creation_rules:
     key_groups:
       - age:
           - age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+  - path_regex: .*\.sops\.json
+    key_groups:
+      - age:
+          - age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
