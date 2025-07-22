@@ -116,12 +116,12 @@ spec:
         existingClaim: kopia-data-rw
         globalMounts:
           - path: /data-rw
-      snapshots:
-        enabled: true
-        type: persistentVolumeClaim
-        existingClaim: kopia-snapshots-nfs
-        globalMounts:
-          - path: /snapshots
+      # snapshots:
+      #   enabled: true
+      #   type: persistentVolumeClaim
+      #   existingClaim: kopia-snapshots-nfs
+      #   globalMounts:
+      #     - path: /snapshots
 
     defaultPodOptions:
       securityContext:
