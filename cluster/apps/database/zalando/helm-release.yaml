@@ -25,8 +25,8 @@ spec:
   values:
     # general configuration parameters
     configGeneral:
-      # Spilo image with pgvecto.rs 0.2.0 support
-      docker_image: ghcr.io/maksimkurb/spilo-17:4.0-master-pgvectors-0.4.0-vectorchord-0.3.0-1
+      # Spilo image with VectorChord support
+      docker_image: ghcr.io/maksimkurb/spilo-17:4.0-master-vectorchord-0.4.2-1
 
       # min number of instances in Postgres cluster. -1 = no limit
       min_instances: -1

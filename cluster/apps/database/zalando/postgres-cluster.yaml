@@ -33,7 +33,7 @@ spec:
   postgresql:
     version: "17"
     parameters:
-      shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vectors,vchord'
+      shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vchord'
       max_connections: '256'
       max_replication_slots: '32'
   users:
