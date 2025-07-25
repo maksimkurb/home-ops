@@ -102,6 +102,10 @@ spec:
                   name: immich
               - configMapRef:
                   name: immich-configmap
+            env:
+              TZ: "${TIMEZONE}"
+              NVIDIA_VISIBLE_DEVICES: all
+              NVIDIA_DRIVER_CAPABILITIES: all
             resources:
               requests:
                 cpu: 1m
