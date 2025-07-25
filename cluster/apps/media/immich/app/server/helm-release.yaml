@@ -77,13 +77,16 @@ spec:
         globalMounts:
           - path: /usr/src/app/upload
     defaultPodOptions:
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: *app
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                    operator: In
+                    values:
+                      - "true"
+      runtimeClassName: nvidia
     controllers:
       main:
         replicas: 2
@@ -103,6 +106,8 @@ spec:
                   name: immich
               - configMapRef:
                   name: immich-configmap
+            securityContext:
+              supplementalGroups: ["44"]
             env:
               TZ: "${TIMEZONE}"
               NVIDIA_VISIBLE_DEVICES: all

@@ -102,6 +102,8 @@ spec:
                   name: immich
               - configMapRef:
                   name: immich-configmap
+            securityContext:
+              supplementalGroups: ["44"]
             env:
               TZ: "${TIMEZONE}"
               NVIDIA_VISIBLE_DEVICES: all
