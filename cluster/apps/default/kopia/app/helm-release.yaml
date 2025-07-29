@@ -168,11 +168,9 @@ spec:
                   periodSeconds: 15
 
       rclone-setup:
-        enabled: false  # Manual job - set to true when needed
-        type: job
-        job:
-          ttlSecondsAfterFinished: 86400  # Keep pod for 24h after completion
-          backoffLimit: 1
+        enabled: true
+        type: deployment
+        replicas: 0  # Scaled to 0 - manually scale up when needed
         containers:
           main:
             image:
