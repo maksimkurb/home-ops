@@ -73,6 +73,24 @@ spec:
       storage: 1Mi
 
 #################
+# RClone Config #
+#################
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kopia-rclone-config
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 10Mi
+
+
+#################
 # Backup target #
 #################
 # ---

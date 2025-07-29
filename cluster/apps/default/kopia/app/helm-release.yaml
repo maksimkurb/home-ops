@@ -87,35 +87,33 @@ spec:
         enabled: true
         type: configMap
         name: ${APP}
-        advancedMounts:
-          main:
-            main:
-              - path: /config/repository.config
-                subPath: repository.config
-                readOnly: true
-      key:
+        globalMounts:
+          - path: /config/repository.config
+            subPath: repository.config
+            readOnly: true
+      rclone:
         enabled: true
-        type: secret
-        name: ${APP}-keys
-        advancedMounts:
-          main:
-            main:
-              - path: /app/rclone/rclone.conf
-                subPath: rclone.sops.conf
-                readOnly: true
+        type: persistentVolumeClaim
+        existingClaim: kopia-rclone-config
+        globalMounts:
+          - path: /app/rclone
       source:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: kopia-data
-        globalMounts:
-          - path: /data
-            readOnly: true
+        advancedMounts:
+          main:
+            main:
+              - path: /data
+                readOnly: true
       restore:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: kopia-data-rw
-        globalMounts:
-          - path: /data-rw
+        advancedMounts:
+          main:
+            main:
+              - path: /data-rw
       # snapshots:
       #   enabled: true
       #   type: persistentVolumeClaim
@@ -168,3 +166,44 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 15
+
+      rclone-setup:
+        enabled: false  # Manual job - set to true when needed
+        type: job
+        job:
+          ttlSecondsAfterFinished: 86400  # Keep pod for 24h after completion
+          backoffLimit: 1
+        containers:
+          main:
+            image:
+              repository: kopia/kopia:0.21
+              tag: latest
+            env:
+              TZ: "${TIMEZONE}"
+              KOPIA_CONFIG_PATH: /config/repository.config
+              KOPIA_PASSWORD: "${SECRET_KOPIA_REPO_PASSWORD}"
+            command:
+              - /bin/sh
+              - -c
+              - |
+                echo "Starting rclone setup shell..."
+                echo "Available mounts:"
+                echo "  /app/rclone - rclone config directory"
+                echo "  /config/repository.config - kopia repository config"
+                echo ""
+                echo "Example commands:"
+                echo "  rclone config - configure rclone"
+                echo "  rclone lsd remote: - list directories"
+                echo "  kopia repository status - check kopia repo"
+                echo ""
+                echo "Job will sleep for 1 hour. Use 'kubectl exec' to run commands:"
+                echo "kubectl exec -it job/kopia-rclone-setup -- /bin/sh"
+                echo ""
+                sleep 3600
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
