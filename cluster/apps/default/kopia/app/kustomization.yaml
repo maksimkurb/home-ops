@@ -9,9 +9,5 @@ configMapGenerator:
   - name: kopia
     files:
       - repository.config
-secretGenerator:
-  - name: kopia-keys
-    files:
-      - rclone.sops.conf
 generatorOptions:
   disableNameSuffixHash: true
