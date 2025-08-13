@@ -13,7 +13,7 @@ spec:
           serviceAccountName: restart-nvidia-device-plugin
           containers:
             - name: kubectl
-              image: bitnami/kubectl:1.33.3
+              image: bitnami/kubectl:1.33.4
               command:
                 - /bin/sh
                 - -c
