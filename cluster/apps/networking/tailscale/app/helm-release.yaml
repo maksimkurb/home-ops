@@ -34,7 +34,7 @@ spec:
     proxyConfig:
       image:
         repository: ghcr.io/tailscale/tailscale
-        tag: v1.86.2
+        tag: v1.86.5
       defaultTags: "tag:k8s"
     operatorConfig:
       image:
