@@ -71,6 +71,9 @@ spec:
                   secretKeyRef:
                     name: paperless
                     key: PAPERLESS_DBPASS
+              # Configure user ID
+              USERMAP_UID: "777"
+              USERMAP_GID: "777"
               # Enable SSO
               PAPERLESS_APPS: "allauth.socialaccount.providers.openid_connect"
               PAPERLESS_SOCIALACCOUNT_PROVIDERS:
