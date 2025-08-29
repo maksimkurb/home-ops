@@ -100,7 +100,7 @@ spec:
           main:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: v1.139.4
+              tag: v1.140.0
             envFrom:
               - secretRef:
                   name: immich
