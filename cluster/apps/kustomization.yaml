@@ -10,6 +10,7 @@ resources:
   - home
   - kube-system
   - media
+  - messaging
   - monitoring
   - networking
   - security
