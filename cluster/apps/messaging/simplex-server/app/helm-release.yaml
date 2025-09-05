@@ -68,7 +68,7 @@ spec:
               ADDR: "smp.${SECRET_PUBLIC_DOMAIN}"
             envFrom:
               - secretRef:
-                  name: ${APP}
+                  name: ${APP}-secret
     service:
       main:
         controller: main
