@@ -4,7 +4,7 @@
 
 This will set up replication to have your backups sent to a [backblaze](https://www.backblaze.com/) b2 bucket.
 
-1. Create master `key-id` and `key` on [Account > App Keys](https://secure.backblaze.com/app_keys.htm)
+1. Create master `key-id` and `key` on **Account > App Keys**
 
 2. Create a `bucket`, and then a `key-id` and `key` for access only to this new bucket
     ```sh
