@@ -94,7 +94,12 @@ spec:
     service:
       main:
         controller: main
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_SIMPLEX_ADDR}"
         ports:
+          chat:
+            port: 5115
           https:
             port: 443
 
