@@ -95,8 +95,6 @@ spec:
       main:
         controller: main
         ports:
-          http:
-            port: 5223
           https:
             port: 443
 
@@ -119,4 +117,4 @@ spec:
                 pathType: Prefix
                 service:
                   identifier: main
-                  port: http
+                  port: https
