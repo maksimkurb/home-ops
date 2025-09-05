@@ -48,7 +48,6 @@ spec:
         globalMounts:
           - path: /var/opt/simplex
       tls-certs:
-        enabled: false  # Enable if using external certificate management
         type: secret
         name: ${APP}-tls
         globalMounts:
@@ -107,6 +106,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
           hajimari.io/enable: "false"
         hosts:
           - host: "smp.${SECRET_PUBLIC_DOMAIN}"
