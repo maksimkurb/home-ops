@@ -47,6 +47,23 @@ spec:
         retain: true
         globalMounts:
           - path: /var/opt/simplex
+      tls-certs:
+        enabled: false  # Enable if using external certificate management
+        type: secret
+        name: ${APP}-tls
+        globalMounts:
+          - path: /etc/ssl/certs/simplex
+            readOnly: true
+
+    # Pod security context
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        seccompProfile:
+          type: RuntimeDefault
 
     resources:
       requests:
