@@ -12,3 +12,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "smp.${SECRET_PUBLIC_DOMAIN}"
+  privateKey:
+    algorithm: RSA
+    size: 4096
