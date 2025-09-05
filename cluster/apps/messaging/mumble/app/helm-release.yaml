@@ -1,0 +1,89 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.2.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.2.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /data
+
+    # Pod security context
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        seccompProfile:
+          type: RuntimeDefault
+
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        memory: 500Mi
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          main:
+            image:
+              repository: docker.io/mumblevoip/mumble-server
+              tag: v1.4.287-4@sha256:dd6cbd5dc981dc0433edebd7f9aee220431d23600b9ef7109dbe24b0feae6ad1
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: ${APP}-secret
+    service:
+      main:
+        controller: main
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_MUMBLE_ADDR}"
+        ports:
+          http:
+            port: 80
+          control:
+            port: 64738
+            protocol: TCP
+          voice:
+            port: 64738
+            protocol: UDP
