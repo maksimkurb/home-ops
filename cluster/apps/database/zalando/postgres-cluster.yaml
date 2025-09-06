@@ -52,6 +52,7 @@ spec:
     prowlarr: []
     sonarr: []
     radarr: []
+    mumble: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -68,6 +69,7 @@ spec:
     sonarr_log: sonarr
     radarr: radarr
     radarr_log: radarr
+    mumble: mumble
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
