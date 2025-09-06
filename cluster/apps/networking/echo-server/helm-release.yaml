@@ -41,7 +41,7 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
         hosts:
-          - host: &host "echo-server.${SECRET_PUBLIC_DOMAIN}"
+          - host: "echo-server.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -67,7 +67,7 @@ spec:
           # ForwardAuth end
 
         hosts:
-          - host: &host "echo-server-auth.${SECRET_PUBLIC_DOMAIN}"
+          - host: "echo-server-auth.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -79,7 +79,7 @@ spec:
       home:
         enabled: true
         hosts:
-          - host: &host "echo-server.${SECRET_PRIVATE_DOMAIN}"
+          - host: "echo-server.${SECRET_PRIVATE_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
