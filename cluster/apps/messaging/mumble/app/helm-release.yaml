@@ -69,6 +69,11 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
+              # MUMBLE_CONFIG_DB_DRIVER: postgresql
+              # MUMBLE_CONFIG_DB_USERNAME: postgresql
+              # MUMBLE_CONFIG_DB_PASSWORD: postgresql
+              # MUMBLE_CONFIG_DB_HOST: postgresql
+              # MUMBLE_CONFIG_DB_PORT: "5432"
             envFrom:
               - secretRef:
                   name: ${APP}-secret
