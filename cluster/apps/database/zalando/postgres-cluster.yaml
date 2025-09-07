@@ -53,6 +53,7 @@ spec:
     sonarr: []
     radarr: []
     mumble: []
+    teamspeak: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -70,6 +71,7 @@ spec:
     radarr: radarr
     radarr_log: radarr
     mumble: mumble
+    teamspeak: teamspeak
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
