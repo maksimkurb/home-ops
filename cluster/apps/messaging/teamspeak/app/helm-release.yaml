@@ -85,9 +85,9 @@ spec:
           voice:
             port: 9987
             protocol: UDP
-          webquery_http:
+          webquery-http:
             port: 10080
-          serverquery_ssh:
+          serverquery-ssh:
             port: 10022
             protocol: TCP
           filetransfer:
