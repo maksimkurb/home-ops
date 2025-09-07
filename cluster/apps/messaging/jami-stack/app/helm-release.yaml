@@ -48,6 +48,7 @@ spec:
           coturn:
             main:
               - path: /etc/coturn/turnserver.conf
+                subPath: config
                 readOnly: true
       coturn-certificate:
         enabled: true
@@ -103,7 +104,7 @@ spec:
               repository: coturn/coturn
               tag: 4.7.0
               pullPolicy: IfNotPresent
-            command: ["docker-entrypoint.sh", "-c", "/etc/coturn/turnserver.conf"]
+            command: ["turnserver", "-c", "/etc/coturn/turnserver.conf"]
             env:
               TZ: "${TIMEZONE}"
             envFrom:
@@ -184,8 +185,6 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-          kubernetes.io/ingress.allow-http: "false"
           hajimari.io/enable: "false"
         hosts:
           - host: "dhtproxy.${SECRET_PUBLIC_DOMAIN}"
