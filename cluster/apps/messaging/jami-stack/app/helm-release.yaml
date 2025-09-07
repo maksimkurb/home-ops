@@ -91,7 +91,7 @@ spec:
               repository: ghcr.io/savoirfairelinux/opendht/opendht-alpine
               tag: v3.5.2
               pullPolicy: IfNotPresent
-            args: ["-b", "bootstrap.jami.net", "-f", "/data/state.db", "-p", "4222", "--proxyserver", "4223", "-s"]
+            command: ["dhtnode", "-b", "bootstrap.jami.net", "-f", "/data/state.db", "-p", "4222", "--proxyserver", "4223", "-s"]
             env:
               TZ: "${TIMEZONE}"
       coturn:
