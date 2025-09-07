@@ -88,7 +88,7 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/savoirfairelinux/opendht/opendht-alpine
+              repository: ghcr.io/savoirfairelinux/opendht/opendht
               tag: v3.5.2
               pullPolicy: IfNotPresent
             command: ["dhtnode", "-b", "bootstrap.jami.net", "-f", "/data/state.db", "-p", "4222", "--proxyserver", "4223", "-s"]
@@ -101,7 +101,7 @@ spec:
           main:
             image:
               repository: coturn/coturn
-              tag: v3.5.2
+              tag: 4.7.0
               pullPolicy: IfNotPresent
             args: ["-c", "/etc/coturn/turnserver.conf"]
             env:
