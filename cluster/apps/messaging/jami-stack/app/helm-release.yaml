@@ -180,6 +180,7 @@ spec:
     ingress:
       dht-proxy:
         enabled: true
+        forceRename: jami-stack-dht-proxy
         className: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
@@ -196,6 +197,7 @@ spec:
                   port: dht-proxy
       coturn:
         enabled: true
+        forceRename: jami-stack-coturn
         className: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
