@@ -42,7 +42,7 @@ spec:
               - path: /data/
       coturn-config:
         enabled: true
-        type: configMap
+        type: secret
         name: ${APP}-coturn
         advancedMounts:
           coturn:
