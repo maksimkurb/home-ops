@@ -5,7 +5,7 @@ type: Opaque
 metadata:
     name: ${APP}-coturn
 stringData:
-    config: ENC[AES256_GCM,data:vNtOsW46tOl2CAyd2Y5Jju/gsH+32X3z6eKjwl37MucINr14/xQ+9R9bzNirf7QEFf62Km7zmnI9wwLVQyLVUeSuZZBa6TsCV0yrvUdHXw6JR2d0wjPrDLT/gsUs/JUoLGWk2s+ULzfytdowc7kGuSFbDXSJIzqELO0JH1ys+ZkIVKAYkr+ve3y/9uvsP8rmtHh3p6NyxUASuoMkg1mYtlPakWQA28F9LcNcdYxkx2fRE1jLAhZQ+cgxuI5QlVzhZSFZFkvo8/Wa/gFKd6CJHGWQBICBvhGz7BVQsJOzwwQVBSG1o16yhRwTvLGiTOUEEncOzN4Ps25zkUvfnBr9ViNtIen8QCLvayjopWp8HTj7cRHS3AgL8tUj5Dwsof4=,iv:udVqz0IwcjHPhwHB37gHpNKjeDT4K58bHfgzlInxSLs=,tag:gL/bY2+TXjq5Br6eZWKZRA==,type:str]
+    config: ENC[AES256_GCM,data:u5tKVFrx4DLsx1tSguP92+hDmKTHzlPDUdB43rlbG3xcwGWvEYx28X8+FqHfGgEuMRUyXlfEnT859yvbZjC53BqY1uBWuFB0vn6KX4t3thVDaeFhjkgsWWxh8QwQXYRvhlyZTFYkVgkju5tjcBbqSZQlvc7uH688lfMVHhXM3X/HDXzCCUXi/ekluJVFtWHGYAeU4MnlC1TqYrk9lmZwKqYj9hDVUAqh72gSwX/ABGNY636Z+OmtZr/efZ3cifupNf6Hqd8cSXdM124katksB7QrxpXE9wWgALZjma+93Ri8R0DcdIomDORvyjMYIy2PGiQlX33AI5Ra+vZfzr4wnAQhUk9tQMGQ5XT4ninGg7chneF08iugHfvBf4oqHqv1SVCi4E+BQTbZy7mczgx6hWPo64hYaJKctJzyHHvB5BDzgYD+dUGOJGXV7v4eJk1V,iv:VnI6JYXFPqojLLvK9UYQhoOkE040wVTcu7lh6aEz9ZY=,tag:nq9cd2aFzT/kEkJI9p4dog==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -21,8 +21,8 @@ sops:
             Y0xtbEZ2T2VDdDBZL3pmU0tDMXM0MDgKfHS00YEmnimxwBhlHTNtwhDmv8MUCa2L
             Np7s6gFDEq9NnQVFmnBU3d7fjZ7aWVmZFTY7K3iDe+xULgAndV2kUg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-09-07T17:16:14Z"
-    mac: ENC[AES256_GCM,data:idEfr20GqkaLr/z3Hda9ZDv4xMVy5AnlDZLZDPgXFSXngf5p7cb6DWMShGaq3AKmXeJNOPhHgdtLJiwN6UEuTKtfXfDYC86wC8h2sNgyYCwlN/dphvSCIndr9oPzRyDSNIquS3G4XnHBxjk5dy8NG6o3Hsoc19JeS3OSRfjlcqk=,iv:M3Xi02bQBef4LSy1Crr4cdYFZz3bI4Rrl2ojiB2QoFc=,tag:R2KRc5tENJBqgrSp5xbPxg==,type:str]
+    lastmodified: "2025-09-07T17:26:39Z"
+    mac: ENC[AES256_GCM,data:Stmnf1enoy6IIM0btUNqCInTxAMZn5uDIgWmJZ+gJGOd/JU0h9aQofPqKKNGulfZEhxLAL2S4jC+t3SEwpNfa8W8lw7/oWkmmRVVELjqe+RPKBHeD6cZoIC8GV+OWDE+0NHbslcyxZveaJA2GabDDmZ8Jnm9yTlYZ53j2DD3K3Y=,iv:7P15irDOK70VcaEm/EzQN7ZvzPrC/FWyVLhG+RDWc0E=,tag:F5NmxLFCvazDOXCDqs/T7A==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.7.3
