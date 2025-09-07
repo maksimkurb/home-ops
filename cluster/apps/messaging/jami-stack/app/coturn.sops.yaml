@@ -5,7 +5,7 @@ type: Opaque
 metadata:
     name: ${APP}-coturn
 stringData:
-    config: ENC[AES256_GCM,data:S0mTjzUpWxwPiqYFizMEqF7HHqNINFdMEArKxiUUF68Ss2wyOP2oNGxmd8DP3vePZXlHupurepFTKHGRTlT571LXxGidLEmNVQD291gJV3Qrdu/gzbm53QOtdZH37B8jBtK1uigipvEJ3EAwnKZtSERbgj/Mage1wPEsZGL+NF6KsqmEJ73CN31StdTcKc7EvSMtWagq3VBKLzWgPhG5uUg3acJwwZLEQTbjpXHnPDvwNDF7xdXl+qlthzCa2FrkS+/y6VpdhFwR1PBrAUjzgejWZ/VDoq3CvUdyyZEIZGRYmwlSZvWgwx4jhDZz/AwEntZlsuV7TnB/AQrHceq7KOGpkS8jjZ999wIbkXxNQcKGjwXj4m6Y+U+3JUiUaRwfGzduEPccUBIR+FNAlKo3UVHRHQM2tMGg4CQ13PKwMN5Exvhmxpf+rpvoc0LqLVNT0MN8IrxeQQDRTL2t,iv:vcuVsGdfJyZvibKB3lKLu2r7n5UR0Nr9eHhcoV6M4r4=,tag:8etTQICdlh182XLRvrZppw==,type:str]
+    config: ENC[AES256_GCM,data:qICbsUiXyQZIfRC0zmMV4FD1wuLRHyfpZqpjT1Q/W7Zo9RSTi4ylnwGACMN6nSfQjfLEpbFRgIe7Y0KbSPf1nYk0pZ8evoJPI8BkjY4ixh2uGlAXmPWurJ319bIe9N6Z0Fs0b0gryWLUauje5JSkOm+Cdi2Oy84z/tfAChLu9k9YV4U4E7QJt/0dFXnVlP+cyNU87op55p3TioO+8e3iOBq08JxvtorelS789C/FbxjU6qbiYdVa3slT3NS2sSE26xy9NZ+aSIZAlDSw4MT5i+feGSrpUK4nV8rU9cSUEDUx+JZiZPweIRCSSkxaizC4yj07hcggvnyuOLxKqz2TQ885n+m1tzX0qCTrSf3XKKssBerZu99BkU5TK+qb1G2JcztPvVX/AB892VtOliYWkgPOD8rY8eWLwDcvZ6EcmB+lKievY3WS03O7HibtbaQ67OwPqQhsmXkHO8ZMsltXGp5AH5vGBzl5AWGAxH8UKN0YY6ZuI6upbEID1bT1J/s5luE4ynAH4Qe1LEgADS1hpIA6Y3jD3DmV35ard2Mt4/BpSWzmHPgDcx1PdUfEK2b+Me7o5wXJqIZNfSl7OgRnKz+NVHHcS9iQAt/dp9b0ba68xx9f/2g=,iv:ABGhgYGJEhA+Cbncs/tzldtjFG7JfVmU4b+HIb236TE=,tag:E3H9wPrtpwPoNc4m522z3Q==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -21,8 +21,8 @@ sops:
             Y0xtbEZ2T2VDdDBZL3pmU0tDMXM0MDgKfHS00YEmnimxwBhlHTNtwhDmv8MUCa2L
             Np7s6gFDEq9NnQVFmnBU3d7fjZ7aWVmZFTY7K3iDe+xULgAndV2kUg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-09-07T17:27:37Z"
-    mac: ENC[AES256_GCM,data:lXzVSnC+x76Z3l9zRxYFUN7I3KVt188Fjk68JrO729/l61g5PCRjWUhH84Z/cn+2qTGe/scd0IjFqllwMpj1AtSYSkWVRcGgKLeqU3ZIEXiuhBc9a1/3E4oEo1GM1X+sppgGmhtfZRGIqALN6k/kQrRu8vL1Ixb3K0zLN20s3Ss=,iv:Xy18g1C7rFUhnRl+p15VNoShQRgFRrzBkm5/ia5kAK0=,tag:IyyVuGPM5D+AHoNsIKXa5Q==,type:str]
+    lastmodified: "2025-09-07T17:41:29Z"
+    mac: ENC[AES256_GCM,data:sBjAE0Gfd8yPMAwZK89UK3Qlji7RuKgdHBVS1dQrNMf6NscvRrgoCCqPszXP+nyMKsffIHBGVRWu+ARw3ts1QRTsWfTPef5I/H8S1Hl1HofTt40uR8MMwfI09JnvnhV5Rqb0wnBJ5H9rWqZQvTlsKdIA4EO8KqLd5jiU/NaCctc=,iv:tpovBeg55G4pAWt70Shmg0io4s9nX5Qta6Eh/YprNig=,tag:hzs1+ZQENVs1zAz1Hk+hyQ==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.7.3
