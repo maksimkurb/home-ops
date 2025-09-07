@@ -103,7 +103,7 @@ spec:
               repository: coturn/coturn
               tag: 4.7.0
               pullPolicy: IfNotPresent
-            args: ["-c", "/etc/coturn/turnserver.conf"]
+            command: ["docker-entrypoint.sh", "-c", "/etc/coturn/turnserver.conf"]
             env:
               TZ: "${TIMEZONE}"
             envFrom:
