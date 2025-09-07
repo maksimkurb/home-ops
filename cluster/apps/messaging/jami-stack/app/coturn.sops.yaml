@@ -1,0 +1,28 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+    name: ${APP}-coturn
+stringData:
+    config: ENC[AES256_GCM,data:YsDShtortufyyt2/WK2LESXx0qCNmrQztELMX0IYHgua3tZk9OxBNEFNdbg7K9H+/WGMHFIAdMwLG7tlsPgvxUhi0oHx7lZGuNtZ1GIpT7SJabsGpsZ9Ndu67YJkxMC7lmz76IY0MHqNF/NsfBrEPi9TJz4wJ27tO8SHix5cB7n7DOhVHs3o7HFFJ3ieIlUu9Zlkux35L3pdwQnhTeIhACMCuWzF8S6IL2JLOOR0ZWsrg8qujTjcaJ+Ehn1nvuzyQDdAhn1/AO1M2okneTit2lfxtb8T1ASL5Xv06L1BKqXTk3FNVZvqupdcjQ==,iv:c2hajnpPb+2NZvE9D4szRRTW104EGXrAEj10Lnwkw1Y=,tag:k6afx0GN6VtA5Jhk6os8/A==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4UFBGNG5kbmFtbmVCNFNy
+            d01TWldLTUZBdU4zNVlFaDFtWGR1T2IrcDBVCm5GSDVhZVdUMDdEcVhxQjQzaS9X
+            d2ZOQmI4Nms1RHVDYlBZNHBIMFhKV1EKLS0tIGp0VGZVNWMzMW5FTDN3NDIxbExy
+            Y0xtbEZ2T2VDdDBZL3pmU0tDMXM0MDgKfHS00YEmnimxwBhlHTNtwhDmv8MUCa2L
+            Np7s6gFDEq9NnQVFmnBU3d7fjZ7aWVmZFTY7K3iDe+xULgAndV2kUg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-09-07T16:55:30Z"
+    mac: ENC[AES256_GCM,data:HkLu4TZtNiDPDDdBK0bfMSQQwfCAf67k1SpsPrhj7BCuznGmkmRZwcmm8QAM/RJ28EeeyMkyS2tTiHiJxAinVu1qWhyZOBrJ6gInPqOinYtnR0KZXnaLrg4NV2+4UFDW0FkOfxfBka7z5HSs9GG009F4YxXcy/s6O+OL8p8wMuE=,iv:uPaugNNknbB5gwpfWowYtKINyUZSKHGJ2Do/7pWmho8=,tag:b/mIFcmWJJMKPhv52BFYWw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.7.3

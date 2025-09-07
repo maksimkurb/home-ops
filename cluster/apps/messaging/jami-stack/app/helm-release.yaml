@@ -1,0 +1,189 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.2.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.2.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    persistence:
+      opendht-data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        advancedMounts:
+          opendht:
+            main:
+              - path: /data/
+      coturn-config:
+        enabled: true
+        type: configMap
+        name: ${APP}-coturn
+        advancedMounts:
+          coturn:
+            main:
+              - path: /etc/coturn/turnserver.conf
+                readOnly: true
+      coturn-certificate:
+        enabled: true
+        type: secret
+        name: ${APP}-turn-tls
+        advancedMounts:
+          coturn:
+            main:
+              - path: /usr/local/etc/turn_server_cert.pem
+                subPath: tls.crt
+                readOnly: true
+              - path: /usr/local/etc/turn_server_pkey.pem
+                subPath: tls.key
+                readOnly: true
+
+    # Pod security context
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        seccompProfile:
+          type: RuntimeDefault
+
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        memory: 500Mi
+
+    controllers:
+      opendht:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/savoirfairelinux/opendht/opendht-alpine
+              tag: v3.5.2
+              pullPolicy: IfNotPresent
+            args: ["-b", "bootstrap.jami.net", "-f", "/data/state.db", "-p", "4222", "--proxyserver", "4223", "-s"]
+            env:
+              TZ: "${TIMEZONE}"
+      coturn:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: coturn/coturn
+              tag: v3.5.2
+              pullPolicy: IfNotPresent
+            args: ["-c", "/etc/coturn/turnserver.conf"]
+            env:
+              TZ: "${TIMEZONE}"
+            envFrom:
+              - secretRef:
+                  name: ${APP}-coturn
+    service:
+      opendht:
+        controller: opendht
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_JAMI_OPENDHT_ADDR}"
+        ports:
+          dht-proxy:
+            port: 4223
+            protocol: TCP
+          dht:
+            port: 4222
+            protocol: UDP
+      coturn:
+        controller: coturn
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_JAMI_COTURN_ADDR}"
+        ports:
+          turn-tcp:
+            port: 3478
+            protocol: TCP
+          turn-udp:
+            port: 3478
+            protocol: UDP
+          turn-tls-tcp:
+            port: 5349
+            protocol: TCP
+          turn-tls-udp:
+            port: 5349
+            protocol: UDP
+          turn-relay-49160:
+            port: 49160
+            protocol: UDP
+          turn-relay-49161:
+            port: 49161
+            protocol: UDP
+          turn-relay-49162:
+            port: 49162
+            protocol: UDP
+          turn-relay-49163:
+            port: 49163
+            protocol: UDP
+          turn-relay-49164:
+            port: 49164
+            protocol: UDP
+          turn-relay-49165:
+            port: 49165
+            protocol: UDP
+          turn-relay-49166:
+            port: 49166
+            protocol: UDP
+          turn-relay-49167:
+            port: 49167
+            protocol: UDP
+          turn-relay-49168:
+            port: 49168
+            protocol: UDP
+          turn-relay-49169:
+            port: 49169
+            protocol: UDP
+          turn-relay-49170:
+            port: 49170
+            protocol: UDP
+    ingress:
+      coturn:
+        enabled: true
+        className: "nginx"
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+          hajimari.io/enable: "false"
+        hosts:
+          - host: "turn.${SECRET_PUBLIC_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix

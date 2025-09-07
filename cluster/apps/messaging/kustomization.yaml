@@ -5,4 +5,5 @@ resources:
   - namespace.yaml
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
+  - ./jami-stack/ks.yaml
   # - ./simplex-server/ks.yaml
