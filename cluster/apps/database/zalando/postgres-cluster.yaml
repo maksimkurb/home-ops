@@ -54,6 +54,7 @@ spec:
     radarr: []
     mumble: []
     teamspeak: []
+    coturn: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -72,6 +73,7 @@ spec:
     radarr_log: radarr
     mumble: mumble
     teamspeak: teamspeak
+    coturn: coturn
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
