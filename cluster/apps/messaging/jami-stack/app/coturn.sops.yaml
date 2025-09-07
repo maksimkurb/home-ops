@@ -5,7 +5,7 @@ type: Opaque
 metadata:
     name: ${APP}-coturn
 stringData:
-    config: ENC[AES256_GCM,data:763pzW/9QumFb03Fsm4dk9YL58u/QYLQh2p+7ObpxesrdQBYur/Jqceoa0okAPqwTgWYePo1m55pyfXV9qBu8zKVlK0l5JwOXnswV45KY5N2YVvf3nDeJKcEHRWouNrR1Jsn07Kfdtw4CP1NvMEZsvMrl4KHLgWxEbDsR47kYg0uZzzjqZq05ffNLTvyu/97b16W5kflFZoSaQZ4ii6zc52yWT+J132VkprlgzoeS1ajUljJx8jbm/+VNMvy1Cbr0+vlSiItmlLETQlV1G+HIOijX5xsBWMEtSDireUW4FV7GuYZYeAzEeeEYEzdMaxTyNDB6XiyG1mLVj8djJ4emeSa58vy3nJU7qTEdqLYfg==,iv:wvwv+kyAGFGZObhi+0K1az7dFkDtFLd188xD4KVV8Hw=,tag:avC2F4kwTfn/hZAWv8uaLA==,type:str]
+    config: ENC[AES256_GCM,data:vNtOsW46tOl2CAyd2Y5Jju/gsH+32X3z6eKjwl37MucINr14/xQ+9R9bzNirf7QEFf62Km7zmnI9wwLVQyLVUeSuZZBa6TsCV0yrvUdHXw6JR2d0wjPrDLT/gsUs/JUoLGWk2s+ULzfytdowc7kGuSFbDXSJIzqELO0JH1ys+ZkIVKAYkr+ve3y/9uvsP8rmtHh3p6NyxUASuoMkg1mYtlPakWQA28F9LcNcdYxkx2fRE1jLAhZQ+cgxuI5QlVzhZSFZFkvo8/Wa/gFKd6CJHGWQBICBvhGz7BVQsJOzwwQVBSG1o16yhRwTvLGiTOUEEncOzN4Ps25zkUvfnBr9ViNtIen8QCLvayjopWp8HTj7cRHS3AgL8tUj5Dwsof4=,iv:udVqz0IwcjHPhwHB37gHpNKjeDT4K58bHfgzlInxSLs=,tag:gL/bY2+TXjq5Br6eZWKZRA==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -21,8 +21,8 @@ sops:
             Y0xtbEZ2T2VDdDBZL3pmU0tDMXM0MDgKfHS00YEmnimxwBhlHTNtwhDmv8MUCa2L
             Np7s6gFDEq9NnQVFmnBU3d7fjZ7aWVmZFTY7K3iDe+xULgAndV2kUg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-09-07T17:05:18Z"
-    mac: ENC[AES256_GCM,data:IBm8iJDYZtuL//bLV4kS8eDetEc18zBmsUVGJrungIEVz4vkQub7WOd4cbrakdJOY0KMa5mZCf8WI+UHK+nUJu2grN6RVzWtSUEg+aSnnbiW7HqfdgdjhDTAoTKY+yOXxcX6ccJh8JaplDMTkP30exIQNKsjtI33zaqTLji4WcE=,iv:Y+uLHx6tOaU/wWuazikQ3j/9kUst5w8126qlHzNCTts=,tag:9GZlWg3sVrBweMfrhpQeFg==,type:str]
+    lastmodified: "2025-09-07T17:16:14Z"
+    mac: ENC[AES256_GCM,data:idEfr20GqkaLr/z3Hda9ZDv4xMVy5AnlDZLZDPgXFSXngf5p7cb6DWMShGaq3AKmXeJNOPhHgdtLJiwN6UEuTKtfXfDYC86wC8h2sNgyYCwlN/dphvSCIndr9oPzRyDSNIquS3G4XnHBxjk5dy8NG6o3Hsoc19JeS3OSRfjlcqk=,iv:M3Xi02bQBef4LSy1Crr4cdYFZz3bI4Rrl2ojiB2QoFc=,tag:R2KRc5tENJBqgrSp5xbPxg==,type:str]
     pgp: []
     encrypted_regex: ^(data|stringData)$
     version: 3.7.3
