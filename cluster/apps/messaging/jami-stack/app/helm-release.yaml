@@ -128,6 +128,9 @@ spec:
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_JAMI_COTURN_ADDR}"
         ports:
+          web-admin:
+            port: 8080
+            protocol: TCP
           turn-tcp:
             port: 3478
             protocol: TCP
@@ -181,9 +184,14 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          kubernetes.io/ingress.allow-http: "false"
           hajimari.io/enable: "false"
         hosts:
           - host: "turn.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  identifier: coturn
+                  port: web-admin
