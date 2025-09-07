@@ -1,0 +1,95 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.2.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.2.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /var/tsserver/
+
+    # Pod security context
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        seccompProfile:
+          type: RuntimeDefault
+
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        memory: 500Mi
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          main:
+            image:
+              repository: teamspeaksystems/teamspeak6-server
+              tag: v6.0.0-beta6
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE}"
+              TSSERVER_LICENSE_ACCEPTED: "accept"
+              TSSERVER_QUERY_SSH_ENABLED: "true"
+              TSSERVER_QUERY_HTTP_PORT: "true"
+            envFrom:
+              - secretRef:
+                  name: ${APP}-secret
+    service:
+      main:
+        controller: main
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: "${SVC_TEAMSPEAK_ADDR}"
+        ports:
+          voice:
+            port: 9987
+            protocol: UDP
+          webquery_http:
+            port: 10080
+          serverquery_ssh:
+            port: 10022
+            protocol: TCP
+          filetransfer:
+            port: 30033
+            protocol: TCP
