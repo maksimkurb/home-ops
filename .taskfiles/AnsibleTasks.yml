@@ -27,6 +27,13 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-server-install.yaml {{ .CLI_ARGS }}"
 
+
+  playbook:signal-tls-proxy-install:
+    desc: Configure VPN Server
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/signal-tls-proxy-install.yaml {{ .CLI_ARGS }}"
+
   playbook:cctv-install:
     desc: Prepare CCTV node
     dir: provision/ansible

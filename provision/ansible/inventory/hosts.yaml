@@ -20,6 +20,10 @@ vpn-server:
   hosts:
     vps-1: {}
 
+signal-tls-proxy:
+  hosts:
+    vps-1: {}
+
 # vpn-gateway:
 #   hosts:
 #     vpn-gateway1: {}

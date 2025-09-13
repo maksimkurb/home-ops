@@ -1,0 +1,4 @@
+---
+enable_signal_tls_proxy: true
+traefik_network_name: "traefik"
+signal_tls_proxy_domain: "signal-tls-proxy.example.com"

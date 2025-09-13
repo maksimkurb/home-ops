@@ -1,0 +1,21 @@
+services:
+  nginx-relay:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.signal-tls-proxy.tls=true"
+      - "traefik.tcp.routers.signal-tls-proxy.entrypoints=websecure"
+      - "traefik.tcp.routers.signal-tls-proxy.tls.certresolver=le"
+      - "traefik.tcp.services.signal-tls-proxy.loadbalancer.server.port=4433"
+      - "traefik.tcp.routers.signal-tls-proxy.rule=HostSNI(`{{ signal_tls_proxy_domain }}`)"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; /opt/nginx/sbin/nginx -s reload; done & /opt/nginx/sbin/nginx -c /etc/nginx/conf.d/nginx.conf -g \"daemon off;\"'"
+
+networks:
+  traefik:
+    external: true
+    name: {{ traefik_network_name }}

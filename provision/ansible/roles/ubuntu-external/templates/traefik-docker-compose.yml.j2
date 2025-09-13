@@ -10,6 +10,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
+      - ./acme:/acme
     command:
       # Core configuration
       - "--global.sendanonymoususage=false"
@@ -42,7 +43,7 @@ services:
 
       # Certificate resolver configuration
       - "--certificatesresolvers.le.acme.email={{ acme_email }}"
-      - "--certificatesresolvers.le.acme.storage=/acme.json"
+      - "--certificatesresolvers.le.acme.storage=/acme/acme.json"
       - "--certificatesresolvers.le.acme.tlschallenge=true"
 
     environment:
