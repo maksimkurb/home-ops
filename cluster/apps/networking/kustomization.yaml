@@ -8,6 +8,6 @@ resources:
   - echo-server
   - ./ingress-nginx/ks.yaml
   - external-dns
-  - k8s-gateway
+  - ./k8s-gateway/ks.yaml
   - speedtest
   - ./metallb/ks.yaml

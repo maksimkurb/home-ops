@@ -7,6 +7,7 @@
   ready
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
+    apex ${INGRESS_HAPROXY_IP}
     fallthrough
   }
   forward . 1.1.1.1 1.0.0.1
