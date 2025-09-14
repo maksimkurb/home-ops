@@ -6,7 +6,7 @@ resources:
   # - ./cloudflared/ks.yaml
   - ./tailscale/ks.yaml
   - echo-server
-  - ingress-nginx
+  - ./ingress-nginx/ks.yaml
   - external-dns
   - k8s-gateway
   - speedtest
