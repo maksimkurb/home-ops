@@ -13,8 +13,7 @@ nvidia:
 
 ubuntu:
   hosts:
-    k3s-home:
-      haproxy_enabled: true
+    k3s-home: {}
     vps-1: {}
 
 vpn-server:
