@@ -67,11 +67,8 @@
           "${distro_id} ${distro_codename}-updates";
       };
       Unattended-Upgrade::Package-Blacklist {
-          "nvidia-container-toolkit";
-          "nvidia-headless-\\d+-server";
-          "libnvidia-encode-\\d+-server";
-          "libnvidia-decode-\\d+-server";
-          "nvidia-utils-\\d+-server";
+          "nvidia-";
+          "libnvidia-";
       };
 
 - name: Start unattended-upgrades service

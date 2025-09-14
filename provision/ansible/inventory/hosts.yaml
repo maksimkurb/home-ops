@@ -3,17 +3,17 @@ kubernetes:
   children:
     master:
       hosts:
-        k3s-home: {}
+        k3s-server: {}
     worker:
       hosts: {}
 
 nvidia:
   hosts:
-    k3s-home: {}
+    k3s-server: {}
 
 ubuntu:
   hosts:
-    k3s-home: {}
+    k3s-server: {}
     vps-1: {}
 
 vpn-server:

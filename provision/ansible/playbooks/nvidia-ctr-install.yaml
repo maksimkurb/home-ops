@@ -38,10 +38,10 @@
       ansible.builtin.apt:
         name:
           - nvidia-container-toolkit
-          - nvidia-headless-550-server
-          - libnvidia-encode-550-server
-          - libnvidia-decode-550-server
-          - nvidia-utils-550-server
+          - nvidia-headless-570-server
+          - libnvidia-encode-570-server
+          - libnvidia-decode-570-server
+          - nvidia-utils-570-server
         install_recommends: false
         update_cache: true
         cache_valid_time: 3600
@@ -50,6 +50,13 @@
       register: apt_install_nvidia_ctr
       retries: 5
       until: apt_install_nvidia_ctr is success
+
+    - name: Enable no-cgroups in nvidia-container-runtime config
+      ansible.builtin.lineinfile:
+        path: /etc/nvidia-container-runtime/config.toml
+        regexp: '^#\s*no-cgroups = false'
+        line: 'no-cgroups = false'
+        backup: yes
 
     - name: Restart k3s-agent service
       ansible.builtin.service:
