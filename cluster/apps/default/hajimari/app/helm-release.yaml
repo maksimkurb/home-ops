@@ -83,18 +83,9 @@ spec:
               icon: mdi:cctv
         - group: Status
           bookmarks:
-            - name: Status (Freshping)
-              url: "https://status.cubly.ru"
-              icon: mdi:check-decagram-outline
-            - name: Status (Internal)
-              url: "https://uptime-kuma.cubly.ru/status/public"
-              icon: mdi:check-decagram-outline
             - name: Status (External)
               url: "https://uptime-kuma.svc.kurb.me/status/public"
               icon: mdi:check-decagram-outline
-            - name: Uptime (Internal)
-              url: "https://uptime-kuma.cubly.ru"
-              icon: mdi:checkbox-multiple-marked-circle-outline
             - name: Uptime (External)
               url: "https://uptime-kuma.svc.kurb.me"
               icon: mdi:checkbox-multiple-marked-circle-outline
@@ -126,7 +117,8 @@ spec:
         ingressClassName: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
           nginx.ingress.kubernetes.io/auth-url: |-

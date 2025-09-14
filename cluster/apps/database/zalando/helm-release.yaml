@@ -164,7 +164,7 @@ spec:
     # configure behavior of load balancers
     configLoadBalancer:
       # DNS zone for cluster DNS name when load balancer is configured for cluster
-      db_hosted_zone: pg.cubly.ru
+      db_hosted_zone: ${SECRET_PG_DOMAIN}
       # annotations to apply to service when load balancing is enabled
       # custom_service_annotations:
       #   keyx: valuez

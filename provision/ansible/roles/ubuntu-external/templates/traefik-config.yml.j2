@@ -1,0 +1,25 @@
+# Traefik dynamic configuration file
+# This file is managed by Ansible and will be overridden by your variables
+
+{% if traefik_file_config is defined %}
+{% if traefik_file_config is string %}
+{{ traefik_file_config | from_yaml | to_nice_yaml }}
+{% else %}
+{{ traefik_file_config | to_nice_yaml }}
+{% endif %}
+{% else %}
+# No custom configuration defined
+# Define traefik_file_config in your vars to add custom routes, middlewares, etc.
+# Example:
+# traefik_file_config:
+#   http:
+#     routers:
+#       my-router:
+#         rule: "Host(`example.com`)"
+#         service: "my-service"
+#     services:
+#       my-service:
+#         loadBalancer:
+#           servers:
+#             - url: "http://backend:8080"
+{% endif %}

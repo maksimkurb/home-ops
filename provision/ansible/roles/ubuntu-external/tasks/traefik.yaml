@@ -25,6 +25,14 @@
     group: root
     mode: '0644'
 
+- name: Traefik / Create config file
+  template:
+    src: traefik-config.yml.j2
+    dest: "/opt/traefik/traefik-config.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Traefik / Deploy with docker-compose
   community.docker.docker_compose_v2:
     project_src: "/opt/traefik"

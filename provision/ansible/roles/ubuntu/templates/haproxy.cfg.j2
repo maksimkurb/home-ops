@@ -1,0 +1,69 @@
+global
+    daemon
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+
+defaults
+    mode tcp
+    option dontlognull
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+# Statistics interface
+listen stats
+    bind *:{{ haproxy_stats_port }}
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 30s
+    stats admin if TRUE
+    stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}
+
+# HTTP frontend (for redirects and health checks)
+frontend k3s_http
+    bind *:80
+    mode http
+    option forwardfor
+    # Redirect HTTP to HTTPS
+    redirect scheme https code 301 if !{ ssl_fc }
+    default_backend k3s_http_backend
+
+# HTTPS frontend (TLS passthrough)
+frontend k3s_https
+    bind *:443
+    mode tcp
+
+    option tcplog
+
+    # Wait for a client hello for at most 5 seconds
+    tcp-request inspect-delay 5s
+    tcp-request content accept if { req_ssl_hello_type 1 }
+
+    # TLS passthrough - no decryption
+    default_backend k3s_https_backend
+
+# HTTP backend (for redirects)
+backend k3s_http_backend
+    mode http
+    option forwardfor
+    option httpchk GET /healthz
+    server k3s-http {{ k3s_loadbalancer_ip }}:80 check inter 5000ms fall 3 rise 2 send-proxy-v2
+
+# HTTPS backend (TLS passthrough)
+backend k3s_https_backend
+    mode tcp
+    option tcp-check
+    tcp-check connect
+    # Preserve client IP at TCP level
+    server k3s-https {{ k3s_loadbalancer_ip }}:443 check inter 5000ms fall 3 rise 2 send-proxy-v2

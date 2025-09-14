@@ -1,0 +1,6 @@
+---
+
+k3s_loadbalancer_ip: "10.5.0.100"
+haproxy_stats_port: "8404"
+haproxy_stats_user: "admin"
+haproxy_stats_password: "changeme123"

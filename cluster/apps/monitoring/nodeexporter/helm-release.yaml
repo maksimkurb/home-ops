@@ -43,7 +43,7 @@ spec:
             target_label: nodename
           - action: replace
             regex: (.*)
-            replacement: $1.k8s.cubly.ru:9100
+            replacement: $1.${SECRET_K8S_DOMAIN}:9100
             source_labels:
               - kubernetes_node
             target_label: instance

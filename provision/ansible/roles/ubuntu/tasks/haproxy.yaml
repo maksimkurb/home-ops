@@ -1,0 +1,38 @@
+---
+- name: Install HAProxy package
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+
+- name: Create HAProxy configuration directory
+  ansible.builtin.file:
+    path: /etc/haproxy
+    state: directory
+    mode: '0755'
+
+- name: Deploy HAProxy configuration for K3s TLS passthrough
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    backup: true
+    mode: '0644'
+    owner: root
+    group: root
+  register: haproxy_config
+
+- name: Enable and start HAProxy service
+  ansible.builtin.systemd_service:
+    name: haproxy
+    enabled: true
+    state: started
+
+- name: Verify HAProxy configuration syntax
+  ansible.builtin.command:
+    cmd: haproxy -f /etc/haproxy/haproxy.cfg -c
+  changed_when: false
+
+- name: Restart HAProxy when configuration changes
+  ansible.builtin.systemd_service:
+    name: haproxy
+    state: restarted
+  when: haproxy_config.changed

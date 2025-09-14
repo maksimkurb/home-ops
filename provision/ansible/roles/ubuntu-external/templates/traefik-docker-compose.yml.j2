@@ -11,6 +11,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
       - ./acme:/acme
+      - ./traefik-config.yml:/etc/traefik/config.yml:ro
     command:
       # Core configuration
       - "--global.sendanonymoususage=false"
@@ -41,13 +42,28 @@ services:
       - "--providers.docker.network={{ traefik_network_name }}"
       - "--providers.docker.defaultrule=Host(`{% raw %}{{ trimPrefix \"/\" .Name }}{% endraw %}.{{ traefik_base_domain }}`)"
 
+      # File provider configuration
+      - "--providers.file.filename=/etc/traefik/config.yml"
+      - "--providers.file.watch=true"
+
       # Certificate resolver configuration
       - "--certificatesresolvers.le.acme.email={{ acme_email }}"
       - "--certificatesresolvers.le.acme.storage=/acme/acme.json"
       - "--certificatesresolvers.le.acme.tlschallenge=true"
 
+      # Custom command arguments
+{% if traefik_custom_command_arguments is defined %}
+{% for argument in traefik_custom_command_arguments %}
+      - "{{ argument }}"
+{% endfor %}
+{% endif %}
     environment:
       - TZ={{ timezone | default('UTC') }}
+{% if traefik_custom_env is defined %}
+{% for env in traefik_custom_env %}
+      - "{{ env }}"
+{% endfor %}
+{% endif %}
 
     labels:
       # Enable Traefik for this container

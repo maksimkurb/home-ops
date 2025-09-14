@@ -1,25 +1,29 @@
 ---
-- include_tasks: locale.yaml
+- import_tasks: locale.yaml
   tags:
     - locale
 
-- include_tasks: packages.yaml
+- import_tasks: packages.yaml
   tags:
     - packages
 
-- include_tasks: network.yaml
+- import_tasks: network.yaml
   tags:
     - network
 
-- include_tasks: filesystem.yaml
+- import_tasks: filesystem.yaml
   tags:
     - filesystem
 
-- include_tasks: user.yaml
+- import_tasks: user.yaml
   tags:
     - user
 
-
-- include_tasks: time.yaml
+- import_tasks: time.yaml
   tags:
     - time
+
+- import_tasks: haproxy.yaml
+  tags:
+    - haproxy
+  when: haproxy_enabled | default(false)

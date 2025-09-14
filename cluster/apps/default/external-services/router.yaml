@@ -31,7 +31,7 @@ metadata:
   namespace: default
   annotations:
     external-dns.alpha.kubernetes.io/enabled: 'true'
-    external-dns.alpha.kubernetes.io/target: tunnel.cubly.ru
+    external-dns.alpha.kubernetes.io/target: '${INGRESS_TUNNEL}'
     nginx.ingress.kubernetes.io/upstream-vhost: "${ROUTER_IP}"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header Origin "http://${ROUTER_IP}";
