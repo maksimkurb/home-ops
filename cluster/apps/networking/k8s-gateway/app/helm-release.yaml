@@ -81,6 +81,8 @@ spec:
 
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         serviceAccount:
           identifier: *app
         replicas: 2

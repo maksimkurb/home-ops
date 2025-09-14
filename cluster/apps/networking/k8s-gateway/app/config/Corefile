@@ -7,8 +7,7 @@
   ready
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
-    apex ${INGRESS_HAPROXY_IP}
-    ttl 30
+    fallthrough
   }
   forward . 1.1.1.1 1.0.0.1
   prometheus 0.0.0.0:9153
