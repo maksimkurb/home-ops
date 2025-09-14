@@ -10,11 +10,5 @@ configMapGenerator:
   - name: cloudflare-proxied-networks
     files:
       - cloudflare-proxied-networks.txt
-  - name: nginx-ingress-configs
-    files:
-      - nginx.tmpl
-  - name: nginx-plugin-drop-x-headers
-    files:
-      - plugins/drop_x_headers/main.lua
 generatorOptions:
   disableNameSuffixHash: true
