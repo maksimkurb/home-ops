@@ -10,5 +10,7 @@ configMapGenerator:
   - name: k8s-gateway-configmap
     files:
       - Corefile=./config/Corefile
+generatorOptions:
+  disableNameSuffixHash: true
 configurations:
   - ./patches/kustomizeconfig.yaml
