@@ -33,7 +33,7 @@ spec:
         controller: main
         type: LoadBalancer
         loadBalancerIP: "${SVC_K8S_GATEWAY_ADDR}"
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           http:
             port: 9153
