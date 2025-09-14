@@ -27,7 +27,7 @@ spec:
       namespace: kube-system
   values:
     controller:
-      replicaCount: 2
+      replicaCount: 1
       updateStrategy:
         rollingUpdate:
           maxUnavailable: 1
@@ -62,7 +62,7 @@ spec:
         enable-real-ip: "true"
         force-ssl-redirect: "true"
         hide-headers: Server,X-Powered-By
-        forwarded-for-header: "CF-Connecting-IP"
+        forwarded-for-header: "X-Forwarded-For"
         hsts-max-age: "31449600"
         keep-alive: 120
         keep-alive-requests: 10000
@@ -70,7 +70,6 @@ spec:
         proxy-buffer-size: 16k
         ssl-protocols: "TLSv1.3 TLSv1.2"
         use-forwarded-headers: "true"
-        # use-proxy-protocol: "true"
         plugins: ""
       metrics:
         enabled: true
