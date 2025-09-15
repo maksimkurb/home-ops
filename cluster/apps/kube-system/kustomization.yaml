@@ -8,5 +8,6 @@ resources:
   - kube-cleanup-operator
   - metrics-server
   - node-feature-discovery
-  - nvidia-device-plugin
+  # Will be replaced with GPU operator: https://github.com/NVIDIA/nvidia-docker/issues/1730
+  #- nvidia-device-plugin
   - reloader
