@@ -43,11 +43,6 @@ spec:
 
     toolkit:
       enabled: true
-      repository: nvcr.io/nvidia/k8s
-      image: container-toolkit
-      version: v1.17.8-ubuntu20.04
-      imagePullPolicy: IfNotPresent
-      imagePullSecrets: []
       env:
         - name: CONTAINERD_CONFIG
           value: /var/lib/rancher/k3s/agent/etc/containerd/config.toml
@@ -57,8 +52,6 @@ spec:
           value: nvidia
         - name: CONTAINERD_SET_AS_DEFAULT
           value: "true"
-      resources: {}
-      installDir: "/usr/local/nvidia"
 
     devicePlugin:
       enabled: true
