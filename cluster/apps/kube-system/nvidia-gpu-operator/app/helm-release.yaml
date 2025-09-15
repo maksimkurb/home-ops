@@ -48,7 +48,15 @@ spec:
       version: v1.17.8-ubuntu20.04
       imagePullPolicy: IfNotPresent
       imagePullSecrets: []
-      env: []
+      env:
+        - name: CONTAINERD_CONFIG
+          value: /var/lib/rancher/k3s/agent/etc/containerd/config.toml
+        - name: CONTAINERD_SOCKET
+          value: /run/k3s/containerd/containerd.sock
+        - name: CONTAINERD_RUNTIME_CLASS
+          value: nvidia
+        - name: CONTAINERD_SET_AS_DEFAULT
+          value: "true"
       resources: {}
       installDir: "/usr/local/nvidia"
 
