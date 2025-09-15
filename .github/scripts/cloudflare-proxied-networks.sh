@@ -3,8 +3,8 @@
 # Get all local networks
 # ipv4_rfc1918='[ "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16" ]'
 
-# Haproxy IP
-ipv4_haproxy='[ "172.22.0.1/32" ]'
+# Add VPS proxy IP
+ip_vps='[ "${SECRET_VPS_IPS}" ]'
 
 # Get all cloudflare ipv4 ranges in an array
 ipv4_cloudflare="$(curl -sL https://www.cloudflare.com/ips-v4 | jq --raw-input --slurp 'split("\n")')"
@@ -20,10 +20,10 @@ fi
 
 # Merge rfc1918 ipv4, cloudflare ipv4, and cloudflare ipv6 ranges into one array
 combined=$(jq \
-    --argjson ipv4_haproxy "${ipv4_haproxy}" \
+    --argjson ip_vps "${ip_vps}" \
     --argjson ipv4_cloudflare "${ipv4_cloudflare}" \
     --argjson ipv6_cloudflare "${ipv6_cloudflare}" \
-    -n '$ipv4_haproxy + $ipv4_cloudflare + $ipv6_cloudflare' \
+    -n '$ip_vps + $ipv4_cloudflare + $ipv6_cloudflare' \
 )
 
 # Output array as a string with \, as delimiter
