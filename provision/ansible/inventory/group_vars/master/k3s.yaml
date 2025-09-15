@@ -20,6 +20,8 @@ k3s_server:
     # Disable metrics-server - installed with Flux
     - metrics-server
     - local-storage
+    # Conflicts with metallb: https://metallb.universe.tf/configuration/k3s/
+    - servicelb
   disable-network-policy: true
   disable-cloud-controller: true
   disable-kube-proxy: false

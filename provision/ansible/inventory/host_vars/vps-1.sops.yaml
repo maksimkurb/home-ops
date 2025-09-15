@@ -134,31 +134,6 @@ amneziawg_interfaces:
           public_key: ENC[AES256_GCM,data:/4eOay7suFLQ0GxFlyku75SLgL0YjWAX4uTe1owrw/Z7gXG+PWZjxfdyS6I=,iv:68ggPgPnQIDWXVWtShBp/hsDx1tmk2rfNfpYZ0quV7M=,tag:G+FsCKHicXUomiMBKK/KNA==,type:str]
           private_key: ENC[AES256_GCM,data:UB6XeGV3YHebXXpMpiSM4+pIHbHjXk/1ORzTqOCzRByV72yh81lVSxU8vR0=,iv:Ei5bHVBYbJcFSFLk+VwR8ehwNGufHZRoYrLqDNS4DlI=,tag:u8SeX47EXsrZW8mKeR/GFA==,type:str]
           address_v4: ENC[AES256_GCM,data:hlwhA4DiU94d,iv:kICcBhHRl2LSDfOMTYwzIuASuplzVJ6ZPqU/qasVaB4=,tag:vYmyh2MKzwoR1RsyAoLVyg==,type:str]
-netplan_enabled: ENC[AES256_GCM,data:RUK8oQ==,iv:KJ1M8uops/pLViBaXyBu/wYc2KkgaC5DfrJv62PEPqA=,tag:s9EJ+fgUPCxJuZlih6RL/g==,type:bool]
-netplan_renderer: ENC[AES256_GCM,data:IPI/9Po1nfw=,iv:FZd0NzJs26GdSImaF6hUrwyLKlsLIYp5wQXD7ZNAAow=,tag:vBUqejVf/8gqosoCyMErBA==,type:str]
-netplan_configuration:
-    network:
-        version: ENC[AES256_GCM,data:Uw==,iv:lfA+uQ/L9K0Kpr8uFtsBa2YEwsXhzdzOg+2icluu3DM=,tag:gd0shHwDbexcAKL1YAib3Q==,type:int]
-        ethernets:
-            eth0:
-                match:
-                    macaddress: ENC[AES256_GCM,data:07l7o3Ybs0mKOqHxzbNSaDI=,iv:IfxDH8v0FpLQyxMwU2bGWWsyOPiF3mI+Cu5O4rCYmdM=,tag:CVLKcnEeHElmqdCX8PtRcQ==,type:str]
-                addresses:
-                    - ENC[AES256_GCM,data:IyRbZki90I0ncr/8Ep0DCuiP,iv:IbL/oFVn3weLpnCdw2SY3LDNi1LdBBU2vNgfAQVjGUY=,tag:HB2gK0LI5Gdm+Cz9CfRPdw==,type:str]
-                    - ENC[AES256_GCM,data:aNp/BdtDnpZHSo5fcPwdn5qTkxz18fhYDeG7BJFTmf21rUQan4TDw0VK,iv:iu7jWpL9qKE8vHdwQWPZMmAuP5Kov6wrLpimOO1kkVU=,tag:xYal1nrMFpRiXUIuBIZP2g==,type:str]
-                nameservers:
-                    addresses:
-                        - ENC[AES256_GCM,data:6oJ0UjyABnZ/s9171g==,iv:hBuC3r0mwLgWySurDhFhlEEsM1xpKSXmMWi0aRpBxJg=,tag:z72HUbvrvsDbAWeb8f0iyw==,type:str]
-                        - ENC[AES256_GCM,data:gOSGbHiaHcJtJwnFfw==,iv:K4+7kruWULzxZtd19b/gEVaAxS/SwLLzv4Dkl50Pyls=,tag:iHoKoVuouI77x58HLK8brg==,type:str]
-                        - ENC[AES256_GCM,data:naeckUGTmHD7A7YapfoE,iv:/U8LrtrnU6Wy8gbn0c9XTDB+4ogyz8UUpVQSyKCyHvU=,tag:mU/zoj2UWeJKhe18cutovw==,type:str]
-                    search: []
-                set-name: ENC[AES256_GCM,data:locfAQ==,iv:XzhfZ1DmCXFgo3EXHUhwZmsPP2iBPT23d8NXbngJKDg=,tag:10tn6XDxt8IjS/Dhh68gPA==,type:str]
-                routes:
-                    - to: ENC[AES256_GCM,data:fu0dIevOjQ==,iv:pcbpcbLq2XFGzBOJFCCadg5qJXCSKCkvM9orp+6RqJg=,tag:YRD6zeUZZjro9/uz33JOfA==,type:str]
-                      via: ENC[AES256_GCM,data:zbOsFcvUquKDImHQww==,iv:52cnoC1nXNxPu4o1pG6J/xhMh7lylndWnbwISvTDlaU=,tag:CC/AxulZPnz+JXP8vlh+yg==,type:str]
-                    - on-link: ENC[AES256_GCM,data:O/gmPw==,iv:LVw4EfkzxY4vHr3aHrUF3TDFa6seWq69CLIbQVjPuCY=,tag:VI2vQZNMpjfvwP4R3b+C3w==,type:bool]
-                      to: ENC[AES256_GCM,data:fu0dIevOjQ==,iv:pcbpcbLq2XFGzBOJFCCadg5qJXCSKCkvM9orp+6RqJg=,tag:YRD6zeUZZjro9/uz33JOfA==,type:str]
-                      via: ENC[AES256_GCM,data:QIaPhEI51w==,iv:FXXwi9+fQyvXfPCGDsAzMJEnvuhcDy20/3gNQDSru8Q=,tag:iJgRNaBuTEn6oAuyVSeqdg==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -174,8 +149,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-09-14T12:29:21Z"
-    mac: ENC[AES256_GCM,data:lIONzpMyXHJw0CgAnQNtvzpH78ohewzibW9KXtrq+8KUnXkxzjM3H6aX0pF+cI7GcaF+NSDB0Us9nBAbDrLgMm8RZHlxbY7cjpwnNEQioCeWe1HuPh1c4IhaYqnHyGfEmtmxSaUC2nvzPixRof28rnV/YlKx/txpJx8qwWVphlI=,iv:qd8l/uvcX1mZjcoBogTaWdKSk4x0L/rkdxluvStfTCk=,tag:j0eDaiSKO7p9EFR/CnflrQ==,type:str]
+    lastmodified: "2025-09-15T12:38:30Z"
+    mac: ENC[AES256_GCM,data:AN/hWmUVCed6mtSe5yYqN3Oz+95Su40FaoxadjUL06VxTItGlZTd60qLPMRaxDiMuZwUhdozizNY0pgsZKRhuKGBQNFM6nR18QsUaxdwg1aV+Ujcf+OX+yXVmz9VSMy7MP/8gw4DUXIo+BBkqy3kJR0giAwJw2Z5SAoNrlWX8rE=,iv:9uiRXN6amtCLTz1FlXRSLVWNFAW5WTvpXwn3XrnilBY=,tag:sag8KRLh8OQR2Ly4BTeqTg==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

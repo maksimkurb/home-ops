@@ -4,6 +4,35 @@ ansible_user: ENC[AES256_GCM,data:+c2gww==,iv:Ib0hfZR2gbmgYmsJPBxSsgo5sefwGMzqfO
 ansible_become_pass: ENC[AES256_GCM,data:Js6ygQRxkbBO9r/qssg6qvE=,iv:6dj6PFU7Po3rIgFYEu6iUaXOwZ+zl8+G0WnKOffh4jA=,tag:sFquZnffidj3cz/H7U5CBA==,type:str]
 node_ip: ENC[AES256_GCM,data:baUUyo+zX4bEUoI=,iv:4ijc1iOODTkofCdK45sb0wmypzEmlP/RTmHClPxttws=,tag:P+loh4FNCbD304/BqQN23Q==,type:str]
 node_domain: ENC[AES256_GCM,data:NnHVzSPNDybHW8WX7mHG/j529w==,iv:Uf4u4vUO5K+15Lq8VBu3YINCMDWeoTy+03n+VY2zbNU=,tag:P65oIuyEEAKriIS0GwoBMw==,type:str]
+netplan_enabled: ENC[AES256_GCM,data:i7Revg==,iv:4hBwf8AYzd0/UXOEA8TXdsAugcwRcVgWCztVd8Up6pc=,tag:vbhKh/sw7hHLgnQTC1KaNA==,type:bool]
+netplan_renderer: ENC[AES256_GCM,data:5ExhjsCBATA=,iv:f9bC5sykCkSaCDl8C8+Nh5/zayc7GaKA1+mD5FUeY1Q=,tag:XCuq+ewK+2bRoqFf6jodJg==,type:str]
+netplan_configuration:
+    network:
+        version: ENC[AES256_GCM,data:+w==,iv:txBoOVRa9KG6z9nI9gvibiSlfxpKBDSKfMuleL+r2MQ=,tag:x3FzNck41GVpeIc0RpFM/w==,type:int]
+        ethernets:
+            ens18:
+                dhcp4: ENC[AES256_GCM,data:J7Tt6Q==,iv:QCrTDa1W5TabsMe0PmJaUo4lTJZ110JlHxil2BbFzrg=,tag:YVAt0ZQdBrVn1AeogsfLPw==,type:str]
+                dhcp4-overrides:
+                    route-metric: ENC[AES256_GCM,data:kWrb,iv:u8u8xrkMQKMU8QgWy3Hf4aCcTqy1m4Yi17zGRwwK6hk=,tag:Os2y5V2rvjHuHJYquoP1Ww==,type:int]
+            ens19:
+                addresses:
+                    - ENC[AES256_GCM,data:DT0EozCmrKIrX/qN/Qo=,iv:ELdiehxP/oU8zxr/UoEsjIEw+qVNb+sfDX9MQlEgyU4=,tag:EKHLUmVK+vmIFQxRmr4+AA==,type:str]
+                dhcp4: ENC[AES256_GCM,data:s99GoYQ=,iv:Re2wLAaQfkr0K6HhlU9m8XECIlAcfAPtSGjMREhru3g=,tag:82av+/axMfV7x5fdlZLcmQ==,type:str]
+                nameservers:
+                    addresses:
+                        - ENC[AES256_GCM,data:NtNu3BJhy2M7k4mx,iv:8WHzg7SmQiZ9vwQ7/PIaIene2fkqAU3TLiTvhfsHVJM=,tag:djokJ3O4WVrzq2nNdseVsQ==,type:str]
+                routes:
+                    - metric: ENC[AES256_GCM,data:jWEJ,iv:SjiaiUxDsJ5pjgdiPF4zo+GeCh18Ma90W4JHG6zmd30=,tag:6NH8oKh0N7nF04V6mosYzg==,type:int]
+                      to: ENC[AES256_GCM,data:U+OsZaolPg==,iv:+aegj+ogcNiC73Q0Q98ZM+jqGvpW35QAqKQ5Ws4DCzA=,tag:MrWPLh++2XaHA1gTKB268g==,type:str]
+                      via: ENC[AES256_GCM,data:iAiHdF4Y1C3+Xg==,iv:PulJ17hKkm24V9zGG/0b2RyxAvlorkHRi1HG0uw2iV4=,tag:HdcXGWiSTBkh02p/8iSYgQ==,type:str]
+            ens20:
+                addresses:
+                    - ENC[AES256_GCM,data:sZjdRTJ9vydki/w=,iv:gwafan9y7Axrx8ju9xnxMo/zR88s+daqicvS7MCbY7s=,tag:FC0yK7logyXDVIgOcxU4dw==,type:str]
+                dhcp4: ENC[AES256_GCM,data:OmUrFNg=,iv:qk2RAVpkhO0ND8X1tB0vfdUc1Rn8hkFrOF7D3nKLzMY=,tag:bOBseb98vAZ1nNWYhagF0A==,type:str]
+                nameservers:
+                    addresses:
+                        - ENC[AES256_GCM,data:ueePrKqIs2OfXPv3,iv:JmK5DNlS/C+RMtazJX8uZQfMhhbo6oimg974b0cztds=,tag:4PXRW+Qi4hwGCRyU/57A4A==,type:str]
+                routes: []
 sops:
     kms: []
     gcp_kms: []
@@ -19,8 +48,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-05-31T16:26:22Z"
-    mac: ENC[AES256_GCM,data:9UWrJtskA3aWSdrByD6GKk6kYLyUDilREUzXFCGxeHEtPSikJMEhx7kaPM9B5+PGljA+NE74qToqcOJayuzOmU186KE8LVM2tB4AO/X7OSA4ANx1eeUB3neOtp9Wf2B9Qg4qC3BPSkprqSt8qzE/DtHA92CxM6GOGSBH5h+SN+U=,iv:Wa9lSMmB8/XD9q3n58kEIVVAIH+YSvIP30+mE0i6y6U=,tag:O1QeUZje/VDzG/KbbiJTZg==,type:str]
+    lastmodified: "2025-09-15T12:38:35Z"
+    mac: ENC[AES256_GCM,data:sNgNhgBkuDKpu3pCFG1h/ura1KTmBD5T7kzwppWEhc/5kLpOU22PxlsTThSE77ogXpy5CJOtkCQIq9G15UREqd+ZLxpqE580Ab9v4kSvsGvJZMu0k1BZedOQUTTvnKG5duT3c88stgET/ruKZ3gD0I4/bH6QGZhGigDnMa8lpLQ=,iv:eR4U7HBoitABfYSHub7xgZpEXsjdz1LQS57KFgYvTyo=,tag:HMYtYVoTadNAIeGfuRVX4Q==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3
