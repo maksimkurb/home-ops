@@ -59,14 +59,12 @@ spec:
         create: true
         name: device-plugin-config
         data:
-          default: |-
+          any: |-
             version: v1
             flags:
               migStrategy: none
             sharing:
               timeSlicing:
-                renameByDefault: false
-                failRequestsGreaterThanOne: false
                 resources:
-                  - name: nvidia.com/gpu
-                    replicas: ${GPU_SLICE_REPLICAS}
+                - name: nvidia.com/gpu
+                  replicas: ${GPU_SLICE_REPLICAS}
