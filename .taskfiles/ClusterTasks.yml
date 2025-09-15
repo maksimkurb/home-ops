@@ -43,3 +43,9 @@ tasks:
     cmds:
       - kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | xargs -l bash -c 'flux suspend hr $0 -n $1'
       - kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | xargs -l bash -c 'flux resume hr $0 -n $1'
+
+  restart-gpu-pods:
+    desc: Restart all deployments/statefulsets that are dependent on GPU resources
+    cmds:
+      - kubectl get deployments --all-namespaces -o json | jq -r '.items[] | select(.spec.template.spec.containers[].resources.limits."nvidia.com/gpu" != null) | "\(.metadata.namespace)/\(.metadata.name)"' | xargs -I {} sh -c 'kubectl rollout restart deployment/$(echo {} | cut -d/ -f2) -n $(echo {} | cut -d/ -f1)'
+      - kubectl get statefulsets --all-namespaces -o json | jq -r '.items[] | select(.spec.template.spec.containers[].resources.limits."nvidia.com/gpu" != null) | "\(.metadata.namespace)/\(.metadata.name)"' | xargs -I {} sh -c 'kubectl rollout restart statefulset/$(echo {} | cut -d/ -f2) -n $(echo {} | cut -d/ -f1)'

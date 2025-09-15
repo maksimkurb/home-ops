@@ -33,6 +33,11 @@
       "automergeType": "branch",
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "description": "Disable auto merge for gpu-operator",
+      "matchPackageNames": ["gpu-operator"],
+      "automerge": false
     }
   ]
 }
