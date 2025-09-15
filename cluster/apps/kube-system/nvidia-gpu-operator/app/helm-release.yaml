@@ -58,6 +58,7 @@ spec:
       config:
         create: true
         name: device-plugin-config
+        default: any
         data:
           any: |-
             version: v1
