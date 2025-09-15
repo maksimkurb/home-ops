@@ -1,6 +1,0 @@
-{
-  "type": "module",
-  "dependencies": {
-    "yaml": "^2.3.4"
-  }
-}
