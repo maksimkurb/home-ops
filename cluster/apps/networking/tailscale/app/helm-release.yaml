@@ -39,7 +39,7 @@ spec:
     operatorConfig:
       image:
         repository: ghcr.io/tailscale/k8s-operator
-        tag: v1.86.5
+        tag: v1.88.2
       hostname: "tailscale-operator"
       defaultTags:
         - "tag:k8s-operator"
