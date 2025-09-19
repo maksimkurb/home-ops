@@ -90,7 +90,7 @@ spec:
           main:
             image:
               repository: ghcr.io/savoirfairelinux/opendht/opendht
-              tag: v3.5.2
+              tag: v3.5.4
               pullPolicy: IfNotPresent
             command: ["dhtnode", "-b", "bootstrap.jami.net", "-f", "/data/state.db", "-p", "4222", "--proxyserver", "4223", "-s"]
             env:
