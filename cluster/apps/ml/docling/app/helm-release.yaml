@@ -1,0 +1,81 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.3.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.3.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        memory: 6Gi
+
+    defaultPodOptions:
+      runtimeClassName: nvidia
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/docling-project/docling-serve-cu126
+              tag: v1.5.1
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE}"
+              DOCLING_SERVE_ENABLE_UI: "true"
+              NVIDIA_VISIBLE_DEVICES: "all"
+
+    service:
+      app:
+        controller: main
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        ports:
+          http:
+            port: 5001
+            protocol: TCP
+
+    ingress:
+      main:
+        enabled: true
+        className: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/appName: "docling"
+        hosts:
+          - host: "docling.${SECRET_PRIVATE_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
