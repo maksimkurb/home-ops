@@ -39,9 +39,9 @@ spec:
           main:
             app:
               - path: "/data"
-                subPath: "/artifacts"
+                subPath: "artifacts"
               - path: "/opt/app-root/lib/python3.12/site-packages/rapidocr/models"
-                subPath: "/rapidocr_models"
+                subPath: "rapidocr_models"
 
     resources:
       requests:
