@@ -46,7 +46,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/docling-project/docling-serve-cu126
+              repository: quay.io/docling-project/docling-serve-cu126
               tag: v1.5.1
               pullPolicy: IfNotPresent
             env:
