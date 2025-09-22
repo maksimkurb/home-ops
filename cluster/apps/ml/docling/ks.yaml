@@ -6,7 +6,7 @@ metadata:
   name: &appname docling
   namespace: flux-system
 spec:
-  targetNamespace: home
+  targetNamespace: ml
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
