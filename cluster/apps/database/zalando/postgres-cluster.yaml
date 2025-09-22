@@ -55,6 +55,7 @@ spec:
     mumble: []
     teamspeak: []
     coturn: []
+    n8n: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -74,6 +75,7 @@ spec:
     mumble: mumble
     teamspeak: teamspeak
     coturn: coturn
+    n8n: n8n
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
