@@ -35,7 +35,7 @@ spec:
         advancedMounts:
           n8n:
             app:
-              - path: /data/
+              - path: /home/node/.n8n
 
     # Pod security context
     defaultPodOptions:
