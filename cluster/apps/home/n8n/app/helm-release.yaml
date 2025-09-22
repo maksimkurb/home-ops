@@ -76,6 +76,7 @@ spec:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: DB_POSTGRESDB_PASSWORD
+              N8N_USER_FOLDER: /home/node/
               EXECUTIONS_DATA_PRUNE: true
               EXECUTIONS_DATA_MAX_AGE: 7
               EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
