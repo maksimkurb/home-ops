@@ -35,7 +35,7 @@ spec:
         advancedMounts:
           n8n:
             app:
-              - path: /home/node/.n8n
+              - path: /home/node/
 
     # Pod security context
     defaultPodOptions:
@@ -77,6 +77,18 @@ spec:
                     name: ${APP}-secret
                     key: DB_POSTGRESDB_PASSWORD
               N8N_USER_FOLDER: /home/node/
+              N8N_EXTERNAL_STORAGE_S3_HOST: minio.default:9000
+              N8N_EXTERNAL_STORAGE_S3_BUCKET_NAME: n8n
+              N8N_EXTERNAL_STORAGE_S3_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: MINIO_ACCESS_KEY
+              N8N_EXTERNAL_STORAGE_S3_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: MINIO_SECRET_KEY
               EXECUTIONS_DATA_PRUNE: true
               EXECUTIONS_DATA_MAX_AGE: 7
               EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
