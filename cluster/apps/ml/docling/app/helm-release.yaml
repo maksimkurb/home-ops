@@ -28,6 +28,18 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    persistence:
+      cache:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        storageClass: local-path
+        advancedMounts:
+          main:
+            app:
+              - path: "/data"
+
     resources:
       requests:
         cpu: 1m
@@ -51,6 +63,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
+              DOCLING_SERVE_ARTIFACTS_PATH: "/data/artifacts"
               DOCLING_SERVE_ENABLE_UI: "true"
               NVIDIA_VISIBLE_DEVICES: "all"
 
