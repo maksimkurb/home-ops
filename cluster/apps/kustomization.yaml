@@ -12,6 +12,7 @@ resources:
   - media
   - messaging
   - monitoring
+  - ml
   - networking
   - security
   # - vpn-gateway
