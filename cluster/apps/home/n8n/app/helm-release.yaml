@@ -89,6 +89,8 @@ spec:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: MINIO_SECRET_KEY
+              N8N_RUNNERS_ENABLED: true
+              N8N_BLOCK_ENV_ACCESS_IN_NODE: true
               EXECUTIONS_DATA_PRUNE: true
               EXECUTIONS_DATA_MAX_AGE: 7
               EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
