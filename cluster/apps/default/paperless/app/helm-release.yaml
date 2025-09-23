@@ -218,3 +218,10 @@ spec:
           paperless:
             app:
               - path: /data/docs
+      gotenberg-temp:
+        type: emptyDir
+        enabled: true
+        advancedMounts:
+          paperless:
+            gotenberg:
+              - path: /nonexistent
