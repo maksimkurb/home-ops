@@ -134,6 +134,8 @@ spec:
             securityContext:
               runAsUser: 65534
               runAsGroup: 65534
+              fsGroupChangePolicy: "OnRootMismatch"
+              supplementalGroups: ["65534"]
       tika:
         containers:
           app:
@@ -222,6 +224,6 @@ spec:
         type: emptyDir
         enabled: true
         advancedMounts:
-          paperless:
-            gotenberg:
+          gotenberg:
+            app:
               - path: /nonexistent
