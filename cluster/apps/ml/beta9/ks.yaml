@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   interval: 1h
-  path: ./cluster/apps/monitoring/beta9/app
+  path: ./cluster/apps/ml/beta9/app
   prune: true
   retryInterval: 2m
   sourceRef:
