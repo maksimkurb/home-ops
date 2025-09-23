@@ -152,6 +152,11 @@ spec:
                 service:
                   identifier: app
                   port: http
+              - path: /webhook-test
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
               - path: /rest/oauth2-credential
                 pathType: Prefix
                 service:
