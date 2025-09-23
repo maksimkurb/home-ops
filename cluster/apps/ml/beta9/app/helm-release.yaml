@@ -1,0 +1,119 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: beta9
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.1.166
+  url: oci://public.ecr.aws/n4e0e1y0/beta9-chart
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: beta9
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # -- Beta9's configuration.
+    # https://github.com/beam-cloud/beta9/blob/main/pkg/common/config.default.yaml
+    config:
+      worker:
+        imageRegistry: public.ecr.aws/n4e0e1y0
+      imageService:
+        runner:
+          baseImageRegistry: public.ecr.aws/n4e0e1y0
+
+    images:
+      gateway:
+        repository: public.ecr.aws/n4e0e1y0/beta9-gateway
+
+    controllers:
+      gateway:
+        replicas: 1
+        strategy: Recreate # Can be Recreate or RollingUpdate
+        initContainers:
+          wait-on-backends:
+            image:
+              repository: busybox
+              tag: 1.37.0
+            command:
+              - sh
+              - -c
+              - |
+                until nc -z redis-master 6379; do echo "Waiting on Redis..."; sleep 2; done;
+                until nc -z juicefs-redis-master 6379; do echo "Waiting on Redis (JuiceFS)..."; sleep 2; done;
+                echo "All systems ready!"
+
+    persistence:
+      images:
+        enabled: true
+        type: persistentVolumeClaim
+        size: 50Gi
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+
+    service:
+      gateway:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9090"
+        labels: {}
+        ports:
+          grpc:
+            port: 1993
+            targetPort: 1993
+            protocol: TCP
+          http:
+            primary: true
+            port: 1994
+            targetPort: 1994
+            protocol: TCP
+          metrics:
+            port: 9090
+            targetPort: 9090
+            protocol: TCP
+        type: ClusterIP
+
+    ingress:
+      gateway:
+        enabled: true
+        className: nginx
+        annotations: {}
+        labels: {}
+
+    serviceAccount:
+      name: beta9
+      annotations: {}
+      labels: {}
+
+    # -- Needed by Gateway
+    redis:
+      enabled: true
+
+    # -- Needed by Gateway
+    postgresql:
+      enabled: false
+
+    # -- Needed by Gateway's file system
+    juicefs-redis:
+      enabled: true
+
+    metrics:
+      enabled: false
