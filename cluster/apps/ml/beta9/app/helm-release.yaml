@@ -105,6 +105,11 @@ spec:
     # -- Needed by Gateway
     redis:
       enabled: true
+      persistence:
+        type: persistentVolumeClaim
+        size: 1Gi
+        storageClass: local-path
+        accessMode: ReadWriteOnce
 
     # -- Needed by Gateway
     postgresql:
@@ -113,6 +118,11 @@ spec:
     # -- Needed by Gateway's file system
     juicefs-redis:
       enabled: true
+      persistence:
+        type: persistentVolumeClaim
+        size: 1Gi
+        storageClass: local-path
+        accessMode: ReadWriteOnce
 
     metrics:
       enabled: false
