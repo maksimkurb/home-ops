@@ -106,6 +106,7 @@ spec:
     redis:
       enabled: true
       persistence:
+        enabled: true
         type: persistentVolumeClaim
         size: 1Gi
         storageClass: local-path
@@ -119,6 +120,7 @@ spec:
     juicefs-redis:
       enabled: true
       persistence:
+        enabled: true
         type: persistentVolumeClaim
         size: 1Gi
         storageClass: local-path
