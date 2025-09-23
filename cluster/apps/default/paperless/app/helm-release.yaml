@@ -60,7 +60,7 @@ spec:
               PAPERLESS_CONSUMER_BARCODE_SCANNER: "ZXING"
               # Configure Tika
               PAPERLESS_TIKA_ENABLED: 1
-              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenburg.default.svc.cluster.local:3000
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.default.svc.cluster.local:3000
               PAPERLESS_TIKA_ENDPOINT: http://paperless-tika.default.svc.cluster.local:9998
               # Configure DB
               PAPERLESS_DBENGINE: postgresql
@@ -120,7 +120,7 @@ spec:
               fsGroup: 777
               fsGroupChangePolicy: "OnRootMismatch"
               supplementalGroups: ["777"]
-      gotenburg:
+      gotenberg:
         containers:
           app:
             image:
@@ -129,7 +129,8 @@ spec:
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
-              DISABLE_GOOGLE_CHROME: "1"
+              DISABLE_GOOGLE_CHROME: "0"
+              CHROMIUM_DISABLE_JAVASCRIPT: "true"
             securityContext:
               runAsUser: 65534
               runAsGroup: 65534
@@ -164,8 +165,8 @@ spec:
         ports:
           http:
             port: 8000
-      gotenburg:
-        controller: gotenburg
+      gotenberg:
+        controller: gotenberg
         ports:
           http:
             port: 3000
