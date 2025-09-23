@@ -93,8 +93,7 @@ spec:
 
     ingress:
       gateway:
-        enabled: true
-        className: nginx
+        enabled: false
         annotations: {}
         labels: {}
 
