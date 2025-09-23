@@ -36,6 +36,8 @@ spec:
           n8n:
             app:
               - path: /home/node/
+              - path: /.npm/
+                subPath: _community-npm-modules
 
     # Pod security context
     defaultPodOptions:
