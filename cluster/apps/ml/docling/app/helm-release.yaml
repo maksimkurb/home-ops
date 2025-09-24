@@ -66,7 +66,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
-              DOCLING_SERVE_ARTIFACTS_PATH: "/data"
+              DOCLING_SERVE_ARTIFACTS_PATH: ""
               DOCLING_SERVE_ENABLE_UI: "true"
               NVIDIA_VISIBLE_DEVICES: "all"
 
