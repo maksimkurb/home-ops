@@ -9,8 +9,8 @@ _... managed by Flux Renovate, and GitHub Actions_ 🤖
 [![talos](https://img.shields.io/badge/talos-v1.1.2-brightgreen?style=for-the-badge&logo=linux&logoColor=white)](https://www.talos.dev/)
 [![kubernetes](https://img.shields.io/badge/kubernetes-v1.24.3-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=for-the-badge)](https://github.com/pre-commit/pre-commit)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/toboshii/home-ops/Schedule%20-%20Renovate?label=renovate&logo=renovatebot&style=for-the-badge)](https://github.com/toboshii/home-ops/actions/workflows/schedule-renovate.yaml)
-[![Lines of code](https://img.shields.io/tokei/lines/github/toboshii/home-ops?style=for-the-badge&color=brightgreen&label=lines&logo=codefactor&logoColor=white)](https://github.com/toboshii/home-ops/graphs/contributors)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/maksimkurb/home-ops/Schedule%20-%20Renovate?label=renovate&logo=renovatebot&style=for-the-badge)](https://github.com/maksimkurb/home-ops/actions/workflows/schedule-renovate.yaml)
+[![Lines of code](https://img.shields.io/tokei/lines/github/maksimkurb/home-ops?style=for-the-badge&color=brightgreen&label=lines&logo=codefactor&logoColor=white)](https://github.com/maksimkurb/home-ops/graphs/contributors)
 
 </div>
 
@@ -20,7 +20,7 @@ _... managed by Flux Renovate, and GitHub Actions_ 🤖
 
 This is a mono repository for my home infrastructure and Kubernetes cluster implementing Infrastructure as Code (IaC) and GitOps practices using tools like [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate) and [GitHub Actions](https://github.com/features/actions).
 
-Feel free to open a [Github issue](https://github.com/toboshii/home-ops/issues/new/choose) or join the [k8s@home Discord](https://discord.gg/sTMX7Vh) if you have any questions.
+Feel free to open a [Github issue](https://github.com/maksimkurb/home-ops/issues/new/choose) or join the [k8s@home Discord](https://discord.gg/sTMX7Vh) if you have any questions.
 
 ---
 
