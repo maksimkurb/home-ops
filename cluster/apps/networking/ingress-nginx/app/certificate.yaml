@@ -17,4 +17,5 @@ spec:
   dnsNames:
     - "${SECRET_PUBLIC_DOMAIN}"
     - "*.${SECRET_PUBLIC_DOMAIN}"
+    - "*.cf.${SECRET_PUBLIC_DOMAIN}"
     - "*.${SECRET_PRIVATE_DOMAIN}"
