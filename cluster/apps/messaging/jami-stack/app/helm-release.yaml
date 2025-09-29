@@ -184,8 +184,8 @@ spec:
         className: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${INGRESS_DEFAULT_CF_PROXY}
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
           hajimari.io/enable: "false"
         hosts:
           - host: "dhtproxy.${SECRET_PUBLIC_DOMAIN}"
@@ -201,8 +201,8 @@ spec:
         className: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${INGRESS_DEFAULT_CF_PROXY}
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
           kubernetes.io/ingress.allow-http: "false"
           hajimari.io/enable: "false"

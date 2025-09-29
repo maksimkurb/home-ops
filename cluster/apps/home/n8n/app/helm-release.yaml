@@ -141,8 +141,8 @@ spec:
         className: "nginx"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${INGRESS_DEFAULT_CF_PROXY}
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_TUNNEL}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
           hajimari.io/enable: "false"
         hosts:
           - host: "n8n-webhook.${SECRET_PUBLIC_DOMAIN}"
