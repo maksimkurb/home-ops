@@ -79,7 +79,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
           hajimari.io/icon: multimedia
         hosts:
-          - host: "jellyfin.cf.${SECRET_PUBLIC_DOMAIN}"
+          - host: "jellyfin-cf.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
