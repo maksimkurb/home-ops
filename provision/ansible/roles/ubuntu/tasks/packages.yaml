@@ -52,6 +52,7 @@
       APT::Periodic::Download-Upgradeable-Packages "1";
       APT::Periodic::AutocleanInterval "7";
       APT::Periodic::Unattended-Upgrade "1";
+  when: enable_unattended_upgrades
 
 - name: Copy 50unattended-upgrades unattended-upgrades config
   ansible.builtin.blockinfile:
@@ -70,12 +71,14 @@
           "nvidia-";
           "libnvidia-";
       };
+  when: enable_unattended_upgrades
 
 - name: Start unattended-upgrades service
   ansible.builtin.systemd:
     name: unattended-upgrades
     enabled: true
     state: started
+  when: enable_unattended_upgrades
 
 - name: Restart unattended-upgrades service
   ansible.builtin.service:
@@ -83,3 +86,24 @@
     daemon_reload: true
     enabled: true
     state: restarted
+  when: enable_unattended_upgrades
+
+- name: Stop and disable unattended-upgrades service
+  ansible.builtin.systemd:
+    name: unattended-upgrades
+    enabled: false
+    state: stopped
+  when: not (enable_unattended_upgrades)
+  ignore_errors: true
+
+- name: Remove 20auto-upgrades unattended-upgrades config
+  ansible.builtin.file:
+    path: /etc/apt/apt.conf.d/20auto-upgrades
+    state: absent
+  when: not (enable_unattended_upgrades)
+
+- name: Remove 50unattended-upgrades unattended-upgrades config
+  ansible.builtin.file:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    state: absent
+  when: not (enable_unattended_upgrades)

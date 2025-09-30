@@ -14,15 +14,18 @@ nvidia:
 ubuntu:
   hosts:
     k3s-server: {}
-    vps-1: {}
+    vps-1:
+      enable_unattended_upgrades: false
 
 vpn-server:
   hosts:
-    vps-1: {}
+    vps-1:
+      enable_unattended_upgrades: false
 
 signal-tls-proxy:
   hosts:
-    vps-1: {}
+    vps-1:
+      enable_unattended_upgrades: false
 
 # vpn-gateway:
 #   hosts:
