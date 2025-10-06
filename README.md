@@ -10,7 +10,6 @@ _... managed by Flux Renovate, and GitHub Actions_ 🤖
 [![kubernetes](https://img.shields.io/badge/kubernetes-v1.24.3-brightgreen?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=for-the-badge)](https://github.com/pre-commit/pre-commit)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/maksimkurb/home-ops/Schedule%20-%20Renovate?label=renovate&logo=renovatebot&style=for-the-badge)](https://github.com/maksimkurb/home-ops/actions/workflows/schedule-renovate.yaml)
-[![Lines of code](https://img.shields.io/tokei/lines/github/maksimkurb/home-ops?style=for-the-badge&color=brightgreen&label=lines&logo=codefactor&logoColor=white)](https://github.com/maksimkurb/home-ops/graphs/contributors)
 
 </div>
 
