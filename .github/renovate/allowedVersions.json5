@@ -4,6 +4,11 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["docker.io/kopia/kopia"],
       "allowedVersions": "<10"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["moonrailgun/tianji"],
+      "allowedVersions": "<=1.27.6"
     }
   ]
 }
