@@ -59,7 +59,7 @@ spec:
           hajimari.io/appName: "Tianji Uptime"
           hajimari.io/icon: check-decagram
         hosts:
-          - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -73,7 +73,7 @@ spec:
           main:
             image:
               repository: moonrailgun/tianji
-              tag: 1.27.6
+              tag: 1.27.1
             env:
               TZ: "${TIMEZONE}"
               ALLOW_REGISTER: "false"
