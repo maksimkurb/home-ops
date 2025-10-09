@@ -40,5 +40,8 @@ PostDown = ip6tables -t nat -D POSTROUTING -o {{ interface.public_interface }} -
 # _PrivateKey = {{ peer.private_key }}
 PublicKey = {{ peer.public_key }}
 AllowedIPs = {{ peer.address_v4 }}/{{ interface.clients_subnet_v4 | default('32') }}{% if peer.address_v6 is defined %}, {{ peer.address_v6 }}/{{ interface.clients_subnet_v6 | default('128') }}{% endif %}
+{% if peer.endpoint is defined %}
+Endpoint = {{ peer.endpoint }}
+{% endif %}
 
 {% endfor %}

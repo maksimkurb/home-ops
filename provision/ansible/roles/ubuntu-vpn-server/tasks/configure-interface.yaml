@@ -39,7 +39,7 @@
   delay: 5
   become: true
 
-- name: Generate client config for {{ peer.name }}
+- name: Generate client config
   delegate_to: localhost
   become: false
   template:
