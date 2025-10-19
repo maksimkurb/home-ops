@@ -63,22 +63,6 @@ spec:
           password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
           host: homelab-pgsql.database.svc.cluster.local
           port: 5432
-      scenarios:
-        wp-admin-ban.yaml: |
-          type: leaky
-          name: homelab/wp-admin-ban
-          description: "Ban access to wp-admin for 5 minutes"
-          filter: "evt.Meta.source_ip != '' && evt.Parsed.request contains '/wp-admin'"
-          leakspeed: "10s"
-          capacity: 1
-          groupby: "evt.Meta.source_ip"
-          distinct: ""
-          debug: false
-          labels:
-            service: wordpress
-            type: ban
-            remediation: true
-          blackhole: 5m
     lapi:
       affinity:
         nodeAffinity:
@@ -118,9 +102,12 @@ spec:
           size: 100Mi
     agent:
       acquisition:
-        - namespace: networking
+        - namespace: nginx-ingress
           podName: ingress-nginx-controller-*
           program: nginx
+      env:
+        - name: COLLECTIONS
+          value: "crowdsecurity/nginx crowdsecurity/base-http-scenarios"
       metrics:
         enabled: true
         serviceMonitor:
