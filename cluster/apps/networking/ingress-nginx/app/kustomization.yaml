@@ -10,5 +10,8 @@ configMapGenerator:
   - name: cloudflare-proxied-networks
     files:
       - cloudflare-proxied-networks.txt
+  - name: ai-robots-useragents
+    files:
+      - ai-robots-useragents.txt
 generatorOptions:
   disableNameSuffixHash: true
