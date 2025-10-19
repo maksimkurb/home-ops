@@ -26,73 +26,6 @@ spec:
     - name: cert-manager
       namespace: kube-system
   values:
-    # CROWDSEC START
-    image:
-      PullPolicy: IfNotPresent
-      image: crowdsecurity/controller
-      # Crowdsec Remediation with Ingress Nginx requires to use our controller image
-      tag: v1.13.2
-      # If you update the tag, the digest needs to be updated as well
-      digest: sha256:4575be24781cad35f8e58437db6a3f492df2a3167fed2b6759a6ff0dc3488d56
-      registry: docker.io
-    extraVolumes:
-      - name: crowdsec-bouncer-plugin
-        emptyDir: {}
-    extraInitContainers:
-      - name: init-clone-crowdsec-bouncer
-        image: crowdsecurity/lua-bouncer-plugin
-        imagePullPolicy: IfNotPresent
-        env:
-          - name: API_URL
-            value: "http://crowdsec-service.security.svc.cluster.local:8080" # crowdsec lapi service-name
-          - name: API_KEY
-            value: "${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}" # generated with `cscli bouncers add <bouncer_name>`
-          - name: BOUNCER_CONFIG
-            value: "/crowdsec/crowdsec-bouncer.conf"
-          - name: CAPTCHA_PROVIDER
-            value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
-          # - name: SECRET_KEY
-          #   value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
-          # - name: SITE_KEY
-          #   value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
-          - name: BAN_TEMPLATE_PATH
-            value: "/etc/nginx/lua/plugins/crowdsec/templates/ban.html"
-          - name: CAPTCHA_TEMPLATE_PATH
-            value: "/etc/nginx/lua/plugins/crowdsec/templates/captcha.html"
-          ## Appsec configuration, optional.
-          ## Remove this section if not using appsec
-          - name: APPSEC_URL
-            value: "http://crowdsec-appsec-service.security.svc.cluster.local:7422" # if using our helm chart with "crowdsec" release name, and running the appsec in the "crowdsec" namespace
-          - name: APPSEC_FAILURE_ACTION
-            value: "passthrough" # What to do if the appsec is down, optional
-          - name: APPSEC_CONNECT_TIMEOUT # connection timeout to the appsec, in ms, optionial
-            value: "100"
-          - name: APPSEC_SEND_TIMEOUT # write timeout to the appsec, in ms, optional
-            value: "100"
-          - name: APPSEC_PROCESS_TIMEOUT # max processing duration of the request, in ms, optional
-            value: "1000"
-          - name: ALWAYS_SEND_TO_APPSEC
-            value: "false" # always send requests to the appsec, even if there's a decision against the IP, optional
-        command:
-          [
-            "sh",
-            "-c",
-            "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/",
-          ]
-        volumeMounts:
-          - name: crowdsec-bouncer-plugin
-            mountPath: /lua_plugins
-    extraVolumeMounts:
-      - name: crowdsec-bouncer-plugin
-        mountPath: /etc/nginx/lua/plugins/crowdsec
-        subPath: crowdsec
-    config:
-      plugins: "crowdsec"
-      lua-shared-dicts: "crowdsec_cache: 50m"
-      server-snippet: |
-        lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt"; # If you want captcha support otherwise remove this line
-        resolver local=on ipv6=off;
-    # CROWDSEC END
     controller:
       replicaCount: 2
       updateStrategy:
@@ -103,7 +36,6 @@ spec:
       extraEnvs:
         - name: TZ
           value: "${TIMEZONE}"
-      #   configMapKey: "nginx.tmpl"
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
         annotations:
@@ -114,9 +46,75 @@ spec:
       ingressClassResource:
         default: true
       allowSnippetAnnotations: true
+
+      # CROWDSEC START
+      image:
+        PullPolicy: IfNotPresent
+        image: crowdsecurity/controller
+        tag: v1.13.2
+        digest: sha256:4575be24781cad35f8e58437db6a3f492df2a3167fed2b6759a6ff0dc3488d56
+        registry: docker.io
+      extraVolumes:
+        - name: crowdsec-bouncer-plugin
+          emptyDir: {}
+      extraInitContainers:
+        - name: init-clone-crowdsec-bouncer
+          image: crowdsecurity/lua-bouncer-plugin
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: API_URL
+              value: "http://crowdsec-service.security.svc.cluster.local:8080" # crowdsec lapi service-name
+            - name: API_KEY
+              value: "${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}" # generated with `cscli bouncers add <bouncer_name>`
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: CAPTCHA_PROVIDER
+              value: "recaptcha" # valid providers are recaptcha, hcaptcha, turnstile
+            # - name: SECRET_KEY
+            #   value: "<your-captcha-secret-key>" # If you want captcha support otherwise remove this ENV VAR
+            # - name: SITE_KEY
+            #   value: "<your-captcha-site-key>" # If you want captcha support otherwise remove this ENV VAR
+            - name: BAN_TEMPLATE_PATH
+              value: "/etc/nginx/lua/plugins/crowdsec/templates/ban.html"
+            - name: CAPTCHA_TEMPLATE_PATH
+              value: "/etc/nginx/lua/plugins/crowdsec/templates/captcha.html"
+            ## Appsec configuration, optional.
+            ## Remove this section if not using appsec
+            - name: APPSEC_URL
+              value: "http://crowdsec-appsec-service.security.svc.cluster.local:7422" # if using our helm chart with "crowdsec" release name, and running the appsec in the "crowdsec" namespace
+            - name: APPSEC_FAILURE_ACTION
+              value: "passthrough" # What to do if the appsec is down, optional
+            - name: APPSEC_CONNECT_TIMEOUT # connection timeout to the appsec, in ms, optionial
+              value: "100"
+            - name: APPSEC_SEND_TIMEOUT # write timeout to the appsec, in ms, optional
+              value: "100"
+            - name: APPSEC_PROCESS_TIMEOUT # max processing duration of the request, in ms, optional
+              value: "1000"
+            - name: ALWAYS_SEND_TO_APPSEC
+              value: "false" # always send requests to the appsec, even if there's a decision against the IP, optional
+          command:
+            [
+              "sh",
+              "-c",
+              "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/",
+            ]
+          volumeMounts:
+            - name: crowdsec-bouncer-plugin
+              mountPath: /lua_plugins
+      extraVolumeMounts:
+        - name: crowdsec-bouncer-plugin
+          mountPath: /etc/nginx/lua/plugins/crowdsec
+          subPath: crowdsec
+      # CROWDSEC END
+
+
       config:
         # CROWDSEC START
+        plugins: "crowdsec"
         lua-shared-dicts: "crowdsec_cache: 50m"
+        server-snippet: |
+          lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+          resolver local=on ipv6=off;
         # CROWDSEC END
         annotations-risk-level: Critical
         client-body-buffer-size: "100M"
@@ -139,7 +137,6 @@ spec:
         use-forwarded-headers: "true"
         compute-full-forwarded-for: "true"
         log-format-upstream: '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_length $request_time [$proxy_upstream_name] [$proxy_alternative_upstream_name] $upstream_addr $upstream_response_length $upstream_response_time $upstream_status $req_id'
-        plugins: ""
       metrics:
         enabled: true
         serviceMonitor:
