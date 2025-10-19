@@ -41,6 +41,11 @@ spec:
   maxHistory: 3
   values:
     container_runtime: containerd
+    secrets:
+      externalSecret:
+        name: crowdsec-lapi-keys
+        csLapiSecretKey: csLapiSecret
+        registrationTokenKey: registrationToken
     lapi:
       affinity:
         nodeAffinity:
