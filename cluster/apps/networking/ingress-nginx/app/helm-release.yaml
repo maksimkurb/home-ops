@@ -199,6 +199,7 @@ spec:
       kind: ConfigMap
       name: cloudflare-proxied-networks
       valuesKey: cloudflare-proxied-networks.txt
+    # https://github.com/ai-robots-txt/ai.robots.txt
     - targetPath: controller.config.block-user-agents
       kind: ConfigMap
       name: ai-robots-useragents
