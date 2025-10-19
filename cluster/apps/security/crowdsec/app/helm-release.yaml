@@ -44,12 +44,14 @@ spec:
         name: crowdsec-lapi-keys
         csLapiSecretKey: csLapiSecret
         registrationTokenKey: registrationToken
-    db_config:
-      type: postgresql
-      user: crowdsec
-      password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
-      host: homelab-pgsql.database.svc.cluster.local
-      port: 5432
+    config:
+      config.yaml.local: |
+        db_config:
+          type: postgresql
+          user: crowdsec
+          password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
+          host: homelab-pgsql.database.svc.cluster.local
+          port: 5432
     lapi:
       affinity:
         nodeAffinity:
