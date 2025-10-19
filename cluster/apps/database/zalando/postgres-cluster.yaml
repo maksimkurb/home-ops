@@ -57,6 +57,7 @@ spec:
     coturn: []
     n8n: []
     beta9: []
+    crowdsec: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -78,6 +79,7 @@ spec:
     coturn: coturn
     n8n: n8n
     beta9: beta9
+    crowdsec: crowdsec
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
