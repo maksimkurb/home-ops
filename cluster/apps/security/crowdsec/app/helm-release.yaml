@@ -84,7 +84,7 @@ spec:
       scenarios:
         wp-admin-ban.yaml: |
           type: trigger
-          name: crowdsecurity/wp-admin-ban
+          name: custom/http-wp-admin-ban
           description: "Ban IPs accessing wp-admin paths"
           filter: evt.Meta.log_type in ["http_access-log", "http_error-log"] and
             (evt.Meta.http_path startsWith "/wp-admin" or
@@ -92,7 +92,7 @@ spec:
              evt.Meta.http_path startsWith "/wp-login" or
              evt.Meta.http_path contains "/wp-content/plugins/" or
              evt.Meta.http_path == "/xmlrpc.php")
-          blackhole: 1h
+          blackhole: 5m
           groupby: "evt.Meta.source_ip"
           labels:
             confidence: 8
