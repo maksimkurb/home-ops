@@ -102,7 +102,7 @@ spec:
           size: 100Mi
     agent:
       acquisition:
-        - namespace: nginx-ingress
+        - namespace: networking
           podName: ingress-nginx-controller-*
           program: nginx
       env:
