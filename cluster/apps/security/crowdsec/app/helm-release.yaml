@@ -70,6 +70,8 @@ spec:
         decisions:
         - type: captcha
           duration: 4h
+        notifications:
+          - slack_default
         on_success: break
         ---
         name: default_ip_remediation
