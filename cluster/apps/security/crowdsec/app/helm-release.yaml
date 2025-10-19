@@ -28,8 +28,6 @@ spec:
       strategy: rollback
     cleanupOnFail: true
     crds: CreateReplace
-  test:
-    enable: true
   rollback:
     recreate: true
     force: true
