@@ -5,5 +5,6 @@ resources:
   - namespace.yaml
   - authelia
   - authelia-redis
+  - crowdsec
   - glauth
   - vaultwarden
