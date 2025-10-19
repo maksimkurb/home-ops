@@ -49,6 +49,7 @@ spec:
         db_config:
           type: postgresql
           user: crowdsec
+          db_name: crowdsec
           password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
           host: homelab-pgsql.database.svc.cluster.local
           port: 5432
