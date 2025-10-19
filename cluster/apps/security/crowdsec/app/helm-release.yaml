@@ -56,6 +56,16 @@ spec:
                     operator: In
                     values:
                       - amd64
+      env:
+        - name: ENROLL_KEY
+          valueFrom:
+            secretKeyRef:
+              name: crowdsec-lapi-keys
+              key: enrollKey
+        - name: ENROLL_INSTANCE_NAME
+          value: "k3s-server"
+        - name: ENROLL_TAGS
+          value: "k8s k3s linux homelab"
       metrics:
         enabled: true
         serviceMonitor:
