@@ -77,6 +77,26 @@ spec:
         #   - splunk_default # Set the splunk url and token in /etc/crowdsec/notifications/splunk.yaml before enabling this.
         #   - http_default   # Set the required http parameters in /etc/crowdsec/notifications/http.yaml before enabling this.
         #   - email_default  # Set the required email parameters in /etc/crowdsec/notifications/email.yaml before enabling this.
+      scenarios:
+        wp-admin-ban.yaml: |
+          type: trigger
+          name: crowdsecurity/wp-admin-ban
+          description: "Ban IPs accessing wp-admin paths"
+          filter: evt.Meta.log_type in ["http_access-log", "http_error-log"] and
+            (evt.Meta.http_path startsWith "/wp-admin" or
+             evt.Meta.http_path == "/wp-login.php" or
+             evt.Meta.http_path startsWith "/wp-login" or
+             evt.Meta.http_path contains "/wp-content/plugins/" or
+             evt.Meta.http_path == "/xmlrpc.php")
+          blackhole: 1h
+          groupby: "evt.Meta.source_ip"
+          labels:
+            confidence: 8
+            spoofable: 1
+            behavior: "http:wordpress-scan"
+            label: "WordPress Admin Access Attempt"
+            service: http
+            remediation: true
       notifications:
         slack.yaml: |
           # Don't change this
