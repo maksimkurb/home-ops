@@ -28,10 +28,10 @@ blacklists_ipv6: crowdsec6-blacklists
 ipset_type: nethash
 #if present, insert rule in those chains
 iptables_chains:
-  - INPUT
+  - "@PPPoE0"
 #  - FORWARD
 #  - DOCKER-USER
-iptables_add_rule_comments: true
+iptables_add_rule_comments: false
 
 ## nftables
 # nftables:
