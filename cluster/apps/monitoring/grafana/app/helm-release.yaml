@@ -48,7 +48,7 @@ spec:
       server:
         root_url: "https://grafana.${SECRET_PRIVATE_DOMAIN}"
       auth:
-        signout_redirect_url: "https://auth.${SECRET_PRIVATE_DOMAIN}/logout"
+        signout_redirect_url: "https://auth.${SECRET_PUBLIC_DOMAIN}/logout"
         oauth_auto_login: true
       auth.basic:
         disable_login_form: false
@@ -57,9 +57,9 @@ spec:
         name: 56k
         scopes: "openid profile email groups"
         empty_scopes: false
-        auth_url: https://auth.${SECRET_PRIVATE_DOMAIN}/api/oidc/authorization
-        token_url: https://auth.${SECRET_PRIVATE_DOMAIN}/api/oidc/token
-        api_url: https://auth.${SECRET_PRIVATE_DOMAIN}/api/oidc/userinfo
+        auth_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/authorization
+        token_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/token
+        api_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/userinfo
         login_attribute_path: preferred_username
         groups_attribute_path: groups
         name_attribute_path: name
