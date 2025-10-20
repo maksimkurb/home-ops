@@ -1,0 +1,67 @@
+#!/bin/sh
+
+PATH=/opt/bin:/opt/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+
+PIDFILE="/opt/var/run/cs-firewall-bouncer.pid"
+CS_FIREWALL_BOUNCER="/opt/usr/bin/cs-firewall-bouncer"
+CONFIG_FILE="/opt/etc/crowdsec/crowdsec-firewall-bouncer.yaml"
+
+cs_firewall_bouncer_status ()
+{
+        [ -f $PIDFILE ] && [ -d /proc/`cat $PIDFILE` ]
+}
+
+start()
+{
+        if [ -f "$CONFIG_FILE" ]; then
+                $CS_FIREWALL_BOUNCER -c $CONFIG_FILE &
+                echo $! > $PIDFILE
+        else
+                $CS_FIREWALL_BOUNCER &
+                echo $! > $PIDFILE
+        fi
+}
+
+stop()
+{
+        if [ -f $PIDFILE ]; then
+                kill `cat $PIDFILE`
+                rm -f $PIDFILE
+        fi
+}
+
+case "$1" in
+        start)
+                if cs_firewall_bouncer_status
+                then
+                        echo cs-firewall-bouncer already running
+                else
+                        start
+                fi
+                ;;
+        stop)
+                if cs_firewall_bouncer_status
+                then
+                        stop
+                else
+                        echo cs-firewall-bouncer is not running
+                fi
+                ;;
+        status)
+                if cs_firewall_bouncer_status
+                then
+                        echo cs-firewall-bouncer is running
+                else
+                        echo cs-firewall-bouncer is not running
+                fi
+                ;;
+
+        restart)
+                stop
+                sleep 3
+                start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                ;;
+esac

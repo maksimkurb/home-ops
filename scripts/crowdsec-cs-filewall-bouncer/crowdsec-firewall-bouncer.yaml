@@ -1,0 +1,122 @@
+# CrowdSec Firewall Bouncer Configuration
+# This configuration file manages how the firewall bouncer connects to CrowdSec LAPI
+# and implements security decisions through iptables rules
+
+# CrowdSec Local API (LAPI) connection settings
+crowdsec_config:
+  # URL of the CrowdSec Local API
+  lapi_url: http://localhost:8080
+
+  # API key for authentication with LAPI
+  # Generate this key using: cscli bouncers add firewall-bouncer
+  lapi_key: "YOUR_API_KEY_HERE"
+
+  # Certificate settings for TLS (optional)
+  # cert_path: /etc/crowdsec/ssl/bouncer.crt
+  # key_path: /etc/crowdsec/ssl/bouncer.key
+  # ca_cert_path: /etc/crowdsec/ssl/ca.crt
+
+  # Disable TLS verification (not recommended for production)
+  insecure_skip_verify: false
+
+  # How often to query LAPI for new decisions (in seconds)
+  update_frequency: 10s
+
+# Firewall configuration
+firewall_config:
+  # Firewall backend to use (iptables, nftables, ipset)
+  backend: iptables
+
+  # Default action for decisions (ban, allow)
+  default_action: ban
+
+  # Chain names for iptables
+  iptables:
+    # Input chain for incoming traffic
+    input_chain: INPUT
+    # Forward chain for forwarded traffic
+    forward_chain: FORWARD
+    # Output chain for outgoing traffic (usually not used)
+    output_chain: OUTPUT
+    # Custom chain prefix
+    chain_prefix: CROWDSEC
+
+  # IP sets configuration (if using ipset backend)
+  ipset:
+    # Name of the ipset for banned IPs
+    banned_set_name: crowdsec-banned
+    # Type of ipset (hash:ip, hash:net)
+    set_type: hash:ip
+    # Maximum entries in the set
+    max_entries: 65536
+
+# Decision handling
+decisions:
+  # Types of decisions to handle
+  # Supported types: ban, captcha, throttle
+  supported_types:
+    - ban
+    - captcha
+
+  # Default duration for decisions (if not specified by LAPI)
+  default_duration: 4h
+
+  # Whether to apply decisions to IPv6 addresses
+  ipv6_enabled: true
+
+  # Whitelist of IP addresses/ranges that should never be banned
+  whitelist:
+    - 127.0.0.1/32
+    - ::1/128
+    # Add your management IPs here
+    # - 192.168.1.100/32
+    # - 10.0.0.0/8
+
+# Logging configuration
+logging:
+  # Log level: trace, debug, info, warn, error
+  level: info
+
+  # Log format: text, json
+  format: text
+
+  # Log file path (optional, logs to stdout if not specified)
+  # file: /var/log/crowdsec-firewall-bouncer.log
+
+  # Whether to compress old log files
+  compress: true
+
+  # Maximum size of log file before rotation
+  max_size: 100
+
+  # Maximum number of old log files to keep
+  max_backups: 3
+
+  # Maximum age of log files in days
+  max_age: 30
+
+# Prometheus metrics (optional)
+prometheus:
+  # Enable metrics endpoint
+  enabled: false
+
+  # Metrics endpoint listen address
+  listen_addr: 127.0.0.1:2112
+
+  # Metrics endpoint path
+  metrics_path: /metrics
+
+# Advanced configuration
+advanced:
+  # Whether to enable dry-run mode (log actions without executing them)
+  dry_run: false
+
+  # Custom iptables rules to add
+  # custom_rules:
+  #   - "-A INPUT -p tcp --dport 22 -j ACCEPT"
+
+  # Whether to flush existing rules on startup
+  flush_on_start: false
+
+  # Whether to restore rules on shutdown
+  restore_on_shutdown: true
