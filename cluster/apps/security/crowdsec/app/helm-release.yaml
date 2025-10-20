@@ -66,10 +66,10 @@ spec:
       profiles.yaml: |
         name: captcha_remediation
         filters:
-          - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() contains "http"
+          - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() contains "http" && (!Alert.GetScenario() contains "-cve" || Alert.GetScenario() contains "-ban")
         decisions:
         - type: captcha
-          duration: 4h
+          duration: 8h
         notifications:
           - slack_default
         on_success: break
@@ -79,7 +79,7 @@ spec:
           - Alert.Remediation == true && Alert.GetScope() == "Ip"
         decisions:
           - type: ban
-            duration: 4h
+            duration: 24h
         notifications:
           - slack_default
         on_success: break
@@ -92,8 +92,7 @@ spec:
             (evt.Meta.http_path startsWith "/wp-admin" or
              evt.Meta.http_path == "/wp-login.php" or
              evt.Meta.http_path startsWith "/wp-login" or
-             evt.Meta.http_path contains "/wp-content/plugins/" or
-             evt.Meta.http_path == "/xmlrpc.php")
+             evt.Meta.http_path contains "/wp-content/plugins/")
           blackhole: 5m
           groupby: "evt.Meta.source_ip"
           labels:
