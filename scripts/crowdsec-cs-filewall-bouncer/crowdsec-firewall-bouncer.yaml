@@ -1,14 +1,14 @@
-mode: ${BACKEND}
+mode: iptables
 update_frequency: 10s
-log_mode: file
-log_dir: /var/log/
+log_mode: stdout
+# log_dir: /var/log/
 log_level: info
-log_compression: true
-log_max_size: 100
-log_max_backups: 3
-log_max_age: 30
-api_url: http://127.0.0.1:8080/
-api_key: ${API_KEY}
+# log_compression: true
+# log_max_size: 100
+# log_max_backups: 3
+# log_max_age: 30
+api_url: https://crowdsec-lapi.acme.corp
+api_key: api-key-here
 ## TLS Authentication
 # cert_path: /etc/crowdsec/tls/cert.pem
 # key_path: /etc/crowdsec/tls/key.pem
@@ -34,28 +34,28 @@ iptables_chains:
 iptables_add_rule_comments: true
 
 ## nftables
-nftables:
-  ipv4:
-    enabled: true
-    set-only: false
-    table: crowdsec
-    chain: crowdsec-chain
-    priority: -10
-  ipv6:
-    enabled: true
-    set-only: false
-    table: crowdsec6
-    chain: crowdsec6-chain
-    priority: -10
+# nftables:
+#   ipv4:
+#     enabled: true
+#     set-only: false
+#     table: crowdsec
+#     chain: crowdsec-chain
+#     priority: -10
+#   ipv6:
+#     enabled: true
+#     set-only: false
+#     table: crowdsec6
+#     chain: crowdsec6-chain
+#     priority: -10
 
-nftables_hooks:
-  - input
-  - forward
+# nftables_hooks:
+#   - input
+#   - forward
 
 # packet filter
-pf:
-  # an empty string disables the anchor
-  anchor_name: ""
+# pf:
+#   # an empty string disables the anchor
+#   anchor_name: ""
 
 prometheus:
   enabled: false
