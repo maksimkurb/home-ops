@@ -89,7 +89,7 @@ spec:
             type: prometheus
             uid: prometheus
             access: proxy
-            url: http://vmsingle-vm-k8s-stack.monitoring.svc.cluster.local:8429
+            url: http://vmsingle-vm-k8s-stack.monitoring.svc.cluster.local:8428
             isDefault: true
           # - name: Loki
           #   type: loki
