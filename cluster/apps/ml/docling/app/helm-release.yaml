@@ -62,7 +62,7 @@ spec:
           app:
             image:
               repository: quay.io/docling-project/docling-serve-cu126
-              tag: v1.7.0
+              tag: v1.7.1
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
