@@ -21,6 +21,7 @@ vpn-server:
   hosts:
     vps-1:
       enable_unattended_upgrades: false
+      xui_enabled: true
 
 signal-tls-proxy:
   hosts:

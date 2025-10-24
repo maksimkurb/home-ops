@@ -1,0 +1,28 @@
+---
+- name: 3x-ui / Create config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /opt/3x-ui
+    - /opt/3x-ui/db
+    - /opt/3x-ui/cert
+
+- name: 3x-ui / Create docker-compose.yml file
+  template:
+    src: 3x-ui-docker-compose.yml.j2
+    dest: "/opt/3x-ui/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: 3x-ui / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/3x-ui"
+    state: present
+
+- name: 3x-ui / Restart with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/3x-ui"
+    state: restarted

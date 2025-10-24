@@ -1,7 +1,15 @@
 ---
 - import_tasks: amneziawg-install.yaml
   tags:
+    - amneziawg
     - amneziawg-install
+
 - import_tasks: amneziawg-configure.yaml
   tags:
+    - amneziawg
     - amneziawg-configure
+
+- import_tasks: 3x-ui-install.yaml
+  tags:
+    - 3x-ui
+  when: xui_enabled | default(false)

@@ -58,6 +58,7 @@ spec:
     n8n: []
     beta9: []
     crowdsec: []
+    lab: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -80,6 +81,7 @@ spec:
     n8n: n8n
     beta9: beta9
     crowdsec: crowdsec
+    lab: lab
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
