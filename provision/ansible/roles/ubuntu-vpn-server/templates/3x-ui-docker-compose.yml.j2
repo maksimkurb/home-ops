@@ -26,7 +26,7 @@ services:
     environment:
       - "TZ={{ timezone | default('UTC') }}"
       - "XRAY_VMESS_AEAD_FORCED=false"
-      - "XUI_ENABLE_FAIL2BAN=true"
+      - "XUI_ENABLE_FAIL2BAN=false"
 {% if xui_custom_env is defined %}
 {% for env in xui_custom_env %}
       - "{{ env }}"

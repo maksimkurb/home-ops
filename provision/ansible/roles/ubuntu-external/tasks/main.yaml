@@ -2,10 +2,12 @@
 - import_tasks: docker.yaml
   tags:
     - docker
+  when: (traefik_enabled | default(false)) or (gatus_config is defined)
 
 - import_tasks: traefik.yaml
   tags:
     - traefik
+  when: traefik_enabled | default(false)
 
 - import_tasks: gatus.yaml
   tags:
