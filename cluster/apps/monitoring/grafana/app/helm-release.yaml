@@ -77,6 +77,8 @@ spec:
         org_role: Viewer
       news:
         news_feed_enabled: false
+      public_dashboards:
+        enabled: true
     datasources:
       datasources.yaml:
         apiVersion: 1
