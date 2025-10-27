@@ -119,6 +119,11 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/default
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 777
+      runAsGroup: 777
+      fsGroup: 777
     dashboards:
       default:
         # apc-ups:
