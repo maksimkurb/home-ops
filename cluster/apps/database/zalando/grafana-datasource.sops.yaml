@@ -1,0 +1,49 @@
+# apiVersion: 1
+# datasources:
+#   - name: PostgreSQL Lab
+#     type: postgres
+#     uid: postgres
+#     access: proxy
+#     url: homelab-pgsql.database.svc.cluster.local:5432
+#     database: YOUR_DATABASE_HERE
+#     user: YOUR_USERNAME_HERE
+#     jsonData:
+#       sslmode: disable
+#       maxOpenConns: 100
+#       maxIdleConns: 100
+#       maxIdleConnsAuto: true
+#       connMaxLifetime: 14400
+#       postgresVersion: 1500
+#       timescaledb: false
+#     secureJsonData:
+#       password: YOUR_PASSWORD_HERE
+#     editable: false
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: grafana-datasource-postgres
+    namespace: database
+    labels:
+        grafana_datasource: "1"
+data:
+    postgres-datasource.yaml: ENC[AES256_GCM,data:OdC0AVoB5pD1Zm4CubxrNx4Qq4cEmr5jeSzir5GtPgPD8PFtasKpdnXXNg1Le7DXnb/2zYgdMH9lMOXs1pJQAUgeI013y1OmzF/e5Lq5Xg0bnCUPyWiUJClnWe/bFVfoIsnsHE4JQLeoXT2Tljb3JScMFdiGIXFcHhnVNwaR+BvFwqd5D3KANA0HrHYMrmkOcdUQu8olhv0RoUB2p4VPYLxVuVgqiEvm+Y88LyBus3b9rfBwrAPSDG9eCFBQImCZc4ap7f7sio90bEKFtbV6lRakjLtEqm763qjNnWWmrlFgJ766sdyuNB4pt1N/pBKs7kJa1tqYP8Kn6Xi3LAQCb8y1vtTfXBi1zEpkZNFC7fynQHyCyVDF5xp2MrNDx8w+rxGTcdm98xsLx5DsfsnrzbhvVA8lXVjoS+DZLE8I/KiZgbbkSweWw2/uwR9QGknMp/DT7n79UVtzMxzAkAwq5nB9mfB1Fn4KlvdXFVvHGixHZ11Am8Hc1iW7lnBMrw/0BM8upg8Oef2ohyMMD9EdhHwo8AtKu+6+sJCdUeVR4HaVSC43gH8sP7ZfD4HXgfpvMOobY7CTO5tZAUpRi0PB6DJLtr/2Yoz6XGgZyWR5DAp8JYDUfue/tql4A5dvdqid9A2E+iSZsRMSqrvSdhXW2Nnahvp4UMeAlnlhh0Ti,iv:Lq7qdy3LzMwqfdJmvPT/T9yZ4ZxqTWHyLVujaok79AY=,tag:I906ZqbrsTACE6NA+VniBg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCVFgrNmhrZ3lBYTc1MFNO
+            SVJYbmdPa1FoRlBuakxWblh5SlJESkJudkZnClJvazhXVjN5M0U2UnUyZDNNR2pW
+            MkhFQ2RNSUFzS0Rob01HVVRsaG85T28KLS0tIEJwcXhuKzMxWFN6Q0ZhTyt0SlE2
+            ZHJmNkg5cjJCMDRFa3pZaFR3djFXYTgKD0UeX2l0MxoZ3JmtthJSd6ESZgUBCTle
+            Y6EsHCF7NjtbHMl7yhS/EU6Ot1r5CfEz71en6F6/XyIXwfEoQf2gsQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-10-27T14:23:53Z"
+    mac: ENC[AES256_GCM,data:tU/iwqKzLl5t0+wRV5/WCBT1QqhWFqQCE6jayrh55j+41PaZdnCSuEU3LkLXCVmZJizQwkJd+0T8JjwlJjhASjFMaAWZ2QWyBYKpjQM/Kb8HDA+XpL+oWGfepxmcG0mw6aq2Qy0KLEKGxPI3S/YygOaYIG+l9MARuIW+mRZhiFE=,iv:dYsV14wFPPmqAP0ppi6QVRIfTP2d9aJoSb/nIVVFsYQ=,tag:ZRSboUoSIjXBYtoZ9EjAyA==,type:str]
+    pgp: []
+    encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
+    version: 3.7.1

@@ -241,6 +241,7 @@ spec:
       datasources:
         enabled: true
         searchNamespace: ALL
+        label: grafana_datasource
         labelValue: ""
     plugins:
       - grafana-clock-panel
@@ -267,6 +268,7 @@ spec:
       hosts:
         - "grafana.${SECRET_PUBLIC_DOMAIN}"
     persistence:
-      enabled: false
+      enabled: true
+      storageClassName: local-path
     testFramework:
       enabled: false
