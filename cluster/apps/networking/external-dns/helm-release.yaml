@@ -25,7 +25,7 @@ spec:
   values:
     logLevel: debug
     triggerLoopOnEvent: true
-    interval: 15m
+    interval: 5m
     provider:
       name: cloudflare
     env:
