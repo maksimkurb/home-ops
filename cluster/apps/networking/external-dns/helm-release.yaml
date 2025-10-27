@@ -23,9 +23,11 @@ spec:
     remediation:
       retries: 5
   values:
-    interval: 15m
     logLevel: debug
-    provider: cloudflare
+    triggerLoopOnEvents: true
+    interval: 15m
+    provider:
+      name: cloudflare
     env:
       - name: CF_API_EMAIL
         valueFrom:
