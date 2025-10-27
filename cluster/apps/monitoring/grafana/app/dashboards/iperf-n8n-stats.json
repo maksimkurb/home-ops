@@ -61,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 22,
   "links": [],
   "panels": [
     {
@@ -511,7 +511,7 @@
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
-            "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": "table",
@@ -541,12 +541,16 @@
       "type": "trend"
     }
   ],
+  "preload": false,
   "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "text": "PostgreSQL Lab",
+          "value": "postgres"
+        },
         "includeAll": false,
         "name": "datasource",
         "options": [],
@@ -556,10 +560,13 @@
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "text": "",
+          "value": ""
+        },
         "datasource": {
           "type": "grafana-postgresql-datasource",
-          "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+          "uid": "${datasource}"
         },
         "definition": "SELECT MAX(id) FROM n8n_iperf_logs;",
         "label": "Test ID",
@@ -573,10 +580,17 @@
       {
         "allValue": "0",
         "allowCustomValue": false,
-        "current": {},
+        "current": {
+          "text": [
+            "h-1.node.kurb.me"
+          ],
+          "value": [
+            "1"
+          ]
+        },
         "datasource": {
           "type": "grafana-postgresql-datasource",
-          "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+          "uid": "${datasource}"
         },
         "definition": "SELECT id || '___' || host\nFROM n8n_iperf_hosts \nORDER BY host",
         "description": "",
@@ -631,6 +645,5 @@
   "timezone": "browser",
   "title": "iPerf Dashboard",
   "uid": "bf2b06xgndtzaa",
-  "version": 4,
-  "weekStart": ""
+  "version": 1
 }
