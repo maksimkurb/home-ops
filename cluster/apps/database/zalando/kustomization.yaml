@@ -9,5 +9,5 @@ resources:
   - zalando-env.yaml
   - secret.sops.yaml
   - postgres-cluster.yaml
-  - grafana-datasource.yaml
+  - grafana-datasource.sops.yaml
   # - lb.yaml
