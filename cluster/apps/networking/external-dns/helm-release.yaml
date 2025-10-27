@@ -24,7 +24,7 @@ spec:
       retries: 5
   values:
     logLevel: debug
-    triggerLoopOnEvents: true
+    triggerLoopOnEvent: true
     interval: 15m
     provider:
       name: cloudflare
