@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPerf Monitor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <h1 class="mb-4">iPerf Speed Monitor</h1>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Time Window</label>
+                        <select id="window" class="form-select">
+                            <option value="15m">15 Minutes</option>
+                            <option value="1h" selected>1 Hour</option>
+                            <option value="4h">4 Hours</option>
+                            <option value="1d">1 Day</option>
+                            <option value="1w">1 Week</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Test Type</label>
+                        <select id="type" class="form-select">
+                            <option value="">All</option>
+                            <option value="download">Download</option>
+                            <option value="upload">Upload</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Host</label>
+                        <input type="text" id="host" class="form-control" placeholder="Filter by host...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary w-100" onclick="loadData()">Refresh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Avg Speed</h6>
+                        <h3 id="avg-speed">--</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Total Tests</h6>
+                        <h3 id="total-tests">--</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Min</h6>
+                        <h3 id="min-speed">--</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Max</h6>
+                        <h3 id="max-speed">--</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Speed Over Time</h5>
+                    <button id="resetZoom" class="btn btn-sm btn-outline-secondary">Reset Zoom</button>
+                </div>
+                <small class="text-muted">Scroll wheel to zoom, click and drag to pan</small>
+                <div id="chartContainer" style="position: relative; width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5>Recent Tests</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Host</th>
+                                <th>Type</th>
+                                <th>Avg Speed</th>
+                                <th>Tested At</th>
+                                <th>Chart</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = 'https://n8n-webhook.cubly.ru/webhook/iperf-stats';
+        let speedChart = null;
+        let seriesMap = new Map(); // Store series by "host-type" key
+        const colors = ['#0d6efd', '#198754', '#dc3545', '#ffc107', '#0dcaf0', '#6610f2', '#d63384', '#fd7e14'];
+
+        document.getElementById('window').addEventListener('change', loadData);
+        document.getElementById('type').addEventListener('change', loadData);
+        document.getElementById('host').addEventListener('input', debounce(loadData, 500));
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        async function loadData() {
+            const params = new URLSearchParams({
+                window: document.getElementById('window').value,
+                type: document.getElementById('type').value,
+                host: document.getElementById('host').value
+            });
+
+            try {
+                const response = await fetch(`${WEBHOOK_URL}?${params}`);
+                const result = await response.json();
+                displayData(result);
+            } catch (error) {
+                alert('Error loading data: ' + error.message);
+            }
+        }
+
+        function displayData(result) {
+            const { data, count, statistics } = result;
+            document.getElementById('avg-speed').textContent = (statistics?.average || 0) + ' Mbps';
+            document.getElementById('total-tests').textContent = count || 0;
+            document.getElementById('min-speed').textContent = (statistics?.min?.toFixed(2) || 0) + ' Mbps';
+            document.getElementById('max-speed').textContent = (statistics?.max?.toFixed(2) || 0) + ' Mbps';
+
+            const timeWindow = document.getElementById('window').value;
+            updateSpeedChart(data, timeWindow);
+            updateTable(data);
+        }
+
+        function updateSpeedChart(data, timeWindow) {
+            const container = document.getElementById('chartContainer');
+            const reversed = [...data].reverse();
+
+            // Initialize chart if not exists
+            if (!speedChart) {
+                container.innerHTML = '';
+
+                speedChart = LightweightCharts.createChart(container, {
+                    layout: {
+                        background: { type: 'solid', color: 'white' },
+                        textColor: '#333',
+                    },
+                    grid: {
+                        vertLines: { color: '#f0f0f0' },
+                        horzLines: { color: '#f0f0f0' },
+                    },
+                    width: container.clientWidth,
+                    height: 400,
+                    timeScale: {
+                        timeVisible: true,
+                        secondsVisible: false,
+                    },
+                    crosshair: {
+                        mode: LightweightCharts.CrosshairMode.Normal,
+                    },
+                });
+
+                // Create legend
+                const legend = document.createElement('div');
+                legend.id = 'legend';
+                legend.style = `position: absolute; left: 12px; top: 12px; z-index: 1; font-size: 12px; font-family: sans-serif; line-height: 20px; font-weight: 300; background: rgba(255, 255, 255, 0.9); padding: 8px; border-radius: 4px; max-height: 380px; overflow-y: auto;`;
+                container.appendChild(legend);
+
+                // Handle legend updates
+                speedChart.subscribeCrosshairMove(param => {
+                    let timeStr = '';
+                    let legendContent = '';
+
+                    if (param.time) {
+                        const date = new Date(param.time * 1000);
+                        timeStr = date.toLocaleString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        legendContent = `<div style="margin-bottom: 4px;"><strong>${timeStr}</strong></div>`;
+
+                        seriesMap.forEach((seriesInfo, key) => {
+                            const seriesData = param.seriesData.get(seriesInfo.series);
+                            if (seriesData) {
+                                const value = seriesData.value.toFixed(2);
+                                legendContent += `<div style="color: ${seriesInfo.color};">${seriesInfo.label}: <strong>${value} Mbps</strong></div>`;
+                            }
+                        });
+                    } else {
+                        legendContent = `<div style="margin-bottom: 4px;"><strong>Speed by Node</strong></div>`;
+                        seriesMap.forEach((seriesInfo) => {
+                            legendContent += `<div style="color: ${seriesInfo.color};">${seriesInfo.label}</div>`;
+                        });
+                    }
+
+                    legend.innerHTML = legendContent;
+                });
+
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    speedChart.applyOptions({ width: container.clientWidth });
+                });
+            }
+
+            if (reversed.length === 0) return;
+
+            // Group data by host and test type
+            const groupedData = {};
+            reversed.forEach(d => {
+                const key = `${d.host}-${d.test_type}`;
+                if (!groupedData[key]) {
+                    groupedData[key] = {
+                        host: d.host,
+                        type: d.test_type,
+                        data: []
+                    };
+                }
+                groupedData[key].data.push({
+                    time: Math.floor(new Date(d.tested_at).getTime() / 1000),
+                    value: parseFloat(d.average_speed)
+                });
+            });
+
+            // Sort data points within each group
+            Object.values(groupedData).forEach(group => {
+                group.data.sort((a, b) => a.time - b.time);
+            });
+
+            // Get sorted keys for consistent coloring
+            const sortedKeys = Object.keys(groupedData).sort();
+
+            // Remove old series that are no longer in the data
+            seriesMap.forEach((seriesInfo, key) => {
+                if (!groupedData[key]) {
+                    speedChart.removeSeries(seriesInfo.series);
+                    seriesMap.delete(key);
+                }
+            });
+
+            // Create or update series for each group
+            sortedKeys.forEach((key, index) => {
+                const group = groupedData[key];
+
+                if (!seriesMap.has(key)) {
+                    // Determine color based on type and index
+                    const baseColor = group.type === 'download' ? '#0d6efd' : '#198754';
+                    const color = colors[index % colors.length];
+
+                    const series = speedChart.addLineSeries({
+                        color: color,
+                        lineWidth: 2,
+                        title: `${group.host} - ${group.type}`,
+                    });
+
+                    seriesMap.set(key, {
+                        series: series,
+                        label: `${group.host} - ${group.type}`,
+                        color: color
+                    });
+                }
+
+                // Update series data
+                seriesMap.get(key).series.setData(group.data);
+            });
+
+            // Fit content
+            speedChart.timeScale().fitContent();
+        }
+
+        function updateTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.slice(0, 20).map((row, idx) => `
+                <tr>
+                    <td>${row.host}</td>
+                    <td><span class="badge bg-${row.test_type === 'download' ? 'primary' : 'success'}">${row.test_type}</span></td>
+                    <td><strong>${parseFloat(row.average_speed).toFixed(2)} Mbps</strong></td>
+                    <td>${new Date(row.tested_at).toLocaleString()}</td>
+                    <td><canvas id="mini-${idx}" width="100" height="30"></canvas></td>
+                </tr>
+            `).join('');
+
+            data.slice(0, 20).forEach((row, idx) => {
+                const measurements = row.second_measurements || [];
+                const ctx = document.getElementById(`mini-${idx}`);
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: measurements.map((_, i) => i + 1),
+                            datasets: [{
+                                data: measurements,
+                                borderColor: row.test_type === 'download' ? '#0d6efd' : '#198754',
+                                borderWidth: 1,
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            plugins: { legend: { display: false } },
+                            scales: { x: { display: false }, y: { display: false } }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Reset zoom button handler
+        document.getElementById('resetZoom').addEventListener('click', () => {
+            if (speedChart) {
+                speedChart.timeScale().fitContent();
+            }
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
