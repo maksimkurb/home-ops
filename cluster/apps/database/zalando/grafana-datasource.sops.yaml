@@ -26,7 +26,7 @@ metadata:
     labels:
         grafana_datasource: "1"
 stringData:
-    postgres-datasource.yaml: ENC[AES256_GCM,data:h4FI5KxnhBL3Krf+R5dZ9Dux1HbdtKTriyjIevJejECGY1Q6ql+iitx1D2Agc57tWt6Ot9bNQHSHflQ96BEOhSQKzqPTdfCL3xt0qn1iLFfIKoC/0e1wosIF1YzElixKObDhHY+FZ76R8hU9m+eotLE8qx9NVVWMvQCw0lRKGNVA+0WZw7dz9z4hWfT9B4WmuP82NLaLOjCELNyWGnCknFuYSwC1YSQVU72AQ0nCM7eJ4uv6vC+5a8RDgPZnxeB2tpLoPDGzr4kflZvSAnXql4Y+HLOsGcvenWNBqN88oeOasz9zP7v5V+SovIe1dS09zeeOg/D9Tp9GIcwBSOtNckF2mqxb/XjzzTI+2Q+YckgsQ0VCxnRjc0koCUdFx6wXQRvUGxvX8ToxmIakeTDt9bnGKmCREkzSeBnRnASCKO40wBfLV5FyM2K5Cvpb3cH3Us2+0zwkNwsUSPSu/ZVRGsJS5qMoZoUJzaR7TBXTqG4WqbUfmKQov0DIvmBt3PX7PW0ovMFj+p2vcYjrUgBWXBnONupg40Hhldd4jSSN1xneiK7yonLSlT5kwuwJmpsFevwpathDH4NQ99I0aXFNDAM3Q4G7ZoMtRR4BGtgDpgmsPvlp+ERTwTI7NWZuh7ha0gF1jibzgY6u9CBEA1Yg7suO3+aphSUq3mn1vatQ,iv:IEwUK+1utKWZS9H/dkCGxKvP0aVCqXbaFrc72iV6yhs=,tag:dPuXD1h1PZLZG60QW2GEiw==,type:str]
+    postgres-datasource.yaml: ENC[AES256_GCM,data:6DwnNTmj1KyHwgAq9H6v0C+sGwQCfF3iHlgWK2g6EnKlOlaE78lKgXSADwPvsS27oWRyaCGmowuFN1C8y/IgnWZKdmwIsGClXJsabzWrZmD0VCa5bEYe+E2UXdR9SJDR+7FP07POyq3Y3VVhqMX5CMBM8JlqOm9ZFhOnlGP015U4/i9g4lvPZtPihk2RPL8qzB3V7+wv0mg1aAEVwKoA8zOkNIg3JQ9AAKC402gwKCFJGJb+RsfP+/VdlWvG9ZOUFyaqKbzWwOcjSNIXlUuzCvZDDP1z7Plh/EwOAB04iOWmUqOEmv9sn5NkXmtWVtzMARP9q02VE5lFwr1eEKYJ3C5podsJGvuapoO+xgEJwn/z70fsdmKlUenqONjz4ORNE7KQLvruSFIymx8bUmy+USAS9qjfC31hGiDAXWHblWTvkU+FbH/pPJ5lIjcnit8MzB7WdDC1V0LfqOfv/DUC0ed2n1EtgnPs380cKaPWFT/etWeljEp/QBcaGXvnTZuw94TgB1+tsMHPR/IQwa/ntBfxndhw/mJ5RKZvOYSeVNj3evMjxDDb+Wfliuqn0RCFemBhxNSexDtjENfw3iqjF7g++GDtT1N5OZtOEUxckPm4mffePKaqWj99oubpP04DY7e0UP6iHs9uhuuEaZV8+wF7S/iXtsyW22hEjX6bgyM=,iv:z9g5Ac638fUNkeGpB1CMO8lz6TTHySxLi02AT8q80zM=,tag:Jo7p7m8AItfoyQ0Umh7nzQ==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -42,8 +42,8 @@ sops:
             ZHJmNkg5cjJCMDRFa3pZaFR3djFXYTgKD0UeX2l0MxoZ3JmtthJSd6ESZgUBCTle
             Y6EsHCF7NjtbHMl7yhS/EU6Ot1r5CfEz71en6F6/XyIXwfEoQf2gsQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-27T14:38:48Z"
-    mac: ENC[AES256_GCM,data:06iItqpps+w2NXdWGXJJeyiEqqu4NkQ+UHLnQ3Oo16S6GdS+5hK+CqRccEwAI/gl9ypwKSBl0VFOMcd74wnmZB8AstV0H6QJ6hVjI756yO7oVwUyBIWlU15+ecpq9FEMQ/1m1aVjTYJMAS1C9bNOqoeSqxKdF/uJbTq+dtWf6oM=,iv:muPId83tQwwk4pARzBeEWXHiVVNAF2Y2Utp+bVbdtpY=,tag:/2A+6/2SkgrU2QxoinQq9g==,type:str]
+    lastmodified: "2025-10-27T15:16:45Z"
+    mac: ENC[AES256_GCM,data:w5ONA3DvuF0PHb2GHS4M2WBOmVgpSZweUn4eqK4sVdsp/MUPzm0N5XNtdx5oifozwpcFXkfx3lRSloTs/zK35PQ54zXGTFe2aKzZdRdyFTS7XadG6DmcZAtle8ETNENCRU9YxGBBr2U+RJd1TIJFh+NncJLNM3cwIg1G9c3NqSw=,iv:mHZK0d0tgc/MZUuXwTOMXD929NvvCWIJfJBe0rJ/6ow=,tag:GUQyIQE/5snJa4IIfmA2mQ==,type:str]
     pgp: []
     encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
     version: 3.7.1
