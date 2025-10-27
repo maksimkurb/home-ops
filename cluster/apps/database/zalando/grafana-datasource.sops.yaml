@@ -1,22 +1,22 @@
 # apiVersion: 1
 # datasources:
 #   - name: PostgreSQL Lab
-#     type: postgres
-#     uid: postgres
+#     type: grafana-postgresql-datasource
+#     uid: homelab-pgsql
 #     access: proxy
-#     url: homelab-pgsql.database.svc.cluster.local:5432
-#     database: YOUR_DATABASE_HERE
-#     user: YOUR_USERNAME_HERE
+#     url: XXXXXXXXXXXXXXXXXX
+#     user: XXXXXXXXXXXXXXXXXX
 #     jsonData:
-#       sslmode: disable
-#       maxOpenConns: 100
+#       connMaxLifetime: 14400
+#       database: XXXXXXXXXXXXXXXXXX
 #       maxIdleConns: 100
 #       maxIdleConnsAuto: true
-#       connMaxLifetime: 14400
+#       maxOpenConns: 100
+#       pdcInjected: false
 #       postgresVersion: 1500
-#       timescaledb: false
+#       sslmode: disable
 #     secureJsonData:
-#       password: YOUR_PASSWORD_HERE
+#       password: XXXXXXXXXXXXXXXXXX
 #     editable: false
 apiVersion: v1
 kind: Secret
@@ -26,7 +26,7 @@ metadata:
     labels:
         grafana_datasource: "1"
 stringData:
-    postgres-datasource.yaml: ENC[AES256_GCM,data:6DwnNTmj1KyHwgAq9H6v0C+sGwQCfF3iHlgWK2g6EnKlOlaE78lKgXSADwPvsS27oWRyaCGmowuFN1C8y/IgnWZKdmwIsGClXJsabzWrZmD0VCa5bEYe+E2UXdR9SJDR+7FP07POyq3Y3VVhqMX5CMBM8JlqOm9ZFhOnlGP015U4/i9g4lvPZtPihk2RPL8qzB3V7+wv0mg1aAEVwKoA8zOkNIg3JQ9AAKC402gwKCFJGJb+RsfP+/VdlWvG9ZOUFyaqKbzWwOcjSNIXlUuzCvZDDP1z7Plh/EwOAB04iOWmUqOEmv9sn5NkXmtWVtzMARP9q02VE5lFwr1eEKYJ3C5podsJGvuapoO+xgEJwn/z70fsdmKlUenqONjz4ORNE7KQLvruSFIymx8bUmy+USAS9qjfC31hGiDAXWHblWTvkU+FbH/pPJ5lIjcnit8MzB7WdDC1V0LfqOfv/DUC0ed2n1EtgnPs380cKaPWFT/etWeljEp/QBcaGXvnTZuw94TgB1+tsMHPR/IQwa/ntBfxndhw/mJ5RKZvOYSeVNj3evMjxDDb+Wfliuqn0RCFemBhxNSexDtjENfw3iqjF7g++GDtT1N5OZtOEUxckPm4mffePKaqWj99oubpP04DY7e0UP6iHs9uhuuEaZV8+wF7S/iXtsyW22hEjX6bgyM=,iv:z9g5Ac638fUNkeGpB1CMO8lz6TTHySxLi02AT8q80zM=,tag:Jo7p7m8AItfoyQ0Umh7nzQ==,type:str]
+    postgres-datasource.yaml: ENC[AES256_GCM,data:9yLrT+hJmEPx4bZzkhSPbMA6NVQtkkyyYJ3lZB3IgPXQ0r3M6I/sgglHgQ09Fo/viB0oLOBjopeSgrlAA2xRCNjos3+cNjVlBzEWmSq+1cwu7yc1ErOl2myqFbtq+jl7cwZ2FhSZwHkMuxci0DUIva7RiqpsH4kzpK30SKFossGpevzxhFmFa1tJeBQ0OazG3wCmtruNWzXBkywZTB1UllqngMY+J4xQx8mIugxTV7zp7FsSwoVixYBci4+/UGVnq9fuzfTYlyJDz0XuAJqb8bObtIAyCsnbMD6HXfMMLLcC096bas9wAu7lQGEnhztZlo9suGTZ55UJdlu8xXxA8pD5KcsLljPvcbQ3ClwAcnfV4tg16W0Rj7tIPyliPPbnHbNy7Ckq1H7ecaYPxC3Ti2YjmhxiC+LcteQVAChc3zWg4cV8cAxG9QGK46mc5uwnZsQsAn1rxrQjcQY9ZX7+o1Oygq0EJICJOMvmh1QeBXh/aMX+PDZ1aX42hTHO2NEYrq5e/9rUtXS96rz7R0+DtAE0RnJQR5DqoOuXKGu5H6Bzn4Xy4Jkn2UdQB1oDYtDDjJcn80G0Nv473Pjn1CG4CwJrF9Hq9O5ouz/LAwHhWOnhk6v4G7Lt0lGkO7m/NIoehKqQjca94UATrH1JiDb18e6bwFQkIujOgtaOVGVGJBUMCVu6i4cBmsOQluVNqQK4dPsN7IFku7/tXA==,iv:TdMjzkK/bP65iRnodREQE509dcW4wyAH+nRaHVLCdsU=,tag:hMriPSouDGyAIiI+4729Lg==,type:str]
 sops:
     kms: []
     gcp_kms: []
@@ -42,8 +42,8 @@ sops:
             ZHJmNkg5cjJCMDRFa3pZaFR3djFXYTgKD0UeX2l0MxoZ3JmtthJSd6ESZgUBCTle
             Y6EsHCF7NjtbHMl7yhS/EU6Ot1r5CfEz71en6F6/XyIXwfEoQf2gsQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-27T15:16:45Z"
-    mac: ENC[AES256_GCM,data:w5ONA3DvuF0PHb2GHS4M2WBOmVgpSZweUn4eqK4sVdsp/MUPzm0N5XNtdx5oifozwpcFXkfx3lRSloTs/zK35PQ54zXGTFe2aKzZdRdyFTS7XadG6DmcZAtle8ETNENCRU9YxGBBr2U+RJd1TIJFh+NncJLNM3cwIg1G9c3NqSw=,iv:mHZK0d0tgc/MZUuXwTOMXD929NvvCWIJfJBe0rJ/6ow=,tag:GUQyIQE/5snJa4IIfmA2mQ==,type:str]
+    lastmodified: "2025-10-27T16:11:49Z"
+    mac: ENC[AES256_GCM,data:mmOgmlAAC78JSZHp9+CajxfmCMHrfBzTGKEwlcXcDFegI9vqR7X5cKT753V2hKWP0kdIvKDM9NbB521l0gEDhssa+Ss+tRhiHjdrq1hxYI4fHwrXKLVMKAWqGYx2fEMsc/1qVqobCITZxeEV5v9juQmrDpTmcWrGzE6B6NOjlAg=,iv:pCfr3+R7rUtj4jUs341TrTRakAu91l9+vDRiWZK6j+4=,tag:h64Gf2n4XtkP1xsYdnnxiA==,type:str]
     pgp: []
     encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
     version: 3.7.1
