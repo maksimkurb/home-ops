@@ -253,7 +253,9 @@ spec:
       enabled: true
       ingressClassName: "nginx"
       annotations:
-        nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+        external-dns.alpha.kubernetes.io/enabled: "true"
+        external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+        external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
         nginx.ingress.kubernetes.io/affinity: "cookie"
         nginx.ingress.kubernetes.io/session-cookie-name: "grafana"
         nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
@@ -261,7 +263,6 @@ spec:
         hajimari.io/appName: "Grafana"
         hajimari.io/icon: view-dashboard
       hosts:
-        - "grafana.${SECRET_PRIVATE_DOMAIN}"
         - "grafana.${SECRET_PUBLIC_DOMAIN}"
     persistence:
       enabled: false
