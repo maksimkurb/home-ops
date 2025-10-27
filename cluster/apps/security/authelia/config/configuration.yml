@@ -168,6 +168,7 @@ identity_providers:
           - email
         redirect_uris:
           - https://grafana.${SECRET_PRIVATE_DOMAIN}/login/generic_oauth
+          - https://grafana.${SECRET_PUBLIC_DOMAIN}/login/generic_oauth
         userinfo_signed_response_alg: 'none'
 
       - client_id: sftpgo
