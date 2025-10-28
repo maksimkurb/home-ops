@@ -271,7 +271,11 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 361
+                "value": 127
+              },
+              {
+                "id": "unit",
+                "value": "Mbits"
               }
             ]
           },
@@ -307,7 +311,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 190
+                "value": 174
               }
             ]
           },
@@ -319,7 +323,19 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 194
+                "value": 178
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 124
               }
             ]
           }
@@ -650,5 +666,5 @@
   "timezone": "browser",
   "title": "iPerf Dashboard",
   "uid": "bf2b06xgndtzaa",
-  "version": 7
+  "version": 8
 }
