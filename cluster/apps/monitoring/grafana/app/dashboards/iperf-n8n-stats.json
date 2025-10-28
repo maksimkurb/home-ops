@@ -470,6 +470,10 @@
               {
                 "id": "unit",
                 "value": "Mbits"
+              },
+              {
+                "id": "max",
+                "value": 500
               }
             ]
           },
@@ -646,5 +650,5 @@
   "timezone": "browser",
   "title": "iPerf Dashboard",
   "uid": "bf2b06xgndtzaa",
-  "version": 6
+  "version": 7
 }
