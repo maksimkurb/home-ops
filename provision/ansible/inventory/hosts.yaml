@@ -23,6 +23,10 @@ vpn-server:
       enable_unattended_upgrades: false
       xui_enabled: true
       traefik_enabled: true
+    vps-3:
+      enable_unattended_upgrades: false
+      xui_enabled: false
+      traefik_enabled: false
 
 signal-tls-proxy:
   hosts:

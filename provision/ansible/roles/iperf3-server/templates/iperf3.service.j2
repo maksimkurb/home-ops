@@ -1,0 +1,12 @@
+[Unit]
+Description=iPerf3 Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/iperf3 --server --daemon --port {{ iperf3_server_port }} --idle-timeout {{ iperf3_server_timeout | default("40") }} --forceflush
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

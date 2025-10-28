@@ -1,0 +1,27 @@
+---
+- name: Install iperf3 on Ubuntu
+  ansible.builtin.apt:
+    name: iperf3
+    state: present
+    update_cache: true
+  become: true
+
+- name: Deploy iperf3 systemd service
+  ansible.builtin.template:
+    src: iperf3.service.j2
+    dest: /etc/systemd/system/iperf3.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - Reload systemd
+    - Restart iperf3
+
+- name: Enable and start iperf3 service
+  ansible.builtin.systemd:
+    name: iperf3
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true

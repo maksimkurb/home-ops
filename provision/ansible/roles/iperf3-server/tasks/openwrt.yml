@@ -1,0 +1,27 @@
+---
+- name: Install iperf3 on OpenWRT
+  community.general.opkg:
+    name: iperf3
+    state: present
+    update_cache: true
+
+- name: Deploy iperf3 init.d script
+  ansible.builtin.template:
+    src: iperf3.init.j2
+    dest: /etc/init.d/iperf3
+    owner: root
+    group: root
+    mode: '0755'
+  notify: Restart iperf3
+
+- name: Enable iperf3 service on OpenWRT
+  ansible.builtin.command:
+    cmd: /etc/init.d/iperf3 enable
+  changed_when: false
+
+- name: Start iperf3 service on OpenWRT
+  ansible.builtin.command:
+    cmd: /etc/init.d/iperf3 start
+  changed_when: false
+  register: iperf3_start
+  failed_when: iperf3_start.rc != 0 and "already running" not in iperf3_start.stderr
