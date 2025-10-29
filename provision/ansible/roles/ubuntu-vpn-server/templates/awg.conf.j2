@@ -16,22 +16,22 @@ H3 = {{ interface.h3 }}
 H4 = {{ interface.h4 }}
 
 PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostUp = iptables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = iptables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10
+PostUp = iptables -t nat -A POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
 PostUp = ip6tables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostUp = ip6tables -A FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostUp = ip6tables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostUp = ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = ip6tables -t nat -A POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10
+PostUp = ip6tables -t nat -A POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
 
 PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostDown = iptables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = iptables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostDown = iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = iptables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10
+PostDown = iptables -t nat -D POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
 PostDown = ip6tables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostDown = ip6tables -D FORWARD -i {{ interface.public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = ip6tables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = ip6tables -t nat -D POSTROUTING -o {{ interface.public_interface }} -j MASQUERADE --wait 10
+PostDown = ip6tables -t nat -D POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
 
 {% for peer in interface.peers %}
 

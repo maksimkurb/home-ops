@@ -14,42 +14,17 @@ nvidia:
 ubuntu:
   hosts:
     k3s-server: {}
-    vps-1:
-      enable_unattended_upgrades: false
+    vps-1: {}
 
 vpn-server:
   hosts:
-    vps-1:
-      enable_unattended_upgrades: false
-      xui_enabled: true
-      traefik_enabled: true
-    vps-3:
-      enable_unattended_upgrades: false
-      xui_enabled: false
-      traefik_enabled: false
+    vps-1: {}
+    vps-3: {}
+
+reverse-proxy:
+  hosts:
+    vps-1: {}
 
 signal-tls-proxy:
   hosts:
-    vps-1:
-      enable_unattended_upgrades: false
-
-# vpn-gateway:
-#   hosts:
-#     vpn-gateway1: {}
-
-# vpn:
-#   hosts:
-#     node-de:
-#       ansible_user: ubuntu
-
-# mail:
-#   hosts:
-#     node-contabo: {}
-
-# cctv:
-#   hosts:
-#     node-contabo: {}
-
-# 3xui:
-#   hosts:
-#     node-contabo: {}
+    vps-1: {}

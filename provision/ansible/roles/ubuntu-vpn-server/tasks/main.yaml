@@ -3,13 +3,15 @@
   tags:
     - amneziawg
     - amneziawg-install
+  when: vpn_amnezia_enabled | default(false)
 
 - import_tasks: amneziawg-configure.yaml
   tags:
     - amneziawg
     - amneziawg-configure
+  when: vpn_amnezia_enabled | default(false)
 
 - import_tasks: 3x-ui-install.yaml
   tags:
     - 3x-ui
-  when: xui_enabled | default(false)
+  when: vpn_xui_enabled | default(false)

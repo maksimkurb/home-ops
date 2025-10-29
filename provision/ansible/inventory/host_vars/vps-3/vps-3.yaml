@@ -1,0 +1,5 @@
+enable_unattended_upgrades: false
+
+vpn_wan_interface: eth0
+vpn_xui_enabled: false
+vpn_amnezia_enabled: true

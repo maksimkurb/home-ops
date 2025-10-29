@@ -1,4 +1,25 @@
 ---
+
+- name: Determine public interface for {{ interface.name }}
+  set_fact:
+    awg_public_interface: "{{ interface.public_interface | default(vpn_wan_interface, true) if (interface.public_interface | default('')) != '' else vpn_wan_interface }}"
+
+- name: Fail if public interface is not defined for {{ interface.name }}
+  fail:
+    msg: "Public interface is not defined. Please set either interface.public_interface or vpn_wan_interface variable."
+  when: awg_public_interface is not defined or awg_public_interface == '' or awg_public_interface is none
+
+- name: Check if public interface {{ awg_public_interface }} exists
+  ansible.builtin.stat:
+    path: "/sys/class/net/{{ awg_public_interface }}"
+  register: public_interface_check
+  become: true
+
+- name: Fail if public interface does not exist
+  fail:
+    msg: "Public interface '{{ awg_public_interface }}' does not exist on {{ inventory_hostname }}. Available interfaces: {{ ansible_interfaces | join(', ') }}"
+  when: not public_interface_check.stat.exists
+
 - name: Configure AmneziaWG for {{ interface.name }}
   template:
     src: awg.conf.j2
@@ -8,6 +29,13 @@
     mode: '0600'
   become: true
   register: config_changed
+
+- name: Restart AmneziaWG service for {{ interface.name }} if config changed
+  systemd:
+    name: "awg-quick@{{ interface.name }}"
+    state: restarted
+  become: true
+  when: config_changed.changed
 
 - name: Enable AmneziaWG service for {{ interface.name }}
   systemd:
@@ -19,24 +47,6 @@
   systemd:
     name: "awg-quick@{{ interface.name }}"
     state: started
-  become: true
-  when: not config_changed.changed
-
-- name: Restart AmneziaWG service for {{ interface.name }}
-  systemd:
-    name: "awg-quick@{{ interface.name }}"
-    state: restarted
-  become: true
-  when: config_changed.changed
-
-- name: Wait for AmneziaWG service to be active for {{ interface.name }}
-  systemd:
-    name: "awg-quick@{{ interface.name }}"
-    state: started
-  register: service_status
-  until: service_status.status.ActiveState == 'active'
-  retries: 5
-  delay: 5
   become: true
 
 - name: Generate client config
