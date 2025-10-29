@@ -6,7 +6,7 @@ amneziawg_interfaces:
       #ENC[AES256_GCM,data:Z/wDF6QiI8c6U0dOWu86jw5i5sFzbg==,iv:LfdYfuqykpycvAnAg4GB0IBNg5L8aBZXm0XEQNDGSCs=,tag:oEt7OtS3OKzZAqpKP8FPCw==,type:comment]
       port: ENC[AES256_GCM,data:5c4mKgA=,iv:KJaEXABFQ80vrrFOFY40Lw6Rwspc3ePEwE8jcM1uKSg=,tag:4zXyFCTjqkc1cyH2aBAW+w==,type:int]
       #ENC[AES256_GCM,data:GzVOF7nwiIbcuwIUsntMDE+B5OtnBg==,iv:3v9KrXBla1JrO5+/xU5lPKtSsn4mkixctn47b/hoE/M=,tag:bGBJA1VJTexDVK6Z0SFNTw==,type:comment]
-      public_host: ENC[AES256_GCM,data:AafuL8iKGlPGz8TuLBZeTT1X,iv:CPIYjvUtxpPd2KdpxFOOC/wRjP2LJdQzEfO+gyFZJLU=,tag:GW2Z4yJ2qcojTrGhUaz8Cg==,type:str]
+      public_host: ENC[AES256_GCM,data:N59wEd+HxcBhcFjlSNRd5A==,iv:z0FBxvFN0Su50DMll5tVI01CSOuFVSZ3A+EcZLgPrvg=,tag:j9fmQFGFtkmjWc03pkQtWg==,type:str]
       #ENC[AES256_GCM,data:3W7Q+c3XaP02MiF7Wnw=,iv:hG2OHdquL1QPqwjB/w9i0VPbifgJ0LjNQpxM6AOKj1o=,tag:a2GZR0noAkF1kh/UuuQw1A==,type:comment]
       mtu: ENC[AES256_GCM,data:Z893tA==,iv:W7Rr+k8o/v6NkDy96ToN6tPHYoZIpoS9q4ivps31SA8=,tag:OZ276hYnA4aaeXTArkZz8A==,type:int]
       #ENC[AES256_GCM,data:4/p40E6EQPHvgwXmm5tj0s8Edg==,iv:fxFCnZX9f+FNz0a6j0dfhBvVAOqwZfa8NduiZAA8B0M=,tag:mnVi3y3UvDNrNttgD6nD3A==,type:comment]
@@ -125,8 +125,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-28T20:49:10Z"
-    mac: ENC[AES256_GCM,data:0vjBOaTQskaLypejhr5BR5u0BVOodV7Z6/4AiyICheDrZlsa3Tm7XbYIpqDJoRDUh4FZRewMTaivPRn0Nq3OyqU6Y4gMjMz4aCxLKuwwfij+ScTZiEMoajN3Dkx8fUm8TWpyT2DoZILHGBwX4DHBVNWWB0STqqrRPf1PdgZG5WI=,iv:FajWyzsX6RieVhnIPLMhVg1X2cLp0giw3f10EMFrpkU=,tag:CJZA2/Fyv5PuvQv4UQvXVA==,type:str]
+    lastmodified: "2025-10-29T05:48:08Z"
+    mac: ENC[AES256_GCM,data:iTYtga4rek595M+wVskVQ7YQwbJaz0GYrej0AtDH+829ZzUGGCuyOXGYOUcD/L5HJb2z7ePs44H0gfhoyHpLVclIdNV8ksv+dS1fU+yz+Ny13ZLpRPZwb6nYbHf/X91HRjAIIZyIdIsCsyb0Fh/zG1hP9KlnfRFVyQudFWoz8CY=,iv:PkioK6KwUQpG3mr8ZAP0+FhEUy9MEwJuJSKLriOJpuA=,tag:lDJXY3775lVn5tiIMeCdoA==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

@@ -21,6 +21,13 @@ vpn-server:
     vps-1: {}
     vps-3: {}
 
+iperf3-stats:
+  hosts:
+    vps-1: {}
+    vps-3: {}
+    k3s-server: {}
+    owrt-spb: {}
+
 reverse-proxy:
   hosts:
     vps-1: {}

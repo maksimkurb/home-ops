@@ -4,6 +4,7 @@ ansible_user: ENC[AES256_GCM,data:jxd8ug==,iv:nRUyPHIebzT5igyisst3VPEXwuTQvEKNRZ
 acme_email: ENC[AES256_GCM,data:sHVCB7s8PoYHFrT4y7lcQuJO2ONPUqvM8JchomVYow==,iv:tkEiR0KTi/A8zihKwdYt2/plss3bDHj8ENT/ZADh/sk=,tag:FhX3/xLb6CMGq0CldFo+Bg==,type:str]
 traefik_base_domain: ENC[AES256_GCM,data:ca9zJd7IlcSl5ds=,iv:QcI86GxYV3xcaVwq5XUJSBxiBgl4VEYh8P1vnZIxJS4=,tag:r+tsSAIH9dRExx3gyEydEg==,type:str]
 signal_tls_proxy_domain: ENC[AES256_GCM,data:5osx0txcbg7Aq5xJ+IGwsw==,iv:e9/g5vAEg6MyzhzsK5qKs/NWwFaNFEKbImvrnWjVoB4=,tag:yNIzZq/gGn+zoi2uL/bn9g==,type:str]
+iperf3_server_port: ENC[AES256_GCM,data:rONOXl0=,iv:WJIayqRuMJbEfA1Y1xPBsJfiXzw/Y2HR/uXai6mjmCs=,tag:EjHGsI/kFG6kOsFR9uVjAw==,type:int]
 traefik_users_clear: ENC[AES256_GCM,data:SrIFFxrOABxltflbM03tItjZkShDzxrn/Ss=,iv:Kdu0Vx71Yyd10wyYjpXVOoc8KWkzXc0pmocglss1Nw0=,tag:RTrLlL9aA5cYsVfIl4nfjg==,type:str]
 traefik_users: ENC[AES256_GCM,data:IwfDyNx+em3aqox47VgX15PUwaQQDq/ma7+SSjs3oh972jgNDO10H6OV,iv:qM8Cb1Nra0R3QUeoLtZLwWrzqcY623m+/a7ADMnyFtM=,tag:NvDIYFQWU5A6oa9rSwt6Zw==,type:str]
 traefik_custom_env:
@@ -53,8 +54,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-28T20:27:19Z"
-    mac: ENC[AES256_GCM,data:LYGKggncy3uq/c5xaf/5ST1Iq+xdt7cs7Cmx4bhhj1JDPFfCmC7a/TRTDNH0orQqMw0M+KnOragzh0+qDpxQLIKWaJ4bFIPeZPcCDSoLFQesdpVmU/4we6ceyiVUx3/JbyzSFnIA6vFO/PYO103LAEVmQX1C0NHDxLKphVmsNsw=,iv:EKsa1SCYfjgKfRxIecnazUGaAl1s41pvTJaF2dhxHi8=,tag:7p/2DcLEM1caZaUnNugp+w==,type:str]
+    lastmodified: "2025-10-29T05:44:52Z"
+    mac: ENC[AES256_GCM,data:OdK47Wh7ijGFGMZIp1cgRqGKwn33EcUlkaur/oJJJ8zK2ZLa3ttyjE6s0nIhRQ7wVgaXSeNVH9btJ2AavXbj+4oLyU6R21PogRwnFZu0y9UcAJ5T4Q6lyDUFxMhrZ9aqyWPRBFMCts7mHN8OFvhRJqgXudJoRLBObyGVrbGXZZg=,iv:UwHpTQ/4r3K/CLv4VbNeFiKyhDZ8xx1dt2ny04I9rGs=,tag:Malt65L4jZB5WpYLphe0EA==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3
