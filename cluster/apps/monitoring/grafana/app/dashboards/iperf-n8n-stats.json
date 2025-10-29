@@ -61,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 22,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -138,8 +138,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 16,
-        "w": 13,
+        "h": 12,
+        "w": 12,
         "x": 0,
         "y": 0
       },
@@ -166,12 +166,12 @@
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
-            "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  h.\"host\" || ' - ' || l.\"test_type\" AS metric\r\nFROM n8n_iperf_logs l\r\nJOIN n8n_iperf_hosts h ON h.id = l.host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (l.\"host_id\" IN ($host_filter))\r\n  AND (l.\"test_type\" IN ($type_filter))\r\nORDER BY l.created_at",
+          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.created_at",
           "refId": "A",
           "sql": {
             "columns": [
@@ -205,7 +205,151 @@
           "table": "n8n_iperf_logs"
         }
       ],
-      "title": "Average network Speed",
+      "title": "Host 1 avg. speed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "green",
+                "value": 200
+              }
+            ]
+          },
+          "unit": "Mbits"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "median"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE\r\n      WHEN '0' IN ($host_filter) THEN false\r\n      WHEN '0' IN ($second_host_filter) THEN false\r\n      ELSE true\r\n    END\r\n  )\r\n  AND (\r\n    (l.\"source_host_id\" IN ($host_filter) AND l.\"target_host_id\" IN ($second_host_filter))\r\n    OR\r\n    (l.\"target_host_id\" IN ($host_filter) AND l.\"source_host_id\" IN ($second_host_filter))\r\n  )\r\nORDER BY l.created_at",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "average_speed",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "created_at",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "orderBy": {
+              "property": {
+                "type": "string"
+              },
+              "type": "property"
+            }
+          },
+          "table": "n8n_iperf_logs"
+        }
+      ],
+      "title": "Host 1 <-> Host 2 avg. speed",
       "type": "timeseries"
     },
     {
@@ -228,13 +372,7 @@
             },
             "inspect": false
           },
-          "links": [
-            {
-              "targetBlank": false,
-              "title": "Show test",
-              "url": "/d/${__dashboard.uid}/${__dashboard.name}?var-test_id=${__data.fields.id}&${__all_variables}"
-            }
-          ],
+          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -251,18 +389,6 @@
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "test_type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 168
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -300,6 +426,15 @@
               {
                 "id": "custom.width",
                 "value": 118
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show details",
+                    "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-test_id=${__data.fields.ID}&${__all_variables:queryparam}"
+                  }
+                ]
               }
             ]
           },
@@ -338,32 +473,97 @@
                 "value": 124
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "source_host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 217
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "target_host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 230
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 209
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "iperf_host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 158
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Source"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 171
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 11,
-        "x": 13,
-        "y": 0
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 12
       },
       "id": 2,
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "ID"
+          }
+        ]
       },
       "pluginVersion": "12.2.0",
       "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
-            "uid": "${DS_GRAFANA-POSTGRESQL-DATASOURCE}"
+            "uid": "${datasource}"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  h.host,\r\n  l.test_type,\r\n  l.average_speed,\r\n  l.second_measurements\r\nFROM n8n_iperf_logs l\r\nJOIN n8n_iperf_hosts h ON l.host_id = h.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (l.\"host_id\" IN ($host_filter))\r\n  AND (l.\"test_type\" IN ($type_filter))\r\nORDER BY l.created_at DESC\r\nLIMIT 100",
+          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
           "refId": "A",
           "sql": {
             "columns": [
@@ -384,7 +584,7 @@
           }
         }
       ],
-      "title": "iPerf tests",
+      "title": "Latest results",
       "transformations": [
         {
           "id": "organize",
@@ -396,10 +596,13 @@
             "includeByName": {},
             "indexByName": {},
             "renameByName": {
-              "average_speed": "",
-              "created_at": "date",
-              "id": "",
+              "average_speed": "Avg. speed",
+              "created_at": "Date",
+              "id": "ID",
+              "iperf_host": "Client on",
               "second_measurements": "",
+              "source_host": "Source",
+              "target_host": "Target",
               "test_type": "type"
             }
           }
@@ -508,10 +711,10 @@
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 11,
-        "x": 13,
-        "y": 8
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 12
       },
       "id": 3,
       "options": {
@@ -537,7 +740,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n  (series.ordinality - 1) AS second,\r\n  (series.value)::numeric AS speed\r\nFROM n8n_iperf_logs l\r\nCROSS JOIN LATERAL jsonb_array_elements(l.second_measurements->'data') WITH ORDINALITY AS series(value, ordinality)\r\nWHERE \r\n  l.id = ${test_id}\r\nORDER BY second",
+          "rawSql": "SELECT \r\n  (series.ordinality - 1) AS second,\r\n  (series.value)::numeric AS speed\r\nFROM iperf_logs l\r\nCROSS JOIN LATERAL jsonb_array_elements(l.second_measurements->'data') WITH ORDINALITY AS series(value, ordinality)\r\nWHERE\r\n  l.id = ${test_id}\r\nORDER BY second",
           "refId": "A",
           "sql": {
             "columns": [
@@ -563,6 +766,7 @@
     }
   ],
   "preload": false,
+  "refresh": "1m",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
@@ -582,20 +786,47 @@
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "129",
+          "value": "129"
         },
         "datasource": {
           "type": "grafana-postgresql-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT MAX(id) FROM n8n_iperf_logs;",
+        "definition": "SELECT MAX(id) FROM iperf_logs;",
         "label": "Test ID",
         "name": "test_id",
         "options": [],
-        "query": "SELECT MAX(id) FROM n8n_iperf_logs;",
+        "query": "SELECT MAX(id) FROM iperf_logs;",
         "refresh": 1,
         "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": "0",
+        "allowCustomValue": false,
+        "current": {
+          "text": [
+            "h-3.node.kurb.me"
+          ],
+          "value": [
+            "7"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT id || '___' || host\nFROM iperf_hosts \nORDER BY host",
+        "description": "",
+        "includeAll": true,
+        "label": "Host",
+        "multi": true,
+        "name": "host_filter",
+        "options": [],
+        "query": "SELECT id || '___' || host\nFROM iperf_hosts \nORDER BY host",
+        "refresh": 1,
+        "regex": "/(?<value>.*)___(?<text>.*)/",
         "type": "query"
       },
       {
@@ -606,65 +837,34 @@
             "h-1.node.kurb.me"
           ],
           "value": [
-            "1"
+            "4"
           ]
         },
         "datasource": {
           "type": "grafana-postgresql-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT id || '___' || host\nFROM n8n_iperf_hosts \nORDER BY host",
+        "definition": "SELECT h.id || '___' || h.host\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
         "description": "",
-        "includeAll": false,
-        "label": "Host",
+        "includeAll": true,
+        "label": "Host 2",
         "multi": true,
-        "name": "host_filter",
+        "name": "second_host_filter",
         "options": [],
-        "query": "SELECT id || '___' || host\nFROM n8n_iperf_hosts \nORDER BY host",
+        "query": "SELECT h.id || '___' || h.host\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
         "refresh": 1,
         "regex": "/(?<value>.*)___(?<text>.*)/",
         "type": "query"
-      },
-      {
-        "allValue": "All",
-        "current": {
-          "text": [
-            "download",
-            "upload"
-          ],
-          "value": [
-            "download",
-            "upload"
-          ]
-        },
-        "includeAll": false,
-        "label": "Type",
-        "multi": true,
-        "name": "type_filter",
-        "options": [
-          {
-            "selected": true,
-            "text": "download",
-            "value": "download"
-          },
-          {
-            "selected": true,
-            "text": "upload",
-            "value": "upload"
-          }
-        ],
-        "query": "download,upload",
-        "type": "custom"
       }
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "iPerf Dashboard",
-  "uid": "bf2b06xgndtzaa",
-  "version": 8
+  "title": "iPerf Dashboard (Public)",
+  "uid": "mam8zpv",
+  "version": 16
 }
