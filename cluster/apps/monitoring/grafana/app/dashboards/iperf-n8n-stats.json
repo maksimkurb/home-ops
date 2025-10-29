@@ -61,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 22,
   "links": [],
   "panels": [
     {
@@ -817,14 +817,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT id || '___' || host\nFROM iperf_hosts \nORDER BY host",
+        "definition": "SELECT id || '___' || COALESCE(alias, host)\nFROM iperf_hosts \nORDER BY host",
         "description": "",
         "includeAll": true,
         "label": "Host",
         "multi": true,
         "name": "host_filter",
         "options": [],
-        "query": "SELECT id || '___' || host\nFROM iperf_hosts \nORDER BY host",
+        "query": "SELECT id || '___' || COALESCE(alias, host)\nFROM iperf_hosts \nORDER BY host",
         "refresh": 1,
         "regex": "/(?<value>.*)___(?<text>.*)/",
         "type": "query"
@@ -844,14 +844,14 @@
           "type": "grafana-postgresql-datasource",
           "uid": "${datasource}"
         },
-        "definition": "SELECT h.id || '___' || h.host\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
+        "definition": "SELECT h.id || '___' || COALESCE(alias, host)\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
         "description": "",
         "includeAll": true,
         "label": "Host 2",
         "multi": true,
         "name": "second_host_filter",
         "options": [],
-        "query": "SELECT h.id || '___' || h.host\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
+        "query": "SELECT h.id || '___' || COALESCE(alias, host)\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
         "refresh": 1,
         "regex": "/(?<value>.*)___(?<text>.*)/",
         "type": "query"
@@ -866,5 +866,5 @@
   "timezone": "browser",
   "title": "iPerf Dashboard (Public)",
   "uid": "mam8zpv",
-  "version": 16
+  "version": 1
 }
