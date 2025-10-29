@@ -23,10 +23,19 @@ vpn-server:
 
 iperf3-stats:
   hosts:
-    vps-1: {}
-    vps-3: {}
-    k3s-server: {}
-    owrt-spb: {}
+    vps-1:
+      iperf3_server_enabled: true
+    vps-3:
+      iperf3_server_enabled: true
+    k3s-server:
+      iperf3_server_enabled: true
+      iperf3_client_enabled: true
+    owrt-spb:
+      iperf3_server_enabled: true
+      iperf3_client_enabled: true
+    casa-sok:
+      iperf3_server_enabled: true
+      iperf3_client_enabled: true
 
 reverse-proxy:
   hosts:

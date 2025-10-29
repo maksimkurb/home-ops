@@ -29,10 +29,16 @@ tasks:
 
 
   playbook:signal-tls-proxy-install:
-    desc: Configure VPN Server
+    desc: Configure Signal TLS Proxy
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/signal-tls-proxy-install.yaml {{ .CLI_ARGS }}"
+
+  playbook:iperf3-stats-install:
+    desc: Configure iperf3 Statistics Collection
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/iperf3-stats-install.yaml {{ .CLI_ARGS }}"
 
   playbook:cctv-install:
     desc: Prepare CCTV node

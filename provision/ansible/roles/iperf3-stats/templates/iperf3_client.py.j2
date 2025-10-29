@@ -1,0 +1,348 @@
+{% if ansible_os_family == "Debian" %}#!/opt/iperf3-client-venv/bin/python3{% else %}#!/usr/bin/env python3{% endif %}
+
+"""
+iperf3 Network Testing Client
+Runs bandwidth tests and sends results to n8n webhook
+"""
+
+import argparse
+import json
+import socket
+import sys
+import time
+from datetime import datetime
+from typing import Optional, Dict, Any
+
+try:
+    import iperf3
+except ImportError:
+    print("ERROR: iperf3 Python library not installed. Install with: pip3 install iperf3")
+    sys.exit(1)
+
+try:
+    import requests
+except ImportError:
+    print("ERROR: requests library not installed. Install with: pip3 install requests")
+    sys.exit(1)
+
+
+# Configuration from Ansible
+WEBHOOK_URL = "{{ iperf3_client_webhook_url }}"
+TEST_ATTEMPTS = {{ iperf3_client_test_attempts }}
+WEBHOOK_ATTEMPTS = {{ iperf3_client_webhook_attempts }}
+TEST_TIMEOUT = {{ iperf3_client_test_connect_timeout_sec }}
+WEBHOOK_TIMEOUT = {{ iperf3_client_webhook_connect_timeout_sec }}
+
+
+def generate_idempotency_key() -> str:
+    """Generate a unique idempotency key with microsecond precision"""
+    return datetime.now().strftime('%Y%m%d%H%M%S%f')
+
+
+def run_iperf3_test(
+    host: str,
+    port: int,
+    threads: int,
+    duration: int,
+    reverse: bool = False,
+    bind_interface: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Run iperf3 test with retry logic
+
+    Args:
+        host: Target server hostname or IP
+        port: Target server port
+        threads: Number of parallel streams
+        duration: Test duration in seconds
+        reverse: If True, run in reverse mode (download), else upload
+        bind_interface: Optional network interface to bind to
+
+    Returns:
+        Test results as dict, or None if all attempts failed
+    """
+    test_type = "download" if reverse else "upload"
+
+    for attempt in range(1, TEST_ATTEMPTS + 1):
+        try:
+            print(f"  Attempt {attempt}/{TEST_ATTEMPTS}...")
+
+            client = iperf3.Client()
+            client.server_hostname = host
+            client.port = port
+            client.num_streams = threads
+            client.duration = duration
+            client.zerocopy = True
+            client.verbose = False
+            client.reverse = reverse
+
+            # Set timeout
+            client.connect_timeout = TEST_TIMEOUT * 1000  # Convert to milliseconds
+
+            # Bind to interface if specified
+            if bind_interface:
+                client.bind_dev = bind_interface
+
+            # Run the test
+            result = client.run()
+
+            # Check if test was successful
+            if result.error:
+                print(f"  ✗ Test failed: {result.error}")
+                if attempt < TEST_ATTEMPTS:
+                    print(f"  Retrying in 2 seconds...")
+                    time.sleep(2)
+                continue
+
+            # Extract metrics for display
+            if reverse:
+                # Download test - data received
+                bitrate = result.received_Mbps
+                bytes_transferred = result.received_bytes
+            else:
+                # Upload test - data sent
+                bitrate = result.sent_Mbps
+                bytes_transferred = result.sent_bytes
+
+            # Extract additional metrics
+            retransmits = getattr(result, 'retransmits', 0)
+
+            print(f"  ✓ Test completed successfully")
+            print(f"    Bitrate: {bitrate:.2f} Mbps")
+            print(f"    Bytes: {bytes_transferred:,}")
+            if retransmits > 0:
+                print(f"    Retransmits: {retransmits}")
+
+            # Return the raw JSON output from iperf3
+            return result.json
+
+        except Exception as e:
+            print(f"  ✗ Exception during test: {e}")
+            if attempt < TEST_ATTEMPTS:
+                print(f"  Retrying in 2 seconds...")
+                time.sleep(2)
+
+    print(f"  ✗ All {TEST_ATTEMPTS} attempts failed")
+    return None
+
+
+def send_webhook(payload: Dict[str, Any], idempotency_key: str) -> bool:
+    """
+    Send results to n8n webhook with retry logic
+
+    Args:
+        payload: JSON payload to send
+        idempotency_key: Unique key to prevent duplicate processing
+
+    Returns:
+        True if webhook was delivered successfully, False otherwise
+    """
+    if not WEBHOOK_URL:
+        print("  ⚠ Webhook URL not configured, skipping webhook delivery")
+        return True
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-idempotency-key": idempotency_key
+    }
+
+    for attempt in range(1, WEBHOOK_ATTEMPTS + 1):
+        try:
+            print(f"  Webhook attempt {attempt}/{WEBHOOK_ATTEMPTS}...")
+
+            response = requests.post(
+                WEBHOOK_URL,
+                json=payload,
+                headers=headers,
+                timeout=WEBHOOK_TIMEOUT
+            )
+
+            # Check if request was successful (2xx status code)
+            if 200 <= response.status_code < 300:
+                print(f"  ✓ Webhook delivered successfully (HTTP {response.status_code})")
+                print(f"    Response: {response.text[:200]}")
+                print(f"    Idempotency key: {idempotency_key}")
+                return True
+            else:
+                print(f"  ✗ Webhook failed with HTTP {response.status_code}")
+                print(f"    Response: {response.text[:200]}")
+                if attempt < WEBHOOK_ATTEMPTS:
+                    print(f"  Retrying in 2 seconds...")
+                    time.sleep(2)
+
+        except requests.exceptions.Timeout:
+            print(f"  ✗ Webhook request timed out after {WEBHOOK_TIMEOUT}s")
+            if attempt < WEBHOOK_ATTEMPTS:
+                print(f"  Retrying in 2 seconds...")
+                time.sleep(2)
+
+        except requests.exceptions.RequestException as e:
+            print(f"  ✗ Webhook request failed: {e}")
+            if attempt < WEBHOOK_ATTEMPTS:
+                print(f"  Retrying in 2 seconds...")
+                time.sleep(2)
+
+    print(f"  ✗ Webhook delivery failed after {WEBHOOK_ATTEMPTS} attempts")
+    return False
+
+
+def run_test_and_send(
+    target_host: str,
+    port: int,
+    threads: int,
+    duration: int,
+    reverse: bool,
+    bind_interface: Optional[str] = None,
+    client_hostname: Optional[str] = None
+) -> bool:
+    """
+    Run a single test and send results to webhook
+
+    Args:
+        target_host: Target server hostname or IP
+        port: Target server port
+        threads: Number of parallel streams
+        duration: Test duration in seconds
+        reverse: If True, run in reverse mode (server sends data to client)
+        bind_interface: Optional network interface to bind to
+        client_hostname: Optional override for client hostname
+
+    Returns:
+        True if both test and webhook were successful, False otherwise
+    """
+    test_direction = "REVERSE (download)" if reverse else "NORMAL (upload)"
+    print(f"\nRunning {test_direction} test...")
+
+    # Get local hostname
+    if client_hostname:
+        local_hostname = client_hostname
+    else:
+        try:
+            local_hostname = socket.gethostname()
+        except Exception:
+            local_hostname = "unknown"
+
+    # Generate idempotency key before test starts
+    idempotency_key = generate_idempotency_key()
+
+    # Run iperf3 test
+    result = run_iperf3_test(target_host, port, threads, duration, reverse, bind_interface)
+
+    if result is None:
+        print(f"✗ {test_direction} test failed")
+        return False
+
+    # Parse iperf3 JSON result
+    try:
+        result_data = json.loads(result) if isinstance(result, str) else result
+    except (json.JSONDecodeError, TypeError):
+        print(f"✗ Failed to parse iperf3 result")
+        return False
+
+    # Determine source and target based on test direction
+    # In normal mode (reverse=False): client sends data, so client is source
+    # In reverse mode (reverse=True): server sends data, so server is source
+    if reverse:
+        source_hostname = target_host
+        target_hostname = local_hostname
+    else:
+        source_hostname = local_hostname
+        target_hostname = target_host
+
+    # Prepare webhook payload - merge iperf3 JSON with metadata
+    payload = {
+        **result_data,
+        "source_hostname": source_hostname,
+        "target_hostname": target_hostname,
+        "iperf_run_on_hostname": local_hostname,
+        "timestamp": datetime.now().isoformat()
+    }
+
+    # Add bind_interface to payload if specified
+    if bind_interface:
+        payload["bind_interface"] = bind_interface
+
+    # Send to webhook
+    webhook_success = send_webhook(payload, idempotency_key)
+
+    if webhook_success:
+        print(f"✓ {test_direction} test completed and results sent")
+        return True
+    else:
+        print(f"✗ {test_direction} test completed but webhook delivery failed")
+        return False
+
+
+def main():
+    """Main entry point"""
+    parser = argparse.ArgumentParser(
+        description='iperf3 Network Testing Client with n8n Webhook Integration'
+    )
+    parser.add_argument('--host', required=True, help='Target iperf3 server hostname or IP')
+    parser.add_argument('--port', type=int, required=True, help='Target iperf3 server port')
+    parser.add_argument('--threads', type=int, required=True, help='Number of parallel streams')
+    parser.add_argument('--duration', type=int, required=True, help='Test duration in seconds')
+    parser.add_argument('--bind-interface', help='Network interface to bind to (optional)')
+    parser.add_argument('--client-hostname', help='Override client hostname (optional)')
+
+    args = parser.parse_args()
+
+    # Get local hostname
+    if args.client_hostname:
+        local_hostname = args.client_hostname
+    else:
+        try:
+            local_hostname = socket.gethostname()
+        except Exception:
+            local_hostname = "unknown"
+
+    print("=" * 60)
+    print("iperf3 Network Test")
+    print("=" * 60)
+    print(f"Local hostname: {local_hostname}")
+    print(f"Target server: {args.host}:{args.port}")
+    print(f"Threads: {args.threads}")
+    print(f"Duration: {args.duration}s")
+    if args.bind_interface:
+        print(f"Bind interface: {args.bind_interface}")
+    print(f"Webhook URL: {WEBHOOK_URL if WEBHOOK_URL else 'Not configured'}")
+    print("=" * 60)
+
+    # Run reverse test (server sends to client - download)
+    reverse_success = run_test_and_send(
+        args.host,
+        args.port,
+        args.threads,
+        args.duration,
+        reverse=True,
+        bind_interface=args.bind_interface,
+        client_hostname=args.client_hostname
+    )
+
+    # Run normal test (client sends to server - upload)
+    normal_success = run_test_and_send(
+        args.host,
+        args.port,
+        args.threads,
+        args.duration,
+        reverse=False,
+        bind_interface=args.bind_interface,
+        client_hostname=args.client_hostname
+    )
+
+    print("\n" + "=" * 60)
+    print("Summary")
+    print("=" * 60)
+    print(f"Reverse test (download): {'✓ Success' if reverse_success else '✗ Failed'}")
+    print(f"Normal test (upload): {'✓ Success' if normal_success else '✗ Failed'}")
+    print("=" * 60)
+
+    # Exit with error code if either test failed
+    if not (reverse_success and normal_success):
+        sys.exit(1)
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

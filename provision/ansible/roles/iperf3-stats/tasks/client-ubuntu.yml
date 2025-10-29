@@ -1,0 +1,84 @@
+---
+- name: Install Python3 and venv for iperf3 client
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-venv
+    state: present
+    update_cache: true
+  become: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Create virtual environment for iperf3 client
+  ansible.builtin.command:
+    cmd: python3 -m venv /opt/iperf3-client-venv
+    creates: /opt/iperf3-client-venv/bin/python
+  become: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Install Python iperf3 library and requests in venv
+  ansible.builtin.pip:
+    name:
+      - iperf3
+      - requests
+    state: present
+    virtualenv: /opt/iperf3-client-venv
+  become: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Deploy iperf3 client script
+  ansible.builtin.template:
+    src: iperf3_client.py.j2
+    dest: /usr/local/bin/iperf3_client.py
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Get list of existing iperf3 cron jobs
+  ansible.builtin.shell: "crontab -l -u root 2>/dev/null | grep 'iperf3 client test -' | sed -n 's/^#Ansible: \\(iperf3 client test - .*\\)/\\1/p' || true"
+  register: existing_iperf3_crons
+  changed_when: false
+  become: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Remove all existing iperf3 client cron jobs
+  ansible.builtin.cron:
+    name: "{{ item }}"
+    state: absent
+    user: root
+  loop: "{{ existing_iperf3_crons.stdout_lines }}"
+  become: true
+  when: existing_iperf3_crons.stdout_lines | length > 0
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Create cron jobs for iperf3 client tests
+  ansible.builtin.cron:
+    name: "iperf3 client test - {{ item.host }}:{{ item.port }}"
+    minute: "{{ item.cron.split()[0] }}"
+    hour: "{{ item.cron.split()[1] }}"
+    day: "{{ item.cron.split()[2] }}"
+    month: "{{ item.cron.split()[3] }}"
+    weekday: "{{ item.cron.split()[4] }}"
+    job: "/usr/local/bin/iperf3_client.py --host {{ item.host }} --port {{ item.port }} --threads {{ item.threads }} --duration {{ item.duration_sec }}{{ ' --bind-interface ' + item.bind_interface if item.bind_interface is defined else '' }}{{ ' --client-hostname ' + iperf3_client_hostname if iperf3_client_hostname else '' }}"
+    user: root
+    state: present
+  loop: "{{ iperf3_client_runs }}"
+  become: true
+  when: iperf3_client_runs | length > 0
+  tags:
+    - iperf3
+    - iperf3-client

@@ -4,6 +4,9 @@
     name: iperf3
     state: present
     update_cache: true
+  tags:
+    - iperf3
+    - iperf3-server
 
 - name: Deploy iperf3 init.d script
   ansible.builtin.template:
@@ -13,11 +16,17 @@
     group: root
     mode: '0755'
   notify: Restart iperf3
+  tags:
+    - iperf3
+    - iperf3-server
 
 - name: Enable iperf3 service on OpenWRT
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 enable
   changed_when: false
+  tags:
+    - iperf3
+    - iperf3-server
 
 - name: Start iperf3 service on OpenWRT
   ansible.builtin.command:
@@ -25,3 +34,6 @@
   changed_when: false
   register: iperf3_start
   failed_when: iperf3_start.rc != 0 and "already running" not in iperf3_start.stderr
+  tags:
+    - iperf3
+    - iperf3-server

@@ -1,0 +1,72 @@
+---
+- name: Install Python3 and pip for iperf3 client on OpenWRT
+  community.general.opkg:
+    name:
+      - python3
+      - python3-pip
+      - python3-setuptools
+      - python3-packaging
+    state: present
+    update_cache: true
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Install Python iperf3 library and requests on OpenWRT
+  ansible.builtin.pip:
+    name:
+      - iperf3
+      - requests
+    state: present
+    executable: pip3
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Ensure /usr/local/bin directory exists on OpenWRT
+  ansible.builtin.file:
+    path: /usr/local/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Deploy iperf3 client script on OpenWRT
+  ansible.builtin.template:
+    src: iperf3_client.py.j2
+    dest: /usr/local/bin/iperf3_client.py
+    owner: root
+    group: root
+    mode: '0755'
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Remove all iperf3 client cron jobs on OpenWRT
+  ansible.builtin.lineinfile:
+    path: /etc/crontabs/root
+    regexp: ".*iperf3_client\\.py.*"
+    state: absent
+  notify: Restart cron
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Create cron jobs for iperf3 client tests on OpenWRT
+  ansible.builtin.lineinfile:
+    path: /etc/crontabs/root
+    line: "{{ item.cron }} /usr/bin/python3 /usr/local/bin/iperf3_client.py --host {{ item.host }} --port {{ item.port }} --threads {{ item.threads }} --duration {{ item.duration_sec }}{{ ' --bind-interface ' + item.bind_interface if item.bind_interface is defined else '' }}{{ ' --client-hostname ' + iperf3_client_hostname if iperf3_client_hostname else '' }}"
+    create: true
+    owner: root
+    group: root
+    mode: '0600'
+    state: present
+  loop: "{{ iperf3_client_runs }}"
+  when: iperf3_client_runs | length > 0
+  notify: Restart cron
+  tags:
+    - iperf3
+    - iperf3-client

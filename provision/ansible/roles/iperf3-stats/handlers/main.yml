@@ -16,3 +16,8 @@
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 restart
   when: ansible_distribution == "OpenWrt" or ansible_pkg_mgr == "opkg"
+
+- name: Restart cron
+  ansible.builtin.command:
+    cmd: /etc/init.d/cron restart
+  when: ansible_distribution == "OpenWrt" or ansible_pkg_mgr == "opkg"

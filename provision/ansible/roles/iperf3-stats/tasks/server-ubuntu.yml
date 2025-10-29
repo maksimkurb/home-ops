@@ -5,6 +5,9 @@
     state: present
     update_cache: true
   become: true
+  tags:
+    - iperf3
+    - iperf3-server
 
 - name: Deploy iperf3 systemd service
   ansible.builtin.template:
@@ -17,6 +20,9 @@
   notify:
     - Reload systemd
     - Restart iperf3
+  tags:
+    - iperf3
+    - iperf3-server
 
 - name: Enable and start iperf3 service
   ansible.builtin.systemd:
@@ -25,3 +31,6 @@
     state: started
     daemon_reload: true
   become: true
+  tags:
+    - iperf3
+    - iperf3-server

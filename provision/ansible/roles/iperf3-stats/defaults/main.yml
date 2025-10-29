@@ -1,6 +1,63 @@
 ---
+# ============================================================================
+# Server Configuration
+# ============================================================================
+
+# Enable iperf3 server (default: false)
+iperf3_server_enabled: false
+
 # Default port for iPerf3 server
 iperf3_server_port: 5201
 
 # Default idle timeout in seconds (default: 40)
 iperf3_server_timeout: 40
+
+# ============================================================================
+# Client Configuration
+# ============================================================================
+
+# Enable iperf3 client script (default: false)
+iperf3_client_enabled: false
+
+# Override the client hostname (optional, defaults to system hostname)
+# This hostname will be used in all test results sent to the webhook
+iperf3_client_hostname: ""
+
+# Client test runs configuration
+# Array of objects with the following keys:
+#   - cron: Cron schedule (e.g., "*/15 * * * *")
+#   - host: Target iperf3 server hostname or IP
+#   - port: Target iperf3 server port
+#   - threads: Number of parallel streams
+#   - duration_sec: Test duration in seconds
+#   - bind_interface: (optional) Network interface to bind to
+#
+# Example:
+# iperf3_client_runs:
+#   - cron: "*/15 * * * *"
+#     host: "192.168.1.100"
+#     port: 5201
+#     threads: 4
+#     duration_sec: 30
+#     bind_interface: "eth1"
+#   - cron: "0 * * * *"
+#     host: "remote.example.com"
+#     port: 19644
+#     threads: 1
+#     duration_sec: 10
+iperf3_client_runs: []
+
+# n8n webhook URL for sending test results (global for all tests)
+iperf3_client_webhook_url: ""
+
+# Number of retry attempts for iperf3 tests
+iperf3_client_test_attempts: 3
+
+# Number of retry attempts for webhook delivery
+iperf3_client_webhook_attempts: 5
+
+# Connection timeout for iperf3 tests in seconds
+iperf3_client_test_connect_timeout_sec: 20
+
+# Connection timeout for webhook HTTP requests in seconds
+iperf3_client_webhook_connect_timeout_sec: 20

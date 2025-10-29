@@ -1,16 +1,44 @@
 ---
-- name: Detect OS and include appropriate tasks
-  ansible.builtin.include_tasks: "{{ item }}"
-  with_first_found:
-    - files:
-        - "{{ ansible_distribution | lower }}.yml"
-        - "{{ ansible_os_family | lower }}.yml"
-      skip: true
+# ============================================================================
+# Server Tasks
+# ============================================================================
 
-- name: Include Ubuntu tasks for Debian-based systems
-  ansible.builtin.include_tasks: ubuntu.yml
-  when: ansible_os_family == "Debian"
+- name: Include server tasks for Ubuntu/Debian
+  ansible.builtin.include_tasks: server-ubuntu.yml
+  when:
+    - iperf3_server_enabled | default(false)
+    - ansible_os_family == "Debian"
+  tags:
+    - iperf3
+    - iperf3-server
 
-- name: Include OpenWRT tasks
-  ansible.builtin.include_tasks: openwrt.yml
-  when: ansible_distribution == "OpenWrt" or ansible_system == "Linux" and ansible_user_id == "root" and ansible_pkg_mgr == "opkg"
+- name: Include server tasks for OpenWRT
+  ansible.builtin.include_tasks: server-openwrt.yml
+  when:
+    - iperf3_server_enabled | default(false)
+    - ansible_distribution == "OpenWrt" or (ansible_system == "Linux" and ansible_pkg_mgr == "opkg")
+  tags:
+    - iperf3
+    - iperf3-server
+
+# ============================================================================
+# Client Tasks
+# ============================================================================
+
+- name: Include client tasks for Ubuntu/Debian
+  ansible.builtin.include_tasks: client-ubuntu.yml
+  when:
+    - iperf3_client_enabled | default(false)
+    - ansible_os_family == "Debian"
+  tags:
+    - iperf3
+    - iperf3-client
+
+- name: Include client tasks for OpenWRT
+  ansible.builtin.include_tasks: client-openwrt.yml
+  when:
+    - iperf3_client_enabled | default(false)
+    - ansible_distribution == "OpenWrt" or (ansible_system == "Linux" and ansible_pkg_mgr == "opkg")
+  tags:
+    - iperf3
+    - iperf3-client
