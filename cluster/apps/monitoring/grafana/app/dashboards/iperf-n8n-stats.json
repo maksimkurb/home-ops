@@ -135,7 +135,24 @@
           },
           "unit": "Mbits"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": [
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 500
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 12,
@@ -161,7 +178,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -279,7 +296,24 @@
           },
           "unit": "Mbits"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": [
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 500
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 12,
@@ -305,7 +339,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -553,7 +587,7 @@
           }
         ]
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
@@ -683,28 +717,28 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "speed"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Mbits"
-              },
-              {
-                "id": "max",
-                "value": 500
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "second"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "speed"
+            },
+            "properties": [
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 500
               }
             ]
           }
@@ -730,7 +764,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0",
+      "pluginVersion": "12.2.1",
       "targets": [
         {
           "datasource": {
