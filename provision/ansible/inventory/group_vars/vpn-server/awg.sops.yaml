@@ -125,8 +125,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-29T05:48:08Z"
-    mac: ENC[AES256_GCM,data:iTYtga4rek595M+wVskVQ7YQwbJaz0GYrej0AtDH+829ZzUGGCuyOXGYOUcD/L5HJb2z7ePs44H0gfhoyHpLVclIdNV8ksv+dS1fU+yz+Ny13ZLpRPZwb6nYbHf/X91HRjAIIZyIdIsCsyb0Fh/zG1hP9KlnfRFVyQudFWoz8CY=,iv:PkioK6KwUQpG3mr8ZAP0+FhEUy9MEwJuJSKLriOJpuA=,tag:lDJXY3775lVn5tiIMeCdoA==,type:str]
+    lastmodified: "2025-10-30T20:28:52Z"
+    mac: ENC[AES256_GCM,data:MYS41+U4ffln7z6MFSbDrmSoEaYvIS2Dric/FSkbBBJXXzbGvWmsiANhSmEEaLEOiq8FdtekjI+qY49rsyVXZImeSGCcsftC5f+q6wCawZ0vscz8nR0h9lgQNBE8yORF+EPj/8aGTO5kIQGTLZd4iXbmiEzEwgmKFSR7qNUg/PA=,iv:IFurAXWgH8Fjqna5xS/a8GUZjAGjofWRC8UB6AmOBYo=,tag:oA08nMaj5BctrSqBA6aG4w==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

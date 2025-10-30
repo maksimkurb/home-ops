@@ -124,6 +124,11 @@ spec:
       runAsUser: 777
       runAsGroup: 777
       fsGroup: 777
+    initChownData:
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
     dashboards:
       default:
         # apc-ups:
@@ -270,6 +275,7 @@ spec:
       hosts:
         - "grafana.${SECRET_PUBLIC_DOMAIN}"
     persistence:
-      enabled: false
+      enabled: true
+      storageClassName: local-path
     testFramework:
       enabled: false
