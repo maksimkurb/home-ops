@@ -125,10 +125,7 @@ spec:
       runAsGroup: 777
       fsGroup: 777
     initChownData:
-      securityContext:
-        runAsUser: 777
-        runAsGroup: 777
-        fsGroup: 777
+      enabled: false
     dashboards:
       default:
         # apc-ups:
