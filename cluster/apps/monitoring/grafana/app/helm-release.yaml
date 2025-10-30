@@ -270,7 +270,6 @@ spec:
       hosts:
         - "grafana.${SECRET_PUBLIC_DOMAIN}"
     persistence:
-      enabled: true
-      storageClassName: local-path
+      enabled: false
     testFramework:
       enabled: false
