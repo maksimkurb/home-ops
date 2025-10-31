@@ -126,6 +126,44 @@ def run_iperf3_test(
     return None
 
 
+def check_kill_switch() -> bool:
+    """
+    Check kill-switch endpoint to see if tests should be aborted
+
+    Returns:
+        True if tests should be aborted (kill-switch returned 201), False otherwise
+    """
+    if not WEBHOOK_URL:
+        print("  ⚠ Webhook URL not configured, skipping kill-switch check")
+        return False
+
+    # Construct kill-switch URL
+    kill_switch_url = WEBHOOK_URL.rstrip('/') + '/kill-switch'
+
+    try:
+        print(f"  Checking kill-switch at {kill_switch_url}...")
+
+        response = requests.get(
+            kill_switch_url,
+            timeout=WEBHOOK_TIMEOUT
+        )
+
+        if response.status_code == 201:
+            print(f"  ⚠ Kill-switch activated (HTTP 201) - tests will be aborted")
+            return True
+        else:
+            print(f"  ✓ Kill-switch not activated (HTTP {response.status_code})")
+            return False
+
+    except requests.exceptions.Timeout:
+        print(f"  ⚠ Kill-switch request timed out after {WEBHOOK_TIMEOUT}s - proceeding with tests")
+        return False
+
+    except requests.exceptions.RequestException as e:
+        print(f"  ⚠ Kill-switch request failed: {e} - proceeding with tests")
+        return False
+
+
 def send_webhook(payload: Dict[str, Any], idempotency_key: str) -> bool:
     """
     Send results to n8n webhook with retry logic
@@ -307,6 +345,14 @@ def main():
         print(f"Bind interface: {args.bind_interface}")
     print(f"Webhook URL: {WEBHOOK_URL if WEBHOOK_URL else 'Not configured'}")
     print("=" * 60)
+
+    # Check kill-switch before running tests
+    print("\nChecking kill-switch...")
+    if check_kill_switch():
+        print("\n" + "=" * 60)
+        print("Tests aborted due to kill-switch activation")
+        print("=" * 60)
+        sys.exit(0)
 
     # Run reverse test (server sends to client - download)
     reverse_success = run_test_and_send(
