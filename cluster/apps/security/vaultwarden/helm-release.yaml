@@ -42,7 +42,6 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          nginx.ingress.kubernetes.io/custom-http-errors: "599" # Disable custom HTTP errors for this endpoint
           hajimari.io/icon: "form-textbox-password"
         hosts:
           - host: &host "bitwarden.${SECRET_PUBLIC_DOMAIN}"
