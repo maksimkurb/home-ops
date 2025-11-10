@@ -37,7 +37,7 @@ spec:
               tag: master-web@sha256:36d8522b89583e3e0b44f9920c8c1cced28628d25c84ae3bb0b8108b9031b394
             env:
               TZ: "${TZ}"
-              SCRUTINY_WEB_INFLUXDB_HOST: localhost
+              SCRUTINY_WEB_INFLUXDB_HOST: influxdb
               SCRUTINY_WEB_INFLUXDB_PORT: "8086"
             envFrom:
               - secretRef:
