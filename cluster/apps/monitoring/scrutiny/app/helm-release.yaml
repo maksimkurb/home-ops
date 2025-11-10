@@ -29,26 +29,37 @@ spec:
     keepHistory: false
   values:
     controllers:
-      main:
-        type: daemonset
+      web:
         containers:
           main:
             image:
               repository: ghcr.io/analogj/scrutiny
-              tag: master-omnibus@sha256:e5638d8580adba40f7c03464cde8420866188b9e48cddb9fc3866ec3243163d5
+              tag: master-web@sha256:36d8522b89583e3e0b44f9920c8c1cced28628d25c84ae3bb0b8108b9031b394
             env:
               TZ: "${TZ}"
+              SCRUTINY_WEB_INFLUXDB_HOST: localhost
+              SCRUTINY_WEB_INFLUXDB_PORT: "8086"
             envFrom:
               - secretRef:
                   name: scrutiny-secrets
-            securityContext:
-              privileged: true
+          influxdb:
+            image:
+              repository: influxdb
+              tag: 2.7-alpine
+            envFrom:
+              - secretRef:
+                  name: scrutiny-secrets
     service:
-      main:
-        controller: main
+      web:
+        controller: web
         ports:
           http:
             port: 8080
+      influxdb:
+        controller: web
+        ports:
+          http:
+            port: 8086
     ingress:
       main:
         className: "nginx"
@@ -73,7 +84,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: main
+                  identifier: web
                   port: http
         tls:
           - hosts:
@@ -84,12 +95,23 @@ spec:
         accessMode: ReadWriteOnce
         size: 1Gi
         storageClass: local-path
-        globalMounts:
-          - path: /opt/scrutiny/config
+        advancedMounts:
+          web:
+            main:
+              - path: /opt/scrutiny/config
       database:
         enabled: true
         accessMode: ReadWriteOnce
         size: 1Gi
         storageClass: local-path
-        globalMounts:
-          - path: /opt/scrutiny/influxdb
+        advancedMounts:
+          web:
+            influxdb:
+              - path: /var/lib/influxdb2
+      udev:
+        type: hostPath
+        hostPath: /run/udev
+        advancedMounts:
+          collector:
+            main:
+              - path: /run/udev
