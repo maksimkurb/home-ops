@@ -108,10 +108,3 @@ spec:
           web:
             influxdb:
               - path: /var/lib/influxdb2
-      udev:
-        type: hostPath
-        hostPath: /run/udev
-        advancedMounts:
-          collector:
-            main:
-              - path: /run/udev
