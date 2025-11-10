@@ -1,0 +1,130 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.2.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        type: daemonset
+        containers:
+          main:
+            image:
+              repository: ghcr.io/analogj/scrutiny
+              tag: master-omnibus@sha256:e5638d8580adba40f7c03464cde8420866188b9e48cddb9fc3866ec3243163d5
+            env:
+              TZ: "${TZ}"
+            envFrom:
+              - secretRef:
+                  name: scrutiny-secrets
+            securityContext:
+              privileged: true
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+    ingress:
+      main:
+        className: "nginx"
+        annotations:
+          # ForwardAuth start
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+          # ForwardAuth end
+          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
+          hajimari.io/group: "monitoring"
+          hajimari.io/appName: "Scrutiny"
+        hosts:
+          - host: &host "scrutiny.${SECRET_PRIVATE_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      config:
+        enabled: true
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: local-path
+        globalMounts:
+          - path: /opt/scrutiny/config
+      database:
+        enabled: true
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: local-path
+        globalMounts:
+          - path: /opt/scrutiny/influxdb
+      udev:
+        enabled: true
+        type: hostPath
+        hostPath: /run/udev
+        globalMounts:
+          - path: /run/udev
+            readOnly: true
+      sda:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/sda
+        globalMounts:
+          - path: /dev/sda
+            readOnly: true
+      sdb:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/sdb
+        globalMounts:
+          - path: /dev/sdb
+            readOnly: true
+      sdc:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/sdc
+        globalMounts:
+          - path: /dev/sdc
+            readOnly: true
+      sdd:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/sdd
+        globalMounts:
+          - path: /dev/sdd
+            readOnly: true

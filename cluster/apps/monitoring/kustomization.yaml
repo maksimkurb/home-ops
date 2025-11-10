@@ -8,5 +8,6 @@ resources:
   # - nodeexporter
   # - ./kube-prometheus-stack/ks.yaml
   - ./grafana/ks.yaml
+  - ./scrutiny/ks.yaml
   # - vector
   - ./victoria-metrics-k8s-stack/ks.yaml
