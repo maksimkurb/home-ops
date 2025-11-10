@@ -40,6 +40,12 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/iperf3-stats-install.yaml {{ .CLI_ARGS }}"
 
+  playbook:scrutiny-collector-install:
+    desc: Install Scrutiny Collector for disk monitoring
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/scrutiny-collector-install.yaml {{ .CLI_ARGS }}"
+
   playbook:cctv-install:
     desc: Prepare CCTV node
     dir: provision/ansible

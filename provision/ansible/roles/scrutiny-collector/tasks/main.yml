@@ -1,0 +1,8 @@
+---
+- name: Include collector tasks for Ubuntu/Debian
+  ansible.builtin.include_tasks: collector-ubuntu.yml
+  when:
+    - ansible_os_family == "Debian"
+  tags:
+    - scrutiny
+    - scrutiny-collector

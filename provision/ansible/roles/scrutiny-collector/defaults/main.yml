@@ -1,0 +1,22 @@
+---
+# Scrutiny collector version (GitHub release tag)
+scrutiny_collector_version: "v0.8.1"
+
+# Scrutiny API endpoint (the web interface URL)
+scrutiny_collector_api_endpoint: "http://localhost:8080"
+
+# Cron schedule for collector runs (default: every 15 minutes)
+scrutiny_collector_cron_minute: "*/15"
+scrutiny_collector_cron_hour: "*"
+scrutiny_collector_cron_day: "*"
+scrutiny_collector_cron_month: "*"
+scrutiny_collector_cron_weekday: "*"
+
+# List of devices to monitor (e.g., ["/dev/sda", "/dev/nvme0"])
+scrutiny_collector_devices: []
+
+# Installation directory
+scrutiny_collector_install_dir: "/opt/scrutiny-collector"
+
+# Configuration directory
+scrutiny_collector_config_dir: "/etc/scrutiny"

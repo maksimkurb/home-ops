@@ -21,6 +21,10 @@ vpn-server:
     vps-1: {}
     vps-3: {}
 
+scrutiny-collector:
+  hosts:
+    pve: {}
+
 iperf3-stats:
   hosts:
     vps-1:

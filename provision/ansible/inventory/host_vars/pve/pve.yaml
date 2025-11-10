@@ -1,0 +1,13 @@
+# Cron schedule for collector runs (default: every 15 minutes)
+scrutiny_collector_cron_minute: "*/15"
+scrutiny_collector_cron_hour: "*"
+scrutiny_collector_cron_day: "*"
+scrutiny_collector_cron_month: "*"
+scrutiny_collector_cron_weekday: "*"
+
+# List of devices to monitor (e.g., ["/dev/sda", "/dev/nvme0"])
+scrutiny_collector_devices:
+  - /dev/sda
+  - /dev/sdb
+  - /dev/sdc
+  - /dev/nvme0n1

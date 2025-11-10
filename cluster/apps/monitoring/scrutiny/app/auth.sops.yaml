@@ -1,0 +1,28 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+    name: scrutiny-api-auth
+stringData:
+    #ENC[AES256_GCM,data:eOB5HU/vOdfKpAaKNWpSSk60xFTyzXtc2zkLUcvyw6FD,iv:koiRyi4mMLukMjL3n4Mdz7f2an0sUkmgFefGTQSDxVU=,tag:jT0aoEm8qJXzCw01FxP5IQ==,type:comment]
+    auth: ENC[AES256_GCM,data:Cdu/KMK+H8gEDDe6YY79l7Jg9r2uOQ/1ii174ASHSQHUQZKd2ML8jhQ=,iv:6SkfWcwf6RLET7aXRUTZGqKoJXOGpLI/edl8G7DBCKU=,tag:U5BUBwesl2GVj8V1EOT+Qg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB2Zi9OZzkrSUhKYVo3MDBt
+            Y2hraWdqZFJQNU8wWGpSNGxIQ2JVeXFSYm5NCnRTQ0xQK0J0ZXlkVlFJUk9FYnpa
+            aVJHQzlNYUwxdGhwOW1QWlVmVDBzdWMKLS0tIFA4U0pscjJkc0xRbjYzZ3FtY2U1
+            dEwrSXhKTkp3SHlBR0Q0MHhTT0lYa0kKEc1Rw/wYaV2L1MlsMCg4ICBzXs3L/d2D
+            ZIlp+47pyKbYw4mIyb02vgqeoYRIu4cvKWgIjTqkgIwgE/m2Z11P4Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-10T17:56:16Z"
+    mac: ENC[AES256_GCM,data:j1MtO4tysDdLOTxGfgrJ/ot3lJuJrkBElms8CWNSKMH+frGrGtVKfdys3Z/JVtC4DZOkBZbhLMTS39SfV3J7w0GDBQaPpe6u31WYJn1eMHT8RyviDImKL/X9D1vjzVC3gfIifPPCXQv6iQNkoovPmOk5s+EaMkGT+DZlS2LR2BU=,iv:5QzUmW7g9JfYo6+MCLTGWKcBuw8/3IGqdlVJAJiGQPE=,tag:sOlWzinslaiIQjCoOVHXLg==,type:str]
+    pgp: []
+    encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
+    version: 3.7.1
