@@ -134,7 +134,7 @@ spec:
           main:
             image:
               repository: kopia/kopia
-              tag: 0.21.1
+              tag: 20251111.0.203707
             env:
               TZ: "${TIMEZONE}"
               KOPIA_CONFIG_PATH: /config/repository.config
@@ -175,7 +175,7 @@ spec:
           main:
             image:
               repository: kopia/kopia
-              tag: 0.21.1
+              tag: 20251111.0.203707
             env:
               TZ: "${TIMEZONE}"
               KOPIA_CONFIG_PATH: /config/repository.config
