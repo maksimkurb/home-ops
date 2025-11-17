@@ -17,7 +17,10 @@
     "prettier.ignorePath": ".github/linters/.prettierignore",
     "yaml.schemas": {
         "Kubernetes": "cluster/*.yaml",
-        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json": "file:///home/maksimkurb/Dev/home-ops/provision/ansible/roles/ubuntu-external/tasks/traefik.yaml"
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json": [
+            "file:///home/maksimkurb/Dev/home-ops/provision/ansible/roles/ubuntu-external/tasks/traefik.yaml",
+            "file:///home/maksimkurb/Dev/home-ops/provision/ansible/roles/reverse-proxy/tasks/traefik.yaml"
+        ]
     },
     "editor.fontFamily": "FiraCode Nerd Font",
     "editor.fontLigatures": true,
