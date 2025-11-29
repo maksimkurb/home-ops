@@ -54,8 +54,8 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-29T09:00:33Z"
-    mac: ENC[AES256_GCM,data:S9Py02hUN7IMrq6r/9iAcQziFUhiXGqC8J4ZCA17x2waJfaO5BkEWNHdz3zJisYd4QcxDHPWx90gspMs/iMplwc6rTx6R2jS9TFRDgz2Uoe7Bz9h6SZ61ioLwv42+kQLyb1+OW5ihArkBZ1Ey6T4PNr9iAlVBkB92dane1KkldY=,iv:/jSpAS26TBTmR/Ymmd8Doadkc/JBoIiYd3JiGCZLCz4=,tag:u9fb9ysVJ8Ur4DQEkO9YKg==,type:str]
+    lastmodified: "2025-11-29T20:08:01Z"
+    mac: ENC[AES256_GCM,data:TO7cSFV5rB5qtV+UGixzZEm4MXLfZq6Q8DyiizWda+HEBSTxI0uU+M0iNlVtyg4sqWA4FRLWi4CCAfHfHxq2VGrPSzSDMciTVbD1W/H0qMu9diLL72AdILEc4ekqdnBZEp6O04SzLFMOfrrA6x9cdrj4c8Do3Zg/iK46CvUuzBo=,iv:8aq5NLkr00cn2jDDzmmrrcsFdgknQT3GWnDlhWZaZVs=,tag:9rkyUanYmWIUG3THaphwCg==,type:str]
     pgp: []
     unencrypted_regex: ^(kind)$
     version: 3.7.3

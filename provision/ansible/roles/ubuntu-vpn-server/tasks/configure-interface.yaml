@@ -1,10 +1,15 @@
 ---
 
-- name: Determine public interface for {{ interface.name }}
+- name: Set interface facts
+  set_fact:
+    interface: "{{ item.value }}"
+    interface_name: "{{ item.key }}"
+
+- name: Determine public interface for {{ interface_name }}
   set_fact:
     awg_public_interface: "{{ interface.public_interface | default(vpn_wan_interface, true) if (interface.public_interface | default('')) != '' else vpn_wan_interface }}"
 
-- name: Fail if public interface is not defined for {{ interface.name }}
+- name: Fail if public interface is not defined for {{ interface_name }}
   fail:
     msg: "Public interface is not defined. Please set either interface.public_interface or vpn_wan_interface variable."
   when: awg_public_interface is not defined or awg_public_interface == '' or awg_public_interface is none
@@ -20,32 +25,32 @@
     msg: "Public interface '{{ awg_public_interface }}' does not exist on {{ inventory_hostname }}. Available interfaces: {{ ansible_interfaces | join(', ') }}"
   when: not public_interface_check.stat.exists
 
-- name: Configure AmneziaWG for {{ interface.name }}
+- name: Configure AmneziaWG for {{ interface_name }}
   template:
     src: awg.conf.j2
-    dest: "/etc/amnezia/amneziawg/{{ interface.name }}.conf"
+    dest: "/etc/amnezia/amneziawg/{{ interface_name }}.conf"
     owner: root
     group: root
     mode: '0600'
   become: true
   register: config_changed
 
-- name: Restart AmneziaWG service for {{ interface.name }} if config changed
+- name: Restart AmneziaWG service for {{ interface_name }} if config changed
   systemd:
-    name: "awg-quick@{{ interface.name }}"
+    name: "awg-quick@{{ interface_name }}"
     state: restarted
   become: true
   when: config_changed.changed
 
-- name: Enable AmneziaWG service for {{ interface.name }}
+- name: Enable AmneziaWG service for {{ interface_name }}
   systemd:
-    name: "awg-quick@{{ interface.name }}"
+    name: "awg-quick@{{ interface_name }}"
     enabled: yes
   become: true
 
-- name: Start AmneziaWG service for {{ interface.name }} if not running
+- name: Start AmneziaWG service for {{ interface_name }} if not running
   systemd:
-    name: "awg-quick@{{ interface.name }}"
+    name: "awg-quick@{{ interface_name }}"
     state: started
   become: true
 

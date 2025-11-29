@@ -16,8 +16,8 @@
 
 - name: Configure AmneziaWG for each interface
   include_tasks: configure-interface.yaml
-  loop: "{{ amneziawg_interfaces_combined | default(amneziawg_interfaces) }}"
+  loop: "{{ amneziawg_interfaces | dict2items }}"
   loop_control:
-    loop_var: interface
+    loop_var: item
   no_log: true
-  when: amneziawg_interfaces_combined is defined or amneziawg_interfaces is defined
+  when: amneziawg_interfaces is defined
