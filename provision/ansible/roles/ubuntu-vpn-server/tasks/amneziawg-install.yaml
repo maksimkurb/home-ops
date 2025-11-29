@@ -6,12 +6,21 @@
     mode: '0755'
   become: true
 
-- name: Enable deb-src for APT sources
+- name: Enable deb-src for APT sources (Ubuntu 24.04+)
   replace:
     path: /etc/apt/sources.list.d/ubuntu.sources
     regexp: '^Types: deb$'
     replace: 'Types: deb deb-src'
   become: true
+  when: ansible_distribution_version is version('24.04', '>=')
+
+- name: Enable deb-src for APT sources (Ubuntu 22.04)
+  replace:
+    path: /etc/apt/sources.list
+    regexp: '^deb\s+(.*)$'
+    replace: 'deb \1\ndeb-src \1'
+  become: true
+  when: ansible_distribution_version is version('24.04', '<')
 
 - name: Update APT cache
   apt:
