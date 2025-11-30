@@ -2,23 +2,128 @@
 # Default values for AmnesiaWG VPN Server
 # These can be overridden in group_vars or host_vars
 
-# List of AmnesiaWG interfaces to configure
+# ============================================================================
+# EXTERNALIZED CLIENT REGISTRY (Reusable Clients)
+# ============================================================================
+#
+# Define clients once and reuse them across multiple interfaces/servers.
+# IP addresses are automatically calculated from interface network + ip_suffix.
+#
+# amneziawg_clients_group:
+#   laptop:
+#     private_key: "xxxxx"
+#     public_key: "xxxxx"
+#     preshared_key: "xxxxx"          # Optional, adds extra security layer
+#     endpoint: "192.168.1.100"       # Optional, client's IP without port
+#     ip_suffix: 10                   # Gets .10 for IPv4 and ::a for IPv6
+#     allowed_ips: "0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1"  # Optional
+#
+#   phone:
+#     private_key: "xxxxx"
+#     public_key: "xxxxx"
+#     ip_suffix: 15                   # Gets .15 for IPv4 and ::f for IPv6
+#
+#   keenetic-router:
+#     private_key: "xxxxx"
+#     public_key: "xxxxx"
+#     endpoint: "192.168.1.1"
+#     ip_suffix: 2
+#
+# Then in interfaces, just reference by name:
+#   amneziawg_interfaces_group:
+#     awg0:
+#       address_v4: 10.9.9.1
+#       address_v6: fd00:1234:5678::1
+#       peers: ["laptop", "phone", "keenetic-router"]
+#       # laptop gets 10.9.9.10 and fd00:1234:5678::a
+#       # phone gets 10.9.9.15 and fd00:1234:5678::f
+#       # keenetic-router gets 10.9.9.2 and fd00:1234:5678::2
+#
+# Supports hierarchical config:
+#   - amneziawg_clients_group: Common clients for all hosts
+#   - amneziawg_clients_host: Host-specific clients
+#   - amneziawg_clients: Direct (no group/host split)
+#
+# Mixed inline + references:
+#   peers:
+#     - "laptop"                      # From registry
+#     - name: special                 # Inline definition
+#       public_key: "..."
+#       private_key: "..."
+#       address_v4: 10.9.9.99
+#
+# ============================================================================
+
+# ============================================================================
+# INTERFACE CONFIGURATION
+# ============================================================================
+#
+# Method 1: Direct configuration (simple)
+#   amneziawg_interfaces:
+#     awg0: { ... }
+#
+# Method 2: Hierarchical (recommended for multiple hosts)
+#   - group_vars/vpn-server/awg.yaml:
+#       amneziawg_interfaces_group: { ... }
+#   - host_vars/vps-4/awg.yaml:
+#       amneziawg_interfaces_host: { ... }
+#
+# ============================================================================
+
 amneziawg_interfaces:
-  - name: awg0  # Interface name
-    port: 51820  # UDP port to listen on
-    public_host: "" # Public hostname or IP
-    private_key: ""  # Server private key
-    public_key: ""   # Server public key
+  awg0:
+    # ========================================================================
+    # Basic Settings
+    # ========================================================================
+    mode: server  # 'server' or 'client'
+    private_key: ""
+    public_key: ""
     mtu: 1412
-    address_v4: "10.8.0.1"  # IPv4 address and subnet
+
+    # ========================================================================
+    # Network Configuration
+    # ========================================================================
+    address_v4: "10.8.0.1"
     subnet_v4: 24
-    clients_subnet_v4: 32
-    address_v6: "fd42:42:42::1"  # IPv6 address and subnet
+    clients_subnet_v4: 32           # Subnet for each client
+
+    address_v6: "fd42:42:42::1"     # Optional
     subnet_v6: 48
     clients_subnet_v6: 56
-    public_interface: "eth0"  # Public interface for NAT
-    private_interface: "awg0"  # Private interface name (same as name)
-    # Obfuscation parameters
+
+    # ========================================================================
+    # Server Mode Settings (mode: server)
+    # ========================================================================
+    port: 51820
+    public_host: ""                 # Your server's public IP/hostname
+    public_interface: "eth0"        # Interface for NAT (or null to disable)
+    private_interface: "awg0"       # Usually same as interface name
+
+    # Peers (clients connecting to this server)
+    peers: []
+    # Examples:
+    # peers: ["laptop", "phone"]                    # Reference from registry
+    # peers:
+    #   - "laptop"                                  # From registry
+    #   - name: inline-client                       # Inline definition
+    #     public_key: "..."
+    #     private_key: "..."
+    #     address_v4: 10.8.0.100
+    #     address_v6: fd42:42:42::100
+
+    # ========================================================================
+    # Client Mode Settings (mode: client) - Site-to-Site
+    # ========================================================================
+    # remote_endpoint: "vpn.example.com:51820"
+    # remote_public_key: "server_public_key"
+    # remote_preshared_key: "preshared_key"      # Optional, for extra security
+    # remote_allowed_ips: "0.0.0.0/0, ::/0"       # Routes to add
+    # private_interface: "awg0"       # Usually same as interface name
+
+
+    # ========================================================================
+    # Obfuscation Parameters (Required - must match between client/server)
+    # ========================================================================
     jc: 3
     jmin: 2
     jmax: 6
@@ -28,13 +133,103 @@ amneziawg_interfaces:
     h2: 4
     h3: 5
     h4: 6
-    # List of peers (clients)
-    peers: []
-    # Example peer configuration:
-    # peers:
-    #   - name: "client1"
-    #     public_key: "client_public_key_here"
-    #     private_key: "client_private_key_here"
-    #     address_v4: "10.8.0.2"
-    #     address_v6: "fd42:42:42::2"
-    #     allowed_ips: "128.0.0.0/0, 8000::/0, 0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1"
+
+    # ========================================================================
+    # Advanced Routing
+    # ========================================================================
+
+    # Custom routing table
+    # routing_table: 100
+    # routing_table_name: "awg_vpn"               # Optional, auto-generated
+
+    # Policy-based routing rules
+    # routing_rules:
+    #   - from: "10.9.9.0/24"                     # Traffic from this network
+    #     table: 100                              # Use this table
+    #   - to: "8.8.8.8"                           # Traffic to this destination
+    #     table: 100
+    #   - iif: "awg0"                             # Traffic from interface
+    #     table: 100
+    #   - oif: "eth0"                             # Traffic to interface
+    #     table: 100
+    #     table_name: "custom_name"               # Optional
+
+# ============================================================================
+# COMPLETE EXAMPLE: VPS with Server + Site-to-Site
+# ============================================================================
+#
+# group_vars/vpn-server/awg.yaml:
+# ---
+# vpn_amnezia_enabled: true
+# vpn_wan_interface: eth0
+#
+# # Shared clients
+# amneziawg_clients_group:
+#   laptop:
+#     private_key: "CLIENT_PRIV"
+#     public_key: "CLIENT_PUB"
+#     ip_suffix: 10
+#   phone:
+#     private_key: "PHONE_PRIV"
+#     public_key: "PHONE_PUB"
+#     ip_suffix: 15
+#
+# # Common interface settings
+# amneziawg_interfaces_group:
+#   awg0:
+#     mode: server
+#     mtu: 1412
+#     subnet_v4: 24
+#     subnet_v6: 64
+#     jc: 6
+#     jmin: 373
+#     jmax: 1087
+#     s1: 54
+#     s2: 99
+#     h1: 410286658
+#     h2: 925748336
+#     h3: 1535569001
+#     h4: 336366358
+#
+# host_vars/vps-4/awg.yaml:
+# ---
+# amneziawg_interfaces_host:
+#   awg0:
+#     # Server interface
+#     port: 19731
+#     public_host: cdn.node.kurb.me
+#     private_key: "SERVER_PRIV"
+#     public_key: "SERVER_PUB"
+#     address_v4: 10.9.9.1
+#     address_v6: fd00:1234:5678::1
+#     public_interface: null                      # No NAT
+#     routing_table: 100
+#     routing_rules:
+#       - iif: awg0
+#         table: 100
+#     peers: ["laptop", "phone"]                  # Reference clients
+#
+#   awg1:
+#     # Site-to-site client
+#     mode: client
+#     private_key: "CLIENT_PRIV"
+#     public_key: "CLIENT_PUB"
+#     address_v4: 10.10.10.2
+#     subnet_v4: 24
+#     remote_endpoint: "upstream.example.com:51820"
+#     remote_public_key: "UPSTREAM_PUB"
+#     remote_allowed_ips: "0.0.0.0/0, ::/0"
+#     routing_table: 100                          # Same table as awg0
+#     jc: 3
+#     jmin: 50
+#     jmax: 1000
+#     s1: 10
+#     s2: 20
+#     h1: 123456
+#     h2: 654321
+#     h3: 111111
+#     h4: 222222
+#
+# Result: awg0 clients' traffic routes through awg1 site-to-site connection
+#
+# ============================================================================

@@ -1,0 +1,54 @@
+---
+# Configure persistent routing tables
+# This ensures routing table names are available in /etc/iproute2/rt_tables
+
+- name: Collect all routing tables from interfaces
+  set_fact:
+    all_routing_tables: >-
+      {{
+        all_routing_tables | default([]) + [
+          {
+            'id': item.value.routing_table,
+            'name': item.value.routing_table_name | default('awg_' + (item.key | string))
+          }
+        ]
+      }}
+  loop: "{{ merged_amneziawg_interfaces | dict2items }}"
+  when:
+    - item.value.routing_table is defined
+    - item.value.routing_table is number
+
+- name: Collect routing tables from routing_rules
+  set_fact:
+    all_routing_tables: >-
+      {{
+        all_routing_tables | default([]) + [
+          {
+            'id': rule.table,
+            'name': rule.table_name | default('awg_rule_' + (rule.table | string))
+          }
+        ]
+      }}
+  loop: "{{ merged_amneziawg_interfaces | dict2items | map(attribute='value') | selectattr('routing_rules', 'defined') | map(attribute='routing_rules') | flatten }}"
+  loop_control:
+    loop_var: rule
+  when:
+    - rule.table is defined
+    - rule.table is number
+
+- name: Remove duplicate routing tables
+  set_fact:
+    unique_routing_tables: "{{ all_routing_tables | default([]) | unique }}"
+
+- name: Ensure routing table entries exist in /etc/iproute2/rt_tables
+  lineinfile:
+    path: /etc/iproute2/rt_tables
+    regexp: "^{{ table_item.id }}\\s+"
+    line: "{{ table_item.id }}\t{{ table_item.name }}"
+    create: no
+  loop: "{{ unique_routing_tables }}"
+  loop_control:
+    loop_var: table_item
+    label: "{{ table_item.id }} - {{ table_item.name }}"
+  become: true
+  when: unique_routing_tables is defined and unique_routing_tables | length > 0

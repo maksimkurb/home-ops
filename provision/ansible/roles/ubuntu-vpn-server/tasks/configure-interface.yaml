@@ -1,9 +1,34 @@
 ---
 
+- name: Clear resolved peers from previous iteration
+  set_fact:
+    resolved_peers: []
+
 - name: Set interface facts
   set_fact:
     interface: "{{ item.value }}"
     interface_name: "{{ item.key }}"
+
+- name: Set default mode to server if not specified
+  set_fact:
+    interface: "{{ interface | combine({'mode': 'server'}) }}"
+  when: interface.mode is not defined
+
+- name: Set default private_interface if not specified
+  set_fact:
+    interface: "{{ interface | combine({'private_interface': interface_name}) }}"
+  when: interface.private_interface is not defined
+
+- name: Resolve peer references from client registry
+  include_tasks: resolve-peers.yaml
+  when: interface.mode == 'server'
+
+- name: Update interface with resolved peers
+  set_fact:
+    interface: "{{ interface | combine({'peers': resolved_peers}) }}"
+  when:
+    - interface.mode == 'server'
+    - resolved_peers is defined
 
 - name: Determine public interface for {{ interface_name }}
   set_fact:
@@ -24,6 +49,20 @@
   fail:
     msg: "Public interface '{{ awg_public_interface }}' does not exist on {{ inventory_hostname }}. Available interfaces: {{ ansible_interfaces | join(', ') }}"
   when: not public_interface_check.stat.exists
+
+- name: Validate server mode configuration for {{ interface_name }}
+  fail:
+    msg: "Server mode requires 'port' and 'public_host' to be defined"
+  when:
+    - interface.mode == 'server'
+    - (interface.port is not defined or interface.public_host is not defined)
+
+- name: Validate client mode configuration for {{ interface_name }}
+  fail:
+    msg: "Client mode requires 'remote_endpoint' and 'remote_public_key' to be defined"
+  when:
+    - interface.mode == 'client'
+    - (interface.remote_endpoint is not defined or interface.remote_public_key is not defined)
 
 - name: Configure AmneziaWG for {{ interface_name }}
   template:
@@ -54,7 +93,7 @@
     state: started
   become: true
 
-- name: Generate client config
+- name: Generate client configs (server mode only)
   delegate_to: localhost
   become: false
   template:
@@ -65,4 +104,7 @@
   loop_control:
     loop_var: peer
     label: "{{ peer.name }}"
-  when: interface.peers is defined
+  when:
+    - interface.mode == 'server'
+    - interface.peers is defined
+    - interface.peers | length > 0

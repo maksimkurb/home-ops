@@ -4,7 +4,9 @@ PrivateKey = {{ interface.private_key }}
 
 Address = {{ interface.address_v4 }}/{{ interface.subnet_v4 }}{% if interface.address_v6 is defined %}, {{ interface.address_v6 }}/{{ interface.subnet_v6 }}{% endif %}
 
+{% if interface.port is defined %}
 ListenPort = {{ interface.port }}
+{% endif %}
 Jc = {{ interface.jc }}
 Jmin = {{ interface.jmin }}
 Jmax = {{ interface.jmax }}
@@ -15,6 +17,8 @@ H2 = {{ interface.h2 }}
 H3 = {{ interface.h3 }}
 H4 = {{ interface.h4 }}
 
+{% if interface.mode == 'server' %}
+# Server mode: NAT and forwarding rules
 PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
 PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
@@ -32,16 +36,71 @@ PostDown = ip6tables -D INPUT -p udp --dport {{ interface.port }} -m conntrack -
 PostDown = ip6tables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
 PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
 PostDown = ip6tables -t nat -D POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
+{% elif interface.mode == 'client' %}
+# Client mode: Forwarding rules only
+PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
+PostUp = ip6tables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostUp = ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
 
+PostDown = iptables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = ip6tables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
+{% endif %}
+
+{% if interface.routing_table is defined %}
+# Custom routing table configuration
+Table = {{ interface.routing_table }}
+{% if interface.routing_rules is defined %}
+{% for rule in interface.routing_rules %}
+{% if rule.from is defined %}
+PostUp = ip rule add from {{ rule.from }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del from {{ rule.from }} table {{ rule.table | default(interface.routing_table) }}
+{% endif %}
+{% if rule.to is defined %}
+PostUp = ip rule add to {{ rule.to }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del to {{ rule.to }} table {{ rule.table | default(interface.routing_table) }}
+{% endif %}
+{% if rule.iif is defined %}
+PostUp = ip rule add iif {{ rule.iif }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del iif {{ rule.iif }} table {{ rule.table | default(interface.routing_table) }}
+{% endif %}
+{% if rule.oif is defined %}
+PostUp = ip rule add oif {{ rule.oif }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del oif {{ rule.oif }} table {{ rule.table | default(interface.routing_table) }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if interface.mode == 'server' %}
 {% for peer in interface.peers %}
 
 [Peer]
 # _Name = {{ peer.name }}
 # _PrivateKey = {{ peer.private_key }}
 PublicKey = {{ peer.public_key }}
+{% if peer.preshared_key is defined %}
+PresharedKey = {{ peer.preshared_key }}
+{% endif %}
 AllowedIPs = {{ peer.address_v4 }}/{{ interface.clients_subnet_v4 | default('32') }}{% if peer.address_v6 is defined %}, {{ peer.address_v6 }}/{{ interface.clients_subnet_v6 | default('128') }}{% endif %}
+
 {% if peer.endpoint is defined %}
 Endpoint = {{ peer.endpoint }}
 {% endif %}
 
 {% endfor %}
+{% elif interface.mode == 'client' %}
+
+[Peer]
+# Remote server
+PublicKey = {{ interface.remote_public_key }}
+{% if interface.remote_preshared_key is defined %}
+PresharedKey = {{ interface.remote_preshared_key }}
+{% endif %}
+AllowedIPs = {{ interface.remote_allowed_ips | default('0.0.0.0/0, ::/0') }}
+
+Endpoint = {{ interface.remote_endpoint }}
+PersistentKeepalive = 25
+{% endif %}

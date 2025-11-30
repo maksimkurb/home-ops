@@ -1,0 +1,58 @@
+---
+# This task resolves peer references from the client registry
+# It takes an array of client names and converts them to full peer objects
+
+- name: Merge group and host level client configurations
+  set_fact:
+    merged_amneziawg_clients: "{{ amneziawg_clients_group | default({}) | combine(amneziawg_clients_host | default({}), recursive=True) }}"
+  when: amneziawg_clients_group is defined or amneziawg_clients_host is defined
+
+- name: Use direct amneziawg_clients if group/host split not used
+  set_fact:
+    merged_amneziawg_clients: "{{ amneziawg_clients | default({}) }}"
+  when:
+    - amneziawg_clients is defined
+    - amneziawg_clients_group is not defined
+    - amneziawg_clients_host is not defined
+
+- name: Set empty client registry if none defined
+  set_fact:
+    merged_amneziawg_clients: {}
+  when: merged_amneziawg_clients is not defined
+
+- name: Resolve peer references to full peer objects
+  set_fact:
+    resolved_peers: >-
+      {{
+        resolved_peers | default([]) + [
+          {
+            'name': peer_item if peer_item is string else peer_item.name,
+            'public_key': (merged_amneziawg_clients[peer_item].public_key if peer_item is string else peer_item.public_key),
+            'private_key': (merged_amneziawg_clients[peer_item].private_key if peer_item is string else peer_item.private_key),
+            'preshared_key': (merged_amneziawg_clients[peer_item].preshared_key | default(omit) if peer_item is string else peer_item.preshared_key | default(omit)),
+            'endpoint': ((merged_amneziawg_clients[peer_item].endpoint + ':' + (interface.port | string)) if (peer_item is string and merged_amneziawg_clients[peer_item].endpoint is defined) else (peer_item.endpoint if (peer_item is mapping and peer_item.endpoint is defined) else omit)),
+            'address_v4': (
+              (interface.address_v4.rsplit('.', 1)[0] + '.' + (merged_amneziawg_clients[peer_item].ip_suffix | string))
+              if peer_item is string
+              else peer_item.address_v4
+            ),
+            'address_v6': (
+              (interface.address_v6.rsplit(':', 1)[0] + ':' + (merged_amneziawg_clients[peer_item].ip_suffix | string))
+              if (peer_item is string and interface.address_v6 is defined and merged_amneziawg_clients[peer_item].ip_suffix is defined)
+              else (peer_item.address_v6 if (peer_item is mapping and peer_item.address_v6 is defined) else omit)
+            ),
+            'allowed_ips': (merged_amneziawg_clients[peer_item].allowed_ips | default('0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1') if peer_item is string else peer_item.allowed_ips | default('0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1'))
+          } | combine({})
+        ]
+      }}
+  loop: "{{ interface.peers }}"
+  loop_control:
+    loop_var: peer_item
+  when:
+    - interface.peers is defined
+    - interface.peers | length > 0
+
+- name: Set empty resolved peers if no peers defined
+  set_fact:
+    resolved_peers: []
+  when: interface.peers is not defined or interface.peers | length == 0

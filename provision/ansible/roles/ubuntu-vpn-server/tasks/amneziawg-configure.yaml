@@ -14,10 +14,30 @@
     state: directory
     mode: '0700'
 
+- name: Merge group and host level interface configurations
+  set_fact:
+    merged_amneziawg_interfaces: "{{ amneziawg_interfaces_group | default({}) | combine(amneziawg_interfaces_host | default({}), recursive=True) }}"
+  when: amneziawg_interfaces_group is defined or amneziawg_interfaces_host is defined
+
+- name: Use direct amneziawg_interfaces if group/host split not used
+  set_fact:
+    merged_amneziawg_interfaces: "{{ amneziawg_interfaces }}"
+  when:
+    - amneziawg_interfaces is defined
+    - amneziawg_interfaces_group is not defined
+    - amneziawg_interfaces_host is not defined
+
+- name: Fail if no interfaces are defined
+  fail:
+    msg: "No AmneziaWG interfaces defined. Please define amneziawg_interfaces, or amneziawg_interfaces_group/amneziawg_interfaces_host"
+  when: merged_amneziawg_interfaces is not defined or merged_amneziawg_interfaces | length == 0
+
+- name: Configure persistent routing tables
+  include_tasks: configure-routing-tables.yaml
+
 - name: Configure AmneziaWG for each interface
   include_tasks: configure-interface.yaml
-  loop: "{{ amneziawg_interfaces | dict2items }}"
+  loop: "{{ merged_amneziawg_interfaces | dict2items }}"
   loop_control:
     loop_var: item
   no_log: true
-  when: amneziawg_interfaces is defined
