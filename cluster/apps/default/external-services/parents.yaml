@@ -60,6 +60,8 @@ kind: Ingress
 metadata:
   name: parents-http-ingress
   namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
