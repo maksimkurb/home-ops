@@ -19,3 +19,4 @@ spec:
     - "*.${SECRET_PUBLIC_DOMAIN}"
     - "*.cf.${SECRET_PUBLIC_DOMAIN}"
     - "*.${SECRET_PRIVATE_DOMAIN}"
+    - "*.${SECRET_PARENTS_DOMAIN}"

@@ -6,10 +6,6 @@ metadata:
   namespace: default
 spec:
   ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: 80
     - name: https
       protocol: TCP
       port: 443
@@ -24,8 +20,6 @@ subsets:
   - addresses:
       - ip: 10.9.5.115
     ports:
-      - port: 80
-        name: http
       - port: 443
         name: https
 ---
@@ -35,8 +29,6 @@ metadata:
   name: parents-passthrough-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
@@ -51,57 +43,7 @@ spec:
                 name: ext-svc-parents
                 port:
                   number: 443
-    - host: "jellyfin.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  number: 443
-    - host: "bt.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  number: 443
-    - host: "hass.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  number: 443
-    - host: "frigate.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  number: 443
-    - host: "start.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  number: 443
-    - host: "traefik.${SECRET_PARENTS_DOMAIN}"
+    - host: "*.${SECRET_PARENTS_DOMAIN}"
       http:
         paths:
           - path: /
