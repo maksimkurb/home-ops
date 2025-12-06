@@ -40,10 +40,6 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - "*.${SECRET_PARENTS_DOMAIN}"
-      secretName: parents-passthrough-dummy-tls-secret
   rules:
     - host: "*.${SECRET_PARENTS_DOMAIN}"
       http:
