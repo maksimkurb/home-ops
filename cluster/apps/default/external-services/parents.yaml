@@ -37,6 +37,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
@@ -55,26 +56,3 @@ spec:
                 port:
                   # Forwards the raw TCP stream to port 443
                   number: 443
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: parents-passthrough-ingress-http
-  namespace: default
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: "*.${SECRET_PARENTS_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ext-svc-parents
-                port:
-                  # Forwards the HTTP request to port 80
-                  number: 80
