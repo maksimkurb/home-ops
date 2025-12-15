@@ -117,7 +117,6 @@ authentication_backend:
     group_search_mode: 'filter'
     permit_referrals: false
     permit_unauthenticated_bind: false
-    permit_feature_detection_failure: true
     user: 'cn=authelia-user,dc=glauth,dc=com'
     password: '{{ env "SECRET_LDAP_PASSWORD" }}'
     attributes:
