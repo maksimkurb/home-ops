@@ -102,6 +102,7 @@ spec:
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
         use-proxy-protocol: "true"
+        real-ip-header: "proxy_protocol"
         # CROWDSEC END
         annotations-risk-level: Critical
         client-body-buffer-size: "100M"
@@ -143,7 +144,7 @@ spec:
               app.kubernetes.io/name: ingress-nginx
               app.kubernetes.io/component: controller
       podAnnotations:
-        configmap.reloader.stakater.com/reload: "cloudflare-proxied-networks,ai-robots-useragents"
+        reloader.stakater.com/auto: "true"
       resources:
         requests:
           cpu: 1m
