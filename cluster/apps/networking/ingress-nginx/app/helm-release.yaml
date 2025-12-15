@@ -27,7 +27,7 @@ spec:
       namespace: kube-system
   values:
     controller:
-      replicaCount: 2
+      replicaCount: 1
       updateStrategy:
         rollingUpdate:
           maxUnavailable: 1
