@@ -48,68 +48,66 @@ spec:
       allowSnippetAnnotations: true
       terminationGracePeriodSeconds: 60
 
-      # # CROWDSEC START
-      # image:
-      #   PullPolicy: IfNotPresent
-      #   image: crowdsecurity/controller
-      #   tag: v1.13.2
-      #   digest: sha256:4575be24781cad35f8e58437db6a3f492df2a3167fed2b6759a6ff0dc3488d56
-      #   registry: docker.io
-      # extraVolumes:
-      #   - name: crowdsec-bouncer-plugin
-      #     emptyDir: {}
-      # extraInitContainers:
-      #   - name: init-clone-crowdsec-bouncer
-      #     image: crowdsecurity/lua-bouncer-plugin
-      #     imagePullPolicy: IfNotPresent
-      #     env:
-      #       - name: API_URL
-      #         value: "http://crowdsec-service.security.svc.cluster.local:8080" # crowdsec lapi service-name
-      #       - name: API_KEY
-      #         value: "${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}" # generated with `cscli bouncers add <bouncer_name>`
-      #       - name: BOUNCER_CONFIG
-      #         value: "/crowdsec/crowdsec-bouncer.conf"
-      #       - name: CAPTCHA_PROVIDER
-      #         value: "hcaptcha" # valid providers are recaptcha, hcaptcha, turnstile
-      #       - name: SECRET_KEY
-      #         value: "${SECRET_HCAPTCHA_SECRET}" # If you want captcha support otherwise remove this ENV VAR
-      #       - name: SITE_KEY
-      #         value: "${HCAPTCHA_SITE}" # If you want captcha support otherwise remove this ENV VAR
-      #       - name: BAN_TEMPLATE_PATH
-      #         value: "/etc/nginx/lua/plugins/crowdsec/templates/ban.html"
-      #       - name: CAPTCHA_TEMPLATE_PATH
-      #         value: "/etc/nginx/lua/plugins/crowdsec/templates/captcha.html"
-      #     command:
-      #       [
-      #         "sh",
-      #         "-c",
-      #         "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/",
-      #       ]
-      #     volumeMounts:
-      #       - name: crowdsec-bouncer-plugin
-      #         mountPath: /lua_plugins
-      # extraVolumeMounts:
-      #   - name: crowdsec-bouncer-plugin
-      #     mountPath: /etc/nginx/lua/plugins/crowdsec
-      #     subPath: crowdsec
-      # # CROWDSEC END
+      # CROWDSEC START
+      image:
+        PullPolicy: IfNotPresent
+        image: crowdsecurity/controller
+        tag: v1.13.2
+        digest: sha256:4575be24781cad35f8e58437db6a3f492df2a3167fed2b6759a6ff0dc3488d56
+        registry: docker.io
+      extraVolumes:
+        - name: crowdsec-bouncer-plugin
+          emptyDir: {}
+      extraInitContainers:
+        - name: init-clone-crowdsec-bouncer
+          image: crowdsecurity/lua-bouncer-plugin
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: API_URL
+              value: "http://crowdsec-service.security.svc.cluster.local:8080" # crowdsec lapi service-name
+            - name: API_KEY
+              value: "${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}" # generated with `cscli bouncers add <bouncer_name>`
+            - name: BOUNCER_CONFIG
+              value: "/crowdsec/crowdsec-bouncer.conf"
+            - name: CAPTCHA_PROVIDER
+              value: "hcaptcha" # valid providers are recaptcha, hcaptcha, turnstile
+            - name: SECRET_KEY
+              value: "${SECRET_HCAPTCHA_SECRET}" # If you want captcha support otherwise remove this ENV VAR
+            - name: SITE_KEY
+              value: "${HCAPTCHA_SITE}" # If you want captcha support otherwise remove this ENV VAR
+            - name: BAN_TEMPLATE_PATH
+              value: "/etc/nginx/lua/plugins/crowdsec/templates/ban.html"
+            - name: CAPTCHA_TEMPLATE_PATH
+              value: "/etc/nginx/lua/plugins/crowdsec/templates/captcha.html"
+          command:
+            [
+              "sh",
+              "-c",
+              "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/",
+            ]
+          volumeMounts:
+            - name: crowdsec-bouncer-plugin
+              mountPath: /lua_plugins
+      extraVolumeMounts:
+        - name: crowdsec-bouncer-plugin
+          mountPath: /etc/nginx/lua/plugins/crowdsec
+          subPath: crowdsec
+      # CROWDSEC END
 
 
       config:
         # CROWDSEC START
-        # plugins: "crowdsec"
-        # lua-shared-dicts: "crowdsec_cache: 50m"
-        # server-snippet: |
-        #   lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
-        #   resolver local=on ipv6=off;
+        plugins: "crowdsec"
+        lua-shared-dicts: "crowdsec_cache: 50m"
+        server-snippet: |
+          lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
+          resolver local=on ipv6=off;
         # use-proxy-protocol: "true"
         # CROWDSEC END
         annotations-risk-level: Critical
         client-body-buffer-size: "100M"
         client-body-timeout: 120
         client-header-timeout: 120
-        # custom-http-errors: |-
-        #   403,404,502,503,504
         enable-brotli: "true"
         enable-ocsp: "true"
         enable-real-ip: "true"
@@ -134,7 +132,6 @@ spec:
             any: true
       extraArgs:
         default-ssl-certificate: "networking/${SECRET_DOMAIN/./-}-tls"
-        enable-ssl-passthrough: ""
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
