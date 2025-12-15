@@ -33,10 +33,10 @@ spec:
         ports:
           metrics:
             enabled: true
-            port: &port 5555
+            port: 5555
           ldap:
             enabled: true
-            port: &ldap-port 3893
+            port: 3893
 
     persistence:
       config:
