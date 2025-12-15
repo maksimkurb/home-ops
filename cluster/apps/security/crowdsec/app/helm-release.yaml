@@ -38,6 +38,9 @@ spec:
     mode: enabled
   maxHistory: 3
   values:
+    image:
+      repository: crowdsecurity/crowdsec
+      tag: "1.7.4"
     container_runtime: containerd
     secrets:
       externalSecret:
