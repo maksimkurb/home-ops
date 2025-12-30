@@ -1,4 +1,7 @@
 ---
+stores:
+  yaml:
+    indent: 2
 creation_rules:
   - path_regex: provision/.*\.sops\.ya?ml
     unencrypted_regex: "^(kind)$"
