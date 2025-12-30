@@ -9,7 +9,7 @@ resources:
   - ./hajimari/ks.yaml
   - ./kopia/ks.yaml
   - ./minio/ks.yaml
-  - ./tianji/ks.yaml
+  # - ./tianji/ks.yaml
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
   - ./stirling-pdf/ks.yaml
