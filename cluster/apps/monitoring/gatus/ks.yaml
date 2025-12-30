@@ -6,7 +6,7 @@ metadata:
   name: &appname gatus
   namespace: flux-system
 spec:
-  targetNamespace: home
+  targetNamespace: monitoring
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
