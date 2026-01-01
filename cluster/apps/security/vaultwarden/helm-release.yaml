@@ -43,7 +43,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-vaultwarden-light
+          gethomepage.dev/icon: sh-vaultwarden-light.svg
           gethomepage.dev/name: Vaultwarden
         hosts:
           - host: "bitwarden.${SECRET_PUBLIC_DOMAIN}"

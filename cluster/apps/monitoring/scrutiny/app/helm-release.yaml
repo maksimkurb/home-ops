@@ -100,7 +100,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-scrutiny-light
+          gethomepage.dev/icon: sh-scrutiny-light.svg
           gethomepage.dev/name: Scrutiny (SMART)
         hosts:
           - host: &host "scrutiny.${SECRET_PRIVATE_DOMAIN}"

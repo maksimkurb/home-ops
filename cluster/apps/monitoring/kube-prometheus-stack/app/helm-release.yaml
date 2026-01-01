@@ -69,7 +69,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-victoriametrics-light
+          gethomepage.dev/icon: sh-victoriametrics-light.svg
           gethomepage.dev/name: VM Alert Manager
       alertmanagerSpec:
         alertmanagerConfiguration:
@@ -106,7 +106,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-prometheus-light
+          gethomepage.dev/icon: sh-prometheus-light.svg
           gethomepage.dev/name: Prometheus
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
