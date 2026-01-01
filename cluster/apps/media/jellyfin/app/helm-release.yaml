@@ -3,14 +3,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app jellyfin
-  namespace: media
+  name: ${APP}
 spec:
   interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 3.7.3
+      version: 4.5.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -123,3 +122,15 @@ spec:
               limits:
                 nvidia.com/gpu: 1
                 memory: 6000Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8096
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
