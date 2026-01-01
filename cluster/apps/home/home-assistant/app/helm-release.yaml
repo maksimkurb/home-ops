@@ -56,7 +56,7 @@ spec:
           gethomepage.dev/group: Home
           gethomepage.dev/icon: /icons/home-assistant/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Home Assistant
-          gethomepage.dev/weight: "100"
+          gethomepage.dev/weight: "-100"
           nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For, X-Real-IP, X-Frame-Options, X-Content-Type-Options, X-Forwarded-Proto"
         hosts:
           - host: "hass.${SECRET_PUBLIC_DOMAIN}"

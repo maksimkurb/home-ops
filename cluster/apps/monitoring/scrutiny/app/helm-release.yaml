@@ -103,6 +103,7 @@ spec:
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: /icons/scrutiny/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Scrutiny (SMART)
+          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
         hosts:
           - host: &host "scrutiny.${SECRET_PRIVATE_DOMAIN}"
             paths:

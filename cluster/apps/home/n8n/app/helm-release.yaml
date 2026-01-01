@@ -154,6 +154,7 @@ spec:
           gethomepage.dev/group: Automation
           gethomepage.dev/icon: /icons/n8n/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: n8n
+          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
         hosts:
           - host: "n8n.${SECRET_PRIVATE_DOMAIN}"
             paths:
