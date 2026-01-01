@@ -129,7 +129,7 @@ spec:
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-face-agent
           gethomepage.dev/name: VM Agent
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}, app=vmagent"
+          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmagent"
         hosts:
           - "vmagent.${SECRET_PRIVATE_DOMAIN}"
     vmsingle:
@@ -163,7 +163,7 @@ spec:
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-database-alert
           gethomepage.dev/name: VM Single
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}, app=vmsingle"
+          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmsingle"
         hosts:
           - "vmsingle.${SECRET_PRIVATE_DOMAIN}"
 
@@ -189,7 +189,7 @@ spec:
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-alert-circle-outline
           gethomepage.dev/name: VM Alert
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}, app=vmalert"
+          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalert"
         hosts:
           - 'vmalert.${SECRET_PRIVATE_DOMAIN}'
       spec:
@@ -291,7 +291,7 @@ spec:
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-bell-alert-outline
           gethomepage.dev/name: VM Alert Manager
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}, app=alertmanager"
+          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalertmanager"
         hosts:
           - "alertmanager.${SECRET_PRIVATE_DOMAIN}"
       useManagedConfig: true
