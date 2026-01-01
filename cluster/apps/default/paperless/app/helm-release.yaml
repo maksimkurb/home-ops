@@ -199,6 +199,9 @@ spec:
           gethomepage.dev/group: Personal Services
           gethomepage.dev/icon: /icons/paperless-ngx/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Paperless
+          gethomepage.dev/widget.type: "paperlessngx"
+          gethomepage.dev/widget.url: "http://paperless-app.default:8000"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_PAPERLESSNGX_API_KEY}"
         hosts:
           - host: paperless.${SECRET_PUBLIC_DOMAIN}
             paths:

@@ -104,6 +104,9 @@ spec:
           gethomepage.dev/icon: /icons/scrutiny/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Scrutiny (SMART)
           gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/weight: "-90"
+          gethomepage.dev/widget.type: "scrutiny"
+          gethomepage.dev/widget.url: "http://scrutiny-web.monitoring:8080"
         hosts:
           - host: &host "scrutiny.${SECRET_PRIVATE_DOMAIN}"
             paths:

@@ -37,7 +37,7 @@ metadata:
       proxy_set_header Origin "http://${ROUTER_IP}";
       proxy_set_header Referer "http://${ROUTER_IP}";
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Networking
+    gethomepage.dev/group: Middleware
     gethomepage.dev/icon: mdi-router-wireless
     gethomepage.dev/name: Router
     gethomepage.dev/pod-selector: "app.kubernetes.io/name=homepage" # Just to have something valid
