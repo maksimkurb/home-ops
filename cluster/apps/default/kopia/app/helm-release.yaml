@@ -71,7 +71,8 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: mdi-backup-restore
+          gethomepage.dev/group: Middleware
+          gethomepage.dev/icon: /icons/kopia/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Kopia backups
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}"

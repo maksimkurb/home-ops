@@ -61,7 +61,8 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-gatus-light.svg
+          gethomepage.dev/group: Maintenance
+          gethomepage.dev/icon: /icons/gatus-light/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Gatus
         hosts:
           - host: gatus.${SECRET_PUBLIC_DOMAIN}

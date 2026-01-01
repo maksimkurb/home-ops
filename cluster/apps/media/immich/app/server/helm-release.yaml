@@ -61,7 +61,8 @@ spec:
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-immich-light.svg
+          gethomepage.dev/group: Personal Services
+          gethomepage.dev/icon: /icons/immich-light/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Immich
         hosts:
           - host: "photos.${SECRET_PUBLIC_DOMAIN}"

@@ -151,7 +151,8 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: mdi-brain
+          gethomepage.dev/group: Automation
+          gethomepage.dev/icon: /icons/n8n/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: n8n
         hosts:
           - host: "n8n.${SECRET_PRIVATE_DOMAIN}"

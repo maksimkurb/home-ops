@@ -53,7 +53,8 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-sonarr-light.svg
+          gethomepage.dev/group: Media
+          gethomepage.dev/icon: /icons/sonarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Sonarr
         hosts:
           - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"

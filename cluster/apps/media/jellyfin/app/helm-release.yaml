@@ -62,7 +62,8 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-jellyfin-light.svg
+          gethomepage.dev/group: Media
+          gethomepage.dev/icon: /icons/jellyfin-light/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin
         hosts:
           - host: "jellyfin.${SECRET_PUBLIC_DOMAIN}"
@@ -79,7 +80,7 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-jellyfin-light.svg
+          gethomepage.dev/icon: /icons/jellyfin-light/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin (CF)
         hosts:
           - host: "jellyfin-cf.${SECRET_PUBLIC_DOMAIN}"

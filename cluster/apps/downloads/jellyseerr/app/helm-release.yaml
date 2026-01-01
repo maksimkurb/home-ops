@@ -42,7 +42,8 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-jellyseerr-light.svg
+          gethomepage.dev/group: Media
+          gethomepage.dev/icon: /icons/jellyseerr-light/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyseerr
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"

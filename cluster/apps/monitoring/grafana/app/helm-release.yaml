@@ -267,7 +267,8 @@ spec:
         nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
         nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
         gethomepage.dev/enabled: "true"
-        gethomepage.dev/icon: sh-grafana-light.svg
+        gethomepage.dev/group: Maintenance
+        gethomepage.dev/icon: /icons/grafana-light/${HOMEPAGE_ICONS_COLOR}
         gethomepage.dev/name: Grafana
       hosts:
         - "grafana.${SECRET_PUBLIC_DOMAIN}"

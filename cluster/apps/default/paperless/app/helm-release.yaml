@@ -196,7 +196,8 @@ spec:
               deny all;
             }
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: mdi-file-document-multiple
+          gethomepage.dev/group: Personal Services
+          gethomepage.dev/icon: /icons/paperless-ngx/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Paperless
         hosts:
           - host: paperless.${SECRET_PUBLIC_DOMAIN}

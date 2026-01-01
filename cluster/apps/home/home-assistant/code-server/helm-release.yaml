@@ -58,7 +58,8 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: mdi-microsoft-visual-studio-code
+          gethomepage.dev/group: Home
+          gethomepage.dev/icon: /icons/visual-studio-code/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Home Assistant Config
         hosts:
           - host: "hass-config.${SECRET_PRIVATE_DOMAIN}"

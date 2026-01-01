@@ -126,6 +126,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-face-agent
           gethomepage.dev/name: VM Agent
         hosts:
@@ -158,6 +159,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-database-alert
           gethomepage.dev/name: VM Single
         hosts:
@@ -182,6 +184,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-alert-circle-outline
           gethomepage.dev/name: VM Alert
         hosts:
@@ -282,6 +285,7 @@ spec:
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-bell-alert-outline
           gethomepage.dev/name: VM Alert Manager
         hosts:

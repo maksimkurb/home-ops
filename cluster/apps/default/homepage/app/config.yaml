@@ -23,10 +23,7 @@ data:
     language: ru
     providers:
       openweathermap: ${SECRET_HOMEPAGE_OPENWEATHERMAP_API_KEY}
-  custom.css: |
-    .service-icon[aria-label^="mdi"] > div, .service-group-icon > div {
-      background: #5eead4 !important;
-    }
+  custom.css: ""
   custom.js: ""
   bookmarks.yaml: |
     - Developer:

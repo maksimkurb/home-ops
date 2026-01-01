@@ -55,7 +55,8 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: mdi-file-pdf-box
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: /icons/stirling-pdf/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Stirling PDF
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
