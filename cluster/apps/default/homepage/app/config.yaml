@@ -8,11 +8,18 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
-  settings.yaml: ""
-  #settings.yaml: |
-  #  providers:
-  #    longhorn:
-  #      url: https://longhorn.my.network
+    ingress: true
+    gateway: true
+  settings.yaml: |
+    background: https://images.unsplash.com/photo-1502790671504-542ad42d5189?auto=format&fit=crop&w=2560&q=80
+    disableIndexing: true
+    layout:
+      Media:
+        style: row
+        columns: 4
+    language: ru
+    providers:
+      openweathermap: ${SECRET_HOMEPAGE_OPENWEATHERMAP_API_KEY}
   custom.css: ""
   custom.js: ""
   bookmarks.yaml: |
@@ -36,6 +43,11 @@ data:
             href: http://localhost/
             description: Homepage is 😎
   widgets.yaml: |
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          hourCycle: h23
     - kubernetes:
         cluster:
           show: true
@@ -55,6 +67,12 @@ data:
         memory: true
         network: default
     - search:
-        provider: duckduckgo
-        target: _blank
+        provider: google
+        showSearchSuggestions: true
+        focus: true
+        target: _self
+    - openweathermap:
+        provider: openweathermap
+        cache: 15
+        units: metric
   docker.yaml: ""

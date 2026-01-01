@@ -33,6 +33,8 @@ spec:
             env:
               - name: HOMEPAGE_ALLOWED_HOSTS
                 value: "start.${SECRET_PUBLIC_DOMAIN}"
+              - name: LOG_TARGETS
+                value: "stdout"
             resources:
               requests:
                 cpu: 50m
