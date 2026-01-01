@@ -96,11 +96,10 @@ spec:
         className: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/rewrite-target: /$1
-          nginx.ingress.kubernetes.io/use-regex: "true"
         hosts:
           - host: start.${SECRET_PUBLIC_DOMAIN}
             paths:
-              - path: /icons(.*)
+              - path: /icons/?(.*)
                 pathType: Prefix
                 service:
                   identifier: icons
