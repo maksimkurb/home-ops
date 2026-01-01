@@ -113,6 +113,13 @@ spec:
                   identifier: icons
                   port: http
 
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
     serviceAccount:
       homepage: {}
 
