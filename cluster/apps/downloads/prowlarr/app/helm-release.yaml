@@ -54,7 +54,7 @@ spec:
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/icon: /icons/prowlarr-light/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/icon: /icons/prowlarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Prowlarr
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"

@@ -62,7 +62,7 @@ spec:
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
-          gethomepage.dev/icon: /icons/gatus-light/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/icon: /icons/gatus/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Gatus
         hosts:
           - host: gatus.${SECRET_PUBLIC_DOMAIN}

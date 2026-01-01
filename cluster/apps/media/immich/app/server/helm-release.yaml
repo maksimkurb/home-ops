@@ -62,7 +62,7 @@ spec:
           nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Personal Services
-          gethomepage.dev/icon: /icons/immich-light/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/icon: /icons/immich/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Immich
         hosts:
           - host: "photos.${SECRET_PUBLIC_DOMAIN}"
