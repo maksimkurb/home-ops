@@ -41,6 +41,16 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
+          icons:
+            image:
+              repository: ghcr.io/selfhst/icons
+              tag: 2.2.0
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 64Mi
 
     service:
       app:
@@ -49,6 +59,12 @@ spec:
           http:
             primary: true
             port: 3000
+      icons:
+        controller: main
+        ports:
+          http:
+            primary: true
+            port: 4050
 
     ingress:
       app:
@@ -75,6 +91,11 @@ spec:
                 pathType: Prefix
                 service:
                   identifier: app
+                  port: http
+              - path: /icons
+                pathType: Prefix
+                service:
+                  identifier: icons
                   port: http
 
     serviceAccount:
