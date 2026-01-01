@@ -50,7 +50,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: sh-authelia
+          gethomepage.dev/icon: sh-authelia-light
           gethomepage.dev/name: Authelia (SSO)
         hosts:
           - host: "auth.${SECRET_PUBLIC_DOMAIN}"
