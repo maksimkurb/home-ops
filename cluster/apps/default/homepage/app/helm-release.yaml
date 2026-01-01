@@ -95,12 +95,13 @@ spec:
       icons:
         className: "nginx"
         annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /$1
+          nginx.ingress.kubernetes.io/use-regex: "true"
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
         hosts:
           - host: start.${SECRET_PUBLIC_DOMAIN}
             paths:
-              - path: /icons/?(.*)
-                pathType: Prefix
+              - path: /icons(/|$)(.*)
+                pathType: ImplementationSpecific
                 service:
                   identifier: icons
                   port: http
