@@ -6,10 +6,9 @@ resources:
   - external-services
   - ./sftpgo/ks.yaml
   - ./syncthing/ks.yaml
-  - ./hajimari/ks.yaml
+  - ./homepage/ks.yaml
   - ./kopia/ks.yaml
   - ./minio/ks.yaml
-  # - ./tianji/ks.yaml
   - ./paperless/ks.yaml
   - ./scanservjs/ks.yaml
   - ./stirling-pdf/ks.yaml
