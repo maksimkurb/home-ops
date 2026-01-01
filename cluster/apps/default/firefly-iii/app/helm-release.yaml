@@ -96,9 +96,9 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          hajimari.io/icon: "wallet"
-          hajimari.io/group: "Home"
-          hajimari.io/appName: "Firefly III"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-wallet
+          gethomepage.dev/name: Firefly III
         hosts:
           - host: firefly.${SECRET_PUBLIC_DOMAIN}
             paths:

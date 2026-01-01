@@ -103,7 +103,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/icon: zigbee
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-zigbee
+          gethomepage.dev/name: Zigbee2MQTT
         hosts:
           - host: z2m.${SECRET_PRIVATE_DOMAIN}
             paths:

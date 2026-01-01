@@ -60,7 +60,9 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          hajimari.io/icon: gatus
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: gatus.svg
+          gethomepage.dev/name: Gatus
         hosts:
           - host: gatus.${SECRET_PUBLIC_DOMAIN}
             paths:

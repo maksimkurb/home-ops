@@ -49,8 +49,9 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          hajimari.io/icon: "shield-key"
-          hajimari.io/name: "Authelia (SSO)"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: authelia.svg
+          gethomepage.dev/name: Authelia (SSO)
         hosts:
           - host: "auth.${SECRET_PUBLIC_DOMAIN}"
             paths:

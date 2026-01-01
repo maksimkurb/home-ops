@@ -105,9 +105,8 @@ spec:
         ingressClassName: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/enable: "false"
         hosts:
-          - host: &host "loki.${SECRET_PRIVATE_DOMAIN}"
+          - host: "loki.${SECRET_PRIVATE_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

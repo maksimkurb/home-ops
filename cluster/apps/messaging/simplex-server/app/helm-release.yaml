@@ -115,7 +115,6 @@ spec:
           nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
           kubernetes.io/ingress.allow-http: "false"
-          hajimari.io/enable: "false"
         hosts:
           - host: "smp.${SECRET_PUBLIC_DOMAIN}"
             paths:

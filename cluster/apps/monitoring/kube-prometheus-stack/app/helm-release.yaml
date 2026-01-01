@@ -68,8 +68,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "VM Alert Manager"
-          hajimari.io/icon: bell-alert-outline
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: victoriametrics.svg
+          gethomepage.dev/name: VM Alert Manager
       alertmanagerSpec:
         alertmanagerConfiguration:
           name: alertmanager
@@ -104,8 +105,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "Prometheus"
-          hajimari.io/icon: face-agent
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: prometheus.svg
+          gethomepage.dev/name: Prometheus
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false

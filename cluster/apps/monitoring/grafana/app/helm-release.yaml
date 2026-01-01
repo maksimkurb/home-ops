@@ -266,8 +266,9 @@ spec:
         nginx.ingress.kubernetes.io/session-cookie-name: "grafana"
         nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
         nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
-        hajimari.io/appName: "Grafana"
-        hajimari.io/icon: view-dashboard
+        gethomepage.dev/enabled: "true"
+        gethomepage.dev/icon: grafana.svg
+        gethomepage.dev/name: Grafana
       hosts:
         - "grafana.${SECRET_PUBLIC_DOMAIN}"
     persistence:

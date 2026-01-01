@@ -43,8 +43,9 @@ spec:
         className: nginx
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/icon: "simple-icons:nodered"
-          hajimari.io/group: "Home"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-node-red
+          gethomepage.dev/name: Node-RED
         hosts:
           - host: "nodered.${SECRET_PRIVATE_DOMAIN}"
             paths:

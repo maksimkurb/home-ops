@@ -57,9 +57,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/icon: "mdi:vs-code"
-          hajimari.io/group: "Home"
-          hajimari.io/appName: "Home Assistant Config"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-vs-code
+          gethomepage.dev/name: Home Assistant Config
         hosts:
           - host: "hass-config.${SECRET_PRIVATE_DOMAIN}"
             paths:

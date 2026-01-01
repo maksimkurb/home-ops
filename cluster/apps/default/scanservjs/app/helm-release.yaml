@@ -82,9 +82,9 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          hajimari.io/icon: "scanner"
-          hajimari.io/group: "Home"
-          hajimari.io/appName: "ScanServJS"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-scanner
+          gethomepage.dev/name: ScanServJS
         hosts:
           - host: scanservjs.${SECRET_PUBLIC_DOMAIN}
             paths:

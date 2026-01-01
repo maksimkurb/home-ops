@@ -64,8 +64,9 @@ spec:
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/configuration-snippet: |
             chunked_transfer_encoding off;
-          hajimari.io/appName: "File Manager (SFTPGo)"
-          hajimari.io/icon: file-cloud
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-file-cloud
+          gethomepage.dev/name: File Manager (SFTPGo)
         hosts:
           - host: &host f.${SECRET_PUBLIC_DOMAIN}
             paths:

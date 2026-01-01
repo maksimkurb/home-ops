@@ -70,8 +70,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "Kopia backups"
-          hajimari.io/icon: "backup-restore"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-backup-restore
+          gethomepage.dev/name: Kopia backups
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}"
             paths:

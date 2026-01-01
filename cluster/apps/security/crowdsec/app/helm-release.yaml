@@ -133,7 +133,6 @@ spec:
         ingressClassName: nginx
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/enabled: "false"
         host: "crowdsec-lapi.${SECRET_PRIVATE_DOMAIN}"
       affinity:
         nodeAffinity:

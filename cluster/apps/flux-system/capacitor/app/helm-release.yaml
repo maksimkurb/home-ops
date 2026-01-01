@@ -72,9 +72,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/icon: "cog-sync-outline"
-          hajimari.io/group: "monitoring"
-          hajimari.io/appName: "Capacitor"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-cog-sync-outline
+          gethomepage.dev/name: Capacitor
         hosts:
           - host: capacitor.${SECRET_PRIVATE_DOMAIN}
             paths:

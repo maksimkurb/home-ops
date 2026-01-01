@@ -52,8 +52,9 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          hajimari.io/appName: "Radarr"
-          hajimari.io/icon: "movie"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: radarr.svg
+          gethomepage.dev/name: Radarr
         hosts:
           - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:
@@ -66,7 +67,7 @@ spec:
       api:
         enabled: true
         annotations:
-          hajimari.io/enable: "false"
+          gethomepage.dev/enabled: "false"
         hosts:
           - host: *host
             paths:

@@ -87,8 +87,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/group: "monitoring"
-          hajimari.io/appName: "Scrutiny"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: scrutiny.svg
+          gethomepage.dev/name: Scrutiny (SMART)
         hosts:
           - host: &host "scrutiny.${SECRET_PRIVATE_DOMAIN}"
             paths:

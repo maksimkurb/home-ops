@@ -195,9 +195,9 @@ spec:
             location /admin/ {
               deny all;
             }
-          hajimari.io/icon: "file-document-multiple"
-          hajimari.io/group: "Home"
-          hajimari.io/appName: "Paperless"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-file-document-multiple
+          gethomepage.dev/name: Paperless
         hosts:
           - host: paperless.${SECRET_PUBLIC_DOMAIN}
             paths:

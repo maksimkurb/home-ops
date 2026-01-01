@@ -86,7 +86,9 @@ spec:
         className: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "docling"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-file-document
+          gethomepage.dev/name: docling
         hosts:
           - host: "docling.${SECRET_PRIVATE_DOMAIN}"
             paths:

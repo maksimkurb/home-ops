@@ -125,8 +125,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "VM Agent"
-          hajimari.io/icon: face-agent
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-face-agent
+          gethomepage.dev/name: VM Agent
         hosts:
           - "vmagent.${SECRET_PRIVATE_DOMAIN}"
     vmsingle:
@@ -156,8 +157,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "VM Single"
-          hajimari.io/icon: database-alert
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-database-alert
+          gethomepage.dev/name: VM Single
         hosts:
           - "vmsingle.${SECRET_PRIVATE_DOMAIN}"
 
@@ -179,8 +181,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "VM Alert"
-          hajimari.io/icon: alert-circle-outline
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-alert-circle-outline
+          gethomepage.dev/name: VM Alert
         hosts:
           - 'vmalert.${SECRET_PRIVATE_DOMAIN}'
       spec:
@@ -278,8 +281,9 @@ spec:
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "VM Alert Manager"
-          hajimari.io/icon: bell-alert-outline
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-bell-alert-outline
+          gethomepage.dev/name: VM Alert Manager
         hosts:
           - "alertmanager.${SECRET_PRIVATE_DOMAIN}"
       useManagedConfig: true

@@ -36,7 +36,9 @@ metadata:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header Origin "http://${ROUTER_IP}";
       proxy_set_header Referer "http://${ROUTER_IP}";
-    hajimari.io/icon: router-wireless
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/icon: mdi-router-wireless
+    gethomepage.dev/name: Router
 spec:
   ingressClassName: nginx
   rules:

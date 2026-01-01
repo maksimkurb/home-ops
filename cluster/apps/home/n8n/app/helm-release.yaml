@@ -127,7 +127,9 @@ spec:
         className: "nginx"
         annotations:
           nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
-          hajimari.io/appName: "n8n"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: mdi-brain
+          gethomepage.dev/name: n8n
         hosts:
           - host: "n8n.${SECRET_PRIVATE_DOMAIN}"
             paths:
@@ -143,7 +145,7 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          hajimari.io/enable: "false"
+          gethomepage.dev/enabled: "false"
         hosts:
           - host: "n8n-webhook.${SECRET_PUBLIC_DOMAIN}"
             paths:
