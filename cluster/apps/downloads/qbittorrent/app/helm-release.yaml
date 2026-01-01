@@ -63,6 +63,12 @@ spec:
           gethomepage.dev/icon: /icons/qbittorrent/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: qBittorrent
           gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/widget.type: "qbittorrent"
+          gethomepage.dev/widget.url: "http://qbittorrent.downloads:50400"
+          gethomepage.dev/widget.username: "${SECRET_HOMEPAGE_QBITTORRENT_USERNAME}"
+          gethomepage.dev/widget.password: "${SECRET_HOMEPAGE_QBITTORRENT_PASSWORD}"
+          gethomepage.dev/widget.enableLeechProgress: "true"
+          gethomepage.dev/widget.enableLeechSize: "true"
         hosts:
           - host: &host-release "{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}"
             paths:
@@ -126,7 +132,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/v2/app/version
+                    path: /
                     port: 50400
                   initialDelaySeconds: 30
                   periodSeconds: 10

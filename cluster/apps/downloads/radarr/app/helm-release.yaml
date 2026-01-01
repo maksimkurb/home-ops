@@ -57,6 +57,9 @@ spec:
           gethomepage.dev/icon: /icons/radarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Radarr
           gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/widget.type: "radarr"
+          gethomepage.dev/widget.url: "http://radarr.downloads"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_RADARR_API_KEY}"
         hosts:
           - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:

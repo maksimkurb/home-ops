@@ -57,6 +57,9 @@ spec:
           gethomepage.dev/icon: /icons/sonarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Sonarr
           gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/widget.type: "sonarr"
+          gethomepage.dev/widget.url: "http://sonarr.downloads"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_SONARR_API_KEY}"
         hosts:
           - host: &host "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:

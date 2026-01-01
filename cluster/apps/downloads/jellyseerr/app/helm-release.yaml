@@ -46,6 +46,9 @@ spec:
           gethomepage.dev/weight: "-90"
           gethomepage.dev/icon: /icons/jellyseerr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyseerr
+          gethomepage.dev/widget.type: "jellyseerr"
+          gethomepage.dev/widget.url: "http://jellyseerr.downloads"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_JELLYSEERR_API_KEY}"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:

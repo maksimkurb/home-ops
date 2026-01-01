@@ -67,6 +67,11 @@ spec:
           gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin
           gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/widget.type: "jellyfin"
+          gethomepage.dev/widget.url: "http://jellyfin.media:8096"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_JELLYFIN_API_KEY}"
+          gethomepage.dev/widget.enableBlocks: "true"
+          gethomepage.dev/widget.enableNowPlaying: "false"
         hosts:
           - host: "jellyfin.${SECRET_PUBLIC_DOMAIN}"
             paths:

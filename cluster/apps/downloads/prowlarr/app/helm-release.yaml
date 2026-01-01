@@ -56,6 +56,9 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/icon: /icons/prowlarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Prowlarr
+          gethomepage.dev/widget.type: "prowlarr"
+          gethomepage.dev/widget.url: "http://prowlarr.downloads"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_PROWLARR_API_KEY}"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
             paths:
