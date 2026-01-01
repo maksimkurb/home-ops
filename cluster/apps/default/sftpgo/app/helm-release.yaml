@@ -66,6 +66,7 @@ spec:
             chunked_transfer_encoding off;
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Personal Services
+          gethomepage.dev/weight: "90"
           gethomepage.dev/icon: /icons/sftpgo/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: File Manager (SFTPGo)
         hosts:

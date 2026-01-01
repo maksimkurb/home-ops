@@ -44,6 +44,7 @@ spec:
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Personal Services
+          gethomepage.dev/weight: "80"
           gethomepage.dev/icon: /icons/vaultwarden/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Vaultwarden
         hosts:
