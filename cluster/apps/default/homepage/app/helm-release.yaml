@@ -45,6 +45,13 @@ spec:
             image:
               repository: ghcr.io/selfhst/icons
               tag: 2.2.0
+            env:
+              - name: PORT
+                value: 4050
+              - name: ICON_SOURCE
+                value: local
+              - name: STANDARD_ICON_FORMAT
+                value: svg
             resources:
               requests:
                 cpu: 50m
@@ -170,34 +177,40 @@ spec:
         type: configMap
         name: ${APP}-config
         defaultMode: 0555
-        globalMounts:
-          - path: /app/config/custom.js
-            subPath: custom.js
-            readOnly: true
-          - path: /app/config/custom.css
-            subPath: custom.css
-            readOnly: true
-          - path: /app/config/bookmarks.yaml
-            subPath: bookmarks.yaml
-            readOnly: true
-          - path: /app/config/docker.yaml
-            subPath: docker.yaml
-            readOnly: true
-          - path: /app/config/kubernetes.yaml
-            subPath: kubernetes.yaml
-            readOnly: true
-          - path: /app/config/services.yaml
-            subPath: services.yaml
-            readOnly: true
-          - path: /app/config/settings.yaml
-            subPath: settings.yaml
-            readOnly: true
-          - path: /app/config/widgets.yaml
-            subPath: widgets.yaml
-            readOnly: true
-      logs:
+        advancedMounts:
+          main:
+            app:
+              - path: /app/config/custom.js
+                subPath: custom.js
+                readOnly: true
+              - path: /app/config/custom.css
+                subPath: custom.css
+                readOnly: true
+              - path: /app/config/bookmarks.yaml
+                subPath: bookmarks.yaml
+                readOnly: true
+              - path: /app/config/docker.yaml
+                subPath: docker.yaml
+                readOnly: true
+              - path: /app/config/kubernetes.yaml
+                subPath: kubernetes.yaml
+                readOnly: true
+              - path: /app/config/services.yaml
+                subPath: services.yaml
+                readOnly: true
+              - path: /app/config/settings.yaml
+                subPath: settings.yaml
+                readOnly: true
+              - path: /app/config/widgets.yaml
+                subPath: widgets.yaml
+                readOnly: true
+      icons:
         enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /app/config/logs
-            readOnly: false
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        advancedMounts:
+          main:
+            icons:
+              - path: /app/icons
