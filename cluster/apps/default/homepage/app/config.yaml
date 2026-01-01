@@ -20,6 +20,14 @@ data:
       Media:
         style: row
         columns: 4
+      Home:
+        style: row
+        columns: 4
+      Personal Services: {}
+      Automation: {}
+      Tools: {}
+      Middleware: {}
+      Maintenance: {}
     language: ru
     providers:
       openweathermap: ${SECRET_HOMEPAGE_OPENWEATHERMAP_API_KEY}
