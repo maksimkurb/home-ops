@@ -136,7 +136,7 @@ spec:
     persistence:
       config:
         enabled: true
-        type: secret
+        type: configMap
         name: ${APP}-config
         defaultMode: 0555
         globalMounts:
