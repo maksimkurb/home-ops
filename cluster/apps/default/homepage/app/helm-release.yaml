@@ -181,6 +181,13 @@ spec:
     persistence:
       config:
         enabled: true
+        type: emptyDir
+        advancedMounts:
+          main:
+            app:
+              - path: /app/config
+      config-files:
+        enabled: true
         type: configMap
         name: ${APP}-config
         defaultMode: 0555
