@@ -74,10 +74,6 @@ spec:
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/kopia/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Kopia backups
-          gethomepage.dev/widget.type: "kopia"
-          gethomepage.dev/widget.url: "http://kopia.default:80"
-          gethomepage.dev/widget.username: "anon"
-          gethomepage.dev/widget.password: "anon"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}"
             paths:

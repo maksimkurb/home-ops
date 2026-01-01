@@ -24,7 +24,6 @@ data:
         style: row
         columns: 4
       Personal Services: {}
-      Automation: {}
       Tools: {}
       Middleware: {}
       Maintenance: {}
