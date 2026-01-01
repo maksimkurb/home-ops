@@ -75,7 +75,7 @@ spec:
           gethomepage.dev/icon: /icons/kopia/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Kopia backups
           gethomepage.dev/widget.type: "kopia"
-          gethomepage.dev/widget.url: "http://kopia.default:8080"
+          gethomepage.dev/widget.url: "http://kopia.default:80"
           gethomepage.dev/widget.username: "anon"
           gethomepage.dev/widget.password: "anon"
         hosts:
