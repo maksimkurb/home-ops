@@ -92,6 +92,13 @@ spec:
                 service:
                   identifier: app
                   port: http
+      icons:
+        className: "nginx"
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /
+        hosts:
+          - host: start.${SECRET_PUBLIC_DOMAIN}
+            paths:
               - path: /icons
                 pathType: Prefix
                 service:
