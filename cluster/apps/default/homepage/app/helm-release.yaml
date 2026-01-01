@@ -213,4 +213,4 @@ spec:
         advancedMounts:
           main:
             icons:
-              - path: /app/icons
+              - path: /app/icons/svg
