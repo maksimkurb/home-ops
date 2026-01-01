@@ -52,3 +52,4 @@ data:
   HCAPTCHA_SITE: ba42ea70-a534-4dc8-be2a-7622c59a16ea
   INGRESS_DEFAULT_CF_PROXY: "false"
   quote: '"'
+  HOMEPAGE_ICONS_COLOR: "5eead4"
