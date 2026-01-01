@@ -40,6 +40,7 @@ metadata:
     gethomepage.dev/group: Networking
     gethomepage.dev/icon: mdi-router-wireless
     gethomepage.dev/name: Router
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=homepage" # Just to have something valid
 spec:
   ingressClassName: nginx
   rules:
