@@ -66,6 +66,7 @@ spec:
           gethomepage.dev/weight: "110"
           gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin
+          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
         hosts:
           - host: "jellyfin.${SECRET_PUBLIC_DOMAIN}"
             paths:
@@ -85,6 +86,7 @@ spec:
           gethomepage.dev/group: "Media"
           gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin (CF)
+          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
         hosts:
           - host: "jellyfin-cf.${SECRET_PUBLIC_DOMAIN}"
             paths:
