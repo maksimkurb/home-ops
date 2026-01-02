@@ -174,7 +174,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
-              N8N_RUNNERS_TASK_BROKER_URI: n8n:8080
+              N8N_RUNNERS_TASK_BROKER_URI: http://n8n:8080
               N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 15
               N8N_RUNNERS_AUTH_TOKEN:
                 valueFrom:
