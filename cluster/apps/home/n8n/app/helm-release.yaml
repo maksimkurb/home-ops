@@ -188,7 +188,7 @@ spec:
                 spec:
                   httpGet:
                     path: /healthz
-                    port: 8080
+                    port: 5680
                   initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 5
@@ -199,7 +199,7 @@ spec:
                 spec:
                   httpGet:
                     path: /healthz/readiness
-                    port: 8080
+                    port: 5680
                   initialDelaySeconds: 10
                   periodSeconds: 5
                   timeoutSeconds: 3
