@@ -168,6 +168,8 @@ spec:
               repository: ghcr.io/n8n-io/runners
               tag: 2.1.4
               pullPolicy: IfNotPresent
+            dependsOn:
+              - n8n
             env:
               TZ: "${TIMEZONE}"
               N8N_RUNNERS_TASK_BROKER_URI: n8n:8080
