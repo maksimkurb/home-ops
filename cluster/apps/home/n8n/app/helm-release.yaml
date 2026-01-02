@@ -38,6 +38,10 @@ spec:
               - path: /home/node/
               - path: /.npm/
                 subPath: _community-npm-modules
+          taskrunner:
+            app:
+              - path: /.n8n/
+                subPath: _taskrunner-n8n
 
     # Pod security context
     defaultPodOptions:
