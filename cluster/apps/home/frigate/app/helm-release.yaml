@@ -157,9 +157,9 @@ spec:
                   httpGet:
                     path: /api/version
                     port: 5000
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
+                  initialDelaySeconds: 60
+                  periodSeconds: 5
                   timeoutSeconds: 1
-                  failureThreshold: 3
+                  failureThreshold: 5
               readiness: *probes
               startup: *probes
