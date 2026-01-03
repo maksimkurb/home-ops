@@ -52,7 +52,7 @@ spec:
   wait: false
   dependsOn:
     - name: frigate
-      namespace: home
+      namespace: flux-system
   decryption:
     provider: sops
     secretRef:
