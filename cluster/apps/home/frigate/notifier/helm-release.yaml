@@ -27,7 +27,7 @@ spec:
         type: secret
         name: frigate-notifier-config
         advancedMounts:
-          frigate:
+          notifier:
             app:
               - path: /app/config.yml
                 subPath: config_yaml
