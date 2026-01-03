@@ -50,6 +50,9 @@ spec:
     kind: GitRepository
     name: flux-cluster
   wait: false
+  dependsOn:
+    - name: frigate
+      namespace: home
   decryption:
     provider: sops
     secretRef:
