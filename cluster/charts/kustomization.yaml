@@ -9,7 +9,6 @@ resources:
   - containeroo-charts.yaml
   - crowdsec-charts.yaml
   - external-dns-charts.yaml
-  - fairwinds-charts.yaml
   - grafana-charts.yaml
   - ingress-nginx-charts.yaml
   - jetstack-charts.yaml
@@ -24,7 +23,6 @@ resources:
   - nvidia-charts.yaml
   - nvidia-dvp-charts.yaml
   - prometheus-community-charts.yaml
-  - rook-ceph-charts.yaml
   - stakater-charts.yaml
   - hajimari-charts.yaml
   - vector-charts.yaml
