@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: frigate
+  name: ${APP}
   namespace: home
 spec:
   interval: 30m
@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts/
       chart: app-template
-      version: 3.7.3
+      version: 4.5.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -89,16 +89,16 @@ spec:
         retain: true
         globalMounts:
           - path: /config
-      # config-file:
-      #   enabled: true
-      #   type: secret
-      #   name: frigate-config
-      #   readOnly: true
-      #   advancedMounts:
-      #     main:
-      #       main:
-      #         - path: /config/config.yml
-      #           subPath: config_yaml
+      config-file:
+        enabled: true
+        type: secret
+        name: frigate-config
+        advancedMounts:
+          main:
+            main:
+              - path: /config/config.yml
+                subPath: config_yaml
+                readOnly: true
       dshm:
         enabled: true
         type: emptyDir
@@ -154,7 +154,7 @@ spec:
                 spec:
                   httpGet:
                     path: /api/version
-                    port: &port 5000
+                    port: 5000
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
