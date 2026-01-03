@@ -52,7 +52,7 @@ spec:
     alertmanager:
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: nginx-intra
         hosts: ["alertmanager.${SECRET_PRIVATE_DOMAIN}"]
         pathType: Prefix
         annotations:
@@ -67,7 +67,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: /icons/victoriametrics/${HOMEPAGE_ICONS_COLOR}
@@ -90,7 +89,7 @@ spec:
     prometheus:
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: nginx-intra
         hosts: ["prometheus.${SECRET_PRIVATE_DOMAIN}"]
         pathType: Prefix
         annotations:
@@ -105,7 +104,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/icon: /icons/prometheus/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Prometheus

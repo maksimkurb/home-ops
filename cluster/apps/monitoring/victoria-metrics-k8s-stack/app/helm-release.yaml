@@ -111,7 +111,7 @@ spec:
         scrapeInterval: 60s
       ingress:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: "nginx-intra"
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -124,7 +124,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-face-agent
@@ -145,7 +144,7 @@ spec:
               storage: 30Gi
       ingress:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: "nginx-intra"
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -158,7 +157,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-database-alert
@@ -171,7 +169,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: nginx-intra
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -184,7 +182,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-alert-circle-outline
@@ -273,7 +270,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: "nginx-intra"
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -286,7 +283,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-bell-alert-outline

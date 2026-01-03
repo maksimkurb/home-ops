@@ -77,14 +77,13 @@ spec:
                   port: *port
       internal:
         enabled: true
-        className: nginx
+        className: nginx-intra
         annotations:
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/configuration-snippet: |
             chunked_transfer_encoding off;
-          nginx.ingress.kubernetes.io/whitelist-source-range: "${NGINX_INTERNAL_WHITELIST}"
         hosts:
           - host: "speedtest.${SECRET_PRIVATE_DOMAIN}"
             paths:

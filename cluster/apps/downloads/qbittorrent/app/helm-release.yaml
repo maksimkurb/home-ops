@@ -45,6 +45,7 @@ spec:
     ingress:
       main:
         enabled: true
+        className: nginx-intra
         annotations:
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
@@ -57,7 +58,6 @@ spec:
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Method $request_method;
           # ForwardAuth end
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/icon: /icons/qbittorrent/${HOMEPAGE_ICONS_COLOR}
@@ -77,7 +77,6 @@ spec:
                 service:
                   identifier: main
                   port: http
-        className: nginx
       api:
         enabled: true
         annotations:
