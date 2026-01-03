@@ -44,9 +44,6 @@ spec:
               tag: "v0.5.3"
             env:
               TZ: "${TIMEZONE}"
-            envFrom:
-              - secretRef:
-                  name: frigate-notifier-secret
             resources:
               requests:
                 cpu: 10m
