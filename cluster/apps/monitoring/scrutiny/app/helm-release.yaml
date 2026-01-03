@@ -118,7 +118,7 @@ spec:
           - hosts:
               - *host
       api:
-        className: "nginx"
+        className: "nginx-intra"
         annotations:
           nginx.ingress.kubernetes.io/auth-type: basic
           nginx.ingress.kubernetes.io/auth-secret: scrutiny-api-auth
