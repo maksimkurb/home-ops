@@ -87,15 +87,17 @@ spec:
         size: 5Gi
         storageClass: local-path
         retain: true
-        globalMounts:
-          - path: /config
+        advancedMounts:
+          frigate:
+            app:
+              - path: /config
       config-file:
         enabled: true
         type: secret
         name: frigate-config
         advancedMounts:
-          main:
-            main:
+          frigate:
+            app:
               - path: /config/config.yml
                 subPath: config_yaml
                 readOnly: true
