@@ -64,5 +64,6 @@
     weekday: "{{ scrutiny_collector_cron_weekday }}"
     job: "{{ scrutiny_collector_install_dir }}/scrutiny-collector-metrics run --config {{ scrutiny_collector_config_dir }}/collector.yaml >> /var/log/scrutiny-collector.log 2>&1"
     user: root
+    cron_file: scrutiny-collector
     state: present
   become: true
