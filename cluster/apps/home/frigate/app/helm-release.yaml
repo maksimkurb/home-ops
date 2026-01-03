@@ -150,7 +150,7 @@ spec:
                 memory: 6000Mi
                 nvidia.com/gpu: "1"
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
                 custom: true
                 spec:
@@ -161,5 +161,3 @@ spec:
                   periodSeconds: 5
                   timeoutSeconds: 1
                   failureThreshold: 5
-              readiness: *probes
-              startup: *probes
