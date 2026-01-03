@@ -210,9 +210,8 @@ spec:
     ingress:
       main:
         enabled: true
-        className: "nginx"
+        className: "nginx-intra"
         annotations:
-          nginx.ingress.kubernetes.io/whitelist-source-range: ${NGINX_INTERNAL_WHITELIST}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/n8n/${HOMEPAGE_ICONS_COLOR}
