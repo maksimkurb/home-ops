@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/twin/gatus
-              tag: v5.33.1
+              tag: v5.34.0
             resources:
               requests:
                 cpu: 50m
