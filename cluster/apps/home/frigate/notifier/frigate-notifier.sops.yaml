@@ -1,0 +1,22 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+    name: frigate-notifier-config
+stringData:
+    config_yaml: ENC[AES256_GCM,data:4aAnQ6NJFlpzT56KsJCJaiaRTMGST8cZGbMCAQFSAo928xgUyKqmyg87GM48Y3IPIIHsjeki+S2jAKJq5nU16F2Ot6xtzSRX914fvFl6ngNWbZl6i6s8O+z9y0QRZ0RYrV4c3PR7LnmVAYnaG30UOoxtyb4E6JDNegyIPJS+ldh5CvIsmcdlYGHfwCJkccmjVvvyhFGGnpKeeLzAIXrUZRjmXJB0DseSpoC3Pjni0Ph4WIeKRq3DE6z90JpbYPJfn8Ed8T4nx29TvGIm2MgyFyQhWey0mAafmyBZ6t4tKlGRW29leyvzkDb6HTuSVHeA+AtDNkokcpgGilYQRRGvikhj7w4a3doQmoVk0jmasgeGBBS0GSBN/wfUYZEOxfj8K4zP/Ni2B8w8nH6yOX+3m/HqFwu1GCywohNi4QLkyWbIqyRtnVEDuwi4xS6gymda1wFuqMeCie0i9g8bWip1+X9yTqtoi5sxruzqHxYBz7q+p+kRcwaLnR0XUJ25E/bvWNeTok0E8Szg6pao6ASqFgjPHX0fz6PRdWTg9utEOolfHu1iwnhyvAiR9cG0h1jeb3H6rNh4lP12Lf91A8BesM4mh+hsII0WJsfrLSLSgmGleX0Y1MchqBu+agTMoZfDBIc6n5oioeA5xnspTB4RiwDHAF//mbr+ccvZXng1FprKrB2eqCdOWm970V0AwAePhH5nxCDMY5ocUwKrQTu4tKN8Qj6kPULzdsLc3l+4RUFh30h0QTcUSLUwQE/6W0Bt1m1vpw7aHbFzmgOW8MXfT+s0XWqFMDwm0lKiOYQhZP5X9UeHzB0g3bhBx+zAz8E2yUsuY3WbJ1ybImZS9Q3mVFi1PfgtRy1CcppiIuyqPo9B1xNmeW+Y8kic7TXwQHMFuie7s4LxOz3echD8RWxjc56qvKUmQxoUlTdHQIbkJdruxuRYKA0f1Gt5uPWzCvFQ7jot0DQkKrkmSQKOWutf8wd6Jj2ReFU/ohEbCmi5vnsKuitEphUoLraPEaxCjnjIhe5zLduzwC4QURRcXt9AicaUjsAEr0kPVyL0V76Aypy3kY4XWu9RW512MXOom9iATzql8yKubEWk5u2OCH3ucAcdB8DWqQbOazKYXTL6aonnPjoqBpUHrtuG2YxQWzu1pzsysPCgQadqssLDdP+0MgJD3Gvj59ngYl+H1U+HbuxDL0VRb7WnYFm0FQOEJpTzhE4LaGtjH//TZRdnjiSwnc2bAVxIWTtMcSHyqvxvbN/D8DN0RAQ3aSFlcHk371fkCbM5GAmbXxrw0s+zbVttAwkkm2QTa7cD8ErDHu5DSekYEpIKgPONmaQTeH0LB3GlWF15MKjGlenzzEhoMqbK1MJy8zYZ0xsi1duuSEBIMWjCyF66vdWlxPbv8iIVeyeDaEodaPSsI0wVc6A5G7gXFzEo1JUzR4YmXAu1Yzz8JsfNpoSTzpqDI/tiqvunD9CwqNKUXR0BHhcQURf50vDXdhkx7XDjcZRF9mOaQtDWrJw8QXEhGZUtmXyxTc1xd0jtrjvWbFzCN0fCJW300tSGDY/h/e8A4XS8Te3qy00YscEU9oHrrN0=,iv:feebN6zs0Xdh87WO4hyV7bDyb5kj84fCyxwkoWkGcQ4=,tag:cTWhhftCp23SGpAldDwrWg==,type:str]
+sops:
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZ0J5VjR1MllXNExtUnJx
+            N2xGekxwR1g4MmxoUStMZzZuZ0tOYUNySUhJCitkQ0xBZkRXcm5pVEY4bUZWN2Zo
+            ZUM2bzljc2p3RzV0SCtSNUFPRVl3TW8KLS0tIFhRNS84N3dWMFcwWnI2ejlpYlpi
+            Y1JrM3dzOUZBdm5UNUg2ZURrQ3UzOVUKC4OQu8vdHbSOkisYPcN9lZYPs1TO3w7Y
+            UysTCx/kfItjbE4gOJVJQ8oG82WBtR4/VxSNdNvS9qDKwiIzHxaJHg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-01-03T15:24:36Z"
+    mac: ENC[AES256_GCM,data:ix5e+q9FXnknKHOd7PgEo66x1QGK/rknwdFHojolMmY2yN9/FQOVUDm4I9HOIJdGypdDKKhpWyNvhvNSj8IFDOVZm9dexoHqKvZiFRj+kFNxlC+ed9qjg3F3Z3htPfCFmLsd/jk4fCv3tGjh8Ttm6WBg4l+lBYX5EOcrMubJR90=,iv:qHElujaQJ5lhkQ66PGlXOvpaYZ5zWqp8FGsCLVvAhFQ=,tag:pm+TlbYgfhZfN+Qe6IoE+Q==,type:str]
+    encrypted_regex: ^(data|stringData)$
+    version: 3.11.0
