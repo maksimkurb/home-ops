@@ -5,5 +5,5 @@ namespace: home
 resources:
   - frigate.sops.yaml
   - pvc.yaml
-  # - frigate-config.sops.yaml
+  - frigate-config.sops.yaml
   - helm-release.yaml
