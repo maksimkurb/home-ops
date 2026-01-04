@@ -1,0 +1,19 @@
+kind: Secret
+vpn_tgproxy_user: ENC[AES256_GCM,data:+mu7ag==,iv:zx7iQCvkffs2sSir2YuhWbvnkTp9C2eyObQFYr2bwfI=,tag:urpP4psnJ/24PGo0axihgw==,type:str]
+vpn_tgproxy_password: ENC[AES256_GCM,data:Fy+zEpdfjewoP3cs47G+vV0QAP28vzGJfbrrhIZMkT55LF9nH66u0gMU,iv:HmgKiwy7BIIPe9u0qYD1nawDHhh19tpq/szjzrgaL/E=,tag:QsrRkl6S/9u6XfWHiQ2tYw==,type:str]
+vpn_tgproxy_port_external: ENC[AES256_GCM,data:1ZWyrbE=,iv:eBEJpCDkwoL0bAyo9cWvsrSqoxdv642ptQH7gxhqG/w=,tag:t0HTSOmwOilA4wBWz/GH8Q==,type:int]
+sops:
+    age:
+        - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvcVoraGdURCs2U1ZjMFY5
+            c2pyWFBzS0dWemhPT1pSVk1Cd01xOUZocXk0CnYxeTNqZHVzYk9FNS9MSDFoazUz
+            ZkQrczhxWEx4dE5WblIwdG9IWGpKOUUKLS0tIEdEMXZPa1gybStDR1p0dFEyNnpF
+            Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
+            OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-01-04T11:47:09Z"
+    mac: ENC[AES256_GCM,data:VBnlPdZKToSRnsVK34qhIg0AfNorc3X3ieHtyR2KO/FdRqzKq4cGFwimf+zr1Z20F5GWfA2TT1gvKl5iHtplD4Qw4IGSfW6a9V9vvaGshmMJ7TtkCCQXtipCHvFjlGrJIXHhdm4J9itn0AX2BowMgtgMxg4Y1ZdilNYOunHIlPY=,iv:T1wlzCdso2VnYx6vgNGiToYDszxgH6lDdkoum+U62K4=,tag:SdIQkUiMpXjIbQ5c56b4JA==,type:str]
+    unencrypted_regex: ^(kind)$
+    version: 3.11.0

@@ -15,3 +15,8 @@
   tags:
     - 3x-ui
   when: vpn_xui_enabled | default(false)
+
+- import_tasks: tgproxy-install.yaml
+  tags:
+    - tgproxy
+  when: vpn_tgproxy_enabled | default(false)

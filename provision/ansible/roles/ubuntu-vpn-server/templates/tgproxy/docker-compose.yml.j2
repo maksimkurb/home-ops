@@ -1,0 +1,12 @@
+services:
+  tgproxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    pull_policy: always
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "{{ vpn_tgproxy_port_external | default(10118) }}:1080/tcp"
+      - "{{ vpn_tgproxy_port_external | default(10118) }}:1080/udp"

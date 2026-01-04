@@ -1,0 +1,44 @@
+---
+- name: tgproxy / Create config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /opt/tgproxy
+    - /opt/tgproxy/dante
+
+- name: tgproxy / Create docker-compose.yml file
+  template:
+    src: tgproxy/docker-compose.yml.j2
+    dest: "/opt/tgproxy/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: tgproxy / Create sockd.conf file
+  template:
+    src: tgproxy/sockd.conf.j2
+    dest: "/opt/tgproxy/dante/sockd.conf"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: tgproxy / Create Dockerfile file
+  template:
+    src: tgproxy/Dockerfile.j2
+    dest: "/opt/tgproxy/Dockerfile"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: tgproxy / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/tgproxy"
+    state: present
+    build: always
+
+- name: tgproxy / Restart with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/tgproxy"
+    state: restarted

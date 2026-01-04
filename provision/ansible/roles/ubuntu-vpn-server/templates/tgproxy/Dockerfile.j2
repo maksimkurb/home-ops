@@ -1,0 +1,6 @@
+FROM vimagick/dante:latest
+
+COPY ./dante/sockd.conf /etc/dante/sockd.conf
+
+RUN useradd {{ vpn_tgproxy_user }} && \
+    echo '{{ vpn_tgproxy_user }}:{{ vpn_tgproxy_password }}' | chpasswd

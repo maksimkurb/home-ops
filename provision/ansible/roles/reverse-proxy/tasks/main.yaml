@@ -2,7 +2,7 @@
 - import_tasks: docker.yaml
   tags:
     - docker
-  when: (traefik_enabled | default(false)) or (gatus_config is defined)
+  when: (traefik_enabled | default(false)) or (gatus_config is defined) or (vpn_tgproxy_enabled | default(false)) or (vpn_xui_enabled | default(false))
 
 - import_tasks: traefik.yaml
   tags:

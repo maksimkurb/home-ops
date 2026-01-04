@@ -2,6 +2,8 @@ ansible_python_interpreter: /usr/bin/python3.12
 
 enable_unattended_upgrades: false
 
-vpn_wan_interface: ens18
+traefik_enabled: true
+vpn_wan_interface: ens6
 vpn_xui_enabled: false
 vpn_amnezia_enabled: true
+vpn_tgproxy_enabled: false
