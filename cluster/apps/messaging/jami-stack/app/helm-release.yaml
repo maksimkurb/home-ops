@@ -102,7 +102,7 @@ spec:
           main:
             image:
               repository: coturn/coturn
-              tag: 4.7.0
+              tag: 4.8.0
               pullPolicy: IfNotPresent
             command: ["turnserver", "-c", "/etc/coturn/turnserver.conf"]
             env:
