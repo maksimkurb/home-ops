@@ -79,6 +79,7 @@ spec:
                   port: http
       api:
         enabled: true
+        className: nginx-intra
         annotations:
           gethomepage.dev/enabled: "false"
         hosts:
@@ -89,7 +90,6 @@ spec:
                 service:
                   identifier: main
                   port: http
-        className: nginx
 
     persistence:
       config:
