@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: fireflyiii/core
-              tag: version-6.4.14
+              tag: version-6.4.15
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
