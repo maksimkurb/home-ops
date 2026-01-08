@@ -122,7 +122,7 @@ spec:
               N8N_PORT: 8080
               N8N_HOST: n8n.${SECRET_PRIVATE_DOMAIN}
               WEBHOOK_URL: https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}/
-              N8N_SKIP_AUTH_ON_OAUTH_CALLBACK: false
+              N8N_SKIP_AUTH_ON_OAUTH_CALLBACK: true
               N8N_PROXY_HOPS: 1
               N8N_LOG_LEVEL: info
               N8N_LOG_OUTPUT: console
