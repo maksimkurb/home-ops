@@ -30,6 +30,8 @@ spec:
             command: [node, /usr/lib/scanservjs/server/server.js]
             env:
               TZ: "${TIMEZONE}"
+              LANG: "C"
+              LC_ALL: "C"
             envFrom:
               - secretRef:
                   name: scanservjs-env
