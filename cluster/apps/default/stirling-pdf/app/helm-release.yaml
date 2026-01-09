@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/stirling-tools/s-pdf
-              tag: 1.6.0@sha256:1f73a8f898fe269cbbccea3be577064dd87fc4334de349fcc5b1afa1bcebf240
+              tag: 2.2.0@sha256:9cd7ecf0b93032086f993f530f535b45c05b2bd768ec3d5df866d1d58046f2da
             env:
               TZ: "${TIMEZONE}"
               DOCKER_ENABLE_SECURITY: "false"
