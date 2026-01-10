@@ -66,9 +66,6 @@ spec:
               - path: /etc/coredns/Corefile
                 subPath: Corefile
                 readOnly: true
-              - path: /etc/coredns/zonefile.db
-                subPath: zonefile.db
-                readOnly: true
 
     defaultPodOptions:
       topologySpreadConstraints:
@@ -86,6 +83,10 @@ spec:
         serviceAccount:
           identifier: *app
         replicas: 2
+        strategy: RollingUpdate
+        rollingUpdate:
+          maxSurge: 0
+          maxUnavailable: 1
         containers:
           main:
             image:

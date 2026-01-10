@@ -1,11 +1,12 @@
 ${SECRET_PUBLIC_DOMAIN}:1053 {
   errors
   log
-  health {
-    lameduck 5s
-  }
+  health
   ready
-  rewrite stop name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
+  rewrite stop {
+    name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN}
+    answer name ${SECRET_PARENTS_DOMAIN} (.*)\.${SECRET_PARENTS_DOMAIN}
+  }
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
