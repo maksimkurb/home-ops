@@ -1,17 +1,4 @@
-$ORIGIN ${SECRET_PARENTS_DOMAIN}.
-$TTL 3600
-
-; SOA record for the zone
-@     IN  SOA ns.${SECRET_PARENTS_DOMAIN}. hostmaster.${SECRET_PARENTS_DOMAIN}. (
-                2024010101  ; serial
-                3600        ; refresh
-                1800        ; retry
-                604800      ; expire
-                3600        ; minimum TTL
-                )
-
-; NS record
-@     IN  NS  ns.${SECRET_PARENTS_DOMAIN}.
-
-; Wildcard CNAME redirects all subdomains of *.${SECRET_PARENTS_DOMAIN} to the parent domain
-*     IN      CNAME   ${SECRET_PARENTS_DOMAIN}.
+; sok.cubly.ru zone file with wildcard CNAME support
+${SECRET_PARENTS_DOMAIN}.            IN      SOA     ns.${SECRET_PARENTS_DOMAIN}. hostmaster.${SECRET_PARENTS_DOMAIN}. 2024010101 7200 3600 1209600 3600
+${SECRET_PARENTS_DOMAIN}.            IN      NS      ns.${SECRET_PARENTS_DOMAIN}.
+*                                   IN      CNAME   ${SECRET_PARENTS_DOMAIN}.

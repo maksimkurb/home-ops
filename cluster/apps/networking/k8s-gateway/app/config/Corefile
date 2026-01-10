@@ -1,7 +1,7 @@
 ${SECRET_PARENTS_DOMAIN}:1053 {
   errors
   log . "{common} [PARENT ZONE]"
-  file /etc/coredns/zonefile.db
+  file /etc/coredns/zonefile.db ${SECRET_PARENTS_DOMAIN}
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
   }
