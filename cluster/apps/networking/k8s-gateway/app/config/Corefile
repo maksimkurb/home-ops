@@ -3,10 +3,7 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
   log
   health
   ready
-  rewrite stop {
-    name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN}
-    answer name ${SECRET_PARENTS_DOMAIN} (.*)\.${SECRET_PARENTS_DOMAIN}
-  }
+  rewrite continue name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
