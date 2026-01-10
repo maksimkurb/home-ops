@@ -1,9 +1,19 @@
+*.${SECRET_PARENTS_DOMAIN}:1053 {
+  errors
+  log
+  rewrite continue name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
+  k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
+    resources Ingress
+    fallthrough
+  }
+  forward . 8.8.8.8 8.8.4.4
+}
+
 ${SECRET_PUBLIC_DOMAIN}:1053 {
   errors
   log
   health
   ready
-  rewrite continue name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
