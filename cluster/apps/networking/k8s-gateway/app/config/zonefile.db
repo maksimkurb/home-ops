@@ -1,4 +1,0 @@
-; sok.cubly.ru zone file with wildcard CNAME support
-${SECRET_PARENTS_DOMAIN}.            IN      SOA     ns.${SECRET_PARENTS_DOMAIN}. hostmaster.${SECRET_PARENTS_DOMAIN}. 2024010101 7200 3600 1209600 3600
-${SECRET_PARENTS_DOMAIN}.            IN      NS      ns.${SECRET_PARENTS_DOMAIN}.
-*                                   IN      CNAME   ${SECRET_PARENTS_DOMAIN}.

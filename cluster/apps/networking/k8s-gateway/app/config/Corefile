@@ -1,21 +1,20 @@
-${SECRET_PARENTS_DOMAIN}:1053 {
-  errors
-  log . "{common} [PARENT ZONE]"
-  file /etc/coredns/zonefile.db ${SECRET_PARENTS_DOMAIN}
-  k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
-    resources Ingress
-  }
-}
-
 ${SECRET_PUBLIC_DOMAIN}:1053 {
   errors
   log
   health
   ready
+
+  template IN ANY ${SECRET_PARENTS_DOMAIN} {
+    match "\w*\.(${SECRET_PARENTS_DOMAIN}\.)$"
+    answer "{{ .Name }} 3600 IN A ${SVC_NGINX_ADDR}"
+    fallthrough
+  }
+
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
   }
+
   forward . 8.8.8.8 8.8.4.4
   prometheus 0.0.0.0:9153
   loadbalance
