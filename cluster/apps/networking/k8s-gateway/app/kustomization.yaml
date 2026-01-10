@@ -10,6 +10,7 @@ configMapGenerator:
   - name: k8s-gateway-configmap
     files:
       - Corefile=./config/Corefile
+      - zonefile.db=./config/zonefile.db
 generatorOptions:
   disableNameSuffixHash: true
 configurations:
