@@ -5,9 +5,7 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
     lameduck 5s
   }
   ready
-  file /etc/coredns/zonefile.db {
-    fallthrough
-  }
+  file /etc/coredns/zonefile.db
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
