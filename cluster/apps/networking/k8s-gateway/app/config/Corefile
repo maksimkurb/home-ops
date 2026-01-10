@@ -5,7 +5,7 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
     lameduck 5s
   }
   ready
-  file /etc/coredns/zonefile.db
+  rewrite stop name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
