@@ -5,6 +5,9 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
     lameduck 5s
   }
   ready
+  file /etc/coredns/zonefile.db {
+    fallthrough
+  }
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough
@@ -12,22 +15,6 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
   forward . 8.8.8.8 8.8.4.4
   prometheus 0.0.0.0:9153
   loadbalance
-}
-
-# Add support for wildcard subdomains of the parent domain to route to the same Ingresses
-${SECRET_PARENTS_DOMAIN}:1053 {
-  errors
-  log
-  health {
-    lameduck 5s
-  }
-  ready
-  prometheus 0.0.0.0:9153
-  loadbalance
-  rewrite stop name regex (.*)\.${SECRET_PARENTS_DOMAIN}$ ${SECRET_PARENTS_DOMAIN} answer auto
-  k8s_gateway . {
-    resources Ingress
-  }
 }
 
 .:1053 {
