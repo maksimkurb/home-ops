@@ -1,6 +1,14 @@
 $ORIGIN ${SECRET_PUBLIC_DOMAIN}.
 $TTL 3600
 
-; Zone file for ${SECRET_PUBLIC_DOMAIN} with wildcard CNAME support for parent domain
+; SOA record for the zone
+@     IN  SOA ns.${SECRET_PUBLIC_DOMAIN}. hostmaster.${SECRET_PUBLIC_DOMAIN}. (
+                2024010101  ; serial
+                3600        ; refresh
+                1800        ; retry
+                604800      ; expire
+                3600        ; minimum TTL
+                )
+
 ; Wildcard CNAME redirects all subdomains of *.${SECRET_PARENTS_DOMAIN} to the parent domain
 *.${SECRET_PARENTS_DOMAIN}     IN      CNAME   ${SECRET_PARENTS_DOMAIN}.
