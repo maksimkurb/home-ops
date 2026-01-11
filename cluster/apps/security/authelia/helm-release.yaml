@@ -84,7 +84,7 @@ spec:
               - path: /config/jwks/rsa.2048.cert
                 subPath: cert
                 readOnly: true
-              - path: /config/jwks/rsas.2048.pem
+              - path: /config/jwks/rsa.2048.pem
                 subPath: pem
                 readOnly: true
 
