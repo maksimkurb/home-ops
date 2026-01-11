@@ -81,10 +81,10 @@ spec:
         advancedMounts:
           main:
             main:
-              - path: /config/jwks/rsa2.2048.cert
+              - path: /config/jwks/rsa.2048.cert
                 subPath: cert
                 readOnly: true
-              - path: /config/jwks/rsa2.2048.pem
+              - path: /config/jwks/rsas.2048.pem
                 subPath: pem
                 readOnly: true
 
