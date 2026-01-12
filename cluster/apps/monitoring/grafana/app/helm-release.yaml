@@ -232,6 +232,12 @@ spec:
           revision: 2
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
+        openwrt:
+          # renovate: depName="OpenWRT Dashboard"
+          gnetId: 18153
+          revision: 4
+          datasource:
+            - { name: DS_PROMETHEUS, value: Prometheus }
     sidecar:
       dashboards:
         enabled: true

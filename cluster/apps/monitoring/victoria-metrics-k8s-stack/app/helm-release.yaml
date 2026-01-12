@@ -109,6 +109,10 @@ spec:
         externalLabels:
           cluster: cluster-name
         scrapeInterval: 60s
+        inlineScrapeConfig: |-
+          - job_name: "OpenWRT"
+            static_configs:
+              - targets: ["${ROUTER_IP}:9100", "${ROUTER_3_IP}:9100"]
       ingress:
         enabled: true
         ingressClassName: "nginx-intra"
