@@ -67,6 +67,14 @@ spec:
           host: homelab-pgsql.database.svc.cluster.local
           port: 5432
       profiles.yaml: |
+        name: authenticated_users_whitelist
+        filters:
+          - Alert.GetScenario() == "custom/authenticated-users-whitelist" && Alert.GetScope() == "Ip"
+        decisions:
+          - type: allow
+            duration: 8h
+        on_success: break
+        ---
         name: captcha_remediation
         filters:
           - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() contains "http" && Alert.GetScenario() not contains "cve"
@@ -87,6 +95,20 @@ spec:
           - slack_default
         on_success: break
       scenarios:
+        authenticated-users.yaml: |
+          type: trigger
+          name: custom/authenticated-users-whitelist
+          description: "Whitelist authenticated users (remote_user present) for 8 hours"
+          filter: evt.Parsed.remote_user != "" && evt.Parsed.remote_user != "-" && evt.Parsed.remote_user != " "
+          blackhole: 8h
+          groupby: "evt.Meta.source_ip"
+          labels:
+            confidence: 10
+            spoofable: 0
+            behavior: "auth:authenticated"
+            label: "Authenticated User"
+            service: http
+            remediation: false
         wp-admin-ban.yaml: |
           type: trigger
           name: custom/http-wp-admin-ban

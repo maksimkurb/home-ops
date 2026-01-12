@@ -103,9 +103,9 @@ spec:
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
 
-          set $auth_user "-";
+          set $auth_user "";
           header_filter_by_lua_block {
-            local auth_user = ngx.var.authHeader0 or ngx.var.upstream_http_remote_user or ngx.var.remote_user or "-"
+            local auth_user = ngx.var.authHeader0 or ngx.var.upstream_http_remote_user or ngx.var.remote_user or ""
             ngx.var.auth_user = auth_user
           }
         # use-proxy-protocol: "true"
