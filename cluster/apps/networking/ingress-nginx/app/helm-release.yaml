@@ -102,9 +102,11 @@ spec:
         server-snippet: |
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
-          map $remote_user $auth_user {
-            default $remote_user;
-            "" $http_x_remote_user;
+          if ($remote_user = "") {
+            set $auth_user $http_x_remote_user;
+          }
+          if ($remote_user != "") {
+            set $auth_user $remote_user;
           }
         # use-proxy-protocol: "true"
         # CROWDSEC END
@@ -145,7 +147,7 @@ spec:
               app.kubernetes.io/name: ${APP}
               app.kubernetes.io/component: controller
       podAnnotations:
-        configmap.reloader.stakater.com/reload: "cloudflare-proxied-networks,ai-robots-useragents,${APP}-controller"
+        configmap.reloader.stakater.com/reload: "cloudflare-proxied-networks,ai-robots-useragents"
       resources:
         requests:
           cpu: 1m
