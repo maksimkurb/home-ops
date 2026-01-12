@@ -62,7 +62,6 @@ spec:
         - name: init-clone-crowdsec-bouncer
           image: crowdsecurity/lua-bouncer-plugin
           tag: v1.1.2
-          digest: sha256:cefad6cb83240df0e7bba2f5b4724597ddbdc2ad6fa6dc6b45d62a26c7f574d3
           imagePullPolicy: IfNotPresent
           env:
             - name: API_URL
