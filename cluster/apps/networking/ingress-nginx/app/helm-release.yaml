@@ -61,6 +61,8 @@ spec:
       extraInitContainers:
         - name: init-clone-crowdsec-bouncer
           image: crowdsecurity/lua-bouncer-plugin
+          tag: v1.1.2
+          digest: sha256:cefad6cb83240df0e7bba2f5b4724597ddbdc2ad6fa6dc6b45d62a26c7f574d3
           imagePullPolicy: IfNotPresent
           env:
             - name: API_URL
@@ -102,11 +104,11 @@ spec:
         server-snippet: |
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
-          if ($remote_user = "") {
-            set $auth_user $http_remote_user;
-          }
-          if ($remote_user != "") {
-            set $auth_user $remote_user;
+
+          set $auth_user "-";
+          header_filter_by_lua_block {
+            local auth_user = ngx.var.authHeader0 or ngx.var.upstream_http_remote_user or ngx.var.remote_user or "-"
+            ngx.var.auth_user = auth_user
           }
         # use-proxy-protocol: "true"
         # CROWDSEC END
