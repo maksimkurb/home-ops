@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pve-node-exporter-external
+  name: node-exporter-external-pve
   namespace: monitoring
 spec:
   ports:
@@ -14,11 +14,59 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: pve-node-exporter-external
+  name: node-exporter-external-pve
   namespace: monitoring
 subsets:
   - addresses:
       - ip: ${PVE_HOST_IP}
+    ports:
+      - port: 9100
+        name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter-external-router-1
+  namespace: monitoring
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9100
+      targetPort: metrics
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: router-1-node-exporter-router-1
+  namespace: monitoring
+subsets:
+  - addresses:
+      - ip: ${ROUTER_IP}
+    ports:
+      - port: 9100
+        name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter-external-router-3
+  namespace: monitoring
+spec:
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9100
+      targetPort: metrics
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: router-1-node-exporter-router-3
+  namespace: monitoring
+subsets:
+  - addresses:
+      - ip: ${ROUTER_3_IP}
     ports:
       - port: 9100
         name: metrics
