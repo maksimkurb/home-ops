@@ -103,7 +103,7 @@ spec:
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
           if ($remote_user = "") {
-            set $auth_user $http_x_remote_user;
+            set $auth_user $http_remote_user;
           }
           if ($remote_user != "") {
             set $auth_user $remote_user;
