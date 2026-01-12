@@ -54,3 +54,13 @@ spec:
                 name: ext-svc-router-dashboard
                 port:
                   number: 80
+    - host: rt-1.${SECRET_PUBLIC_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ext-svc-router-dashboard
+                port:
+                  number: 80
