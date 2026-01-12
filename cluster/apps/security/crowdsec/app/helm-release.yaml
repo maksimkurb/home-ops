@@ -86,6 +86,10 @@ spec:
         notifications:
           - slack_default
         on_success: break
+      simulation.yaml: |
+        simulation: false
+        exclusions:
+          - crowdsecurity/http-crawl-non_statics
       parsers:
         s02-enrich:
           authenticated-users.yaml: |
