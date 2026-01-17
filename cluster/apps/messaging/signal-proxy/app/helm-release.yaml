@@ -55,7 +55,7 @@ spec:
           main:
             image:
               repository: nginx
-              tag: 1.27-alpine
+              tag: 1.29-alpine
             ports:
               - containerPort: 11051
                 protocol: TCP
