@@ -57,15 +57,22 @@ spec:
         fsGroupChangePolicy: "OnRootMismatch"
 
     persistence:
-      transcode:
+      data:
         storageClass: local-path
         accessMode: ReadWriteOnce
         size: 100M
         globalMounts:
           - path: /db
             subPath: hbbs
-          - path: /root
-            subPath: root
+      keys:
+        enabled: true
+        type: secret
+        name: rustdesk-key
+        globalMounts:
+          - path: /root/id_ed25519
+            subPath: id_ed25519
+          - path: /root/id_ed25519.pub
+            subPath: id_ed25519.pub
 
     controllers:
       main:
