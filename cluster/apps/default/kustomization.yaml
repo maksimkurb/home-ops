@@ -13,3 +13,4 @@ resources:
   - ./scanservjs/ks.yaml
   - ./stirling-pdf/ks.yaml
   - ./firefly-iii/ks.yaml
+  - ./rustdesk/ks.yaml

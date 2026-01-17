@@ -1,0 +1,153 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.5.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 5
+  uninstall:
+    keepHistory: false
+  values:
+    service:
+      main:
+        controller: main
+        type: LoadBalancer
+        loadBalancerIP: "${SVC_RUSTDESK_ADDR}"
+        externalTrafficPolicy: Local
+        ports:
+          rustdesk-1:
+            port: 21114
+          rustdesk-2:
+            port: 21115
+          rustdesk-3:
+            port: &port 21116
+          rustdesk-4:
+            port: *port
+            protocol: UDP
+          rustdesk-5-relay:
+            port: 21117
+          rustdesk-6:
+            port: 21118
+          rustdesk-7-relay:
+            port: 21119
+
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    ingress:
+      main:
+        enabled: true
+        className: nginx
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/weight: "-110"
+          gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/name: Jellyfin
+          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
+          gethomepage.dev/widget.type: "jellyfin"
+          gethomepage.dev/widget.url: "http://jellyfin.media:8096"
+          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_JELLYFIN_API_KEY}"
+          gethomepage.dev/widget.enableBlocks: "true"
+          gethomepage.dev/widget.enableNowPlaying: "false"
+        hosts:
+          - host: "jellyfin.${SECRET_PUBLIC_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+
+    persistence:
+      transcode:
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 100M
+        globalMounts:
+          - path: /db
+            subPath: hbbs
+          - path: /root
+            subPath: root
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/rustdesk/rustdesk-server
+              tag: 1.1.15
+            command:
+              - hbbs
+              - -r localhost:21117
+            env:
+              TZ: "${TIMEZONE}"
+              ENCRYPTED_ONLY: "1"
+              DB_URL: /db/db_v2.sqlite3
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                memory: 1000Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 21116
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+          relay:
+            image:
+              repository: ghcr.io/rustdesk/rustdesk-server
+              tag: 1.1.15
+            command:
+              - hbbr
+            env:
+              TZ: "${TIMEZONE}"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                memory: 1000Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 21117
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
