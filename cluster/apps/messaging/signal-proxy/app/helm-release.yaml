@@ -1,0 +1,89 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.5.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 5
+  uninstall:
+    keepHistory: false
+  values:
+    service:
+      main:
+        controller: main
+        type: LoadBalancer
+        loadBalancerIP: "${SVC_SIGNAL_PROXY_ADDR}"
+        annotations:
+          io.cilium/lb-ipam-ips: "${SVC_SIGNAL_PROXY_ADDR}"
+        externalTrafficPolicy: Local
+        ports:
+          signal-proxy:
+            port: 11051
+            protocol: TCP
+
+    persistence:
+      config:
+        enabled: true
+        type: configMap
+        name: ${APP}-config
+        globalMounts:
+          - path: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: nginx
+              tag: 1.27-alpine
+            ports:
+              - containerPort: 11051
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 11051
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 11051
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
