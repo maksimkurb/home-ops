@@ -170,7 +170,7 @@ spec:
           app:
             image:
               repository: ghcr.io/n8n-io/runners
-              tag: 2.4.4
+              tag: 2.5.0
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
