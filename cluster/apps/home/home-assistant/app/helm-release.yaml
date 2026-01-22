@@ -120,7 +120,7 @@ spec:
           check-db-ready:
             image:
               repository: postgres
-              tag: 17.7
+              tag: 18.1
             command:
               - "sh"
               - "-c"
