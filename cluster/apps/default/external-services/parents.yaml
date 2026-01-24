@@ -18,7 +18,7 @@ metadata:
   namespace: default
 subsets:
   - addresses:
-      - ip: 10.9.5.115
+      - ip: 192.168.100.102
     ports:
       - port: 443
         name: https
