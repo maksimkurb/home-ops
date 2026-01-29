@@ -104,13 +104,17 @@ spec:
               TZ: "${TIMEZONE}"
               DOCKER_ENABLE_SECURITY: "false"
               SECURITY_ENABLE_LOGIN: "false"
-              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "true"
+              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "false"
+              DISABLE_ADDITIONAL_FEATURES: "true"
+              SYSTEM_ENABLEANALYTICS: "false"
+              SYSTEM_ENABLEPOSTHOG: "false"
+              SYSTEM_ENABLESCARF: "false"
             resources:
               requests:
                 cpu: 1m
                 memory: 100Mi
               limits:
-                memory: 1Gi
+                memory: 2Gi
             probes:
               liveness: &probe
                 enabled: true
