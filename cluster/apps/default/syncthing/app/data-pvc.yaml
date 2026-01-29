@@ -1,4 +1,7 @@
 ---
+############################
+# Backup source 1 (Immich) #
+############################
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -31,7 +34,48 @@ spec:
   resources:
     requests:
       storage: 1Mi
+
 ---
+###########################
+# Backup source 2 (MinIO) #
+###########################
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: syncthing-minio
+spec:
+  storageClassName: syncthing-minio
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadWriteMany"]
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: "${NFS_PROXMOX_MINIO_DATA}"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: syncthing-minio
+  namespace: default
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: syncthing-minio
+  resources:
+    requests:
+      storage: 1Mi
+
+---
+####################
+# Syncthing config #
+####################
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

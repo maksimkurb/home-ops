@@ -120,3 +120,15 @@ spec:
           - path: /data/immich/.stignore
             subPath: .stignore
             readOnly: false
+      minio:
+        enabled: true
+        existingClaim: syncthing-minio
+        globalMounts:
+          - path: /data/minio
+            readOnly: true
+          - path: /data/minio/.stfolder
+            subPath: .stfolder
+            readOnly: false
+          - path: /data/minio/.stignore
+            subPath: .stignore
+            readOnly: false
