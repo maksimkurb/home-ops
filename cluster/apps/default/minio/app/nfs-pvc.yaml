@@ -11,7 +11,7 @@ spec:
   storageClassName: minio
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: /tank/minio
+    path: ${NFS_PROXMOX_MINIO_DATA}
   nodeAffinity:
     required:
       nodeSelectorTerms:

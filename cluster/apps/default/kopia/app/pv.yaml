@@ -1,6 +1,6 @@
-#########################
-# Backup source (WebUI) #
-#########################
+##############################
+# Backup source 1 (Pod data) #
+##############################
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -31,6 +31,43 @@ metadata:
 spec:
   accessModes: ["ReadOnlyMany"]
   storageClassName: kopia-data
+  resources:
+    requests:
+      storage: 1Mi
+
+###########################
+# Backup source 2 (MinIO) #
+###########################
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kopia-data-minio
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadOnlyMany"]
+  storageClassName: kopia-data-minio
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: "${NFS_PROXMOX_MINIO_DATA}"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kopia-data-minio
+  namespace: default
+spec:
+  accessModes: ["ReadOnlyMany"]
+  storageClassName: kopia-data-minio
   resources:
     requests:
       storage: 1Mi
