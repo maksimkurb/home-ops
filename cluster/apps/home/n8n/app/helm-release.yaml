@@ -47,8 +47,7 @@ spec:
         name: n8n-supabase-ca
         defaultMode: 0o777
         globalMounts:
-          - path: /opt/custom-certificates/supabase-prod-ca-2021.crt
-            subPath: supabase-prod-ca-2021.crt
+          - path: /opt/custom-certificates
 
     # Pod security context
     defaultPodOptions:
