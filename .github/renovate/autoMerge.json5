@@ -38,6 +38,11 @@
       "description": "Disable auto merge for gpu-operator",
       "matchPackageNames": ["gpu-operator"],
       "automerge": false
+    },
+    {
+      "description": "Disable auto merge for n8n",
+      "matchPackageNames": ["ghcr.io/n8n-io/n8n"],
+      "automerge": false
     }
   ]
 }
