@@ -42,6 +42,14 @@ spec:
             app:
               - path: /.n8n/
                 subPath: _taskrunner-n8n
+      certs:
+        type: secret
+        name: n8n-supabase-ca
+        advancedMounts:
+          n8n:
+            app:
+              - path: /opt/custom-certificates/supabase-prod-ca-2021.crt
+                subPath: supabase-prod-ca-2021.crt
 
     # Pod security context
     defaultPodOptions:

@@ -5,3 +5,9 @@ resources:
   - config-pvc.yaml
   - secret.sops.yaml
   - helm-release.yaml
+secretGenerator:
+  - files:
+      - ./supabase-prod-ca-2021.crt
+    name: n8n-supabase-ca
+    options:
+      disableNameSuffixHash: true
