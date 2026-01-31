@@ -45,7 +45,6 @@ spec:
       certs:
         type: secret
         name: n8n-supabase-ca
-        defaultMode: 0o777
         globalMounts:
           - path: /opt/custom-certificates
 
@@ -69,6 +68,23 @@ spec:
       n8n:
         annotations:
           reloader.stakater.com/auto: "true"
+
+        initContainers:
+          setup-certs:
+            image:
+              repository: ghcr.io/n8n-io/n8n
+              tag: 2.6.2
+              pullPolicy: IfNotPresent
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+            command:
+              - sh
+              - -c
+              - |
+                c_rehash /opt/custom-certificates
+                chmod 555 /opt/custom-certificates
+                chmod 444 /opt/custom-certificates/*
 
         containers:
           app:
@@ -155,6 +171,23 @@ spec:
       taskrunner:
         annotations:
           reloader.stakater.com/auto: "true"
+
+        initContainers:
+          setup-certs:
+            image:
+              repository: ghcr.io/n8n-io/runners
+              tag: 2.6.2
+              pullPolicy: IfNotPresent
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+            command:
+              - sh
+              - -c
+              - |
+                c_rehash /opt/custom-certificates
+                chmod 555 /opt/custom-certificates
+                chmod 444 /opt/custom-certificates/*
 
         containers:
           app:
