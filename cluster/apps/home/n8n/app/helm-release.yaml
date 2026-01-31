@@ -49,16 +49,15 @@ spec:
         advancedMounts:
           n8n:
             app:
-              - path: /opt/custom-certificates/supabase-prod-ca-2021.crt
-                subPath: supabase-prod-ca-2021.crt
+              - path: /opt/custom-certificates
 
     # Pod security context
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 777
-        runAsGroup: 777
-        fsGroup: 777
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
 
     resources:
@@ -72,14 +71,6 @@ spec:
       n8n:
         annotations:
           reloader.stakater.com/auto: "true"
-
-        pod:
-          securityContext:
-            runAsNonRoot: false
-            runAsUser: 777
-            runAsGroup: 777
-            fsGroup: 777
-            fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           app:
@@ -166,14 +157,6 @@ spec:
       taskrunner:
         annotations:
           reloader.stakater.com/auto: "true"
-
-        pod:
-          securityContext:
-            runAsNonRoot: false
-            runAsUser: 777
-            runAsGroup: 777
-            fsGroup: 777
-            fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           app:
