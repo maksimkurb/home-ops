@@ -45,14 +45,17 @@ spec:
       certs:
         type: secret
         name: n8n-supabase-ca
-        advancedMounts:
-          n8n:
-            app:
-              - path: /opt/custom-certificates
+        defaultMode: 0o777
+        globalMounts:
+          - path: /opt/custom-certificates/supabase-prod-ca-2021.crt
+            subPath: supabase-prod-ca-2021.crt
 
     # Pod security context
     defaultPodOptions:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
         fsGroup: 777
         fsGroupChangePolicy: "OnRootMismatch"
 
