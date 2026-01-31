@@ -45,6 +45,7 @@ spec:
       certs:
         type: secret
         name: n8n-supabase-ca
+        defaultMode: 0o444
         advancedMounts:
           n8n:
             app:
