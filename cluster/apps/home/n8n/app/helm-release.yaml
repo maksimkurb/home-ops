@@ -42,9 +42,14 @@ spec:
             app:
               - path: /.n8n/
                 subPath: _taskrunner-n8n
-      certs:
+      certs-source:
         type: secret
         name: n8n-supabase-ca
+        globalMounts:
+          - path: /tmp/certs-source
+      certs:
+        type: emptyDir
+        medium: Memory
         globalMounts:
           - path: /opt/custom-certificates
 
@@ -82,6 +87,8 @@ spec:
               - sh
               - -c
               - |
+                mkdir -p /opt/custom-certificates
+                cp /tmp/certs-source/* /opt/custom-certificates/
                 c_rehash /opt/custom-certificates
                 chmod 555 /opt/custom-certificates
                 chmod 444 /opt/custom-certificates/*
@@ -185,6 +192,8 @@ spec:
               - sh
               - -c
               - |
+                mkdir -p /opt/custom-certificates
+                cp /tmp/certs-source/* /opt/custom-certificates/
                 c_rehash /opt/custom-certificates
                 chmod 555 /opt/custom-certificates
                 chmod 444 /opt/custom-certificates/*
