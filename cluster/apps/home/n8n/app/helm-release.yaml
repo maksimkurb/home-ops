@@ -45,7 +45,7 @@ spec:
       certs:
         type: secret
         name: n8n-supabase-ca
-        defaultMode: 0o444
+        defaultMode: 0o777
         advancedMounts:
           n8n:
             app:
@@ -55,9 +55,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
         fsGroupChangePolicy: "OnRootMismatch"
 
     resources:
