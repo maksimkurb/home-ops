@@ -101,6 +101,14 @@
       "matchPackageNames": [
         "fireflyiii/core"
       ]
+    },
+    {
+      "description": "Handle TeamSpeak beta versions",
+      "matchDatasources": ["docker"],
+      "versioning": "loose",
+      "matchPackageNames": [
+        "teamspeak"
+      ]
     }
   ]
 }
