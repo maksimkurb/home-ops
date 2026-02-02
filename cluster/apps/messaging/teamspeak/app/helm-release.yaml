@@ -65,7 +65,7 @@ spec:
           main:
             image:
               repository: teamspeaksystems/teamspeak6-server
-              tag: v6.0.0-beta7
+              tag: v6.0.0-beta8
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
