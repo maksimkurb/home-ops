@@ -52,12 +52,19 @@ spec:
         storageClass: local-path
         accessMode: ReadWriteOnce
         size: 100M
-        globalMounts:
-          - path: /persist
-            subPath: grist-persist
-
+        advancedMounts:
+          main:
+            main:
+              - path: /persist
+                subPath: grist-persist
+          redis:
+            redis:
+              - path: /data
+                subPath: grist-redis
     controllers:
       main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           main:
             image:
