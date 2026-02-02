@@ -78,7 +78,7 @@ spec:
               GRIST_OIDC_IDP_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
               GRIST_OIDC_IDP_SCOPES: openid profile email
               GRIST_OIDC_IDP_CLIENT_ID: grist
-              GRIST_OIDC_IDP_SKIP_END_SESSION_ENDPOINT: false
+              GRIST_OIDC_IDP_SKIP_END_SESSION_ENDPOINT: true
               GRIST_OIDC_SP_IGNORE_EMAIL_VERIFIED: true
             envFrom:
               - secretRef:
