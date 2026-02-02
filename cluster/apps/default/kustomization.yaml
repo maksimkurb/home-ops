@@ -7,6 +7,7 @@ resources:
   - ./sftpgo/ks.yaml
   - ./syncthing/ks.yaml
   - ./homepage/ks.yaml
+  - ./grist/ks.yaml
   - ./kopia/ks.yaml
   - ./minio/ks.yaml
   - ./paperless/ks.yaml
