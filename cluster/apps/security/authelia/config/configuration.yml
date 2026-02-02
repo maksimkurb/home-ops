@@ -257,3 +257,20 @@ identity_providers:
           - email
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_post'
+
+      - client_id: 'grist'
+        client_name: 'Grist'
+        client_secret: ${SECRET_GRIST_OAUTH_CLIENT_SECRET}
+        public: false
+        require_pkce: true
+        claims_policy: 'default'
+        pkce_challenge_method: 'S256'
+        authorization_policy: 'one_factor'
+        redirect_uris:
+          - 'https://grist.${SECRET_PUBLIC_DOMAIN}/oauth2/callback '
+        scopes:
+          - openid
+          - profile
+          - email
+        id_token_signed_response_alg: 'RS256'
+        token_endpoint_auth_method: 'client_secret_post'
