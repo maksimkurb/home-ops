@@ -107,7 +107,7 @@
       "matchDatasources": ["docker"],
       "versioning": "loose",
       "matchPackageNames": [
-        "teamspeak"
+        "teamspeaksystems/teamspeak6-server"
       ]
     }
   ]
