@@ -267,7 +267,7 @@ identity_providers:
         pkce_challenge_method: 'S256'
         authorization_policy: 'one_factor'
         redirect_uris:
-          - 'https://grist.${SECRET_PUBLIC_DOMAIN}/oauth2/callback '
+          - 'https://grist.${SECRET_PUBLIC_DOMAIN}/oauth2/callback'
         scopes:
           - openid
           - profile
