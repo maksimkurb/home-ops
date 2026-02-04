@@ -267,7 +267,7 @@ spec:
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "false"
           nginx.ingress.kubernetes.io/enable-cors: "true"
-          nginx.ingress.kubernetes.io/cors-allow-origin: "https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}, https://n8n.${SECRET_PRIVATE_DOMAIN}"
+          nginx.ingress.kubernetes.io/cors-allow-origin: "https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}, https://grist.${SECRET_PUBLIC_DOMAIN}, https://*.${SECRET_PUBLIC_DOMAIN}, https://n8n.${SECRET_PRIVATE_DOMAIN}"
           nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
           nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
           nginx.ingress.kubernetes.io/cors-expose-headers: "Content-Length,Content-Range"
