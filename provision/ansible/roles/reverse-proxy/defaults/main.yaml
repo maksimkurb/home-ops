@@ -1,6 +1,6 @@
 ---
 # renovate: datasource=github-releases depName=traefik/traefik
-traefik_version: "v3.5.2"
+traefik_version: "v3.6.7"
 tianji_jwt_secret: "replace-me-with-a-random-string"
 traefik_network_name: "traefik"
 traefik_networks:
