@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: ghcr.io/gethomepage/homepage
-              tag: v1.10.0
+              tag: v1.10.1
             env:
               - name: HOMEPAGE_ALLOWED_HOSTS
                 value: "start.${SECRET_PUBLIC_DOMAIN}"
