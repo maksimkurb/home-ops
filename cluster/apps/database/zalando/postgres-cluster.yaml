@@ -29,7 +29,7 @@ spec:
       memory: 1000Mi
     limits:
       cpu: '2'
-      memory: 1000Mi
+      memory: 2000Mi
   postgresql:
     version: "17"
     parameters:

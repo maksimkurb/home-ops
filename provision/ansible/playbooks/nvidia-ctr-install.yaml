@@ -8,20 +8,31 @@
     - name: Pausing for 5 seconds...
       pause:
         seconds: 5
+  vars:
+    nvidia_driver_version: "580"
   tasks:
-    - name: Add an Apt signing key
-      ansible.builtin.apt_key:
-        url: https://nvidia.github.io/libnvidia-container/gpgkey
-        state: present
-
-    - name: Get the codename of the distribution
-      shell: . /etc/os-release;echo $ID$VERSION_ID
-      register: dist_version
-
-    - name: Download file with custom HTTP headers
+    - name: Download NVIDIA GPG key
       ansible.builtin.get_url:
-        url: https://nvidia.github.io/libnvidia-container/{{ dist_version.stdout }}/libnvidia-container.list
-        dest: /etc/apt/sources.list.d/libnvidia-container.list
+        url: https://nvidia.github.io/libnvidia-container/gpgkey
+        dest: /tmp/nvidia-container-toolkit.gpg.key
+        mode: '0644'
+
+    - name: Dearmor and install NVIDIA GPG key
+      ansible.builtin.shell: |
+        cat /tmp/nvidia-container-toolkit.gpg.key | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+    - name: Create nvidia-container-toolkit sources file (DEB822 format)
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/libnvidia-container.sources
+        content: |
+          Enabled: yes
+          Types: deb
+          URIs: https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH)
+          Suites: /
+          Signed-By: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+        mode: '0644'
 
     - name: Upgrade all system packages
       ansible.builtin.apt:
@@ -38,10 +49,10 @@
       ansible.builtin.apt:
         name:
           - nvidia-container-toolkit
-          - nvidia-headless-570-server
-          - libnvidia-encode-570-server
-          - libnvidia-decode-570-server
-          - nvidia-utils-570-server
+          - "nvidia-headless-{{ nvidia_driver_version }}-server"
+          - "libnvidia-encode-{{ nvidia_driver_version }}-server"
+          - "libnvidia-decode-{{ nvidia_driver_version }}-server"
+          - "nvidia-utils-{{ nvidia_driver_version  }}-server"
         install_recommends: false
         update_cache: true
         cache_valid_time: 3600
