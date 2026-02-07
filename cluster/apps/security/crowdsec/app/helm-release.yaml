@@ -66,6 +66,11 @@ spec:
           password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
           host: homelab-pgsql.database.svc.cluster.local
           port: 5432
+          flush:
+            agents_autodelete:
+              cert: null
+              login_password:
+                duration: 60m
       profiles.yaml: |
         name: captcha_remediation
         filters:
