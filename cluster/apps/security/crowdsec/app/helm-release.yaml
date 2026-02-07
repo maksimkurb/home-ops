@@ -68,9 +68,7 @@ spec:
           port: 5432
           flush:
             agents_autodelete:
-              cert: null
-              login_password:
-                duration: 60m
+              login_password: 15m
       profiles.yaml: |
         name: captcha_remediation
         filters:
