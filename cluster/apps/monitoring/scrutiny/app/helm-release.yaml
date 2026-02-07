@@ -36,7 +36,7 @@ spec:
               - influxdb
             image:
               repository: ghcr.io/analogj/scrutiny
-              tag: master-web@sha256:fbfb3e1fb51177ae2f56aae42e2502ff13abe1093157cb445708943b79896d70
+              tag: master-web@sha256:108c81f8e42cf1086b75c8f205fc70052e3677a10591a4348e16833192401628
             env:
               TZ: "${TZ}"
               SCRUTINY_WEB_INFLUXDB_HOST: localhost
