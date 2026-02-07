@@ -100,7 +100,7 @@ spec:
               tag: 2.7.2
               pullPolicy: IfNotPresent
             env:
-              TZ: "${TIMEZONE}"
+              TZ: "${TIMEZONE_FAILSAFE}"
               DB_TYPE: postgresdb
               DB_POSTGRESDB_HOST: homelab-pgsql.database
               DB_POSTGRESDB_PORT: "5432"
@@ -137,7 +137,7 @@ spec:
               EXECUTIONS_DATA_PRUNE: true
               EXECUTIONS_DATA_MAX_AGE: 7
               EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
-              GENERIC_TIMEZONE: "${TIMEZONE}"
+              GENERIC_TIMEZONE: "${TIMEZONE_FAILSAFE}"
               N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
               N8N_PROTOCOL: "https"
               N8N_PORT: 8080
@@ -205,8 +205,8 @@ spec:
               tag: 2.7.2
               pullPolicy: IfNotPresent
             env:
-              TZ: "${TIMEZONE}"
-              GENERIC_TIMEZONE: "${TIMEZONE}"
+              TZ: "${TIMEZONE_FAILSAFE}"
+              GENERIC_TIMEZONE: "${TIMEZONE_FAILSAFE}"
               N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
               N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 15
               N8N_RUNNERS_AUTH_TOKEN:

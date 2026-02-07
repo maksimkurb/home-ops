@@ -6,6 +6,7 @@ metadata:
   namespace: flux-system
 data:
   TIMEZONE: "Europe/Saratov"
+  TIMEZONE_FAILSAFE: "Europe/Samara"
   CLUSTER_NAME: "cluster01"
   CLUSTER_ID: "1"
   GPU_SLICE_REPLICAS: "6"
