@@ -21,6 +21,7 @@ data:
       Media:
         style: row
         columns: 4
+        useEqualHeights: true
       Home:
         style: row
         columns: 4
