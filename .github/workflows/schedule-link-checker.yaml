@@ -23,7 +23,7 @@ jobs:
         uses: lycheeverse/lychee-action@v2.7.0
         id: lychee
         with:
-          args: --max-retries 5 --retry-wait-time 5
+          args: --max-retries 5 --retry-wait-time 5 .
         env:
           GITHUB_TOKEN: "${{ steps.generate-token.outputs.token }}"
       - name: Find Link Checker Issue
