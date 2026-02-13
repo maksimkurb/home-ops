@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-assistant/home-assistant
-              tag: 2026.2.1
+              tag: 2026.2.2
             env:
               TZ: "${TIMEZONE}"
               # https://github.com/blakeblackshear/frigate-hass-integration/issues/762
