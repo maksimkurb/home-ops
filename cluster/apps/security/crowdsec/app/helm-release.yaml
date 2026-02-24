@@ -93,6 +93,7 @@ spec:
         simulation: false
         exclusions:
           - crowdsecurity/http-crawl-non_statics
+          - crowdsecurity/http-probing
       parsers:
         s02-enrich:
           authenticated-users.yaml: |
