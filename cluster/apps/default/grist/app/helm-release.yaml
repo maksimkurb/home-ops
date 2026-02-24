@@ -117,7 +117,7 @@ spec:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 8.1.5
+              tag: 8.1.6
             resources:
               requests:
                 cpu: 5m
