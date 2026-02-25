@@ -20,7 +20,7 @@ jobs:
           app_id: "${{ secrets.BOT_APP_ID }}"
           private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v2.7.0
+        uses: lycheeverse/lychee-action@v2.8.0
         id: lychee
         with:
           args: --max-retries 5 --retry-wait-time 5 .
