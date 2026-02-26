@@ -100,7 +100,7 @@ spec:
           main:
             image:
               repository: docker.io/nodered/node-red
-              tag: 4.1.5-debian
+              tag: 4.1.6-debian
             env:
               TZ: "${TIMEZONE}"
               NODE_RED_ENABLE_PROJECTS: "true"
