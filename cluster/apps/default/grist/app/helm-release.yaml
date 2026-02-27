@@ -69,7 +69,7 @@ spec:
           main:
             image:
               repository: gristlabs/grist
-              tag: 1.7.10
+              tag: 1.7.11
             env:
               TZ: "${TIMEZONE}"
               GRIST_SANDBOX_FLAVOR: gvisor
