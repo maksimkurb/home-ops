@@ -1,6 +1,6 @@
 kind: Secret
-ansible_host: ENC[AES256_GCM,data:+HFvq9B1Em1fN2mS0+CU,iv:iDp2LWa/nH4uDc3t/l7Fwpf5RokvJ5xhvA2ha5ekNy4=,tag:ZfiD0IcHx5FOs43ukGN+HA==,type:str]
-ansible_user: ENC[AES256_GCM,data:atCbPoRC04Mwfw==,iv:jSBqVbUCk/vlvGo1ATI6U0bzz5lOJklct6Tso4VRwGU=,tag:eDJnK109oT6mAXd5PDsctQ==,type:str]
+ansible_host: ENC[AES256_GCM,data:p79h9P8Qzf2JDmF/OqGE,iv:D7rF4mqzheHbzuicX12C7CcmiVXc3hokhzWincNgs8o=,tag:Urosmeomvoqa6pf4l6CJdg==,type:str]
+ansible_user: ENC[AES256_GCM,data:qSravw==,iv:IJOt1pURIc8zuSHSoTAxDxP9jzE+d9zf2TjI+rjs5xE=,tag:wF6RtcjUYBBN4AJgHD+HMQ==,type:str]
 iperf3_client_hostname: ENC[AES256_GCM,data:ZVTc9nUN7La2Yg/sOBbQaA==,iv:UyXeoGc19UYA1RVr8RIVez6yCa5W7cNyItfybQiFgTA=,tag:yyZmREcJTecrmavqpyMkyQ==,type:str]
 iperf3_client_runs:
     - cron: ENC[AES256_GCM,data:mrIgQgY+ncYAEtAgxQVCLytX2Q==,iv:uvmYK1KvFjvhbOgGrQyUXZLMZS+cNmdOWHNdBuIv2vk=,tag:apXvbZxi4LF25M2gdXjhGg==,type:str]
@@ -16,10 +16,6 @@ iperf3_client_runs:
       duration_sec: ENC[AES256_GCM,data:TKA=,iv:tvwBAbpsqa5+VRYtlGO04F16X4QlBfwsrb7jVGbqcwM=,tag:Idn1+DYG3mMz1jW5JrvxcQ==,type:int]
       bind_interface: ENC[AES256_GCM,data:x2cc6g==,iv:FEj5FfsSBPI+VaZjsedagenXb1Pc6FiKBbPqHerblCE=,tag:64KkMseuAe3iFEey8Q8ngw==,type:str]
 sops:
-    kms: []
-    gcp_kms: []
-    azure_kv: []
-    hc_vault: []
     age:
         - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
           enc: |
@@ -30,8 +26,7 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-29T08:59:41Z"
-    mac: ENC[AES256_GCM,data:YRK7F3S/NfnsF6LToINkCiTY+bGm/kpu5hsrkTabWS0PiL3Ho3bYBpIojSMACUKjH13iSlo9E7ykYUYtKb/0nmfClCVM/SIhpxhORbXW/LwdBmtk9MfftdX3Imi5UfdOuZb8c3iJd5xicdxaTuwzmer4KdjUv5/VKJgiakeD9jA=,iv:VzMhbdAE4H84ZzxMVZelCNHIWmP2KfRh5U/gLSmnPzk=,tag:74M7x5eNggYXMiE6ce1f2A==,type:str]
-    pgp: []
+    lastmodified: "2026-02-11T12:57:07Z"
+    mac: ENC[AES256_GCM,data:Jtwodj3utqcHIgkbE3wBNSG84k9WoyVdF1kCHHdBLT5BZAiYsJ5No/ErLOQjhxnyT4QOVQPmcblSWpGF83ib7y+QxHjjVCnN6w2hZdqHEslnDQ+Xzw2Djw+eICz1TUcgR5i6dhNvffVb3xTrxOEdNSNw1u0DbYHpKbO2K6adnqA=,iv:qZl6//pN1SY77Rd64u9juwMJ4KlzStvWdJGMU18SgRo=,tag:GaZjOyCqaQWjCixjuMjADQ==,type:str]
     unencrypted_regex: ^(kind)$
-    version: 3.7.3
+    version: 3.11.0

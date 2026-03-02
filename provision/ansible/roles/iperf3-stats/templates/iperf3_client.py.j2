@@ -148,12 +148,12 @@ def check_kill_switch() -> bool:
             timeout=WEBHOOK_TIMEOUT
         )
 
-        if response.status_code == 201:
-            print(f"  ⚠ Kill-switch activated (HTTP 201) - tests will be aborted")
-            return True
-        else:
-            print(f"  ✓ Kill-switch not activated (HTTP {response.status_code})")
+        if response.status_code == 200:
+            print(f"  ✓ Kill-switch returned 200 OK - proceeding with tests")
             return False
+        else:
+            print(f"  ⚠ Kill-switch returned HTTP {response.status_code} status, aborting tests")
+            return True
 
     except requests.exceptions.Timeout:
         print(f"  ⚠ Kill-switch request timed out after {WEBHOOK_TIMEOUT}s - proceeding with tests")

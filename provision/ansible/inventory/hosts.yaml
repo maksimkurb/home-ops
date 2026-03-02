@@ -39,7 +39,7 @@ iperf3-stats:
       iperf3_server_enabled: true
       iperf3_client_enabled: true
     casa-sok:
-      iperf3_server_enabled: true
+      iperf3_server_enabled: false
       iperf3_client_enabled: true
 
 reverse-proxy:

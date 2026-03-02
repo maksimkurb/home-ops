@@ -11,17 +11,11 @@
   vars:
     nvidia_driver_version: "580"
   tasks:
-    - name: Download NVIDIA GPG key
-      ansible.builtin.get_url:
-        url: https://nvidia.github.io/libnvidia-container/gpgkey
-        dest: /tmp/nvidia-container-toolkit.gpg.key
-        mode: '0644'
-
-    - name: Dearmor and install NVIDIA GPG key
+    - name: Download and install NVIDIA GPG key
       ansible.builtin.shell: |
-        cat /tmp/nvidia-container-toolkit.gpg.key | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-      args:
-        creates: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+        curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
+          | gpg --dearmor --yes -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      changed_when: true
 
     - name: Create nvidia-container-toolkit sources file (DEB822 format)
       ansible.builtin.copy:
