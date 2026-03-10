@@ -19,7 +19,7 @@ spec:
 
     image:
       repository: rancher/local-path-provisioner
-      tag: v0.0.34
+      tag: v0.0.35
       pullPolicy: IfNotPresent
 
     nodePathMap:
