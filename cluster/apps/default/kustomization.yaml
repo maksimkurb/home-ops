@@ -15,3 +15,4 @@ resources:
   - ./stirling-pdf/ks.yaml
   - ./firefly-iii/ks.yaml
   - ./rustdesk/ks.yaml
+  - ./orthanc/ks.yaml
