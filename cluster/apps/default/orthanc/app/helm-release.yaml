@@ -40,10 +40,10 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               ORTHANC__NAME: "Orthanc"
-              ORTHANC__AUTHENTICATION_ENABLED: "true"
-            envFrom:
-              - secretRef:
-                  name: orthanc-env
+              ORTHANC__AUTHENTICATION_ENABLED: "false"
+              # Enable DICOM web viewer plugins
+              STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+              DICOM_WEB_PLUGIN_ENABLED: "true"
             probes:
               liveness:
                 enabled: true
