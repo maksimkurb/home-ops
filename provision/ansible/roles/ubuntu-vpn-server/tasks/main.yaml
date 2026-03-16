@@ -20,3 +20,9 @@
   tags:
     - tgproxy
   when: vpn_tgproxy_enabled | default(false)
+
+- import_tasks: mtproto-proxy-install.yaml
+  tags:
+    - mtproto-proxy
+    - tgproxy-mtproto
+  when: vpn_tgproxy_mtproto_enabled | default(false)

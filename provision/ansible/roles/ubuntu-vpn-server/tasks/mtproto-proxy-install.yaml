@@ -1,0 +1,55 @@
+---
+- name: mtproto / Validate required variables
+  assert:
+    that:
+      - vpn_tgproxy_mtproto_secret is defined
+    fail_msg: "Missing MTProto configuration. Define vpn_tgproxy_mtproto_secret."
+
+- name: mtproto / Create config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /opt/mtproto-proxy
+    - /opt/mtproto-proxy/data
+
+- name: mtproto / Create docker-compose.yml file
+  template:
+    src: mtproto-proxy/docker-compose.yml.j2
+    dest: "/opt/mtproto-proxy/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: mtproto / Deploy with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/mtproto-proxy"
+    state: present
+
+- name: mtproto / Restart with docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "/opt/mtproto-proxy"
+    state: restarted
+
+- name: mtproto / Build connection URL
+  set_fact:
+    tgproxy_mtproto_url: >-
+      https://t.me/proxy?server={{
+      ansible_host
+      | default(ansible_default_ipv4.address, true)
+      | default(inventory_hostname, true)
+      }}&port={{ vpn_tgproxy_mtproto_port_external }}&secret={{
+      vpn_tgproxy_mtproto_secret
+      }}
+
+- name: mtproto / Print MTProto proxy URL
+  debug:
+    msg: "MTProto proxy: {{ tgproxy_mtproto_url }}"
+
+- name: mtproto / Print MTProto sponsor status
+  debug:
+    msg: >-
+      MTProto sponsor channel is enabled via proxy tag {{ vpn_tgproxy_mtproto_tag }}.
+      Users may be prompted to join the sponsored channel in Telegram.
+  when: vpn_tgproxy_mtproto_tag | default('') | length > 0

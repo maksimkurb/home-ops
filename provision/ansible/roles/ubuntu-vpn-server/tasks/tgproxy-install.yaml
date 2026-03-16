@@ -1,4 +1,12 @@
 ---
+- name: tgproxy / Validate required variables
+  assert:
+    that:
+      - vpn_tgproxy_user is defined
+      - vpn_tgproxy_password is defined
+      - vpn_tgproxy_port_external is defined
+    fail_msg: "Missing tgproxy configuration. Define SOCKS credentials and port."
+
 - name: tgproxy / Create config directories
   file:
     path: "{{ item }}"
@@ -42,3 +50,16 @@
   community.docker.docker_compose_v2:
     project_src: "/opt/tgproxy"
     state: restarted
+
+- name: tgproxy / Build connection URLs
+  set_fact:
+    tgproxy_socks_url: >-
+      socks5://{{ vpn_tgproxy_user }}:{{ vpn_tgproxy_password }}@{{
+      ansible_host
+      | default(ansible_default_ipv4.address, true)
+      | default(inventory_hostname, true)
+      }}:{{ vpn_tgproxy_port_external }}
+
+- name: tgproxy / Print SOCKS proxy URL
+  debug:
+    msg: "SOCKS proxy: {{ tgproxy_socks_url }}"

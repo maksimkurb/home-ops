@@ -3,6 +3,14 @@
 # These can be overridden in group_vars or host_vars
 
 # ============================================================================
+# TELEGRAM PROXIES
+# ============================================================================
+
+vpn_tgproxy_mtproto_enabled: false
+vpn_tgproxy_mtproto_port_external: 10443
+vpn_tgproxy_mtproto_tag: ""
+
+# ============================================================================
 # EXTERNALIZED CLIENT REGISTRY (Reusable Clients)
 # ============================================================================
 #

@@ -7,3 +7,4 @@ vpn_wan_interface: ens6
 vpn_xui_enabled: false
 vpn_amnezia_enabled: true
 vpn_tgproxy_enabled: false
+vpn_tgproxy_mtproto_enabled: true
