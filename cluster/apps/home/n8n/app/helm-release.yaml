@@ -77,7 +77,7 @@ spec:
         initContainers:
           setup-certs:
             image:
-              repository: ghcr.io/n8n-io/n8n
+              repository: rxchi1d/n8n-ffmpeg
               tag: 2.12.2
               pullPolicy: IfNotPresent
             securityContext:
@@ -96,7 +96,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/n8n-io/n8n
+              repository: rxchi1d/n8n-ffmpeg
               tag: 2.12.2
               pullPolicy: IfNotPresent
             env:
