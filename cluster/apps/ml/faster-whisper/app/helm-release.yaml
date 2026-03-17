@@ -65,6 +65,17 @@ spec:
               WHISPER_MODEL: "base"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: all
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 10300
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 1
+                  failureThreshold: 3
             resources:
               requests:
                 cpu: 100m
