@@ -62,6 +62,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               WHISPER_LANG: "ru"
+              WHISPER_MODEL: "tiny"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: all
             resources:
