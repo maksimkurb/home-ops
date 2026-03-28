@@ -44,3 +44,4 @@ provision/*.kubeconfig
 talos/cni/charts
 .monokle
 talos/pkgs/
+.codex
