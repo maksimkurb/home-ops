@@ -116,6 +116,15 @@ spec:
               TZ: "${TIMEZONE}"
               LOG_LEVEL: "info"
               PORT: 80
+              DB_TYPE: postgres
+              DB_HOST: homelab-pgsql.database.svc.cluster.local
+              DB_PORT: "5432"
+              DB_USER: seerr
+              DB_NAME: seerr
+              DB_LOG_QUERIES: "false"
+            envFrom:
+              - secretRef:
+                  name: *app
             resources:
               requests:
                 cpu: 1m
