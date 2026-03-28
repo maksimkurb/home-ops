@@ -60,6 +60,7 @@ spec:
     crowdsec: []
     lab: []
     gatus: []
+    seerr: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -84,6 +85,7 @@ spec:
     crowdsec: crowdsec
     lab: lab
     gatus: gatus
+    seerr: seerr
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true
