@@ -64,7 +64,7 @@ spec:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          nginx.ingress.kubernetes.io/permanent-redirect: "https://seerr.${SECRET_PUBLIC_DOMAIN}$request_uri"
+          nginx.ingress.kubernetes.io/permanent-redirect: "https://seerr.${SECRET_PUBLIC_DOMAIN}"
         hosts:
           - host: "jellyseerr.${SECRET_PUBLIC_DOMAIN}"
             paths:
