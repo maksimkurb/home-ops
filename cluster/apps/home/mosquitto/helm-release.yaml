@@ -47,6 +47,7 @@ spec:
         volumeSpec:
           secret:
             secretName: mosquitto
+            defaultMode: 448
         advancedMounts:
           main:
             main:
