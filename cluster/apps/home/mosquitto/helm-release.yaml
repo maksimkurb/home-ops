@@ -39,14 +39,26 @@ spec:
       data:
         enabled: true
         existingClaim: mosquitto-external-config
+        globalMounts:
+          - path: /data
       config:
         enabled: true
         type: custom
         volumeSpec:
           secret:
             secretName: mosquitto
-        globalMounts:
-          - path: /mosquitto/config
+        advancedMounts:
+          main:
+            main:
+              - path: /mosquitto/config/mosquitto.conf
+                subPath: mosquitto.conf
+                readOnly: true
+              - path: /mosquitto/config/mosquitto_pwd
+                subPath: mosquitto_pwd
+                readOnly: true
+              - path: /mosquitto/config/acl
+                subPath: acl
+                readOnly: true
 
     defaultPodOptions:
       securityContext:
