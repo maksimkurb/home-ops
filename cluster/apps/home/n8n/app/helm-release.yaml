@@ -281,6 +281,11 @@ spec:
                 service:
                   identifier: app
                   port: http
+              - path: /assets
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
               - path: /webhook
                 pathType: Prefix
                 service:
