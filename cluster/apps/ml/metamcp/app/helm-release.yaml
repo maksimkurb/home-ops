@@ -45,11 +45,21 @@ spec:
               LOG_LEVEL: info
               APP_URL: https://metamcp.${SECRET_PRIVATE_DOMAIN}
               NEXT_PUBLIC_APP_URL: https://metamcp.${SECRET_PRIVATE_DOMAIN}
+              OIDC_CLIENT_ID: metamcp
+              OIDC_DISCOVERY_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
+              OIDC_PROVIDER_ID: authelia
+              OIDC_SCOPES: openid email profile groups
+              OIDC_PKCE: "true"
               BETTER_AUTH_SECRET:
                 valueFrom:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: BETTER_AUTH_SECRET
+              OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: OIDC_CLIENT_SECRET
               POSTGRES_HOST: homelab-pgsql.database
               POSTGRES_PORT: "5432"
               POSTGRES_DB: metamcp

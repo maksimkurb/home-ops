@@ -277,3 +277,21 @@ identity_providers:
           - email
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_basic'
+
+      - client_id: 'metamcp'
+        client_name: 'MetaMCP'
+        client_secret: ${SECRET_METAMCP_OAUTH_CLIENT_SECRET}
+        public: false
+        require_pkce: true
+        claims_policy: 'default'
+        pkce_challenge_method: 'S256'
+        authorization_policy: 'one_factor'
+        redirect_uris:
+          - 'https://metamcp.${SECRET_PRIVATE_DOMAIN}/api/auth/oauth2/callback/authelia'
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        id_token_signed_response_alg: 'RS256'
+        token_endpoint_auth_method: 'client_secret_basic'
