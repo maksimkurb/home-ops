@@ -78,7 +78,7 @@ spec:
           setup-certs:
             image:
               repository: rxchi1d/n8n-ffmpeg
-              tag: 2.13.4
+              tag: 2.14.2
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -97,7 +97,7 @@ spec:
           app:
             image:
               repository: rxchi1d/n8n-ffmpeg
-              tag: 2.13.4
+              tag: 2.14.2
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
