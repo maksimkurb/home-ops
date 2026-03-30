@@ -286,6 +286,16 @@ spec:
                 service:
                   identifier: app
                   port: http
+              - path: /static
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+              - path: /rest
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
               - path: /webhook
                 pathType: Prefix
                 service:
