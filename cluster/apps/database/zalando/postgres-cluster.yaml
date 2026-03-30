@@ -56,7 +56,7 @@ spec:
     teamspeak: []
     coturn: []
     n8n: []
-    metamcp: []
+    ml.mcpjungle: []
     beta9: []
     crowdsec: []
     lab: []
@@ -82,7 +82,7 @@ spec:
     teamspeak: teamspeak
     coturn: coturn
     n8n: n8n
-    metamcp: metamcp
+    mcpjungle: mcpjungle
     beta9: beta9
     crowdsec: crowdsec
     lab: lab
