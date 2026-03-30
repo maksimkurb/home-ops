@@ -64,16 +64,6 @@ spec:
                     - /bin/sh
                     - -c
                     - |
-                      i=0
-                      until curl -fsS http://127.0.0.1:8080/health >/dev/null; do
-                        i=$((i + 1))
-                        if [ "$i" -ge 60 ]; then
-                          echo "mcpjungle init skipped: server did not become healthy in time"
-                          exit 0
-                        fi
-                        sleep 2
-                      done
-
                       mcpjungle init-server || true
             probes:
               liveness:
