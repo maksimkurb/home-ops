@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ./faster-whisper/ks.yaml
-  - ./metamcp/ks.yaml
+  - ./mcpjungle/ks.yaml

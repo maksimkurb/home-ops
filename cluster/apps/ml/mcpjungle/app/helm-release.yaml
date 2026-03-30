@@ -36,52 +36,35 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/metatool-ai/metamcp
-              tag: 2.4.22
+              repository: ghcr.io/mcpjungle/mcpjungle
+              tag: latest-stdio
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
-              NODE_ENV: production
-              LOG_LEVEL: info
-              APP_URL: https://metamcp.${SECRET_PRIVATE_DOMAIN}
-              NEXT_PUBLIC_APP_URL: https://metamcp.${SECRET_PRIVATE_DOMAIN}
-              OIDC_CLIENT_ID: metamcp
-              OIDC_DISCOVERY_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
-              OIDC_PROVIDER_ID: authelia
-              OIDC_SCOPES: openid email profile groups
-              OIDC_PKCE: "true"
-              BETTER_AUTH_SECRET:
-                valueFrom:
-                  secretKeyRef:
-                    name: ${APP}-secret
-                    key: BETTER_AUTH_SECRET
-              OIDC_CLIENT_SECRET:
-                valueFrom:
-                  secretKeyRef:
-                    name: ${APP}-secret
-                    key: OIDC_CLIENT_SECRET
+              SERVER_MODE: development
+              OTEL_ENABLED: "false"
+              MCP_SERVER_INIT_REQ_TIMEOUT_SEC: "10"
               POSTGRES_HOST: homelab-pgsql.database
               POSTGRES_PORT: "5432"
-              POSTGRES_DB: metamcp
-              POSTGRES_USER: metamcp
+              POSTGRES_DB: mcpjungle
+              POSTGRES_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: ml.mcpjungle.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
               POSTGRES_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: ${APP}-secret
-                    key: POSTGRES_PASSWORD
-              DATABASE_URL:
-                valueFrom:
-                  secretKeyRef:
-                    name: ${APP}-secret
-                    key: DATABASE_URL
-              TRANSFORM_LOCALHOST_TO_DOCKER_INTERNAL: "false"
+                    name: ml.mcpjungle.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
             probes:
               liveness:
                 enabled: true
                 custom: true
                 spec:
-                  tcpSocket:
-                    port: 12008
+                  httpGet:
+                    path: /health
+                    port: 8080
                   initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 5
@@ -90,8 +73,9 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  tcpSocket:
-                    port: 12008
+                  httpGet:
+                    path: /health
+                    port: 8080
                   initialDelaySeconds: 10
                   periodSeconds: 5
                   timeoutSeconds: 3
@@ -100,14 +84,15 @@ spec:
                 enabled: true
                 custom: true
                 spec:
-                  tcpSocket:
-                    port: 12008
+                  httpGet:
+                    path: /health
+                    port: 8080
                   periodSeconds: 10
                   failureThreshold: 30
             resources:
               requests:
                 cpu: 10m
-                memory: 256Mi
+                memory: 128Mi
               limits:
                 memory: 1Gi
 
@@ -116,22 +101,31 @@ spec:
         controller: app
         ports:
           http:
-            port: &port 12008
+            port: &port 8080
 
     ingress:
       app:
         enabled: true
         className: "nginx-intra"
         annotations:
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/server/${HOMEPAGE_ICONS_COLOR}
-          gethomepage.dev/name: MetaMCP
+          gethomepage.dev/name: MCPJungle
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
         hosts:
-          - host: "metamcp.${SECRET_PRIVATE_DOMAIN}"
+          - host: "mcpjungle.${SECRET_PRIVATE_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
