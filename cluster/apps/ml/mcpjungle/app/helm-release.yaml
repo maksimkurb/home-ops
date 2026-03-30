@@ -68,14 +68,6 @@ spec:
                   secretKeyRef:
                     name: ml.mcpjungle.homelab-pgsql.credentials.postgresql.acid.zalan.do
                     key: password
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                    - /bin/sh
-                    - -c
-                    - |
-                      /mcpjungle init-server || true
             probes:
               liveness:
                 enabled: true
