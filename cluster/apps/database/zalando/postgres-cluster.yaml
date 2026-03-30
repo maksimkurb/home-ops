@@ -82,7 +82,7 @@ spec:
     teamspeak: teamspeak
     coturn: coturn
     n8n: n8n
-    mcpjungle: mcpjungle
+    mcpjungle: ml.mcpjungle
     beta9: beta9
     crowdsec: crowdsec
     lab: lab
