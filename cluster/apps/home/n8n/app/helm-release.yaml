@@ -276,6 +276,11 @@ spec:
         hosts:
           - host: "n8n-webhook.${SECRET_PUBLIC_DOMAIN}"
             paths:
+              - path: /signin
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
               - path: /webhook
                 pathType: Prefix
                 service:
