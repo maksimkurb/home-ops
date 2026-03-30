@@ -29,6 +29,17 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    persistence:
+      root:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /root
+
     controllers:
       app:
         annotations:
@@ -64,7 +75,7 @@ spec:
                     - /bin/sh
                     - -c
                     - |
-                      mcpjungle init-server || true
+                      /mcpjungle init-server || true
             probes:
               liveness:
                 enabled: true
