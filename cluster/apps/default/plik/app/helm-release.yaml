@@ -111,8 +111,8 @@ spec:
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Personal Services
-          gethomepage.dev/icon: /icons/plik/${HOMEPAGE_ICONS_COLOR}
-          gethomepage.dev/name: Plik
+          gethomepage.dev/icon: /icons/file-explorer/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/name: Plik (File Sharing)
         hosts:
           - host: plik.${SECRET_PUBLIC_DOMAIN}
             paths:
