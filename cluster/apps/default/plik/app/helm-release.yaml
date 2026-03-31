@@ -55,7 +55,7 @@ spec:
               PLIKD_MAX_FILE_PER_UPLOAD: "1000"
               PLIKD_DEFAULT_TTL_STR: 30d
               PLIKD_MAX_TTL_STR: 30d
-              PLIKD_FEATURE_AUTHENTICATION: enabled
+              PLIKD_FEATURE_AUTHENTICATION: forced
               PLIKD_FEATURE_LOCAL_LOGIN: disabled
               PLIKD_FEATURE_DELETE_ACCOUNT: disabled
               PLIKD_FEATURE_ONE_SHOT: enabled
