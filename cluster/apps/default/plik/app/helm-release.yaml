@@ -1,0 +1,140 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-4.6.2/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app plik
+  namespace: default
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/rootgg/plik
+              tag: 1.4.1
+            env:
+              TZ: "${TIMEZONE}"
+              PLIKD_DEBUG: "false"
+              PLIKD_LOG_LEVEL: INFO
+              PLIKD_LISTEN_PORT: "8080"
+              PLIKD_LISTEN_ADDRESS: 0.0.0.0
+              PLIKD_SSL_ENABLED: "false"
+              PLIKD_NO_WEB_INTERFACE: "false"
+              PLIKD_PLIK_DOMAIN: https://plik.${SECRET_PUBLIC_DOMAIN}
+              PLIKD_SESSION_TIMEOUT: 365d
+              PLIKD_STREAM_TIMEOUT_STR: 5m
+              PLIKD_MAX_FILE_SIZE_STR: 10GB
+              PLIKD_MAX_USER_SIZE_STR: unlimited
+              PLIKD_MAX_FILE_PER_UPLOAD: "1000"
+              PLIKD_DEFAULT_TTL_STR: 30d
+              PLIKD_MAX_TTL_STR: 30d
+              PLIKD_FEATURE_AUTHENTICATION: disabled
+              PLIKD_FEATURE_LOCAL_LOGIN: disabled
+              PLIKD_FEATURE_DELETE_ACCOUNT: disabled
+              PLIKD_FEATURE_ONE_SHOT: enabled
+              PLIKD_FEATURE_REMOVABLE: enabled
+              PLIKD_FEATURE_STREAM: enabled
+              PLIKD_FEATURE_PASSWORD: enabled
+              PLIKD_FEATURE_COMMENTS: enabled
+              PLIKD_FEATURE_SET_TTL: enabled
+              PLIKD_FEATURE_EXTEND_TTL: disabled
+              PLIKD_FEATURE_CLIENTS: enabled
+              PLIKD_FEATURE_GITHUB: enabled
+              PLIKD_FEATURE_TEXT: enabled
+              PLIKD_FEATURE_E2EE: enabled
+              PLIKD_DATA_BACKEND: s3
+              PLIK_S3_ACCESS_KEY_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: *app
+                    key: PLIK_S3_ACCESS_KEY_ID
+              PLIK_S3_SECRET_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: *app
+                    key: PLIK_S3_SECRET_ACCESS_KEY
+              DB_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.plik.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.plik.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              PLIKD_DATA_BACKEND_CONFIG: >-
+                {"Endpoint":"minio.default.svc.cluster.local:9000","AccessKeyID":"$(PLIK_S3_ACCESS_KEY_ID)","SecretAccessKey":"$(PLIK_S3_SECRET_ACCESS_KEY)","Bucket":"plik-files","Location":"us-east-1","Prefix":"","UseSSL":false,"BucketLookup":"path","PartSize":16777216,"PartUploadConcurrency":4,"SendContentMd5":false,"SSE":""}
+              PLIKD_METADATA_BACKEND_CONFIG: >-
+                {"Driver":"postgres","ConnectionString":"host=homelab-pgsql.database.svc.cluster.local port=5432 user=$(DB_USERNAME) password=$(DB_PASSWORD) dbname=plik sslmode=disable","Debug":false}
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 512Mi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: &port 8080
+
+    ingress:
+      main:
+        enabled: true
+        className: nginx
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Personal Services
+          gethomepage.dev/icon: /icons/plik/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/name: Plik
+        hosts:
+          - host: plik.${SECRET_PUBLIC_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: *port

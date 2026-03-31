@@ -62,6 +62,7 @@ spec:
     lab: []
     gatus: []
     seerr: []
+    default.plik: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -88,6 +89,7 @@ spec:
     lab: lab
     gatus: gatus
     seerr: seerr
+    plik: default.plik
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true

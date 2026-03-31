@@ -16,3 +16,4 @@ resources:
   - ./firefly-iii/ks.yaml
   - ./rustdesk/ks.yaml
   - ./orthanc/ks.yaml
+  - ./plik/ks.yaml
