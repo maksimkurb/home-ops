@@ -12,6 +12,7 @@ spec:
       app.kubernetes.io/name: *appname
   dependsOn:
     - name: minio
+    - name: authelia
   interval: 30m
   timeout: 10m
   path: "./cluster/apps/default/plik/app"

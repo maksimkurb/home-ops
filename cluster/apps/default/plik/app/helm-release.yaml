@@ -36,6 +36,9 @@ spec:
             image:
               repository: docker.io/rootgg/plik
               tag: 1.4.1
+            envFrom:
+              - secretRef:
+                  name: *app
             env:
               TZ: "${TIMEZONE}"
               PLIKD_DEBUG: "false"
@@ -52,7 +55,7 @@ spec:
               PLIKD_MAX_FILE_PER_UPLOAD: "1000"
               PLIKD_DEFAULT_TTL_STR: 30d
               PLIKD_MAX_TTL_STR: 30d
-              PLIKD_FEATURE_AUTHENTICATION: disabled
+              PLIKD_FEATURE_AUTHENTICATION: enabled
               PLIKD_FEATURE_LOCAL_LOGIN: disabled
               PLIKD_FEATURE_DELETE_ACCOUNT: disabled
               PLIKD_FEATURE_ONE_SHOT: enabled
@@ -67,30 +70,10 @@ spec:
               PLIKD_FEATURE_TEXT: enabled
               PLIKD_FEATURE_E2EE: enabled
               PLIKD_DATA_BACKEND: s3
-              PLIK_S3_ACCESS_KEY_ID:
-                valueFrom:
-                  secretKeyRef:
-                    name: *app
-                    key: PLIK_S3_ACCESS_KEY_ID
-              PLIK_S3_SECRET_ACCESS_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: *app
-                    key: PLIK_S3_SECRET_ACCESS_KEY
-              DB_USERNAME:
-                valueFrom:
-                  secretKeyRef:
-                    name: default.plik.homelab-pgsql.credentials.postgresql.acid.zalan.do
-                    key: username
-              DB_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: default.plik.homelab-pgsql.credentials.postgresql.acid.zalan.do
-                    key: password
-              PLIKD_DATA_BACKEND_CONFIG: >-
-                {"Endpoint":"minio.default.svc.cluster.local:9000","AccessKeyID":"$(PLIK_S3_ACCESS_KEY_ID)","SecretAccessKey":"$(PLIK_S3_SECRET_ACCESS_KEY)","Bucket":"plik-files","Location":"us-east-1","Prefix":"","UseSSL":false,"BucketLookup":"path","PartSize":16777216,"PartUploadConcurrency":4,"SendContentMd5":false,"SSE":""}
-              PLIKD_METADATA_BACKEND_CONFIG: >-
-                {"Driver":"postgres","ConnectionString":"host=homelab-pgsql.database.svc.cluster.local port=5432 user=$(DB_USERNAME) password=$(DB_PASSWORD) dbname=plik sslmode=disable","Debug":false}
+              PLIKD_OIDC_CLIENT_ID: plik
+              PLIKD_OIDC_PROVIDER_NAME: Authelia
+              PLIKD_OIDC_REQUIRE_VERIFIED_EMAIL: "false"
+              PLIKD_OIDC_PROVIDER_URL: https://auth.${SECRET_PUBLIC_DOMAIN}
             probes:
               liveness:
                 enabled: true

@@ -190,6 +190,22 @@ identity_providers:
           - https://f.${SECRET_PUBLIC_DOMAIN}/web/oidc/redirect
         userinfo_signed_response_alg: 'none'
 
+      - client_id: plik
+        client_name: Plik
+        client_secret: ${SECRET_PLIK_OAUTH_CLIENT_SECRET}
+        claims_policy: 'default'
+        public: false
+        authorization_policy: one_factor
+        pre_configured_consent_duration: 1y
+        scopes:
+          - openid
+          - profile
+          - groups
+          - email
+        redirect_uris:
+          - https://plik.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback
+        userinfo_signed_response_alg: 'none'
+
       - client_id: nodered
         client_name: NodeRED
         client_secret: ${SECRET_NODERED_OAUTH_CLIENT_SECRET}
