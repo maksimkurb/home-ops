@@ -90,7 +90,7 @@ spec:
             enabled: true
             image:
               repository: ghcr.io/coder/code-server
-              tag: 4.112.0
+              tag: 4.113.0
             workingDir: "/config"
             args:
               - --auth
