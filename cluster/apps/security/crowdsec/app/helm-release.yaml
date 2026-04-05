@@ -40,7 +40,7 @@ spec:
   values:
     image:
       repository: crowdsecurity/crowdsec
-      tag: "v1.7.6"
+      tag: "v1.7.7"
     container_runtime: containerd
     secrets:
       externalSecret:
