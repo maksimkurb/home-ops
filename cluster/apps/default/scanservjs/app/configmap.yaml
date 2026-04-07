@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanservjs-sane
+  namespace: default
+data:
+  net.conf: |
+    192.168.55.1

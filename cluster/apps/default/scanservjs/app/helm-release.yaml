@@ -110,22 +110,15 @@ spec:
           scanservjs:
             app:
               - path: /var/lib/scanservjs
-      # sane:
-      #   enabled: true
-      #   type: configMap
-      #   name: scanservjs-sane
-      #   globalMounts:
-      #     - path: /etc/sane.d/net.conf
-      #       subPath: net.conf
+      sane:
+        enabled: true
+        type: configMap
+        name: scanservjs-sane
+        globalMounts:
+          - path: /etc/sane.d/net.conf
+            subPath: net.conf
       tmp:
         enabled: true
         type: emptyDir
         globalMounts:
           - path: /tmp
-
-    configMaps:
-      sane:
-        enabled: true
-        data:
-          net.conf: |
-            192.168.55.1
