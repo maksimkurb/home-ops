@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: tailscale-operator
-      version: 1.94.2
+      version: 1.96.5
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -34,12 +34,12 @@ spec:
     proxyConfig:
       image:
         repository: ghcr.io/tailscale/tailscale
-        tag: v1.94.2
+        tag: v1.96.5
       defaultTags: "tag:k8s"
     operatorConfig:
       image:
         repository: ghcr.io/tailscale/k8s-operator
-        tag: v1.94.2
+        tag: v1.96.5
       hostname: "tailscale-operator"
       defaultTags:
         - "tag:k8s-operator"
