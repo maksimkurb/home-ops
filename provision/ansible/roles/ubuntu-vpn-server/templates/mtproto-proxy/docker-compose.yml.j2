@@ -1,16 +1,31 @@
+{% set mtproto_bindings = vpn_tgproxy_mtproto %}
 services:
-  mtproto:
+{% for binding in mtproto_bindings %}
+  mtproto_{{ loop.index }}:
+{% if (binding.secret | string | length) < 42 %}
     image: telegrammessenger/proxy:latest
+{% else %}
+    image: nineseconds/mtg:2.1.7
+{% endif %}
     pull_policy: always
     restart: always
     security_opt:
       - no-new-privileges:true
-    ports:
-      - "{{ vpn_tgproxy_mtproto_port_external | default(10443) }}:443/tcp"
+{% if (binding.secret | string | length) < 42 %}
     environment:
-      SECRET: "{{ vpn_tgproxy_mtproto_secret }}"
-{% if vpn_tgproxy_mtproto_tag | default('') | length > 0 %}
-      TAG: "{{ vpn_tgproxy_mtproto_tag }}"
-{% endif %}
+      SECRET: "{{ binding.secret }}"
     volumes:
-      - /opt/mtproto-proxy/data:/data
+      - /opt/mtproto-proxy/data/mtproto_{{ loop.index }}:/data
+{% else %}
+    command:
+      - simple-run
+      - 0.0.0.0:3128
+      - "{{ binding.secret }}"
+{% endif %}
+    ports:
+{% if (binding.secret | string | length) < 42 %}
+      - "{{ binding.port }}:443/tcp"
+{% else %}
+      - "{{ binding.port }}:3128/tcp"
+{% endif %}
+{% endfor %}

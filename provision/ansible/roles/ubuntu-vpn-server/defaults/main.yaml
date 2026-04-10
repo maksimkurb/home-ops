@@ -7,8 +7,7 @@
 # ============================================================================
 
 vpn_tgproxy_mtproto_enabled: false
-vpn_tgproxy_mtproto_port_external: 10443
-vpn_tgproxy_mtproto_tag: ""
+vpn_tgproxy_mtproto: []
 
 # ============================================================================
 # EXTERNALIZED CLIENT REGISTRY (Reusable Clients)
