@@ -96,7 +96,7 @@ spec:
           main:
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
-              tag: v2.7.3-cuda
+              tag: v2.7.4-cuda
             envFrom:
               - secretRef:
                   name: immich
