@@ -5,7 +5,7 @@ services:
 {% if (binding.secret | string | length) < 42 %}
     image: telegrammessenger/proxy:latest
 {% else %}
-    image: nineseconds/mtg:2.1.7
+    image: nineseconds/mtg:2.2.8
 {% endif %}
     pull_policy: always
     restart: always
