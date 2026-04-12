@@ -53,6 +53,15 @@ spec:
     matrixAuthenticationService:
       ingress:
         host: account.matrix.${SECRET_PUBLIC_DOMAIN}
+      additional:
+        00-registration-token.yaml:
+          config: |
+            account:
+              password_registration_enabled: true
+              registration_token_required: true
+        01-email.yaml:
+          configSecret: ${APP}-mas-config
+          configSecretKey: email.yaml
       postgres:
         host: homelab-pgsql.database.svc.cluster.local
         port: 5432
@@ -86,6 +95,14 @@ spec:
       enabled: false
 
     synapse:
+      # Re-create DB manually to set collate:
+      # CREATE DATABASE synapse
+      # WITH
+      # OWNER = 'messaging.synapse'
+      # ENCODING = 'UTF8'
+      # LC_COLLATE = 'C'
+      # LC_CTYPE = 'C'
+      # TEMPLATE = template0;
       postgres:
         host: homelab-pgsql.database.svc.cluster.local
         port: 5432

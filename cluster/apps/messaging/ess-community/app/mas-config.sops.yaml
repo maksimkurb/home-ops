@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: ${APP}-mas-config
+stringData:
+  email.yaml: ENC[AES256_GCM,data:vmJ4hd5ptOeNMEmBSXz+HzJ/MvKOvM9N0uU2T8JmL//IS1aA2vk3iK/sFF/pYdfM4ZOzYqSBfaDA7YywhaJlcxOkHSiy8tGE3Lx3rUhRYT/6xbkLA6LZSF3APvFqOzKw2Ur7cEArvXDLNDqjrgQHkJbs/Vmgjzx0Fc6g+IOlibgzMMokLsKJgoKGAQhWLMS+8EAUE2q9HSlIuG60+EwbujewlWxZysHqb2Acy1e5c38P42Ja2XXesaKw2O57MEBHtgaIYlEL4AcyigvAI/qk0o6RAFx845V1torOpWFzXCE4+Up6kiK5nmWd0TcHbaub8pPtZ+zMBT9Kqxa4Tmj86O5pvp1hgceo,iv:lKa94iIgj0Rqw4CQrY9EcjraFs8aFjcv9fvjzS8MhS0=,tag:ykWQs+2E8YidcgzCjKCp7A==,type:str]
+sops:
+  age:
+    - recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6Y0FHaDJ5c1lnSFJPUWNQ
+        N2t6dnlPNlhmbzFHVFVYWVpTWjBZVWlESDB3CjJXWWpvdzFMYW1wOWxRWmczR1R4
+        RG5SUEFOejJUdFhFOVdGU0R1Q2pkYk0KLS0tIFIxWTg2K1dZZUlVMUZNTk9rb2xq
+        MGlWaUlrN0VlR3owSThTN1Mzbm9NclUKtDMfuAuC8rCEyLR346oqt53xgjVKtIci
+        Am2WRnqWaH1mTKEwyPINuec86EkjQVzL0oJc60ksS87k9dmgTLs7kQ==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2026-04-12T11:40:53Z"
+  mac: ENC[AES256_GCM,data:pzf+JV6iUZryO+GreCRhOQdD8FV7t50+I+AkSW5DbcwpVly3pnDkpevk8C2WE+RwPVHDKb/+QQov9sAb+FU2zat6d8AIPr6RMqbD+umKwO8T3yeWbJ0TBy3pqc8im9WIk1lC/bxsAF/cS+wP1OVM5DEJJEUqptmceg8zmNLRUOU=,iv:gSg3d2dfviJBxsTOkq2bQBezXOAPBiow5rXeWDGhi9s=,tag:pZdDeGXmwRmP7WEsssik1Q==,type:str]
+  encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
+  version: 3.11.0
