@@ -62,6 +62,7 @@ spec:
     lab: []
     gatus: []
     seerr: []
+    messaging.synapse: []
     default.plik: []
   databases:
     vaultwarden: vaultwarden
@@ -89,6 +90,7 @@ spec:
     lab: lab
     gatus: gatus
     seerr: seerr
+    synapse: messaging.synapse
     plik: default.plik
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
