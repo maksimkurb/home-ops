@@ -75,6 +75,12 @@ spec:
     matrixRTC:
       ingress:
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
+        annotations:
+          nginx.ingress.kubernetes.io/enable-cors: "true"
+          nginx.ingress.kubernetes.io/cors-allow-origin: "https://matrix.${SECRET_PUBLIC_DOMAIN}, https://*.matrix.${SECRET_PUBLIC_DOMAIN}"
+          nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+          nginx.ingress.kubernetes.io/cors-allow-headers: "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token"
+          nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
       sfu:
         useStunToDiscoverPublicIP: true
         exposedServices:
