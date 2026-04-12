@@ -53,6 +53,15 @@ spec:
     matrixAuthenticationService:
       ingress:
         host: account.matrix.${SECRET_PUBLIC_DOMAIN}
+      postgres:
+        host: homelab-pgsql.database.svc.cluster.local
+        port: 5432
+        user: messaging.mas
+        database: mas
+        sslMode: disable
+        password:
+          secret: messaging.mas.homelab-pgsql.credentials.postgresql.acid.zalan.do
+          secretKey: password
 
     matrixRTC:
       ingress:
@@ -74,9 +83,18 @@ spec:
             externalTrafficPolicy: Local
 
     postgres:
-      enabled: true
+      enabled: false
 
     synapse:
+      postgres:
+        host: homelab-pgsql.database.svc.cluster.local
+        port: 5432
+        user: messaging.synapse
+        database: synapse
+        sslMode: disable
+        password:
+          secret: messaging.synapse.homelab-pgsql.credentials.postgresql.acid.zalan.do
+          secretKey: password
       ingress:
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       media:

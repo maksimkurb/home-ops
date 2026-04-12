@@ -62,6 +62,7 @@ spec:
     lab: []
     gatus: []
     seerr: []
+    messaging.mas: []
     messaging.synapse: []
     default.plik: []
   databases:
@@ -90,6 +91,7 @@ spec:
     lab: lab
     gatus: gatus
     seerr: seerr
+    mas: messaging.mas
     synapse: messaging.synapse
     plik: default.plik
   enableMasterLoadBalancer: true
