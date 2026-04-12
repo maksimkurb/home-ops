@@ -73,14 +73,12 @@ spec:
             enabled: true
             portType: NodePort
             port: 30881
-            nodePort: 30881
             internalTrafficPolicy: Cluster
             externalTrafficPolicy: Cluster
           rtcMuxedUdp:
             enabled: true
             portType: NodePort
             port: 30882
-            nodePort: 30882
             internalTrafficPolicy: Cluster
             externalTrafficPolicy: Cluster
 
