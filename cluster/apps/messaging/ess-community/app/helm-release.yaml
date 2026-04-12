@@ -10,7 +10,7 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 25.12.0
+    tag: 26.3.2
   url: oci://ghcr.io/element-hq/ess-helm/matrix-stack
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
@@ -69,18 +69,20 @@ spec:
       sfu:
         useStunToDiscoverPublicIP: true
         exposedServices:
-          # Router/NAT must forward public 30881/TCP to a cluster node on 30881/TCP.
           rtcTcp:
+            enabled: true
             portType: NodePort
             port: 30881
             nodePort: 30881
-            externalTrafficPolicy: Local
-          # Router/NAT must forward public 30882/UDP to a cluster node on 30882/UDP.
+            internalTrafficPolicy: Cluster
+            externalTrafficPolicy: Cluster
           rtcMuxedUdp:
+            enabled: true
             portType: NodePort
             port: 30882
             nodePort: 30882
-            externalTrafficPolicy: Local
+            internalTrafficPolicy: Cluster
+            externalTrafficPolicy: Cluster
 
     postgres:
       enabled: false
