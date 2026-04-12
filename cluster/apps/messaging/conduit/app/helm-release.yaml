@@ -40,7 +40,7 @@ spec:
           main:
             image:
               repository: docker.io/matrixconduit/matrix-conduit
-              tag: v0.10.12
+              tag: next
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
