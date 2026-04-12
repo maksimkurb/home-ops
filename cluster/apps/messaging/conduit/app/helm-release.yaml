@@ -104,7 +104,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
         hosts:
-          - host: "chat.${SECRET_PUBLIC_DOMAIN}"
+          - host: "matrix.${SECRET_PUBLIC_DOMAIN}"
             paths:
               - path: /_matrix
                 pathType: Prefix

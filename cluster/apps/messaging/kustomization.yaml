@@ -3,7 +3,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespace.yaml
+  - ./coturn/ks.yaml
   - ./conduit/ks.yaml
+  - ./element-web/ks.yaml
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
   - ./signal-proxy/ks.yaml
