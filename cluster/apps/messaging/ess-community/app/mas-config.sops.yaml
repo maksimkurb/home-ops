@@ -1,4 +1,4 @@
-nb apiVersion: v1
+apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
@@ -16,7 +16,7 @@ sops:
             MGlWaUlrN0VlR3owSThTN1Mzbm9NclUKtDMfuAuC8rCEyLR346oqt53xgjVKtIci
             Am2WRnqWaH1mTKEwyPINuec86EkjQVzL0oJc60ksS87k9dmgTLs7kQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-12T11:48:14Z"
-    mac: ENC[AES256_GCM,data:D/v6lJgkjpBZAIslhpCkyVXUlq2MLB2jnROAGULvk+Y3/GPkwdmctNivNYlFmJBsdroWPYSHzpJMSrGDyEZoB5i6CqNczmxp99TDPCX7OrQZsjYjRt1Cf2m+ervZrc/uUT9a7dUzOzospRCumjNBKUThKY/4ic1Ne4+ExtJLV64=,iv:K5SypYWRY4dFxQzSoqlSeD9pzfes4mtBkvER7fOh5/I=,tag:/KZqXkkYogiBT6kOfT8FDg==,type:str]
+    lastmodified: "2026-04-12T16:13:37Z"
+    mac: ENC[AES256_GCM,data:b9GIGH29fjL9YG9baa+OIga+QZvXt2/j/7MuJY+AthWZlOpYts1QkdoNz+Vvcy98urX4PwvFDB3YnBGHOgQtfGqxXiHlHHdBUL/QocXh+PLaqzTh6KvvT5VX1eRugCzWDhnSYOL5cUhDDc+HrgdO0mqRWaIG5fntT25fGpJTo9A=,iv:tEVlPMbtpP9DF5gWSNj3kK23akQaHYpvDdV5udVZb9g=,tag:GIcawL194HqG2w/lAh2LAg==,type:str]
     encrypted_regex: ((?i)(pass|secret($|[^N])|key|token|^data$|^stringData))
     version: 3.11.0
