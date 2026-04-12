@@ -81,6 +81,24 @@ spec:
           nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
           nginx.ingress.kubernetes.io/cors-allow-headers: "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token"
           nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+      livenessProbe:
+        failureThreshold: 6
+        periodSeconds: 10
+        timeoutSeconds: 5
+      readinessProbe:
+        failureThreshold: 6
+        periodSeconds: 10
+        timeoutSeconds: 5
+      startupProbe:
+        failureThreshold: 12
+        periodSeconds: 10
+        timeoutSeconds: 5
       sfu:
         useStunToDiscoverPublicIP: true
         exposedServices:
