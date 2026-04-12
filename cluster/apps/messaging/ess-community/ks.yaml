@@ -3,21 +3,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname conduit
+  name: &appname ess-community
   namespace: flux-system
 spec:
   targetNamespace: messaging
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
-  dependsOn:
-    - name: coturn
-      namespace: flux-system
-    - name: minio
-      namespace: flux-system
   interval: 30m
-  timeout: 5m
-  path: "./cluster/apps/messaging/conduit/app"
+  timeout: 10m
+  path: "./cluster/apps/messaging/ess-community/app"
   prune: true
   sourceRef:
     kind: GitRepository
