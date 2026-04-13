@@ -160,6 +160,15 @@ spec:
             matrix_rtc:
               enabled: true
               server_url: "https://mrtc.matrix.${SECRET_PUBLIC_DOMAIN}"
+        # Configures TURN for legacy clients and standard signaling
+        02-turn.yaml:
+          config: |
+            turn_uris:
+              - "turns:mrtc.matrix.${SECRET_PUBLIC_DOMAIN}:443?transport=udp"
+              - "turns:mrtc.matrix.${SECRET_PUBLIC_DOMAIN}:443?transport=tcp"
+            turn_shared_secret: "${SECRET_MATRIX_TURN_KEY}"
+            turn_user_lifetime: 86400000
+            turn_allow_guests: true
 
     wellKnownDelegation:
       baseDomainRedirect:
