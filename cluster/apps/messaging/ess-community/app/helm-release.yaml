@@ -114,6 +114,11 @@ spec:
             port: 30882
             internalTrafficPolicy: Cluster
             externalTrafficPolicy: Cluster
+          turnTLS:
+            enabled: true
+            domain: turn.matrix.${SECRET_PUBLIC_DOMAIN}
+            tlsSecret: ${APP}-turn-tls
+
 
     postgres:
       enabled: false
