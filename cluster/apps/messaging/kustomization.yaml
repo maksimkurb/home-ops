@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ./ess-community/ks.yaml
+  - ./coturn/ks.yaml
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
   - ./signal-proxy/ks.yaml

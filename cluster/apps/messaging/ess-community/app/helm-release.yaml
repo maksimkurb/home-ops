@@ -100,7 +100,7 @@ spec:
         periodSeconds: 10
         timeoutSeconds: 5
       sfu:
-        manualIP: "${SECRET_MATRIX_TURN_PUBLIC_IP}"
+        manualIP: "${SECRET_COTURN_PUBLIC_IP}"
         useStunToDiscoverPublicIP: false
         exposedServices:
           rtcTcp:
@@ -115,12 +115,6 @@ spec:
             port: 30882
             internalTrafficPolicy: Cluster
             externalTrafficPolicy: Cluster
-          turnTLS:
-            enabled: true
-            domain: turn.matrix.${SECRET_PUBLIC_DOMAIN}
-            port: 30003
-            tlsSecret: ${APP}-turn-tls
-
 
     postgres:
       enabled: false
@@ -166,9 +160,11 @@ spec:
         02-turn.yaml:
           config: |
             turn_uris:
-              - "turns:turn.matrix.${SECRET_PUBLIC_DOMAIN}:30003?transport=udp"
-              - "turns:turn.matrix.${SECRET_PUBLIC_DOMAIN}:30003?transport=tcp"
-            turn_shared_secret: "${SECRET_MATRIX_TURN_KEY}"
+              - "turn:turn.${SECRET_PUBLIC_DOMAIN}:3478?transport=udp"
+              - "turn:turn.${SECRET_PUBLIC_DOMAIN}:3478?transport=tcp"
+              - "turns:turn.${SECRET_PUBLIC_DOMAIN}:5349?transport=udp"
+              - "turns:turn.${SECRET_PUBLIC_DOMAIN}:5349?transport=tcp"
+            turn_shared_secret: "${SECRET_COTURN_KEY}"
             turn_user_lifetime: 86400000
             turn_allow_guests: true
 

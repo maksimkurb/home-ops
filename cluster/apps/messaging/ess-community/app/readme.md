@@ -13,4 +13,4 @@ Router / firewall:
 Notes:
 - this is not a standalone coturn deployment
 - for Element X calls, MatrixRTC is the main requirement
-- if classic TURN is still needed later, add separate coturn in parallel
+- classic TURN is deployed separately in `../coturn`
