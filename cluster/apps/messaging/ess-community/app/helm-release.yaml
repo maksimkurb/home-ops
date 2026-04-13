@@ -58,6 +58,7 @@ spec:
           config: |
             account:
               password_registration_enabled: true
+              password_recovery_enabled: true
               registration_token_required: true
         01-email.yaml:
           configSecret: ${APP}-mas-config
