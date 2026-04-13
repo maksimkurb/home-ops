@@ -159,6 +159,10 @@ spec:
     wellKnownDelegation:
       baseDomainRedirect:
         enabled: false
-      additionalClientConfig:
-        org.matrix.msc4140.calls:
-          preferred_backend: "matrix-org/livekit"
+      additional:
+        client: |
+          {
+            "org.matrix.msc4140.calls": {
+              "preferred_backend": "matrix-org/livekit"
+            }
+          }
