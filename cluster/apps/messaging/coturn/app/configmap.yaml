@@ -16,6 +16,8 @@ data:
     max-port=49170
     cert=/etc/coturn/tls/tls.crt
     pkey=/etc/coturn/tls/tls.key
+    verbose
+    simple-log
     no-cli
     no-multicast-peers
     no-loopback-peers
