@@ -41,10 +41,16 @@ spec:
         enabled: true
         type: secret
         name: ${APP}-secret
-        globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
-            readOnly: true
+        advancedMounts:
+          main:
+            main:
+              - path: /config/config.yaml
+                subPath: config.yaml
+                readOnly: true
+            build-bridge:
+              - path: /config/config.yaml
+                subPath: config.yaml
+                readOnly: true
       data:
         enabled: true
         type: persistentVolumeClaim
@@ -52,13 +58,23 @@ spec:
         size: 2Gi
         storageClass: local-path
         retain: true
-        globalMounts:
-          - path: /data
+        advancedMounts:
+          main:
+            main:
+              - path: /data
+            build-bridge:
+              - path: /data
       workdir:
         enabled: true
         type: emptyDir
-        globalMounts:
-          - path: /work
+        advancedMounts:
+          main:
+            main:
+              - path: /work
+            clone-source:
+              - path: /work
+            build-bridge:
+              - path: /work
 
     defaultPodOptions:
       securityContext:
