@@ -5,7 +5,6 @@ resources:
   - namespace.yaml
   - ./ess-community/ks.yaml
   - ./coturn/ks.yaml
-  - ./mx-puppet-vk/ks.yaml
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
   - ./signal-proxy/ks.yaml
