@@ -19,38 +19,22 @@ spec:
     createNamespace: true
     remediation:
       retries: 3
-    timeout: 20m0s
   upgrade:
     cleanupOnFail: true
     remediation:
       retries: 3
-    timeout: 20m0s
   uninstall:
     keepHistory: false
   values:
-    service:
-      main:
-        controller: main
-        ports:
-          http:
-            port: 8437
-            protocol: TCP
-
     persistence:
       config:
         enabled: true
         type: secret
         name: ${APP}-secret
-        advancedMounts:
-          main:
-            main:
-              - path: /config/config.yaml
-                subPath: config.yaml
-                readOnly: true
-            build-bridge:
-              - path: /config/config.yaml
-                subPath: config.yaml
-                readOnly: true
+        globalMounts:
+          - path: /app/config.py
+            subPath: config.py
+            readOnly: true
       data:
         enabled: true
         type: persistentVolumeClaim
@@ -58,118 +42,23 @@ spec:
         size: 2Gi
         storageClass: local-path
         retain: true
-        advancedMounts:
-          main:
-            main:
-              - path: /data
-            build-bridge:
-              - path: /data
-      workdir:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          main:
-            main:
-              - path: /work
-            clone-source:
-              - path: /work
-            build-bridge:
-              - path: /work
-
-    defaultPodOptions:
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
+        globalMounts:
+          - path: /data
 
     controllers:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          clone-source:
-            image:
-              repository: docker.io/alpine/git
-              tag: 2.47.2
-            command:
-              - /bin/sh
-              - -c
-              - |
-                rm -rf /work/src
-                git clone https://github.com/MurzNN/mx-puppet-vk /work/src
-                cd /work/src
-                git checkout 2459741e16cec02a121cee67eab324c5e25eef34
-            securityContext:
-              allowPrivilegeEscalation: false
-          build-bridge:
-            image:
-              repository: docker.io/node
-              tag: 20-bookworm-slim
-            workingDir: /work/src
-            command:
-              - /bin/sh
-              - -c
-              - |
-                npm ci
-                npm run build
-                if [ ! -f /data/vk-registration.yaml ]; then
-                  node ./build/index.js --register --config /config/config.yaml --registration-file /data/vk-registration.yaml
-                fi
-            securityContext:
-              allowPrivilegeEscalation: false
         containers:
           main:
             image:
-              repository: docker.io/node
-              tag: 20-bookworm-slim
-            workingDir: /work/src
-            command:
-              - node
-              - ./build/index.js
-              - --config
-              - /config/config.yaml
-              - --registration-file
-              - /data/vk-registration.yaml
+              repository: docker.io/maksimkurb/matrix-vk-bot
+              tag: latest
             env:
               TZ: "${TIMEZONE}"
             resources:
               requests:
-                cpu: 100m
-                memory: 256Mi
+                cpu: 25m
+                memory: 128Mi
               limits:
-                memory: 768Mi
-            securityContext:
-              allowPrivilegeEscalation: false
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  tcpSocket:
-                    port: 8437
-                  initialDelaySeconds: 30
-                  periodSeconds: 15
-                  timeoutSeconds: 5
-                  failureThreshold: 5
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  tcpSocket:
-                    port: 8437
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 6
-              startup:
-                enabled: true
-                custom: true
-                spec:
-                  tcpSocket:
-                    port: 8437
-                  periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 90
+                memory: 512Mi
