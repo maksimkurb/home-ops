@@ -99,6 +99,11 @@ spec:
         # CROWDSEC START
         plugins: "crowdsec"
         lua-shared-dicts: "crowdsec_cache: 50m"
+        http-snippet: |
+          map $request_method $crowdsec_disable_bouncer {
+            GET 0;
+            default 1;
+          }
         server-snippet: |
           lua_ssl_trusted_certificate "/etc/ssl/certs/ca-certificates.crt";
           resolver local=on ipv6=off;
