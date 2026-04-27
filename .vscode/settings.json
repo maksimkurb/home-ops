@@ -4,10 +4,16 @@
     "files.associations": {
         "*.json5": "jsonc",
         "**/ansible/**/*.yml": "ansible",
-        "**/ansible/**/*.sops.yml": "yaml",
         "**/ansible/**/inventory/**/*.yml": "yaml",
         "**/terraform/**/*.tf": "terraform",
-        "**/cluster/**/*.sops.toml": "plaintext"
+        "**/*.sops.yml": "sops",
+        "**/*.sops.yaml": "sops",
+        "**/*.sops.toml": "sops"
+    },
+    "github.copilot.enable": {
+        "*": true,
+        "sops": false,
+        "dotenv": false
     },
     "material-icon-theme.folders.associations": {
         ".taskfiles": "utils",
@@ -27,6 +33,9 @@
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs":"active",
     "editor.hover.delay": 1500,
+    "chat.tools.edits.autoApprove": {
+        "**/*.sops.*": false
+    },
     "explorer.autoReveal": true,
     "cSpell.language": "en,en-US",
     "cSpell.words": [

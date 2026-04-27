@@ -18,24 +18,21 @@ H3 = {{ interface.h3 }}
 H4 = {{ interface.h4 }}
 
 {% if interface.mode == 'server' %}
-# Server mode: NAT and forwarding rules
-PostUp = iptables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = iptables -t nat -A POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
-PostUp = ip6tables -A INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostUp = ip6tables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = ip6tables -t nat -A POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
+# Server mode: nftables-managed rules
+PostUp = nft add table inet awg_manage
+PostUp = nft 'add chain inet awg_manage input { type filter hook input priority filter; policy accept; }'
+PostUp = nft 'add chain inet awg_manage forward { type filter hook forward priority filter; policy accept; }'
+PostUp = nft 'add chain inet awg_manage prerouting { type nat hook prerouting priority dstnat; policy accept; }'
+PostUp = nft 'add chain inet awg_manage postrouting { type nat hook postrouting priority srcnat; policy accept; }'
+PostUp = nft add rule inet awg_manage input udp dport {{ interface.port }} ct state new accept
+PostUp = nft add rule inet awg_manage forward iifname "{{ awg_public_interface }}" oifname "%i" accept
+PostUp = nft add rule inet awg_manage forward iifname "%i" accept
+PostUp = nft add rule inet awg_manage forward tcp flags syn tcp option maxseg size set 1280
+PostUp = nft add rule inet awg_manage postrouting oifname "{{ awg_public_interface }}" masquerade
+PostUp = nft add rule inet awg_manage prerouting iifname "%i" udp dport 53 redirect to :53
+PostUp = nft add rule inet awg_manage prerouting iifname "%i" tcp dport 53 redirect to :53
 
-PostDown = iptables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostDown = iptables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = iptables -t nat -D POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
-PostDown = ip6tables -D INPUT -p udp --dport {{ interface.port }} -m conntrack --ctstate NEW -j ACCEPT --wait 10
-PostDown = ip6tables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = ip6tables -t nat -D POSTROUTING -o {{ awg_public_interface }} -j MASQUERADE --wait 10
+PostDown = nft delete table inet awg_manage
 {% elif interface.mode == 'client' %}
 # Client mode: Forwarding rules only
 PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
