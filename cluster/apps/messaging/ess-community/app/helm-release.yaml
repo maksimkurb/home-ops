@@ -168,6 +168,10 @@ spec:
             turn_shared_secret: "${SECRET_COTURN_KEY}"
             turn_user_lifetime: 86400000
             turn_allow_guests: true
+        03-disable-msc4108.yaml:
+          config: |
+            experimental_features:
+              msc4108_enabled: false
 
     wellKnownDelegation:
       baseDomainRedirect:
