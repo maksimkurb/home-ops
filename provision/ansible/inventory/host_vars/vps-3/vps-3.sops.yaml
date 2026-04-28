@@ -1,6 +1,6 @@
 kind: Secret
 ansible_host: ENC[AES256_GCM,data:0KsQU6H1+6Xf06b6Og==,iv:4AHbvaD94YOsI4476FUxFDN7MhxjF3lnOhtomeqSDa8=,tag:kpoz41leqBzI5XuthGRqaw==,type:str]
-ansible_user: ENC[AES256_GCM,data:jxd8ug==,iv:nRUyPHIebzT5igyisst3VPEXwuTQvEKNRZKFng87uAU=,tag:GQ05Fl/YKxDt+o9i4nIKBQ==,type:str]
+ansible_user: ENC[AES256_GCM,data:0Mv916uvqlNb+A==,iv:Ej7QVnl3Zuc4mXhUyEgQVrubCVjJhh+qZQTk+3Xt5NQ=,tag:yY1B2styiiRDX5kvok5CqQ==,type:str]
 iperf3_client_hostname: ENC[AES256_GCM,data:1RdBnKLO7NiU9WxxOTcrM41N,iv:1C5qCG3NTKvOvpZrf6U2ZoRluxEGcTqFnBZmrh0Kd/E=,tag:4rH7brt0y4Igu+Mv7PukrQ==,type:str]
 traefik_base_domain: ENC[AES256_GCM,data:yGh3Idb3OV/qDoTq5srteyjz,iv:EPM0+euVaINE7gdbl7KSoDAsfBg5EOD05KOqIr7HIHQ=,tag:FgXw4xiqiAwauq/dcZFsyQ==,type:str]
 acme_email: ENC[AES256_GCM,data:5aAioQAmO/vOv9tng4HVbjUDqD7hs2X6TdtX7JXhxQ==,iv:Me/zA9I2knF+YAN9Hx86LHbnKHRjEtvuTKvkjkbJisM=,tag:MN7hQjtslXTaHt3N2KA7CA==,type:str]
@@ -15,7 +15,7 @@ sops:
             Y284bkQ5Y09yN3pyRDVkWHk4TVFhZk0KsuXMnTcefEaBnZrA2lUIB6Q7Nd/ASndZ
             OufZVVJTOADqMzcmicsz03ozIrTPcYbHE8Q5n2oKIJ6XLenwrcrDFg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-01-04T11:23:16Z"
-    mac: ENC[AES256_GCM,data:Qt4XrccoV27gXxllC66LNUUofNGfYXFigIcHSioC4KNpKAoiIo9wW8Mz4WGR/O7165mmTVTSJguEYiYaRaaV1HBMKOKgPIDkWz1JA8ayVcTKaJWUJWcXSeNg5f0KwmflQJjsIe3BPuAHpT75a+BHud9VsbDVupXFaevvTazqIfw=,iv:L/pL2i0xCbxWzGi+q73bFqWI2H8j6jvDKR4E3hV2qsE=,tag:xOwo++Tndc1jZ0z9XaE17g==,type:str]
+    lastmodified: "2026-04-28T21:14:24Z"
+    mac: ENC[AES256_GCM,data:7yPNg7K8QhqdfqNq+bS/6a8TIaRIbZR9iUWvYFFxeiPg5vAyFMh+ixRPxd5+QtOQN/P176b6cyTKbmu06obhPwhXrkxyT2V31ZySeVhZ/usQ2qZja/0vXOOrO9SAUXNzaaYPjzvVDJCnrw2qGm9XxFXN7QzU5CnkBwIgXT8f5m4=,iv:DlkMZFAJyfHQHkJSVs3ViKg4TEXuWtBbBxG49uQCFoM=,tag:dZYp6rODQuc3tCxvsJwkGw==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.11.0

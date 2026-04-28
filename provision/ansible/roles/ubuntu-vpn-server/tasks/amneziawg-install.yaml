@@ -40,28 +40,59 @@
   become: true
 
 - name: Enable IPv4 and IPv6 forward
-  blockinfile:
-    path: /etc/sysctl.conf
-    block: |
-      net.ipv4.ip_forward = 1
-      net.ipv6.conf.all.forwarding = 1
-      net.ipv6.conf.all.proxy_ndp = 1
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.d/99-amneziawg.conf
+    sysctl_set: true
+  loop:
+    - name: net.ipv4.ip_forward
+      value: "1"
+    - name: net.ipv6.conf.all.forwarding
+      value: "1"
+    - name: net.ipv6.conf.all.proxy_ndp
+      value: "1"
   become: true
 
-- name: Reload sysctl
-  command: sysctl -p /etc/sysctl.conf
+- name: Validate AmneziaWG PPA release
+  assert:
+    that:
+      - (amneziawg_ppa_release | default(ansible_distribution_release)) in amneziawg_ppa_supported_releases
+    fail_msg: >-
+      AmneziaWG PPA does not publish packages for Ubuntu {{ ansible_distribution_release }}
+      as of 2026-04-29. Supported releases in this role are:
+      {{ amneziawg_ppa_supported_releases | join(', ') }}.
+      Set amneziawg_ppa_release to one of those codenames to force a supported PPA series
+      that includes the required AmneziaWG userspace package.
+  become: true
+
+- name: Create apt keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Add AmneziaWG PPA signing key
+  get_url:
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x75C9DD72C799870E310542E24166F2C257290828
+    dest: /etc/apt/keyrings/amnezia-ppa.asc
+    mode: '0644'
   become: true
 
 - name: Add AmneziaWG repository
   apt_repository:
-    repo: "ppa:amnezia/ppa"
+    repo: "deb [signed-by=/etc/apt/keyrings/amnezia-ppa.asc] https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu {{ amneziawg_ppa_release | default(ansible_distribution_release) }} main"
     state: present
     filename: amnezia
   become: true
 
 - name: Install AmneziaWG
   apt:
-    name: amneziawg
+    name:
+      - amneziawg
+      - amneziawg-dkms
     state: present
     update_cache: yes
   become: true

@@ -8,6 +8,14 @@
 
 vpn_tgproxy_mtproto_enabled: false
 vpn_tgproxy_mtproto: []
+amneziawg_ppa_supported_releases:
+  - focal
+  - jammy
+  - noble
+  - oracular
+# Optional override for newer Ubuntu releases not yet published in the PPA.
+# Example: amneziawg_ppa_release: noble
+# amneziawg_ppa_release: ""
 
 # ============================================================================
 # EXTERNALIZED CLIENT REGISTRY (Reusable Clients)
