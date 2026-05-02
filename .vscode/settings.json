@@ -6,9 +6,6 @@
         "**/ansible/**/*.yml": "ansible",
         "**/ansible/**/inventory/**/*.yml": "yaml",
         "**/terraform/**/*.tf": "terraform",
-        "**/*.sops.yml": "sops",
-        "**/*.sops.yaml": "sops",
-        "**/*.sops.toml": "sops"
     },
     "github.copilot.enable": {
         "*": true,
@@ -33,9 +30,6 @@
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs":"active",
     "editor.hover.delay": 1500,
-    "chat.tools.edits.autoApprove": {
-        "**/*.sops.*": false
-    },
     "explorer.autoReveal": true,
     "cSpell.language": "en,en-US",
     "cSpell.words": [

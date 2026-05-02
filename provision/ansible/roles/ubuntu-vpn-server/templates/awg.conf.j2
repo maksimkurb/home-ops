@@ -1,6 +1,7 @@
 [Interface]
 PrivateKey = {{ interface.private_key }}
 #_PublicKey = {{ interface.public_key }}
+{% set nft_table = 'awg_' ~ interface_name %}
 
 Address = {{ interface.address_v4 }}/{{ interface.subnet_v4 }}{% if interface.address_v6 is defined %}, {{ interface.address_v6 }}/{{ interface.subnet_v6 }}{% endif %}
 
@@ -19,31 +20,32 @@ H4 = {{ interface.h4 }}
 
 {% if interface.mode == 'server' %}
 # Server mode: nftables-managed rules
-PostUp = nft add table inet awg_manage
-PostUp = nft 'add chain inet awg_manage input { type filter hook input priority filter; policy accept; }'
-PostUp = nft 'add chain inet awg_manage forward { type filter hook forward priority filter; policy accept; }'
-PostUp = nft 'add chain inet awg_manage prerouting { type nat hook prerouting priority dstnat; policy accept; }'
-PostUp = nft 'add chain inet awg_manage postrouting { type nat hook postrouting priority srcnat; policy accept; }'
-PostUp = nft add rule inet awg_manage input udp dport {{ interface.port }} ct state new accept
-PostUp = nft add rule inet awg_manage forward iifname "{{ awg_public_interface }}" oifname "%i" accept
-PostUp = nft add rule inet awg_manage forward iifname "%i" accept
-PostUp = nft add rule inet awg_manage forward tcp flags syn tcp option maxseg size set 1280
-PostUp = nft add rule inet awg_manage postrouting oifname "{{ awg_public_interface }}" masquerade
-PostUp = nft add rule inet awg_manage prerouting iifname "%i" udp dport 53 redirect to :53
-PostUp = nft add rule inet awg_manage prerouting iifname "%i" tcp dport 53 redirect to :53
+PostUp = nft add table inet {{ nft_table }}
+PostUp = nft 'add chain inet {{ nft_table }} input { type filter hook input priority filter; policy accept; }'
+PostUp = nft 'add chain inet {{ nft_table }} forward { type filter hook forward priority filter; policy accept; }'
+PostUp = nft 'add chain inet {{ nft_table }} prerouting { type nat hook prerouting priority dstnat; policy accept; }'
+PostUp = nft 'add chain inet {{ nft_table }} postrouting { type nat hook postrouting priority srcnat; policy accept; }'
+PostUp = nft add rule inet {{ nft_table }} input udp dport {{ interface.port }} ct state new accept
+PostUp = nft add rule inet {{ nft_table }} forward iifname "{{ awg_public_interface }}" oifname "%i" accept
+PostUp = nft add rule inet {{ nft_table }} forward iifname "%i" accept
+PostUp = nft add rule inet {{ nft_table }} forward tcp flags syn tcp option maxseg size set 1280
+PostUp = nft add rule inet {{ nft_table }} postrouting oifname "{{ awg_public_interface }}" masquerade
+#PostUp = nft add rule inet {{ nft_table }} prerouting iifname "%i" udp dport 53 redirect to :53
+#PostUp = nft add rule inet {{ nft_table }} prerouting iifname "%i" tcp dport 53 redirect to :53
+{% if interface.target_routing_table is defined %}
+PostUp = ip rule add iif "%i" table {{ interface.target_routing_table }}
+PostDown = ip rule del iif "%i" table {{ interface.target_routing_table }}
+{% endif %}
 
-PostDown = nft delete table inet awg_manage
+PostDown = nft delete table inet {{ nft_table }}
 {% elif interface.mode == 'client' %}
-# Client mode: Forwarding rules only
-PostUp = iptables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = iptables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = ip6tables -A FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostUp = ip6tables -A FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
+# Client mode: nftables-managed forwarding for tunnel egress
+PostUp = nft add table inet {{ nft_table }}
+PostUp = nft 'add chain inet {{ nft_table }} forward { type filter hook forward priority filter; policy accept; }'
+PostUp = nft add rule inet {{ nft_table }} forward oifname "%i" accept
+PostUp = nft add rule inet {{ nft_table }} forward iifname "%i" accept
 
-PostDown = iptables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = iptables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = ip6tables -D FORWARD -i {{ awg_public_interface }} -o {{ interface.private_interface }} -j ACCEPT --wait 10
-PostDown = ip6tables -D FORWARD -i {{ interface.private_interface }} -j ACCEPT --wait 10
+PostDown = nft delete table inet {{ nft_table }}
 {% endif %}
 
 {% if interface.routing_table is defined %}

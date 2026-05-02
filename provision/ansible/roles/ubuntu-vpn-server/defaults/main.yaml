@@ -85,6 +85,27 @@ amneziawg_ppa_supported_releases:
 #
 # ============================================================================
 
+amneziawg_interface_defaults:
+  mode: server
+  mtu: 1412
+  subnet_v4: 24
+  clients_subnet_v4: 32
+  address_v6: "fd42:42:42::1"
+  subnet_v6: 48
+  clients_subnet_v6: 56
+  port: 51820
+  public_host: ""
+  jc: 3
+  jmin: 2
+  jmax: 6
+  s1: 1
+  s2: 2
+  h1: 3
+  h2: 4
+  h3: 5
+  h4: 6
+  peers: []
+
 amneziawg_interfaces:
   awg0:
     # ========================================================================
@@ -156,6 +177,8 @@ amneziawg_interfaces:
     # Custom routing table
     # routing_table: 100
     # routing_table_name: "awg_vpn"               # Optional, auto-generated
+    # target_routing_table: 100                   # Route traffic entering this interface through another table
+    # target_routing_table_name: "awg_target"     # Optional, auto-generated
 
     # Policy-based routing rules
     # routing_rules:
@@ -217,11 +240,8 @@ amneziawg_interfaces:
 #     public_key: "SERVER_PUB"
 #     address_v4: 10.9.9.1
 #     address_v6: fd00:1234:5678::1
-#     public_interface: null                      # No NAT
-#     routing_table: 100
-#     routing_rules:
-#       - iif: awg0
-#         table: 100
+#     public_interface: awg1
+#     target_routing_table: 100                   # Send awg0 client traffic to awg1's table
 #     peers: ["laptop", "phone"]                  # Reference clients
 #
 #   awg1:

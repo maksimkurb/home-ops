@@ -6,18 +6,15 @@
 
 - name: Set interface facts
   set_fact:
-    interface: "{{ item.value }}"
+    interface: "{{ amneziawg_interface_defaults | combine(item.value, recursive=True) }}"
     interface_name: "{{ item.key }}"
-
-- name: Set default mode to server if not specified
-  set_fact:
-    interface: "{{ interface | combine({'mode': 'server'}) }}"
-  when: interface.mode is not defined
 
 - name: Set default private_interface if not specified
   set_fact:
     interface: "{{ interface | combine({'private_interface': interface_name}) }}"
-  when: interface.private_interface is not defined
+  when:
+    - interface.mode == 'server'
+    - interface.private_interface is not defined
 
 - name: Resolve peer references from client registry
   include_tasks: resolve-peers.yaml
@@ -32,7 +29,7 @@
 
 - name: Determine public interface for {{ interface_name }}
   set_fact:
-    awg_public_interface: "{{ interface.public_interface | default(vpn_wan_interface, true) if (interface.public_interface | default('')) != '' else vpn_wan_interface }}"
+    awg_public_interface: "{{ interface.public_interface | default(vpn_wan_interface, true) }}"
 
 - name: Fail if public interface is not defined for {{ interface_name }}
   fail:

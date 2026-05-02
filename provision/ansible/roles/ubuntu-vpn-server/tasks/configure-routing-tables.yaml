@@ -36,16 +36,95 @@
     - rule.table is defined
     - rule.table is number
 
+- name: Collect target routing tables from interfaces
+  set_fact:
+    all_routing_tables: >-
+      {{
+        all_routing_tables | default([]) + [
+          {
+            'id': item.value.target_routing_table,
+            'name': item.value.target_routing_table_name | default('awg_target_' + (item.key | string))
+          }
+        ]
+      }}
+  loop: "{{ merged_amneziawg_interfaces | dict2items }}"
+  when:
+    - item.value.target_routing_table is defined
+    - item.value.target_routing_table is number
+
 - name: Remove duplicate routing tables
   set_fact:
     unique_routing_tables: "{{ all_routing_tables | default([]) | unique }}"
+
+- name: Check whether /etc/iproute2/rt_tables exists
+  stat:
+    path: /etc/iproute2/rt_tables
+  register: rt_tables_etc
+  become: true
+  when: unique_routing_tables is defined and unique_routing_tables | length > 0
+
+- name: Check whether packaged rt_tables exists
+  stat:
+    path: /usr/lib/iproute2/rt_tables
+  register: rt_tables_usr
+  become: true
+  when:
+    - unique_routing_tables is defined
+    - unique_routing_tables | length > 0
+    - not rt_tables_etc.stat.exists
+
+- name: Ensure /etc/iproute2 exists
+  file:
+    path: /etc/iproute2
+    state: directory
+    mode: '0755'
+  become: true
+  when:
+    - unique_routing_tables is defined
+    - unique_routing_tables | length > 0
+    - not rt_tables_etc.stat.exists
+
+- name: Seed /etc/iproute2/rt_tables from packaged defaults
+  copy:
+    src: /usr/lib/iproute2/rt_tables
+    dest: /etc/iproute2/rt_tables
+    remote_src: true
+    mode: '0644'
+  become: true
+  when:
+    - unique_routing_tables is defined
+    - unique_routing_tables | length > 0
+    - not rt_tables_etc.stat.exists
+    - rt_tables_usr.stat.exists
+
+- name: Create minimal /etc/iproute2/rt_tables when no packaged file exists
+  copy:
+    dest: /etc/iproute2/rt_tables
+    mode: '0644'
+    content: |
+      #
+      # reserved values
+      #
+      255 local
+      254 main
+      253 default
+      0 unspec
+      #
+      # local
+      #
+  become: true
+  when:
+    - unique_routing_tables is defined
+    - unique_routing_tables | length > 0
+    - not rt_tables_etc.stat.exists
+    - not rt_tables_usr.stat.exists
 
 - name: Ensure routing table entries exist in /etc/iproute2/rt_tables
   lineinfile:
     path: /etc/iproute2/rt_tables
     regexp: "^{{ table_item.id }}\\s+"
     line: "{{ table_item.id }}\t{{ table_item.name }}"
-    create: no
+    create: yes
   loop: "{{ unique_routing_tables }}"
   loop_control:
     loop_var: table_item
