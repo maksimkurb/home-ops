@@ -59,7 +59,7 @@ spec:
           influxdb:
             image:
               repository: influxdb
-              tag: 2.8-alpine
+              tag: 2.9-alpine
             env:
               DOCKER_INFLUXDB_INIT_MODE: setup
               DOCKER_INFLUXDB_INIT_ORG: scrutiny
