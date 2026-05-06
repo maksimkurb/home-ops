@@ -74,6 +74,11 @@ spec:
           secretKey: password
 
     matrixRTC:
+      hostAliases:
+        - ip: ${SVC_NGINX_ADDR}
+          hostnames:
+            - matrix.${SECRET_PUBLIC_DOMAIN}
+            - synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       ingress:
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
