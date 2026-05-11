@@ -27,7 +27,7 @@
   loop: "{{ vpn_tgproxy_mtproto }}"
   loop_control:
     extended: true
-  when: (item.secret | string | length) < 42
+  when: not (item.secret | string | regex_search('^ee[0-9A-Fa-f]{34,}$'))
 
 - name: mtproto / Create docker-compose.yml file
   template:
