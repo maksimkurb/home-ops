@@ -46,6 +46,10 @@ spec:
               NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
               NTFY_ATTACHMENT_CACHE_DIR: /var/cache/ntfy/attachments
               NTFY_UPSTREAM_BASE_URL: https://ntfy.sh
+              NTFY_WEB_PUSH_PUBLIC_KEY: "${NTFY_WEB_PUSH_PUBLIC_KEY}"
+              NTFY_WEB_PUSH_PRIVATE_KEY: "${SECRET_NTFY_WEB_PUSH_PRIVATE_KEY}"
+              NTFY_WEB_PUSH_FILE: /var/cache/ntfy/webpush.db
+              NTFY_WEB_PUSH_EMAIL_ADDRESS: "${SECRET_EMAIL}"
             resources:
               requests:
                 cpu: 5m
@@ -87,6 +91,9 @@ spec:
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Messaging
           gethomepage.dev/icon: /icons/ntfy/${HOMEPAGE_ICONS_COLOR}
