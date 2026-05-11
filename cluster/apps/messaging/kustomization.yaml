@@ -8,5 +8,6 @@ resources:
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
   - ./signal-proxy/ks.yaml
+  - ./unified-push/ks.yaml
   # - ./jami-stack/ks.yaml
   # - ./simplex-server/ks.yaml
