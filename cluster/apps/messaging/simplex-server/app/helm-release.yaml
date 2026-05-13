@@ -80,7 +80,7 @@ spec:
           main:
             image:
               repository: simplexchat/smp-server
-              tag: v6.5.0
+              tag: v7.0.0
               pullPolicy: IfNotPresent
             command:
               - smp-server
