@@ -29,6 +29,10 @@ spec:
         enabled: true
       prometheusRule:
         enabled: true
+    frr-k8s:
+      prometheus:
+        serviceMonitor:
+          enabled: false
     speaker:
       tolerations:
         - key: "node-role.kubernetes.io/master"
