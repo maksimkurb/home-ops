@@ -40,7 +40,7 @@ spec:
         containers:
           main:
             image:
-              repository: public.ecr.aws/docker/library/redis
+              repository: redis
               tag: 7.4.9
             command:
               - "redis-server"
