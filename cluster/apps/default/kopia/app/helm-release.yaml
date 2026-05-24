@@ -159,6 +159,7 @@ spec:
               - 0.0.0.0:80
               - --metrics-listen-addr
               - 0.0.0.0:8080
+              - --allow-extremely-dangerous-unauthenticated-server-on-the-network
               - --without-password
             resources:
               requests:
