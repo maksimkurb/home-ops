@@ -143,11 +143,11 @@ spec:
             resources:
               requests:
                 cpu: 200m
-                memory: 100Mi
+                memory: 3500Mi
                 nvidia.com/gpu: "1"
               limits:
                 cpu: 4000m
-                memory: 6000Mi
+                memory: 5Gi
                 nvidia.com/gpu: "1"
             probes:
               liveness:
