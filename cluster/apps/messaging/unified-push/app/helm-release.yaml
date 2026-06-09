@@ -34,7 +34,7 @@ spec:
           main:
             image:
               repository: docker.io/binwiederhier/ntfy
-              tag: v2.23.0
+              tag: v2.24.0
               pullPolicy: IfNotPresent
             args:
               - serve
