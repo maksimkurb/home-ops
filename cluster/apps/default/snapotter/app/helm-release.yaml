@@ -123,7 +123,7 @@ spec:
               OIDC_SCOPES: "openid profile email"
               OIDC_AUTO_CREATE_USERS: "true"
               OIDC_AUTO_LINK_USERS: "true"
-              OIDC_DEFAULT_ROLE: admin
+              OIDC_DEFAULT_ROLE: user
               OIDC_USERNAME_CLAIM: preferred_username
             resources:
               requests:
