@@ -50,6 +50,9 @@ iperf3_server_timeout: 40
 # Enable iperf3 client script (default: false)
 iperf3_client_enabled: false
 
+# Override the client hostname in webhook payloads (optional)
+iperf3_client_hostname: ""
+
 # Client test runs configuration
 # Each entry creates a separate cron job
 iperf3_client_runs:
@@ -154,8 +157,11 @@ None
 1. Enable the client in your playbook with `iperf3_client_enabled: true`
 2. Configure your n8n webhook URL
 3. Define test runs with schedule, target hosts, and parameters
-4. Run your playbook
-5. Each configured test will run automatically via cron
+4. Optionally set `iperf3_client_hostname` when the reported hostname should differ from the system hostname
+5. Run your playbook
+6. Each configured test will run automatically via cron
+
+On Ubuntu/Debian, the role installs Python dependencies into `/opt/iperf3-client-venv` and deploys `/usr/local/bin/iperf3_client.py` with that venv shebang.
 
 ## Service Management
 

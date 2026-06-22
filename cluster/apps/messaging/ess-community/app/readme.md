@@ -1,4 +1,4 @@
-ESS Community call networking
+# ESS Community Call Networking
 
 Element X / Element Web calls in ESS Community use `matrixRTC`.
 
