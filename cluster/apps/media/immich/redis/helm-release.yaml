@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: redis
-              tag: 7.4.9
+              tag: 8.8.0
             env:
               REDIS_REPLICATION_MODE: master
             resources:
