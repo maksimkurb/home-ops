@@ -85,7 +85,7 @@ spec:
 
     controllers:
       main:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
         rollingUpdate:
           surge: 1
@@ -111,7 +111,7 @@ spec:
             resources:
               requests:
                 cpu: 1m
-                memory: 250Mi
+                memory: 1Gi
                 nvidia.com/gpu: "1"
               limits:
                 nvidia.com/gpu: "1"

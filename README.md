@@ -76,6 +76,10 @@ task cluster:reconcile
 task precommit:run
 ```
 
+`task precommit:init` bootstraps `pre-commit` into a repo-local `.venv` using `uv`
+when available, or `python3 -m venv` as a fallback. The Git hook itself is stored
+in `.githooks/`, so no OS-level `pre-commit` package is required.
+
 Use `task cluster:reconcile` only when intentionally applying Git state to the cluster.
 
 ## Secrets

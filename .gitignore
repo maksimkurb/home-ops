@@ -22,6 +22,7 @@ ansible/inventory/e2e/hosts.yml
 provision/vpn-server-awg-configs
 nvidia.nvidia_driver*
 node_modules
+.venv/
 # Terraform
 .terraform*
 .terraform.tfstate*
