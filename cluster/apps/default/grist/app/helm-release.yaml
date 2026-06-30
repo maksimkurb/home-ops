@@ -87,6 +87,7 @@ spec:
               GRIST_OIDC_IDP_CLIENT_ID: grist
               GRIST_OIDC_IDP_SKIP_END_SESSION_ENDPOINT: true
               GRIST_OIDC_SP_IGNORE_EMAIL_VERIFIED: true
+              GRIST_MCP_ENABLED: true
             envFrom:
               - secretRef:
                   name: grist-env
