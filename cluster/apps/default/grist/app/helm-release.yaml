@@ -74,6 +74,7 @@ spec:
               TZ: "${TIMEZONE}"
               GRIST_SANDBOX_FLAVOR: gvisor
               APP_HOME_URL: "https://${APP}.${SECRET_PUBLIC_DOMAIN}"
+              GRIST_SERVE_SAME_ORIGIN: true
               GRIST_SINGLE_ORG: "homelab"
               GRIST_TELEMETRY_LEVEL: "off"
               GRIST_DOCS_MINIO_USE_SSL: "0"
@@ -89,7 +90,7 @@ spec:
               GRIST_OIDC_SP_IGNORE_EMAIL_VERIFIED: true
               GRIST_MCP_ENABLED: true
               GRIST_ENABLE_OIDC_SERVER: true
-              GRIST_OIDC_CIMD_ALLOWED_HOSTS: claude.ai,chatgpt.com
+              GRIST_OIDC_CIMD_ALLOWED_HOSTS: claude.ai,chatgpt.com,localhost
             envFrom:
               - secretRef:
                   name: grist-env
