@@ -87,20 +87,15 @@ spec:
         size: 5Gi
         storageClass: local-path
         retain: true
-        advancedMounts:
-          frigate:
-            app:
-              - path: /config
+        globalMounts:
+          - path: /config
       config-file:
         enabled: true
         type: secret
         name: frigate-config
-        advancedMounts:
-          frigate:
-            app:
-              - path: /config/config.yml
-                subPath: config_yaml
-                readOnly: true
+        globalMounts:
+          - path: /config-template
+            readOnly: true
       dshm:
         enabled: true
         type: emptyDir
@@ -130,6 +125,19 @@ spec:
       frigate:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          seed-config:
+            image:
+              repository: ghcr.io/blakeblackshear/frigate
+              tag: "0.17.1-tensorrt"
+            command:
+              - sh
+              - -c
+              - |
+                if [ ! -f /config/config.yml ]; then
+                  cp /config-template/config_yaml /config/config.yml
+                  chmod 0644 /config/config.yml
+                fi
         containers:
           app:
             image:
