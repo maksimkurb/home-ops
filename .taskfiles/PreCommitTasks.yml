@@ -4,16 +4,16 @@ version: "3"
 tasks:
 
   init:
-    desc: Install pre-commit hooks
+    desc: Install repo-local pre-commit environment and hooks
     cmds:
-      - pre-commit install --install-hooks
+      - "{{.PROJECT_DIR}}/scripts/pre-commit install"
 
   update:
     desc: Update pre-commit hooks
     cmds:
-      - pre-commit autoupdate
+      - "{{.PROJECT_DIR}}/scripts/pre-commit update"
 
   run:
     desc: Run pre-commit on all files
     cmds:
-      - pre-commit run --all-files
+      - "{{.PROJECT_DIR}}/scripts/pre-commit run"

@@ -9,6 +9,5 @@ resources:
   - metrics-server
   - node-feature-discovery
   # Will be replaced with GPU operator: https://github.com/NVIDIA/nvidia-docker/issues/1730
-  #- nvidia-device-plugin
   - ./nvidia-gpu-operator/ks.yaml
   - reloader

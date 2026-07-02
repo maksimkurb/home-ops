@@ -34,15 +34,20 @@ spec:
         controller: main
         ports:
           http:
-            port: 8080
+            port: &port 1349
 
     ingress:
       main:
         enabled: true
+        className: nginx
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
           external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
           nginx.ingress.kubernetes.io/auth-url: |-
@@ -56,40 +61,37 @@ spec:
           # ForwardAuth end
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Tools
-          gethomepage.dev/icon: /icons/stirling-pdf/${HOMEPAGE_ICONS_COLOR}
-          gethomepage.dev/name: Stirling PDF
+          gethomepage.dev/icon: mdi-image-edit
+          gethomepage.dev/name: SnapOtter
         hosts:
-          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
+          - host: snapotter.${SECRET_PUBLIC_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix
                 service:
                   identifier: main
-                  port: 8080
-        className: nginx
+                  port: *port
 
     persistence:
-      config:
+      data:
         enabled: true
-        existingClaim: ${APP}-config
+        existingClaim: snapotter-data
         globalMounts:
-          - path: /configs
-      logs:
-        enabled: true
-        type: emptyDir
-      tmp:
-        enabled: true
-        type: emptyDir
-      tessdata:
+          - path: /data
+      workspace:
         enabled: true
         type: emptyDir
         globalMounts:
-          - path: /usr/share/tessdata
+          - path: /tmp/workspace
 
     defaultPodOptions:
       securityContext:
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
         supplementalGroups:
           - 777
+        fsGroupChangePolicy: "OnRootMismatch"
 
     controllers:
       main:
@@ -98,31 +100,45 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/stirling-tools/s-pdf
-              tag: 2.11.0@sha256:b75b5ae2fcb75948f468718ed4c0bd499a8cafc9daf7f90f4c1e0e5a6acf9df8
+              repository: ghcr.io/snapotter-hq/snapotter
+              tag: 1.17.2
             env:
               TZ: "${TIMEZONE}"
-              DOCKER_ENABLE_SECURITY: "false"
-              SECURITY_ENABLE_LOGIN: "false"
-              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "false"
-              DISABLE_ADDITIONAL_FEATURES: "true"
-              SYSTEM_ENABLEANALYTICS: "false"
-              SYSTEM_ENABLEPOSTHOG: "false"
-              SYSTEM_ENABLESCARF: "false"
+              AUTH_ENABLED: "true"
+              ANALYTICS_ENABLED: "false"
+              TRUST_PROXY: "true"
+              RATE_LIMIT_PER_MIN: "100"
+              DEFAULT_USERNAME: admin
+              DEFAULT_PASSWORD: "${SECRET_SNAPOTTER_DEFAULT_PASSWORD}"
+              DB_PATH: /data/snapotter.db
+              FILES_STORAGE_PATH: /data/files
+              WORKSPACE_PATH: /tmp/workspace
+              EXTERNAL_URL: "https://snapotter.${SECRET_PUBLIC_DOMAIN}"
+              COOKIE_SECRET: "${SECRET_SNAPOTTER_COOKIE_SECRET}"
+              OIDC_ENABLED: "true"
+              OIDC_ISSUER_URL: "https://auth.${SECRET_PUBLIC_DOMAIN}"
+              OIDC_CLIENT_ID: snapotter
+              OIDC_CLIENT_SECRET: "${SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET}"
+              OIDC_PROVIDER_NAME: Authelia
+              OIDC_SCOPES: "openid profile email"
+              OIDC_AUTO_CREATE_USERS: "true"
+              OIDC_AUTO_LINK_USERS: "true"
+              OIDC_DEFAULT_ROLE: user
+              OIDC_USERNAME_CLAIM: preferred_username
             resources:
               requests:
-                cpu: 1m
+                cpu: 100m
                 memory: 1Gi
               limits:
-                memory: 1536Mi
+                memory: 4Gi
             probes:
               liveness: &probe
                 enabled: true
                 type: HTTP
-                path: /api/v1/info/status
+                path: /api/v1/health
               readiness: *probe
               startup:
                 <<: *probe
                 spec:
-                  failureThreshold: 90
+                  failureThreshold: 60
                   periodSeconds: 5

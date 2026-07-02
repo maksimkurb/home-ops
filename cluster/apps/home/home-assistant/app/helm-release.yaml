@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-assistant/home-assistant
-              tag: 2026.6.0
+              tag: 2026.6.4
             env:
               TZ: "${TIMEZONE}"
               # https://github.com/blakeblackshear/frigate-hass-integration/issues/762
@@ -110,10 +110,10 @@ spec:
             resources:
               requests:
                 cpu: 1m
-                memory: 100Mi
+                memory: 768Mi
               limits:
                 cpu: 1000m
-                memory: 4000Mi
+                memory: 2Gi
             securityContext:
               privileged: true
         initContainers:

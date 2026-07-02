@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "$ROOT" ]; then
+  ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+
+VENV="${PRE_COMMIT_VENV:-$ROOT/.venv}"
+PYTHON="$VENV/bin/python"
+PRE_COMMIT="$VENV/bin/pre-commit"
+
+export UV_CACHE_DIR="${UV_CACHE_DIR:-$ROOT/.task/uv-cache}"
+export PRE_COMMIT_HOME="${PRE_COMMIT_HOME:-$ROOT/.task/pre-commit-cache}"
+
+die() {
+  printf 'pre-commit bootstrap failed: %s\n' "$*" >&2
+  exit 1
+}
+
+ensure_pre_commit() {
+  if [ -x "$PRE_COMMIT" ]; then
+    return
+  fi
+
+  if command -v uv >/dev/null 2>&1; then
+    uv venv --allow-existing "$VENV"
+    uv pip install --python "$PYTHON" pre-commit
+    return
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 -m venv "$VENV" || die "python3 is present, but venv is unavailable. Install uv in your user profile and rerun this command."
+    "$PYTHON" -m pip install --upgrade pip
+    "$PYTHON" -m pip install pre-commit
+    return
+  fi
+
+  die "install uv or python3, then rerun this command."
+}
+
+command="${1:-run}"
+if [ "$#" -gt 0 ]; then
+  shift
+fi
+
+case "$command" in
+  ensure)
+    ensure_pre_commit
+    ;;
+  install)
+    ensure_pre_commit
+    if [ "$(git -C "$ROOT" config --get core.hooksPath || true)" != ".githooks" ]; then
+      git -C "$ROOT" config core.hooksPath .githooks
+    fi
+    cd "$ROOT"
+    "$PRE_COMMIT" install-hooks
+    ;;
+  update)
+    ensure_pre_commit
+    cd "$ROOT"
+    exec "$PRE_COMMIT" autoupdate "$@"
+    ;;
+  run)
+    ensure_pre_commit
+    cd "$ROOT"
+    exec "$PRE_COMMIT" run --all-files "$@"
+    ;;
+  exec)
+    ensure_pre_commit
+    cd "$ROOT"
+    exec "$PRE_COMMIT" "$@"
+    ;;
+  *)
+    die "unknown command '$command'"
+    ;;
+esac

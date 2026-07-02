@@ -69,11 +69,12 @@ spec:
           main:
             image:
               repository: gristlabs/grist
-              tag: 1.7.14
+              tag: 1.7.16
             env:
               TZ: "${TIMEZONE}"
               GRIST_SANDBOX_FLAVOR: gvisor
               APP_HOME_URL: "https://${APP}.${SECRET_PUBLIC_DOMAIN}"
+              GRIST_SERVE_SAME_ORIGIN: true
               GRIST_SINGLE_ORG: "homelab"
               GRIST_TELEMETRY_LEVEL: "off"
               GRIST_DOCS_MINIO_USE_SSL: "0"
@@ -87,6 +88,9 @@ spec:
               GRIST_OIDC_IDP_CLIENT_ID: grist
               GRIST_OIDC_IDP_SKIP_END_SESSION_ENDPOINT: true
               GRIST_OIDC_SP_IGNORE_EMAIL_VERIFIED: true
+              GRIST_MCP_ENABLED: true
+              GRIST_ENABLE_OIDC_SERVER: true
+              GRIST_OIDC_CIMD_ALLOWED_HOSTS: claude.ai,chatgpt.com,localhost,127.0.0.1
             envFrom:
               - secretRef:
                   name: grist-env
@@ -117,7 +121,7 @@ spec:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 8.1.8
+              tag: 9.1.0
             resources:
               requests:
                 cpu: 5m

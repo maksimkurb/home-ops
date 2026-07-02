@@ -4,7 +4,7 @@
       "description": "Auto merge container digests",
       "matchDatasources": ["docker"],
       "automerge": true,
-      "automergeType": "branch",
+      "automergeType": "pr",
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["digest"],
       "matchPackagePattern": ["ghcr.io/k8s-at-home","ghcr.io/onedr0p"]
@@ -13,24 +13,31 @@
       "description": "Auto merge containers",
       "matchDatasources": ["docker"],
       "automerge": true,
-      "automergeType": "branch",
+      "automergeType": "pr",
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "description": "Auto merge GitHub Actions",
-      "matchDatasources": ["github-tags"],
+      "matchManagers": ["github-actions"],
       "automerge": true,
-      "automergeType": "branch",
+      "automergeType": "pr",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchPackageNames": ["lycheeverse/lychee-action", "renovatebot/github-action"]
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "description": "Auto merge Ansible Galaxy dependencies",
+      "matchDatasources": ["galaxy", "galaxy-collection"],
+      "automerge": true,
+      "automergeType": "pr",
+      "requiredStatusChecks": null,
+      "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "description": "Auto merge Helm charts",
       "matchDatasources": ["helm"],
       "automerge": true,
-      "automergeType": "branch",
+      "automergeType": "pr",
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["minor", "patch"]
     },

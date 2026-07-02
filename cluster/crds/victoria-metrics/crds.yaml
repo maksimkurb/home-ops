@@ -9,12 +9,12 @@ spec:
   url: https://github.com/VictoriaMetrics/helm-charts.git
   ref:
     # renovate: registryUrl=https://github.com/VictoriaMetrics/helm-charts chart=victoria-metrics-k8s-stack
-    tag: victoria-metrics-k8s-stack-0.19.1
+    tag: victoria-metrics-k8s-stack-0.82.0
   ignore: |
     # exclude all
     /*
     # include crd directory
-    !/charts/victoria-metrics-k8s-stack/charts/crds/crds
+    !/charts/victoria-metrics-operator/charts/crds/crds
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
