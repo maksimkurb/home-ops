@@ -58,7 +58,7 @@ spec:
           app:
             image:
               repository: lscr.io/linuxserver/faster-whisper
-              tag: 3.1.0-gpu-legacy
+              tag: 3.3.1-gpu-legacy
             env:
               TZ: "${TIMEZONE}"
               WHISPER_LANG: "ru"
