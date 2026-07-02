@@ -6,5 +6,4 @@ resources:
   - cluster-issuers
   - local-path-provisioner
   # - rook-ceph
-  # - nfs-provisioner
   # - add-node-taints.yaml

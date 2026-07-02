@@ -6,7 +6,6 @@ resources:
   - cert-manager.yaml
   - downloads.yaml
   - ext-gateway.yaml
-  - falco-system.yaml
   - flux-system.yaml
   - home.yaml
   - kube-system.yaml

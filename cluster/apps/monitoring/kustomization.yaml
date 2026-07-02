@@ -4,11 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   # - generic-rules
-  # - loki
-  # - nodeexporter
-  # - ./kube-prometheus-stack/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana/ks.yaml
   - ./scrutiny/ks.yaml
-  # - vector
   - ./victoria-metrics-k8s-stack/ks.yaml
