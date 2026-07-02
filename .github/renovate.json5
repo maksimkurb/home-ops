@@ -23,6 +23,9 @@
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
+  "timezone": "UTC",
+  "platformAutomerge": false,
+  "automergeSchedule": ["after 5am and before 6am on saturday"],
   "commitBodyTable": true,
   "ignoreDeps": [
     "ghcr.io/fluxcd/helm-controller",
