@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "github>maksimkurb/home-ops//.github/renovate/base.json5"
+  ],
+  "platform": "github",
+  "username": "homeops-gh-bot[bot]",
+  "repositories": ["maksimkurb/home-ops"],
+  "onboarding": false,
+  "requireConfig": false,
+  "gitAuthor": "homeops-gh-bot[bot] <112959216+homeops-gh-bot[bot]@users.noreply.github.com>"
+}

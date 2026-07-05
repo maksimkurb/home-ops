@@ -26,6 +26,14 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
+      "description": "Auto merge GitHub releases and tags",
+      "matchDatasources": ["github-releases", "github-tags"],
+      "automerge": true,
+      "automergeType": "pr",
+      "requiredStatusChecks": null,
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
       "description": "Auto merge Ansible Galaxy dependencies",
       "matchDatasources": ["galaxy", "galaxy-collection"],
       "automerge": true,
