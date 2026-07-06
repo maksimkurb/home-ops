@@ -33,6 +33,7 @@ k3s_server:
   kubelet-arg:
     # Enables the kubelet to gracefully evict pods during a node shutdown
     - "feature-gates=GracefulNodeShutdown=true"
+    - "max-pods=200"
     - "resolv-conf=/run/systemd/resolve/resolv.conf"
   # Required to monitor kube-controller-manager with kube-prometheus-stack
   kube-controller-manager-arg:
