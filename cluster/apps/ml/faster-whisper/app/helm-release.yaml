@@ -74,14 +74,14 @@ spec:
                 && exec /command/s6-setuidgid abc python3 -m wyoming_faster_whisper
                 --uri tcp://0.0.0.0:10300
                 --device cuda
-                --model "${WHISPER_MODEL:-auto}"
-                --beam-size "${WHISPER_BEAM:-1}"
-                --language "${WHISPER_LANG:-auto}"
+                --model "$${WHISPER_MODEL:-auto}"
+                --beam-size "$${WHISPER_BEAM:-1}"
+                --language "$${WHISPER_LANG:-auto}"
                 --data-dir /config
                 --download-dir /config
                 --compute-type int8
-                ${DEBUG:+--debug}
-                ${LOCAL_ONLY:+--local-files-only}
+                $${DEBUG:+--debug}
+                $${LOCAL_ONLY:+--local-files-only}
             probes:
               readiness:
                 enabled: true
