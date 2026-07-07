@@ -83,5 +83,5 @@ spec:
                 nvidia.com/gpu: "1"
               limits:
                 cpu: 2000m
-                memory: 3Gi
+                memory: 8Gi
                 nvidia.com/gpu: "1"
