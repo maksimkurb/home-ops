@@ -62,7 +62,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               WHISPER_LANG: "ru"
-              WHISPER_MODEL: "large-v3-turbo"
+              WHISPER_MODEL: "bzikst/faster-whisper-large-v3-russian"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: all
             command:
