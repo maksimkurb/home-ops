@@ -48,13 +48,22 @@ spec:
         - qa3
         - qa4
       hsts: true
+      apiToken:
+        existingSecret: envrouter
+        existingSecretKey: api-token
+      trustedProxies:
+        - "${NETWORK_K8S_CLUSTER_CIDR}"
+        - "${NETWORK_BGP_SVC_RANGE}"
+        - "${SVC_NGINX_ADDR}/32"
       oidc:
         enabled: true
         issuer: "https://auth.${SECRET_PUBLIC_DOMAIN}"
         clientId:
-          value: envrouter
+          existingSecret: envrouter
+          existingSecretKey: oidc-client-id
         clientSecret:
-          value: "${SECRET_ENVROUTER_OAUTH_CLIENT_SECRET}"
+          existingSecret: envrouter
+          existingSecretKey: oidc-client-secret
         redirectUrl: "https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback"
 
     ingress:
