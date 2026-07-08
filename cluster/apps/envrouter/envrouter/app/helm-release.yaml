@@ -59,8 +59,8 @@ spec:
         enabled: true
         issuer: "https://auth.${SECRET_PUBLIC_DOMAIN}"
         clientId:
-          existingSecret: envrouter
-          existingSecretKey: oidc-client-id
+          existingConfigMap: envrouter
+          existingConfigMapKey: oidc-client-id
         clientSecret:
           existingSecret: envrouter
           existingSecretKey: oidc-client-secret
