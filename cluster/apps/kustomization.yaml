@@ -6,6 +6,7 @@ resources:
   - default
   - database
   - downloads
+  - envrouter
   - flux-system
   - home
   - kube-system

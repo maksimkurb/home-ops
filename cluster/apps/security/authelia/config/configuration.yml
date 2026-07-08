@@ -313,14 +313,14 @@ identity_providers:
 
       - client_id: 'envrouter'
         client_name: 'EnvRouter'
-        client_secret: 'SECRET'
+        client_secret: '${SECRET_ENVROUTER_OAUTH_CLIENT_SECRET}'
         public: false
         require_pkce: false
         claims_policy: 'default'
         authorization_policy: 'one_factor'
         pre_configured_consent_duration: 1y
         redirect_uris:
-          - 'http://localhost:3001/auth/callback'
+          - 'https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback'
         scopes:
           - openid
           - profile
