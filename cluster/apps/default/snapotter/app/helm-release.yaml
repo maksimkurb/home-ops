@@ -101,7 +101,7 @@ spec:
           main:
             image:
               repository: ghcr.io/snapotter-hq/snapotter
-              tag: 1.17.2
+              tag: 2.0.0
             env:
               TZ: "${TIMEZONE}"
               AUTH_ENABLED: "true"
