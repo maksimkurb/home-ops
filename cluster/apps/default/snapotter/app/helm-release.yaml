@@ -118,6 +118,13 @@ spec:
             image:
               repository: ghcr.io/snapotter-hq/snapotter
               tag: 2.0.0
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - >-
+                export DATABASE_URL="postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@homelab-pgsql.database.svc.cluster.local:5432/snapotter";
+                exec entrypoint.sh ./node_modules/.bin/tsx --import ./src/tracing.ts --import ./src/instrument.ts src/index.ts
             env:
               TZ: "${TIMEZONE}"
               AUTH_ENABLED: "true"
@@ -136,7 +143,6 @@ spec:
                   secretKeyRef:
                     name: default.snapotter.homelab-pgsql.credentials.postgresql.acid.zalan.do
                     key: password
-              DATABASE_URL: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/snapotter"
               REDIS_URL: "redis://snapotter-redis:6379"
               FILES_STORAGE_PATH: /data/files
               WORKSPACE_PATH: /tmp/workspace
