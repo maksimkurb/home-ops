@@ -65,6 +65,7 @@ spec:
     messaging.mas: []
     messaging.synapse: []
     default.plik: []
+    default.snapotter: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -94,6 +95,7 @@ spec:
     mas: messaging.mas
     synapse: messaging.synapse
     plik: default.plik
+    snapotter: default.snapotter
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true

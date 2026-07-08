@@ -35,6 +35,11 @@ spec:
         ports:
           http:
             port: &port 1349
+      redis:
+        controller: redis
+        ports:
+          redis:
+            port: 6379
 
     ingress:
       main:
@@ -76,13 +81,24 @@ spec:
       data:
         enabled: true
         existingClaim: snapotter-data
-        globalMounts:
-          - path: /data
+        advancedMounts:
+          main:
+            main:
+              - path: /data
       workspace:
         enabled: true
         type: emptyDir
-        globalMounts:
-          - path: /tmp/workspace
+        advancedMounts:
+          main:
+            main:
+              - path: /tmp/workspace
+      redis-data:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          redis:
+            redis:
+              - path: /data
 
     defaultPodOptions:
       securityContext:
@@ -110,7 +126,18 @@ spec:
               RATE_LIMIT_PER_MIN: "100"
               DEFAULT_USERNAME: admin
               DEFAULT_PASSWORD: "${SECRET_SNAPOTTER_DEFAULT_PASSWORD}"
-              DB_PATH: /data/snapotter.db
+              POSTGRES_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.snapotter.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.snapotter.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              DATABASE_URL: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/snapotter"
+              REDIS_URL: "redis://snapotter-redis:6379"
               FILES_STORAGE_PATH: /data/files
               WORKSPACE_PATH: /tmp/workspace
               EXTERNAL_URL: "https://snapotter.${SECRET_PUBLIC_DOMAIN}"
@@ -142,3 +169,15 @@ spec:
                 spec:
                   failureThreshold: 60
                   periodSeconds: 5
+      redis:
+        containers:
+          redis:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.0
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
