@@ -16,7 +16,7 @@
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
   "timezone": "UTC",
-  "platformAutomerge": true,
+  "platformAutomerge": false,
   "commitBodyTable": true,
   "ignoreDeps": [
     "ghcr.io/fluxcd/helm-controller",
