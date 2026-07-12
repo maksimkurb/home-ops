@@ -9,6 +9,5 @@
   "repositories": ["maksimkurb/home-ops"],
   "onboarding": false,
   "requireConfig": false,
-  "gitAuthor": "homeops-gh-bot[bot] <112959216+homeops-gh-bot[bot]@users.noreply.github.com>",
-  "automergeSchedule": ["after 5am and before 11am on saturday"]
+  "gitAuthor": "homeops-gh-bot[bot] <112959216+homeops-gh-bot[bot]@users.noreply.github.com>"
 }
