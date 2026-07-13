@@ -1,11 +1,11 @@
 ---
 collections:
   - name: community.general
-    version: 13.0.1
+    version: 13.1.0
   - name: community.sops
-    version: 2.3.0
+    version: 2.4.0
   - name: ansible.posix
-    version: 2.2.1
+    version: 2.2.2
 roles:
   - src: xanmanning.k3s
     version: v3.6.4

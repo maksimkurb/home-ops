@@ -4,7 +4,7 @@
       "description": "Auto merge container digests",
       "matchDatasources": ["docker"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["digest"],
       "matchPackagePattern": ["ghcr.io/k8s-at-home","ghcr.io/onedr0p"]
@@ -13,50 +13,62 @@
       "description": "Auto merge containers",
       "matchDatasources": ["docker"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major updates",
+      "groupSlug": "all-non-major"
     },
     {
       "description": "Auto merge GitHub Actions",
       "matchManagers": ["github-actions"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major updates",
+      "groupSlug": "all-non-major"
     },
     {
       "description": "Auto merge GitHub releases and tags",
       "matchDatasources": ["github-releases", "github-tags"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major updates",
+      "groupSlug": "all-non-major"
     },
     {
       "description": "Auto merge Ansible Galaxy dependencies",
       "matchDatasources": ["galaxy", "galaxy-collection"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major updates",
+      "groupSlug": "all-non-major"
     },
     {
       "description": "Auto merge Helm charts",
       "matchDatasources": ["helm"],
       "automerge": true,
-      "automergeType": "pr",
+      "automergeType": "branch",
       "requiredStatusChecks": null,
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major updates",
+      "groupSlug": "all-non-major"
     },
     {
       "description": "Disable auto merge for gpu-operator",
       "matchPackageNames": ["gpu-operator"],
+      "groupName": null,
       "automerge": false
     },
     {
       "description": "Disable auto merge for n8n",
       "matchPackageNames": ["ghcr.io/n8n-io/n8n"],
+      "groupName": null,
       "automerge": false
     }
   ]

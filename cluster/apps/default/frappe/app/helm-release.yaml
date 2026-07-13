@@ -1,0 +1,277 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    disableWait: true
+    remediation:
+      retries: 5
+    timeout: 15m
+  upgrade:
+    cleanupOnFail: true
+    disableWait: true
+    remediation:
+      retries: 5
+    timeout: 15m
+  values:
+    global:
+      nameOverride: ${APP}
+
+    defaultPodOptions:
+      imagePullSecrets:
+        - name: frappe-ghcr
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          configurator:
+            image: &frappeImage
+              repository: ghcr.io/maksimkurb/frappe-kazip
+              tag: 1.0.5
+            command:
+              - bash
+              - -c
+            args:
+              - |-
+                set -euo pipefail
+                ls -1 apps > sites/apps.txt
+                if [ ! -f sites/common_site_config.json ]; then
+                  printf '{}\n' > sites/common_site_config.json
+                fi
+                bench set-config -g db_host homelab-pgsql.database.svc.cluster.local
+                bench set-config -gp db_port 5432
+                bench set-config -g redis_cache redis://frappe-redis:6379
+                bench set-config -g redis_queue redis://frappe-redis:6379
+                bench set-config -g redis_socketio redis://frappe-redis:6379
+                bench set-config -gp socketio_port 9000
+                bench set-config -g chromium_path /usr/bin/chromium-headless-shell
+                bench migrate
+        containers:
+          backend:
+            image: *frappeImage
+            env:
+              GUNICORN_THREADS: "4"
+              GUNICORN_WORKERS: "2"
+              GUNICORN_TIMEOUT: "120"
+              SITE_NAME: erp.${SECRET_PUBLIC_DOMAIN}
+              POSTGRES_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.frappe.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: default.frappe.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: frappe
+                    key: admin-password
+              ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: frappe
+                    key: encryption-key
+            probes:
+              liveness: &backendTcpProbe
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8000
+                  initialDelaySeconds: 30
+                  timeoutSeconds: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/method/ping
+                    port: 8000
+                    httpHeaders:
+                      - name: Host
+                        value: erp.${SECRET_PUBLIC_DOMAIN}
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+              startup:
+                <<: *backendTcpProbe
+                spec:
+                  failureThreshold: 60
+                  periodSeconds: 5
+                  tcpSocket:
+                    port: 8000
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+          frontend:
+            image: *frappeImage
+            command:
+              - nginx-entrypoint.sh
+            env:
+              BACKEND: 127.0.0.1:8000
+              SOCKETIO: 127.0.0.1:9000
+              FRAPPE_SITE_NAME_HEADER: erp.${SECRET_PUBLIC_DOMAIN}
+              UPSTREAM_REAL_IP_ADDRESS: 0.0.0.0/0
+              UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
+              UPSTREAM_REAL_IP_RECURSIVE: "on"
+              PROXY_READ_TIMEOUT: "120"
+              CLIENT_MAX_BODY_SIZE: 50m
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+          websocket:
+            image: *frappeImage
+            command:
+              - node
+              - /home/frappe/frappe-bench/apps/frappe/socketio.js
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+          queue-short:
+            image: *frappeImage
+            command:
+              - bench
+              - worker
+              - --queue
+              - short,default
+            resources: &workerResources
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+          queue-long:
+            image: *frappeImage
+            command:
+              - bench
+              - worker
+              - --queue
+              - long,default,short
+            resources: *workerResources
+          scheduler:
+            image: *frappeImage
+            command:
+              - bench
+              - schedule
+            resources:
+              requests:
+                cpu: 25m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+      redis:
+        containers:
+          redis:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.0
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+            targetPort: 8080
+      redis:
+        controller: redis
+        ports:
+          redis:
+            port: 6379
+
+    ingress:
+      main:
+        enabled: true
+        className: nginx
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          nginx.ingress.kubernetes.io/proxy-body-size: 50m
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Personal Services
+          gethomepage.dev/icon: frappe
+          gethomepage.dev/name: Frappe
+        hosts:
+          - host: erp.${SECRET_PUBLIC_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+
+    persistence:
+      sites:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        advancedMounts:
+          main:
+            configurator:
+              - path: /home/frappe/frappe-bench/sites
+            backend:
+              - path: /home/frappe/frappe-bench/sites
+            frontend:
+              - path: /home/frappe/frappe-bench/sites
+            websocket:
+              - path: /home/frappe/frappe-bench/sites
+            queue-short:
+              - path: /home/frappe/frappe-bench/sites
+            queue-long:
+              - path: /home/frappe/frappe-bench/sites
+            scheduler:
+              - path: /home/frappe/frappe-bench/sites
+      redis:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        advancedMounts:
+          redis:
+            redis:
+              - path: /data
