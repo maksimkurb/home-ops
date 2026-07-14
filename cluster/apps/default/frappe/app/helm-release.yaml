@@ -126,7 +126,7 @@ spec:
                     port: 8000
             resources:
               requests:
-                cpu: 100m
+                cpu: 500m
                 memory: 512Mi
               limits:
                 memory: 2Gi
@@ -156,7 +156,7 @@ spec:
               - /home/frappe/frappe-bench/apps/frappe/socketio.js
             resources:
               requests:
-                cpu: 25m
+                cpu: 50m
                 memory: 128Mi
               limits:
                 memory: 512Mi
@@ -169,7 +169,7 @@ spec:
               - short,default
             resources: &workerResources
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 256Mi
               limits:
                 memory: 1Gi
@@ -188,7 +188,7 @@ spec:
               - schedule
             resources:
               requests:
-                cpu: 25m
+                cpu: 50m
                 memory: 256Mi
               limits:
                 memory: 1Gi
@@ -201,7 +201,7 @@ spec:
               tag: 9.1.0
             resources:
               requests:
-                cpu: 10m
+                cpu: 50m
                 memory: 64Mi
               limits:
                 memory: 256Mi
