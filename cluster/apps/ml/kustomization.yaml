@@ -5,4 +5,3 @@ resources:
   - namespace.yaml
   - ./faster-whisper/ks.yaml
   - ./mcphub/ks.yaml
-  - ./mcpjungle/ks.yaml
