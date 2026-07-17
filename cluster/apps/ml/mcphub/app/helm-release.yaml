@@ -1,0 +1,130 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /data
+
+    controllers:
+      app:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: samanhappy/mcphub
+              tag: 1.0.24
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE_FAILSAFE}"
+              NODE_ENV: production
+              PORT: "3000"
+              USE_DB: "false"
+              MCPHUB_SETTING_PATH: /data/mcp_settings.json
+              INSTALL_BASE_URL: "https://mcphub.${SECRET_PRIVATE_DOMAIN}"
+              ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: ADMIN_PASSWORD
+              JWT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: JWT_SECRET
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3000
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  failureThreshold: 6
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3000
+                  periodSeconds: 10
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+
+    service:
+      app:
+        controller: app
+        ports:
+          http:
+            port: &port 3000
+
+    ingress:
+      app:
+        enabled: true
+        className: "nginx-intra"
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+        hosts:
+          - host: "mcphub.${SECRET_PRIVATE_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: *port
