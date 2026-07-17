@@ -152,6 +152,8 @@ spec:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: N8N_ENCRYPTION_KEY
+              CODEX_BINARY: /home/node/.n8n/nodes/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex
+              CODEX_HOME: /home/node/.codex
             probes:
               liveness:
                 enabled: true
