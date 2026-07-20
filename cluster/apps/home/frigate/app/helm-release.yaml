@@ -155,7 +155,7 @@ spec:
                 nvidia.com/gpu: "1"
               limits:
                 cpu: 4000m
-                memory: 5Gi
+                memory: 6Gi
                 nvidia.com/gpu: "1"
             probes:
               liveness:

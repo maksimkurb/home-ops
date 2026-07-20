@@ -139,6 +139,9 @@ spec:
       enabled: true
       spec:
         replicaCount: 1
+        resources:
+          limits:
+            memory: 2Gi
         extraArgs:
           dedup.minScrapeInterval: "60s"
         storage:
