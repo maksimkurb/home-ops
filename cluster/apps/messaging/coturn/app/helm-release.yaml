@@ -156,3 +156,270 @@ spec:
           turn-relay-49170:
             port: 49170
             protocol: UDP
+          turn-relay-49171:
+            port: 49171
+            protocol: UDP
+          turn-relay-49172:
+            port: 49172
+            protocol: UDP
+          turn-relay-49173:
+            port: 49173
+            protocol: UDP
+          turn-relay-49174:
+            port: 49174
+            protocol: UDP
+          turn-relay-49175:
+            port: 49175
+            protocol: UDP
+          turn-relay-49176:
+            port: 49176
+            protocol: UDP
+          turn-relay-49177:
+            port: 49177
+            protocol: UDP
+          turn-relay-49178:
+            port: 49178
+            protocol: UDP
+          turn-relay-49179:
+            port: 49179
+            protocol: UDP
+          turn-relay-49180:
+            port: 49180
+            protocol: UDP
+          turn-relay-49181:
+            port: 49181
+            protocol: UDP
+          turn-relay-49182:
+            port: 49182
+            protocol: UDP
+          turn-relay-49183:
+            port: 49183
+            protocol: UDP
+          turn-relay-49184:
+            port: 49184
+            protocol: UDP
+          turn-relay-49185:
+            port: 49185
+            protocol: UDP
+          turn-relay-49186:
+            port: 49186
+            protocol: UDP
+          turn-relay-49187:
+            port: 49187
+            protocol: UDP
+          turn-relay-49188:
+            port: 49188
+            protocol: UDP
+          turn-relay-49189:
+            port: 49189
+            protocol: UDP
+          turn-relay-49190:
+            port: 49190
+            protocol: UDP
+          turn-relay-49191:
+            port: 49191
+            protocol: UDP
+          turn-relay-49192:
+            port: 49192
+            protocol: UDP
+          turn-relay-49193:
+            port: 49193
+            protocol: UDP
+          turn-relay-49194:
+            port: 49194
+            protocol: UDP
+          turn-relay-49195:
+            port: 49195
+            protocol: UDP
+          turn-relay-49196:
+            port: 49196
+            protocol: UDP
+          turn-relay-49197:
+            port: 49197
+            protocol: UDP
+          turn-relay-49198:
+            port: 49198
+            protocol: UDP
+          turn-relay-49199:
+            port: 49199
+            protocol: UDP
+          turn-relay-49200:
+            port: 49200
+            protocol: UDP
+          turn-relay-49201:
+            port: 49201
+            protocol: UDP
+          turn-relay-49202:
+            port: 49202
+            protocol: UDP
+          turn-relay-49203:
+            port: 49203
+            protocol: UDP
+          turn-relay-49204:
+            port: 49204
+            protocol: UDP
+          turn-relay-49205:
+            port: 49205
+            protocol: UDP
+          turn-relay-49206:
+            port: 49206
+            protocol: UDP
+          turn-relay-49207:
+            port: 49207
+            protocol: UDP
+          turn-relay-49208:
+            port: 49208
+            protocol: UDP
+          turn-relay-49209:
+            port: 49209
+            protocol: UDP
+          turn-relay-49210:
+            port: 49210
+            protocol: UDP
+          turn-relay-49211:
+            port: 49211
+            protocol: UDP
+          turn-relay-49212:
+            port: 49212
+            protocol: UDP
+          turn-relay-49213:
+            port: 49213
+            protocol: UDP
+          turn-relay-49214:
+            port: 49214
+            protocol: UDP
+          turn-relay-49215:
+            port: 49215
+            protocol: UDP
+          turn-relay-49216:
+            port: 49216
+            protocol: UDP
+          turn-relay-49217:
+            port: 49217
+            protocol: UDP
+          turn-relay-49218:
+            port: 49218
+            protocol: UDP
+          turn-relay-49219:
+            port: 49219
+            protocol: UDP
+          turn-relay-49220:
+            port: 49220
+            protocol: UDP
+          turn-relay-49221:
+            port: 49221
+            protocol: UDP
+          turn-relay-49222:
+            port: 49222
+            protocol: UDP
+          turn-relay-49223:
+            port: 49223
+            protocol: UDP
+          turn-relay-49224:
+            port: 49224
+            protocol: UDP
+          turn-relay-49225:
+            port: 49225
+            protocol: UDP
+          turn-relay-49226:
+            port: 49226
+            protocol: UDP
+          turn-relay-49227:
+            port: 49227
+            protocol: UDP
+          turn-relay-49228:
+            port: 49228
+            protocol: UDP
+          turn-relay-49229:
+            port: 49229
+            protocol: UDP
+          turn-relay-49230:
+            port: 49230
+            protocol: UDP
+          turn-relay-49231:
+            port: 49231
+            protocol: UDP
+          turn-relay-49232:
+            port: 49232
+            protocol: UDP
+          turn-relay-49233:
+            port: 49233
+            protocol: UDP
+          turn-relay-49234:
+            port: 49234
+            protocol: UDP
+          turn-relay-49235:
+            port: 49235
+            protocol: UDP
+          turn-relay-49236:
+            port: 49236
+            protocol: UDP
+          turn-relay-49237:
+            port: 49237
+            protocol: UDP
+          turn-relay-49238:
+            port: 49238
+            protocol: UDP
+          turn-relay-49239:
+            port: 49239
+            protocol: UDP
+          turn-relay-49240:
+            port: 49240
+            protocol: UDP
+          turn-relay-49241:
+            port: 49241
+            protocol: UDP
+          turn-relay-49242:
+            port: 49242
+            protocol: UDP
+          turn-relay-49243:
+            port: 49243
+            protocol: UDP
+          turn-relay-49244:
+            port: 49244
+            protocol: UDP
+          turn-relay-49245:
+            port: 49245
+            protocol: UDP
+          turn-relay-49246:
+            port: 49246
+            protocol: UDP
+          turn-relay-49247:
+            port: 49247
+            protocol: UDP
+          turn-relay-49248:
+            port: 49248
+            protocol: UDP
+          turn-relay-49249:
+            port: 49249
+            protocol: UDP
+          turn-relay-49250:
+            port: 49250
+            protocol: UDP
+          turn-relay-49251:
+            port: 49251
+            protocol: UDP
+          turn-relay-49252:
+            port: 49252
+            protocol: UDP
+          turn-relay-49253:
+            port: 49253
+            protocol: UDP
+          turn-relay-49254:
+            port: 49254
+            protocol: UDP
+          turn-relay-49255:
+            port: 49255
+            protocol: UDP
+          turn-relay-49256:
+            port: 49256
+            protocol: UDP
+          turn-relay-49257:
+            port: 49257
+            protocol: UDP
+          turn-relay-49258:
+            port: 49258
+            protocol: UDP
+          turn-relay-49259:
+            port: 49259
+            protocol: UDP

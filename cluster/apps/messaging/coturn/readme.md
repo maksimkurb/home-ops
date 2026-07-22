@@ -9,7 +9,7 @@ It reuses:
 Service exposure:
 - `3478/TCP` and `3478/UDP` for TURN
 - `5349/TCP` and `5349/UDP` for TURN over TLS/DTLS
-- `49160-49170/UDP` for relay traffic
+- `49160-49259/UDP` for relay traffic
 
 Network assumption:
 - public `turn.<domain>` continues to resolve to the same public IP
