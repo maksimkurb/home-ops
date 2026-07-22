@@ -83,15 +83,21 @@ spec:
               - /bin/sh
               - -ec
               - |
+                # Cilium forwards the LoadBalancer IP to this pod. Coturn
+                # allocates relay sockets on the pod IP, so map that actual
+                # relay address to the public WAN address in ICE candidates.
                 exec turnserver \
                   -c /etc/coturn/turnserver.conf \
                   --static-auth-secret="$TURN_SHARED_SECRET" \
-                  --external-ip="$TURN_PUBLIC_IP/$TURN_SERVICE_IP"
+                  --external-ip="$TURN_PUBLIC_IP/$TURN_POD_IP"
             env:
               TZ: "${TIMEZONE}"
               TURN_SHARED_SECRET: "${SECRET_COTURN_KEY}"
               TURN_PUBLIC_IP: "${SECRET_COTURN_PUBLIC_IP}"
-              TURN_SERVICE_IP: "${SVC_COTURN_ADDR}"
+              TURN_POD_IP:
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
 
     service:
       coturn:
