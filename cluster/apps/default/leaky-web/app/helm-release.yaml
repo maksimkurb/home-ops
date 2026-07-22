@@ -44,6 +44,9 @@ spec:
               BROWSER_ICE_SERVERS_JSON: '[{"urls":["stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"]}]'
               SERVER_ICE_SERVERS: "stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"
               TURN_HOST: "turn.${SECRET_PUBLIC_DOMAIN}"
+              # Browser clients use TURN_HOST publicly. The server pod reaches
+              # Coturn through its ClusterIP service, avoiding public-NAT hairpinning.
+              TURN_SERVER_HOST: "coturn.messaging.svc.cluster.local"
               TURN_PORT: "3478"
               TURN_TLS_PORT: "5349"
               TURN_SHARED_SECRET: "${SECRET_COTURN_KEY}"
