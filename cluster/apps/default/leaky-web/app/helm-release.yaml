@@ -41,8 +41,8 @@ spec:
               TRUST_PROXY_HOPS: "1"
               # STUN remains useful for direct paths. TURN credentials are minted
               # by the app from Coturn's shared REST-auth secret.
-              BROWSER_ICE_SERVERS_JSON: '[{"urls":["stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"]}]'
-              SERVER_ICE_SERVERS: "stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"
+              BROWSER_ICE_SERVERS_JSON: '[{"urls":["stun:stun.l.google.com:19302"]}]'
+              SERVER_ICE_SERVERS: "stun:stun.l.google.com:19302"
               TURN_HOST: "turn.${SECRET_PUBLIC_DOMAIN}"
               # Browser clients use TURN_HOST publicly. The server pod reaches
               # Coturn through its ClusterIP service, avoiding public-NAT hairpinning.
@@ -54,6 +54,8 @@ spec:
               WEBRTC_PORT_MIN: "61000"
               WEBRTC_PORT_MAX: "61010"
               WEBRTC_ENABLE_ICE_TCP: "false"
+              # Use the public TURN relays exclusively. Pod-network host
+              # candidates (172.22.*) are not reachable from browsers.
               WEBRTC_ICE_TRANSPORT_POLICY: "all"
               SESSION_TTL_MINUTES: "30"
               DNS_ENABLED: "true"
