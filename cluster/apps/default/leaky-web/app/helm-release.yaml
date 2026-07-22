@@ -44,6 +44,7 @@ spec:
               BROWSER_ICE_SERVERS_JSON: '[{"urls":["stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"]}]'
               SERVER_ICE_SERVERS: "stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"
               TURN_HOST: "turn.${SECRET_PUBLIC_DOMAIN}"
+              TURN_SERVER_HOST: "${SVC_COTURN_ADDR}"
               TURN_PORT: "3478"
               TURN_TLS_PORT: "5349"
               TURN_SHARED_SECRET: "${SECRET_COTURN_KEY}"
