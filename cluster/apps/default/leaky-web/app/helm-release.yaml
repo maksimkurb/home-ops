@@ -39,8 +39,15 @@ spec:
               HOST: 0.0.0.0
               PORT: "8080"
               TRUST_PROXY_HOPS: "1"
+              # STUN remains useful for direct paths. TURN credentials are minted
+              # by the app from Coturn's shared REST-auth secret.
               BROWSER_ICE_SERVERS_JSON: '[{"urls":["stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"]}]'
               SERVER_ICE_SERVERS: "stun:turn.${SECRET_PUBLIC_DOMAIN}:3478"
+              TURN_HOST: "turn.${SECRET_PUBLIC_DOMAIN}"
+              TURN_PORT: "3478"
+              TURN_TLS_PORT: "5349"
+              TURN_SHARED_SECRET: "${SECRET_COTURN_KEY}"
+              TURN_CREDENTIAL_TTL_SECONDS: "3600"
               WEBRTC_PORT_MIN: "61000"
               WEBRTC_PORT_MAX: "61010"
               WEBRTC_ENABLE_ICE_TCP: "false"
