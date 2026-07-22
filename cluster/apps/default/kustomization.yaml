@@ -18,5 +18,4 @@ resources:
   - ./rustdesk/ks.yaml
   - ./orthanc/ks.yaml
   - ./plik/ks.yaml
-  - ./leaky-web/ks.yaml
   - ./frappe/ks.yaml
