@@ -80,7 +80,7 @@ spec:
           main:
             image:
               repository: ghcr.io/rustdesk/rustdesk-server
-              tag: 1.1.15
+              tag: 1.1.16
             command:
               - hbbs
               - -r localhost:21117
@@ -108,7 +108,7 @@ spec:
           relay:
             image:
               repository: ghcr.io/rustdesk/rustdesk-server
-              tag: 1.1.15
+              tag: 1.1.16
             command:
               - hbbr
             env:
