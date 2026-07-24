@@ -150,6 +150,8 @@ spec:
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/server-snippet: |
+            gzip off;
       media:
         storage:
           size: 20Gi
