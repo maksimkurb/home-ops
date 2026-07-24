@@ -48,7 +48,7 @@ spec:
           configurator:
             image: &frappeImage
               repository: ghcr.io/maksimkurb/frappe-kazip
-              tag: 1.0.11
+              tag: 1.0.17
             command:
               - bash
               - -c
@@ -198,7 +198,7 @@ spec:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.1.0
+              tag: 9.1.1
             resources:
               requests:
                 cpu: 50m
