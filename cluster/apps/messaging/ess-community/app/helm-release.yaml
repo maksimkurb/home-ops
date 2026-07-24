@@ -148,6 +148,8 @@ spec:
           secretKey: password
       ingress:
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
       media:
         storage:
           size: 20Gi
