@@ -14,11 +14,11 @@ nvidia:
 ubuntu:
   hosts:
     k3s-server: {}
-    vps-1: {}
+    # vps-1: {}
 
 vpn-server:
   hosts:
-    vps-1: {}
+    # vps-1: {}
     vps-3: {}
 
 scrutiny-collector:
@@ -27,8 +27,8 @@ scrutiny-collector:
 
 iperf3-stats:
   hosts:
-    vps-1:
-      iperf3_server_enabled: true
+    # vps-1:
+    #   iperf3_server_enabled: true
     vps-3:
       iperf3_server_enabled: true
     k3s-server:
@@ -41,10 +41,10 @@ iperf3-stats:
       iperf3_server_enabled: false
       iperf3_client_enabled: true
 
-reverse-proxy:
-  hosts:
-    vps-1: {}
+# reverse-proxy:
+#   hosts:
+#     vps-1: {}
 
-signal-tls-proxy:
-  hosts:
-    vps-1: {}
+# signal-tls-proxy:
+#   hosts:
+#     vps-1: {}

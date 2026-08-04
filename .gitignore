@@ -30,6 +30,7 @@ terraform.tfstate*
 # Sops
 .decrypted~*
 *.agekey
+*.sops.tmp.*
 # Kubernetes
 kubeconfig*
 talosconfig*

@@ -84,7 +84,7 @@ Use `task cluster:reconcile` only when intentionally applying Git state to the c
 
 ## Secrets
 
-SOPS files are encrypted repo state. Do not commit decrypted files or generated `.decrypted~*` files.
+SOPS files are encrypted repo state. Do not commit decrypted files or generated `.decrypted~*` or `*.sops.tmp.*` files.
 
 AI agents must not decrypt or edit encrypted SOPS files; if a secret change is required, they should print the cleartext snippet for the human operator to apply.
 
