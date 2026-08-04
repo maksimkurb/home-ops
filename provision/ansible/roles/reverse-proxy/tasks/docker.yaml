@@ -26,9 +26,21 @@
     mode: "0644"
 
 - name: Prepare / Add Docker Repository
-  apt_repository:
-    repo: "deb [arch={{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+  ansible.builtin.deb822_repository:
+    name: download_docker_com_linux_ubuntu
+    types: deb
+    uris: https://download.docker.com/linux/ubuntu
+    suites: "{{ ansible_distribution_release }}"
+    components: stable
+    architectures:
+      - "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+    signed_by: /etc/apt/keyrings/docker.asc
     state: present
+
+- name: Prepare / Remove legacy Docker repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/download_docker_com_linux_ubuntu.list
+    state: absent
 
 - name: Prepare / Remove distro Docker Compose packages
   apt:

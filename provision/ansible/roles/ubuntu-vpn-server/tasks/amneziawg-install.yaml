@@ -82,10 +82,20 @@
   become: true
 
 - name: Add AmneziaWG repository
-  apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/amnezia-ppa.asc] https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu {{ amneziawg_ppa_release | default(ansible_distribution_release) }} main"
+  ansible.builtin.deb822_repository:
+    name: amnezia
+    types: deb
+    uris: https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu
+    suites: "{{ amneziawg_ppa_release | default(ansible_distribution_release) }}"
+    components: main
+    signed_by: /etc/apt/keyrings/amnezia-ppa.asc
     state: present
-    filename: amnezia
+  become: true
+
+- name: Remove legacy AmneziaWG repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/amnezia.list
+    state: absent
   become: true
 
 - name: Install AmneziaWG

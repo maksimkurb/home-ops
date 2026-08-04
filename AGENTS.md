@@ -49,7 +49,7 @@ AI agents must not decrypt or modify encrypted SOPS files.
 - Never modify encrypted files matching `*.sops.yaml`, `*.sops.yml`, `*.sops.json`, `*.sops.toml`, or `*.sops.conf`.
 - Reading encrypted SOPS files is allowed only to inspect visible metadata, resource names, keys, and structure.
 - If a secret change is needed, leave encrypted files untouched and print the exact cleartext YAML, TOML, JSON, or key-value snippet for the user to apply manually.
-- Never commit decrypted temporary files such as `.decrypted~*`.
+- Never commit decrypted temporary files such as `.decrypted~*` or `*.sops.tmp.*`
 
 ## Validation
 
