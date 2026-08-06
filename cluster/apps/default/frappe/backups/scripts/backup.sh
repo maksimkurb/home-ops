@@ -18,6 +18,11 @@ esac
 
 cd /home/frappe/frappe-bench
 
+export PATH="/tools:${PATH}"
+export LD_LIBRARY_PATH="/tools/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
+echo "Using $(pg_dump --version)"
+
 retention_hours=$((BACKUP_RETENTION_DAYS * 24))
 retention_minutes=$((retention_hours * 60))
 bench set-config -gp keep_backups_for_hours "${retention_hours}"
