@@ -1,0 +1,132 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: frappe-backup
+spec:
+  interval: 30m
+  dependsOn:
+    - name: frappe
+    - name: minio
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      nameOverride: frappe-backup
+
+    defaultPodOptions:
+      imagePullSecrets:
+        - name: frappe-ghcr
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+    controllers:
+      main:
+        type: cronjob
+        cronjob:
+          schedule: "0 2 * * *"
+          timeZone: ${TIMEZONE}
+          concurrencyPolicy: Forbid
+          backoffLimit: 2
+          failedJobsHistory: 1
+          successfulJobsHistory: 3
+          startingDeadlineSeconds: 1800
+          ttlSecondsAfterFinished: 86400
+        initContainers:
+          backup:
+            image:
+              repository: ghcr.io/maksimkurb/frappe-kazip
+              tag: 1.0.17
+            command:
+              - /bin/bash
+              - /scripts/backup.sh
+            env:
+              SITE_NAME: erp.${SECRET_PUBLIC_DOMAIN}
+              BACKUP_RETENTION_DAYS: "30"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+        containers:
+          upload-and-prune:
+            image:
+              repository: quay.io/minio/mc
+              tag: RELEASE.2025-08-13T08-35-41Z
+            command:
+              - /bin/sh
+              - /scripts/upload-and-prune.sh
+            env:
+              SITE_NAME: erp.${SECRET_PUBLIC_DOMAIN}
+              S3_ENDPOINT: http://minio.default.svc.cluster.local:9000
+              S3_BUCKET: kazip-frappe
+              BACKUP_RETENTION_DAYS: "30"
+              MC_CONFIG_DIR: /tmp/.mc
+              MINIO_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: frappe-backup
+                    key: access-key
+              MINIO_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: frappe-backup
+                    key: secret-key
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 256Mi
+
+    persistence:
+      sites:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: frappe-sites
+        advancedMounts:
+          main:
+            backup:
+              - path: /home/frappe/frappe-bench/sites
+            upload-and-prune:
+              - path: /home/frappe/frappe-bench/sites
+      scripts:
+        enabled: true
+        type: configMap
+        name: frappe-backup-scripts
+        advancedMounts:
+          main:
+            backup:
+              - path: /scripts
+                readOnly: true
+            upload-and-prune:
+              - path: /scripts
+                readOnly: true
+      tmp:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          main:
+            upload-and-prune:
+              - path: /tmp

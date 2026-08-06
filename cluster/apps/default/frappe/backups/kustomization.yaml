@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - helm-release.yaml
+configMapGenerator:
+  - name: frappe-backup-scripts
+    files:
+      - backup.sh=scripts/backup.sh
+      - upload-and-prune.sh=scripts/upload-and-prune.sh
+    options:
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
+generatorOptions:
+  disableNameSuffixHash: true
