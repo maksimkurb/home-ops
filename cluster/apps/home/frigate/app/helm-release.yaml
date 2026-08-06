@@ -23,7 +23,15 @@ spec:
         reloader.stakater.com/auto: "true"
 
     service:
-      app:
+      main:
+        controller: frigate
+        forceRename: ${APP}
+        ports:
+          http:
+            port: 5000
+          authenticated:
+            port: 8971
+      streams:
         controller: frigate
         type: LoadBalancer
         externalTrafficPolicy: Local
@@ -31,8 +39,6 @@ spec:
         annotations:
           io.cilium/lb-ipam-ips: "${SVC_FRIGATE_ADDR}"
         ports:
-          http:
-            port: 5000
           go2rtc:
             port: 1984
             protocol: TCP
@@ -75,8 +81,8 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: frigate
-                  port: 5000
+                  identifier: main
+                  port: authenticated
         className: nginx
 
     persistence:

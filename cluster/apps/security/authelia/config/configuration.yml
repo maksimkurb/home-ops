@@ -20,6 +20,15 @@ access_control:
         - "^/.well-known/(.*)$"
         - "^/favicon\\\\.(.*)$"
 
+    - domain: "frigate.${SECRET_PUBLIC_DOMAIN}"
+      policy: one_factor
+      subject:
+        - "group:frigate-admin"
+        - "group:frigate-khoroshkina"
+
+    - domain: "frigate.${SECRET_PUBLIC_DOMAIN}"
+      policy: deny
+
 telemetry:
   metrics:
     enabled: true
