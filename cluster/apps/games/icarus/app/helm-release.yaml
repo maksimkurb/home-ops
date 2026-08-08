@@ -44,11 +44,11 @@ spec:
               tag: 1.0.0@sha256:a3d932c10dc042622ca234d8ac713e607b1f081701efe42e68f253c712ada67b
               pullPolicy: IfNotPresent
             env:
-              SERVER_NAME: Icarus Server
+              SERVER_NAME: "cubly server"
               SERVER_MAX_PLAYERS: "8"
               SERVER_PORT: "17777"
               SERVER_QUERYPORT: "27015"
-              SERVER_IP: "${CONFIG_ICARUS_ADDR}"
+              SERVER_IP: "${SVC_ICARUS_ADDR}"
               PUID: "4711"
               PGID: "4711"
               UPDATE_CRON: "*/30 * * * *"
@@ -67,7 +67,7 @@ spec:
         controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: "${CONFIG_ICARUS_ADDR}"
+        loadBalancerIP: "${SVC_ICARUS_ADDR}"
         ports:
           game:
             port: 17777
