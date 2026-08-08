@@ -29,7 +29,7 @@ spec:
     defaultPodOptions:
       terminationGracePeriodSeconds: 120
       securityContext:
-        fsGroup: 4711
+        fsGroup: 777
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
@@ -49,8 +49,8 @@ spec:
               SERVER_PORT: "17777"
               SERVER_QUERYPORT: "27015"
               SERVER_IP: "${SVC_ICARUS_ADDR}"
-              PUID: "4711"
-              PGID: "4711"
+              PUID: "777"
+              PGID: "777"
               UPDATE_CRON: "*/30 * * * *"
             envFrom:
               - secretRef:
