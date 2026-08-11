@@ -80,7 +80,7 @@ spec:
             dependsOn: postgres-client
             image:
               repository: ghcr.io/maksimkurb/frappe-kazip
-              tag: 1.0.19
+              tag: 1.0.21
             command:
               - /bin/bash
               - /scripts/backup.sh
