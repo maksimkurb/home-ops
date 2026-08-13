@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ./envrouter/ks.yaml
-  # - ./envrouter-example/ks.yaml
+  - ./envrouter-example/ks.yaml
