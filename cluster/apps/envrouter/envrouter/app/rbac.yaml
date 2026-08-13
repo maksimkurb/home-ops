@@ -1,0 +1,133 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: envrouter-workload-observer
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+    verbs:
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: dev1
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: dev2
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: dev3
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: dev4
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: qa1
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: qa2
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: qa3
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: envrouter-workload-observer
+  namespace: qa4
+subjects:
+  - kind: ServiceAccount
+    name: envrouter
+    namespace: envrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: envrouter-workload-observer

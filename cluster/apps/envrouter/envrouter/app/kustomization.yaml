@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - configmap.yaml
   - secret.sops.yaml
+  - rbac.yaml
   - helm-release.yaml
