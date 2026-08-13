@@ -6,7 +6,6 @@ metadata:
   name: &appname envrouter
   namespace: flux-system
 spec:
-  targetNamespace: envrouter
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
