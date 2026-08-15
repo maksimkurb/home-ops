@@ -56,7 +56,7 @@ spec:
           postgres-client:
             image:
               repository: docker.io/library/postgres
-              tag: 17.10-bookworm
+              tag: 17.11-bookworm
             command:
               - /bin/bash
               - -c
@@ -80,7 +80,7 @@ spec:
             dependsOn: postgres-client
             image:
               repository: ghcr.io/maksimkurb/frappe-kazip
-              tag: 1.0.21
+              tag: 1.0.22
             command:
               - /bin/bash
               - /scripts/backup.sh
