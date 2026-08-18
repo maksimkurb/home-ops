@@ -165,6 +165,38 @@ identity_providers:
       default:
         id_token: ['groups', 'email', 'preferred_username', 'name']
 
+    authorization_policies:
+      require_group_home:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:home'
+      require_group_home_two_factor:
+        default_policy: 'deny'
+        rules:
+          - policy: 'two_factor'
+            subject: 'group:home'
+      require_group_media:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:home'
+      require_group_files:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:home'
+      require_group_photos:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:home'
+      require_group_admins:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:home'
+
     clients:
       - client_id: grafana
         client_name: Grafana
@@ -348,6 +380,25 @@ identity_providers:
         pre_configured_consent_duration: 1y
         redirect_uris:
           - 'https://erp.${SECRET_PUBLIC_DOMAIN}/api/method/frappe.integrations.oauth2_logins.custom/authelia'
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        userinfo_signed_response_alg: 'none'
+        consent_mode: implicit
+        token_endpoint_auth_method: 'client_secret_post'
+
+      - client_id: 'stirling-pdf'
+        client_name: 'Stirling PDF'
+        client_secret: '${SECRET_STIRLING_PDF_OAUTH_CLIENT_SECRET}'
+        public: false
+        require_pkce: false
+        claims_policy: 'default'
+        authorization_policy: 'require_group_home_two_factor'
+        pre_configured_consent_duration: 1y
+        redirect_uris:
+          - 'https://stirling-pdf.${SECRET_PUBLIC_DOMAIN}/login/oauth2/code/authelia'
         scopes:
           - openid
           - profile
