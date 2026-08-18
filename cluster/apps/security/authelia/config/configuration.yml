@@ -406,6 +406,8 @@ identity_providers:
           - groups
         response_types:
           - 'code'
+        grant_types:
+          - 'authorization_code'
         userinfo_signed_response_alg: 'none'
         access_token_signed_response_alg: 'none'
         consent_mode: implicit
