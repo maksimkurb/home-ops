@@ -103,7 +103,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               DOCKER_ENABLE_SECURITY: "false"
-              SECURITY_ENABLE_LOGIN: "false"
+              SECURITY_ENABLE_LOGIN: "true"
               INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "false"
               DISABLE_ADDITIONAL_FEATURES: "true"
               SYSTEM_ENABLEANALYTICS: "false"

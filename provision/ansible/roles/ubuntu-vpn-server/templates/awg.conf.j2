@@ -1,13 +1,16 @@
 [Interface]
 PrivateKey = {{ interface.private_key }}
 #_PublicKey = {{ interface.public_key }}
+
 {% set nft_table = 'awg_' ~ interface_name %}
+{% set fw_tag = 'awg-' ~ interface_name %}
 
 Address = {{ interface.address_v4 }}/{{ interface.subnet_v4 }}{% if interface.address_v6 is defined %}, {{ interface.address_v6 }}/{{ interface.subnet_v6 }}{% endif %}
 
 {% if interface.port is defined %}
 ListenPort = {{ interface.port }}
 {% endif %}
+
 Jc = {{ interface.jc }}
 Jmin = {{ interface.jmin }}
 Jmax = {{ interface.jmax }}
@@ -19,59 +22,174 @@ H3 = {{ interface.h3 }}
 H4 = {{ interface.h4 }}
 
 {% if interface.mode == 'server' %}
-# Server mode: nftables-managed rules
+# -----------------------------------------------------------------------------
+# Server mode
+#
+# AWG-owned nftables table is used only for:
+#   - packet modification (MSS)
+#   - NAT
+#   - optional DNS redirect
+#
+# Firewall authorization is inserted into the host's actual INPUT/FORWARD
+# chains through iptables. On systems with iptables-nft this still creates
+# native nftables rules, but inside the firewall that owns the DROP policy.
+# -----------------------------------------------------------------------------
+
 PostUp = nft add table inet {{ nft_table }}
-PostUp = nft 'add chain inet {{ nft_table }} input { type filter hook input priority filter; policy accept; }'
-PostUp = nft 'add chain inet {{ nft_table }} forward { type filter hook forward priority filter; policy accept; }'
+
+# MSS adjustment must happen before normal filter chains.
+PostUp = nft 'add chain inet {{ nft_table }} forward_mangle { type filter hook forward priority mangle; policy accept; }'
+
+# NAT chains.
 PostUp = nft 'add chain inet {{ nft_table }} prerouting { type nat hook prerouting priority dstnat; policy accept; }'
 PostUp = nft 'add chain inet {{ nft_table }} postrouting { type nat hook postrouting priority srcnat; policy accept; }'
-PostUp = nft add rule inet {{ nft_table }} input udp dport {{ interface.port }} ct state new accept
-PostUp = nft add rule inet {{ nft_table }} forward iifname "{{ awg_public_interface }}" oifname "%i" accept
-PostUp = nft add rule inet {{ nft_table }} forward iifname "%i" accept
-PostUp = nft add rule inet {{ nft_table }} forward tcp flags syn tcp option maxseg size set 1280
+
+# Adjust MSS only for traffic actually crossing the AWG tunnel.
+PostUp = nft add rule inet {{ nft_table }} forward_mangle iifname "%i" tcp flags syn tcp option maxseg size set 1280
+PostUp = nft add rule inet {{ nft_table }} forward_mangle oifname "%i" tcp flags syn tcp option maxseg size set 1280
+
+# Masquerade VPN clients when leaving through the public interface.
 PostUp = nft add rule inet {{ nft_table }} postrouting oifname "{{ awg_public_interface }}" masquerade
+
+
+# -----------------------------------------------------------------------------
+# Host firewall integration
+# -----------------------------------------------------------------------------
+
+{% if interface.port is defined %}
+# Allow incoming AWG transport traffic.
+PostUp = iptables -w -C INPUT -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT 2>/dev/null || iptables -w -I INPUT 1 -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT
+{% endif %}
+
+# Allow traffic originating from AWG clients.
+#
+# Deliberately does not restrict oifname: this preserves support for
+# target_routing_table / policy routing where AWG traffic may leave through
+# an interface other than awg_public_interface.
+PostUp = iptables -w -C FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || iptables -w -I FORWARD 1 -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT
+
+# Allow traffic from the public interface towards AWG clients.
+# This preserves the behavior of the old nftables rule.
+PostUp = iptables -w -C FORWARD -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || iptables -w -I FORWARD 1 -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT
+
+
+{% if interface.address_v6 is defined %}
+# IPv6 firewall rules.
+
+{% if interface.port is defined %}
+PostUp = ip6tables -w -C INPUT -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT 2>/dev/null || ip6tables -w -I INPUT 1 -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT
+{% endif %}
+
+PostUp = ip6tables -w -C FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || ip6tables -w -I FORWARD 1 -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT
+
+PostUp = ip6tables -w -C FORWARD -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || ip6tables -w -I FORWARD 1 -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT
+{% endif %}
+
+
+# Optional DNS redirect.
 #PostUp = nft add rule inet {{ nft_table }} prerouting iifname "%i" udp dport 53 redirect to :53
 #PostUp = nft add rule inet {{ nft_table }} prerouting iifname "%i" tcp dport 53 redirect to :53
+
+
 {% if interface.target_routing_table is defined %}
+# Route packets arriving from AWG through the requested routing table.
 PostUp = ip rule add iif "%i" table {{ interface.target_routing_table }}
-PostDown = ip rule del iif "%i" table {{ interface.target_routing_table }}
+PostDown = ip rule del iif "%i" table {{ interface.target_routing_table }} 2>/dev/null || true
 {% endif %}
 
-PostDown = nft delete table inet {{ nft_table }}
+
+# -----------------------------------------------------------------------------
+# Cleanup
+# -----------------------------------------------------------------------------
+
+{% if interface.port is defined %}
+PostDown = iptables -w -D INPUT -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT 2>/dev/null || true
+{% endif %}
+
+PostDown = iptables -w -D FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || true
+PostDown = iptables -w -D FORWARD -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || true
+
+{% if interface.address_v6 is defined %}
+{% if interface.port is defined %}
+PostDown = ip6tables -w -D INPUT -i "{{ awg_public_interface }}" -p udp --dport {{ interface.port }} -m comment --comment "{{ fw_tag }}-input" -j ACCEPT 2>/dev/null || true
+{% endif %}
+
+PostDown = ip6tables -w -D FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || true
+PostDown = ip6tables -w -D FORWARD -i "{{ awg_public_interface }}" -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || true
+{% endif %}
+
+PostDown = nft delete table inet {{ nft_table }} 2>/dev/null || true
+
+
 {% elif interface.mode == 'client' %}
-# Client mode: nftables-managed forwarding for tunnel egress
-PostUp = nft add table inet {{ nft_table }}
-PostUp = nft 'add chain inet {{ nft_table }} forward { type filter hook forward priority filter; policy accept; }'
-PostUp = nft add rule inet {{ nft_table }} forward oifname "%i" accept
-PostUp = nft add rule inet {{ nft_table }} forward iifname "%i" accept
+# -----------------------------------------------------------------------------
+# Client mode
+#
+# Forwarding authorization must also be inserted into the firewall that owns
+# the FORWARD policy. A separate nftables base chain with "accept" is not
+# sufficient when another FORWARD chain has policy drop.
+# -----------------------------------------------------------------------------
 
-PostDown = nft delete table inet {{ nft_table }}
+# Allow forwarded traffic to enter the AWG tunnel.
+PostUp = iptables -w -C FORWARD -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || iptables -w -I FORWARD 1 -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT
+
+# Allow forwarded traffic coming from the AWG tunnel.
+PostUp = iptables -w -C FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || iptables -w -I FORWARD 1 -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT
+
+{% if interface.address_v6 is defined %}
+PostUp = ip6tables -w -C FORWARD -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || ip6tables -w -I FORWARD 1 -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT
+
+PostUp = ip6tables -w -C FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || ip6tables -w -I FORWARD 1 -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT
 {% endif %}
+
+
+# Cleanup.
+
+PostDown = iptables -w -D FORWARD -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || true
+PostDown = iptables -w -D FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || true
+
+{% if interface.address_v6 is defined %}
+PostDown = ip6tables -w -D FORWARD -o "%i" -m comment --comment "{{ fw_tag }}-forward-to-awg" -j ACCEPT 2>/dev/null || true
+PostDown = ip6tables -w -D FORWARD -i "%i" -m comment --comment "{{ fw_tag }}-forward-from-awg" -j ACCEPT 2>/dev/null || true
+{% endif %}
+
+{% endif %}
+
 
 {% if interface.routing_table is defined %}
+# -----------------------------------------------------------------------------
 # Custom routing table configuration
+# -----------------------------------------------------------------------------
+
 Table = {{ interface.routing_table }}
+
 {% if interface.routing_rules is defined %}
 {% for rule in interface.routing_rules %}
+
 {% if rule.from is defined %}
 PostUp = ip rule add from {{ rule.from }} table {{ rule.table | default(interface.routing_table) }}
-PostDown = ip rule del from {{ rule.from }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del from {{ rule.from }} table {{ rule.table | default(interface.routing_table) }} 2>/dev/null || true
 {% endif %}
+
 {% if rule.to is defined %}
 PostUp = ip rule add to {{ rule.to }} table {{ rule.table | default(interface.routing_table) }}
-PostDown = ip rule del to {{ rule.to }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del to {{ rule.to }} table {{ rule.table | default(interface.routing_table) }} 2>/dev/null || true
 {% endif %}
+
 {% if rule.iif is defined %}
 PostUp = ip rule add iif {{ rule.iif }} table {{ rule.table | default(interface.routing_table) }}
-PostDown = ip rule del iif {{ rule.iif }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del iif {{ rule.iif }} table {{ rule.table | default(interface.routing_table) }} 2>/dev/null || true
 {% endif %}
+
 {% if rule.oif is defined %}
 PostUp = ip rule add oif {{ rule.oif }} table {{ rule.table | default(interface.routing_table) }}
-PostDown = ip rule del oif {{ rule.oif }} table {{ rule.table | default(interface.routing_table) }}
+PostDown = ip rule del oif {{ rule.oif }} table {{ rule.table | default(interface.routing_table) }} 2>/dev/null || true
 {% endif %}
+
 {% endfor %}
 {% endif %}
 {% endif %}
+
 
 {% if interface.mode == 'server' %}
 {% for peer in interface.peers %}
@@ -79,10 +197,13 @@ PostDown = ip rule del oif {{ rule.oif }} table {{ rule.table | default(interfac
 [Peer]
 # _Name = {{ peer.name }}
 # _PrivateKey = {{ peer.private_key }}
+
 PublicKey = {{ peer.public_key }}
+
 {% if peer.preshared_key is defined %}
 PresharedKey = {{ peer.preshared_key }}
 {% endif %}
+
 AllowedIPs = {{ peer.address_v4 }}/{{ interface.clients_subnet_v4 | default('32') }}{% if peer.address_v6 is defined %}, {{ peer.address_v6 }}/{{ interface.clients_subnet_v6 | default('128') }}{% endif %}
 
 {% if peer.endpoint is defined %}
@@ -90,16 +211,22 @@ Endpoint = {{ peer.endpoint }}
 {% endif %}
 
 {% endfor %}
+
+
 {% elif interface.mode == 'client' %}
 
 [Peer]
 # Remote server
+
 PublicKey = {{ interface.remote_public_key }}
+
 {% if interface.remote_preshared_key is defined %}
 PresharedKey = {{ interface.remote_preshared_key }}
 {% endif %}
+
 AllowedIPs = {{ interface.remote_allowed_ips | default('0.0.0.0/0, ::/0') }}
 
 Endpoint = {{ interface.remote_endpoint }}
 PersistentKeepalive = 25
+
 {% endif %}
