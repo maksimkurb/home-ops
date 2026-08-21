@@ -9,7 +9,6 @@
       - nftables
       - python3
       - unzip
-      - wireguard-tools
     state: present
     update_cache: true
 

@@ -34,17 +34,21 @@ def public_key(private):
     return (x2 * pow(z2, P - 2, P) % P).to_bytes(32, "little")
 
 def load_junk_packets(items):
-    packets = {}
+    sources = []
     for item in items:
         try:
-            name, file_path = item.split("=", 1)
-            if name not in {"I1", "I2", "I3"}: raise ValueError
-            values = list(json.loads(Path(file_path).read_text()).get("packets", {}).values())
-            values = [value for value in values if isinstance(value, str) and value]
-            if values: packets[name] = secrets.choice(values)
+            _, file_path = item.split("=", 1)
+            source = json.loads(Path(file_path).read_text())
+            cycles = int(source["cycles"])
+            packets = source["packets"]
+            if cycles > 0 and all(isinstance(packets.get(f"I{number}_c{cycle}"), str) for cycle in range(1, cycles + 1) for number in range(1, 6)):
+                sources.append((cycles, packets))
         except (OSError, ValueError, json.JSONDecodeError):
             continue
-    return packets
+    if not sources: return {}
+    cycles, source = secrets.choice(sources)
+    cycle = secrets.randbelow(cycles) + 1
+    return {f"I{number}": source[f"I{number}_c{cycle}"] for number in range(1, 6)}
 
 def new_state(name, junk_list_files):
     private = bytearray(os.urandom(32)); private[0] &= 248; private[31] &= 127; private[31] |= 64; private = bytes(private)
@@ -59,6 +63,7 @@ def normalize(state, name):
             raise SystemExit(f"Conflicting per-host profiles in {name}; resolve before migration")
         state["profiles"] = profiles[0] if profiles else {}
     if not isinstance(state["profiles"], dict): raise SystemExit(f"Invalid profiles for {name}")
+    return not all(name in state.get("junk_packets", {}) for name in ("I1", "I2", "I3", "I4", "I5"))
 
 def parse_mappings(items):
     mappings = {}
@@ -119,11 +124,14 @@ def main():
     root = Path(args.state_root); root.mkdir(parents=True, exist_ok=True); path = root / f"{args.name}.json"; mappings = parse_mappings(args.profile_interface)
     with (root / ".lock").open("a+") as lock:
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX); changed = False
-        if path.exists(): state = json.loads(path.read_text()); normalize(state, args.name)
+        if path.exists():
+            state = json.loads(path.read_text()); missing_junk_packets = normalize(state, args.name)
+            if missing_junk_packets: state["junk_packets"] = load_junk_packets(args.junk_list_file)
         else:
             legacy = import_legacy(Path(args.legacy_state_root), args.name, mappings)
             state = new_state(args.name, args.junk_list_file) if legacy is None else {key: legacy[key] for key in ("name", "private_key", "public_key", "preshared_key")} | {"profiles": legacy["profiles"]}
             changed = True
+        if path.exists() and missing_junk_packets: changed = True
         profiles = state["profiles"]
         used = used_addresses(root, args.interface)
         current_profile = profiles.get(args.profile)

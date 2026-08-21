@@ -27,7 +27,7 @@
 - name: Copy supplied WARP config
   ansible.builtin.copy:
     src: "{{ warp_config_source }}"
-    dest: "/etc/wireguard/{{ vpn_warp_interface }}.conf"
+    dest: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     owner: root
     group: root
     mode: "0600"
@@ -60,7 +60,7 @@
   ansible.builtin.copy:
     remote_src: true
     src: /etc/wireguard/warp-state/wgcf-profile.conf
-    dest: "/etc/wireguard/{{ vpn_warp_interface }}.conf"
+    dest: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     owner: root
     group: root
     mode: "0600"
@@ -69,24 +69,31 @@
 
 - name: Remove DNS mutation from WARP profile
   ansible.builtin.lineinfile:
-    path: "/etc/wireguard/{{ vpn_warp_interface }}.conf"
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*DNS\s*='
     state: absent
 
 - name: Remove any existing WARP Table directive
   ansible.builtin.lineinfile:
-    path: "/etc/wireguard/{{ vpn_warp_interface }}.conf"
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*Table\s*='
     state: absent
 
 - name: Force WARP not to replace the main routing table
   ansible.builtin.lineinfile:
-    path: "/etc/wireguard/{{ vpn_warp_interface }}.conf"
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     insertafter: '^\[Interface\]'
     line: "Table = off"
 
-- name: Enable and restart WARP
+- name: Retire the standard WireGuard WARP unit
   ansible.builtin.systemd_service:
     name: "wg-quick@{{ vpn_warp_interface }}"
+    enabled: false
+    state: stopped
+  failed_when: false
+
+- name: Enable and restart WARP through AmneziaWG
+  ansible.builtin.systemd_service:
+    name: "awg-quick@{{ vpn_warp_interface }}"
     enabled: true
     state: restarted
