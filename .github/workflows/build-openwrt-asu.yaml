@@ -27,6 +27,7 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: containers/openwrt-asu
+          file: containers/openwrt-asu/Containerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/openwrt-asu:latest
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
