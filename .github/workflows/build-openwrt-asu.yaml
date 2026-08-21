@@ -1,0 +1,32 @@
+---
+name: Build OpenWrt ASU
+
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "containers/openwrt-asu/**"
+      - ".github/workflows/build-openwrt-asu.yaml"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v7
+        with:
+          context: containers/openwrt-asu
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/openwrt-asu:latest
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}

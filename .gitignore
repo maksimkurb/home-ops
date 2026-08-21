@@ -48,3 +48,4 @@ talos/cni/charts
 talos/pkgs/
 .codex
 .codegraph
+**/__pycache__

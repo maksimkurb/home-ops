@@ -1,0 +1,4 @@
+FROM docker.io/openwrt/asu:latest
+
+COPY patch_asu.py /tmp/patch_asu.py
+RUN python /tmp/patch_asu.py

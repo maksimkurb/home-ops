@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${APP}-config
+data:
+  asu.toml: |
+    upstream_url = "https://downloads.openwrt.org"
+    base_container = "ghcr.io/openwrt/imagebuilder"
+    redis_url = "redis://127.0.0.1:6379/0"
+
+    allow_defaults = false
+    log_level = "INFO"
+
+    build_ttl = "7d"
+    build_ttl_unversioned = "30m"
+    build_defaults_ttl = "30m"
+    build_failure_ttl = "5m"
+
+    max_pending_jobs = 5
+    job_timeout = "15m"
+
+    # Stock LuCI does not send custom feeds. The patched ASU image injects
+    # these feeds before validation and request-hash calculation.
+    repository_allow_list = [
+      "https://repo.keen-pbr.fyi/repository/stable/openwrt/",
+      "https://slava-shchipunov.github.io/awg-openwrt/",
+    ]
+
+    [server_repositories."24.10"]
+    keen-pbr = "https://repo.keen-pbr.fyi/repository/stable/openwrt/24.10.6/aarch64_cortex-a53"
+
+    [server_repositories."25.12"]
+    keen-pbr = "https://repo.keen-pbr.fyi/repository/stable/openwrt/25.12.2/aarch64_cortex-a53/packages.adb"
+    amneziawg = "https://slava-shchipunov.github.io/awg-openwrt/{version}/{target}/packages.adb"
+
+    [server_repository_keys]
+    "24.10" = [
+      "RWR06DuN3p3XkO7fQ1ERQqhwpQnASyu19nYKMtLaoPO9Gm0fC70NarXa",
+    ]
+    "25.12" = [
+      "-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfDfwi91j7jXK4UVbTpoYX4CmkESy\\nG6iQxZMKGNpm01sLl6OU7EWN8LHlGZDnJfjzJ441kIbhgIc6bTjNY9UHew==\\n-----END PUBLIC KEY-----",
+      "-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1t08qno7dxzSfXYaDBp50KU0k4N7\\n0fzYnk8gIltrG+jGVT/zb7sWbZKyQGOtpQbZjc3jTYIqgq/M/l2RRyCNsg==\\n-----END PUBLIC KEY-----",
+    ]

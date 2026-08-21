@@ -19,3 +19,4 @@ resources:
   - ./orthanc/ks.yaml
   - ./plik/ks.yaml
   - ./frappe/ks.yaml
+  - ./openwrt-asu/ks.yaml
