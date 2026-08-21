@@ -1,0 +1,9 @@
+enable_unattended_upgrades: false
+
+traefik_enabled: true
+vpn_wan_interface: ens3
+vpn_xui_enabled: false
+vpn_amnezia_enabled: true
+vpn_tgproxy_enabled: false
+vpn_tgproxy_mtproto_enabled: false
+amneziawg_ppa_release: noble
