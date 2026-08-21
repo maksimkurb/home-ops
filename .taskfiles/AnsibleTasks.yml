@@ -39,6 +39,11 @@ tasks:
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-client-add.yaml {{ .CLI_ARGS }}"
 
+  playbook:reverse-proxy-install:
+    desc: Install reverse proxy
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/reverse-proxy-install.yaml {{ .CLI_ARGS }}"
 
   playbook:signal-tls-proxy-install:
     desc: Configure Signal TLS Proxy

@@ -7,3 +7,77 @@ traefik_networks:
     - name: traefik
 docker_create_networks:
     - name: traefik
+
+# Publish public DoH resolvers through https://{{ traefik_base_domain }}/dnsproxy/<upstream>.
+# Set to true on the desired proxy host to enable every upstream below.
+traefik_doh_proxy_enabled: false
+traefik_doh_proxy_path_prefix: /dnsproxy
+dnsproxy_alternative_hostnames: []
+traefik_doh_proxy_upstreams:
+    # Control D native filters
+    - name: controld_unfiltered
+      url: https://freedns.controld.com/p0
+    - name: controld_malware
+      url: https://freedns.controld.com/p1
+    - name: controld_ads_tracking
+      url: https://freedns.controld.com/p2
+    - name: controld_social
+      url: https://freedns.controld.com/p3
+    - name: controld_family
+      url: https://freedns.controld.com/family
+    - name: controld_uncensored
+      url: https://freedns.controld.com/uncensored
+
+    # Control D third-party filter variants
+    - name: controld_oisd_full
+      url: https://freedns.controld.com/x-oisd
+    - name: controld_oisd_basic
+      url: https://freedns.controld.com/x-oisd-basic
+    - name: controld_stevenblack
+      url: https://freedns.controld.com/x-stevenblack
+    - name: controld_1hosts_lite
+      url: https://freedns.controld.com/x-1hosts-lite
+    - name: controld_1hosts_pro
+      url: https://freedns.controld.com/x-1hosts-pro
+    - name: controld_1hosts_xtra
+      url: https://freedns.controld.com/x-1hosts-xtra
+    - name: controld_hagezi_light
+      url: https://freedns.controld.com/x-hagezi-light
+    - name: controld_hagezi_normal
+      url: https://freedns.controld.com/x-hagezi-normal
+    - name: controld_hagezi_pro
+      url: https://freedns.controld.com/x-hagezi-pro
+    - name: controld_hagezi_proplus
+      url: https://freedns.controld.com/x-hagezi-proplus
+    - name: controld_hagezi_ultimate
+      url: https://freedns.controld.com/x-hagezi-ultimate
+    - name: controld_hagezi_tif
+      url: https://freedns.controld.com/x-hagezi-tif
+    - name: controld_adguard
+      url: https://freedns.controld.com/x-adguard
+
+    # Quad9
+    - name: quad9_secure
+      url: https://dns.quad9.net
+    - name: quad9_uncensored
+      url: https://dns10.quad9.net
+    - name: quad9_secure_ecs
+      url: https://dns11.quad9.net
+    - name: quad9_uncensored_ecs
+      url: https://dns12.quad9.net
+
+    # AdGuard DNS
+    - name: adguard_default
+      url: https://dns.adguard-dns.com
+    - name: adguard_unfiltered
+      url: https://unfiltered.adguard-dns.com
+    - name: adguard_family
+      url: https://family.adguard-dns.com
+
+    # Cloudflare 1.1.1.1
+    - name: cloudflare_default
+      url: https://cloudflare-dns.com/dns-query
+    - name: cloudflare_security
+      url: https://security.cloudflare-dns.com/dns-query
+    - name: cloudflare_family
+      url: https://family.cloudflare-dns.com/dns-query

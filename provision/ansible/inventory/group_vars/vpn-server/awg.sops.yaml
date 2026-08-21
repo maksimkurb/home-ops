@@ -127,7 +127,7 @@ sops:
             kVnVXCYsiir5HjYesmBg0wfNE7RZ9Qi/XrL9Bjoi0gX9gClFIAWnLw==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-08-21T19:51:14Z"
-    mac: ENC[AES256_GCM,data:US43pbTIJnaMCdQSDi36b0d2CZPN9BMZqd29Mjw2d+y3V3TNVib8d4c7Q6NUm6fzADWavn92CVQwkI/nCm49367AOvJphDWAlbJbA7QDC1RtrqLjsiSWEd52bCGFXcPNsIL0r8Kof21p/xAEV6aBOuw6oEtPDOd/BwF3YvCEQyI=,iv:hu7qbR7SCQlpxHvfLTdLWITOCUZ8dDvpPADjTaR98dc=,tag:tdqAeNzh2DNh6ym+S005wQ==,type:str]
+    lastmodified: "2026-08-21T20:01:05Z"
+    mac: ENC[AES256_GCM,data:Tp7quCvkp6x5NqhmW+GUMQOnujo9D9U5dBvP7+6FfZ8cISssnn8ut6FtlL4h0V6t2Kt21D2EIxuSu1+VlextXiyS1WPpsUiWmwETz/c+/qvmy0r733MsRWKjEaViwxtmUsgyp6X6MiB7JDMkvuJNMhEIWZuO6RFovhbZdrvlHD0=,iv:dJg7uKTDNCMi2NMj96EKsj+CCvWu0+SBVBTLWxgiQv0=,tag:xYnUUEWdnmUUp9lseAwVIQ==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

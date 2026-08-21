@@ -1,25 +1,61 @@
 # Traefik dynamic configuration file
-# This file is managed by Ansible and will be overridden by your variables
+# This file is managed by Ansible.
 
-{% if traefik_file_config is defined %}
-{% if traefik_file_config is string %}
-{{ traefik_file_config | from_yaml | to_nice_yaml }}
-{% else %}
-{{ traefik_file_config | to_nice_yaml }}
+{% set traefik_config = traefik_file_config | default({}) %}
+{% if traefik_config is string %}
+{% set traefik_config = traefik_config | from_yaml %}
 {% endif %}
-{% else %}
-# No custom configuration defined
-# Define traefik_file_config in your vars to add custom routes, middlewares, etc.
-# Example:
-# traefik_file_config:
-#   http:
-#     routers:
-#       my-router:
-#         rule: "Host(`example.com`)"
-#         service: "my-service"
-#     services:
-#       my-service:
-#         loadBalancer:
-#           servers:
-#             - url: "http://backend:8080"
+{% set vpn_config = vpn_server | default({}) %}
+{% set keen_pbr_config = vpn_config['keen_pbr'] | default({}) %}
+{% set keen_pbr_api = keen_pbr_config['api'] | default({}) %}
+{% if traefik_doh_proxy_enabled | bool %}
+{% set doh = namespace(config={'http': {'middlewares': {'doh-replace-path': {'replacePath': {'path': '/dns-query'}}}, 'routers': {}, 'services': {}}}) %}
+{% set doh_hostnames = [traefik_base_domain] + dnsproxy_alternative_hostnames %}
+{% set doh_tls = {'certResolver': 'le'} %}
+{% if dnsproxy_alternative_hostnames | length %}
+{% set doh_tls = doh_tls | combine({'domains': [{'main': traefik_base_domain, 'sans': dnsproxy_alternative_hostnames}]}) %}
 {% endif %}
+{% for upstream in traefik_doh_proxy_upstreams %}
+{% set name = 'doh-' ~ (upstream.name | replace('_', '-')) %}
+{% set router = {
+    'entryPoints': ['websecure'],
+    'middlewares': ['doh-replace-path'],
+    'rule': '(' ~ (doh_hostnames | map('regex_replace', '^(.*)$', 'Host(`\\1`)') | join(' || ')) ~ ') && Path(`' ~ traefik_doh_proxy_path_prefix ~ '/' ~ upstream.name ~ '`) && (Method(`GET`) || Method(`POST`))',
+    'service': name,
+    'tls': doh_tls
+} %}
+{% set service = {
+    'loadBalancer': {
+        'passHostHeader': false,
+        'servers': [{'url': upstream.url}]
+    }
+} %}
+{% set doh.config = doh.config | combine({'http': {'routers': {name: router}, 'services': {name: service}}}, recursive=True) %}
+{% endfor %}
+{% set traefik_config = traefik_config | combine(doh.config, recursive=True) %}
+{% endif %}
+{% if keen_pbr_api['enabled'] | default(false) | bool %}
+{% set keen_pbr_api_port = keen_pbr_api['listen'] | default('0.0.0.0:12121') | regex_replace('^.*:', '') %}
+{% set keen_pbr_traefik_config = {
+    'http': {
+        'routers': {
+            'keen-pbr': {
+                'entryPoints': ['websecure'],
+                'middlewares': ['basic-auth@docker'],
+                'rule': 'Host(`keen-pbr.' ~ traefik_base_domain ~ '`)',
+                'service': 'keen-pbr',
+                'tls': {'certResolver': 'le'}
+            }
+        },
+        'services': {
+            'keen-pbr': {
+                'loadBalancer': {
+                    'servers': [{'url': 'http://host.docker.internal:' ~ keen_pbr_api_port}]
+                }
+            }
+        }
+    }
+} %}
+{% set traefik_config = traefik_config | combine(keen_pbr_traefik_config, recursive=True) %}
+{% endif %}
+{{ traefik_config | to_nice_yaml }}

@@ -42,3 +42,14 @@
   community.docker.docker_compose_v2:
     project_src: "/opt/traefik"
     state: restarted
+
+- name: Traefik / Show DoH proxy endpoints
+  ansible.builtin.debug:
+    msg: |
+      DoH proxy endpoints:
+      | Name | Original URL | Proxied URL |
+      | --- | --- | --- |
+      {% for upstream in traefik_doh_proxy_upstreams %}
+      | {{ upstream.name }} | {{ upstream.url }}/dns-query | {% for hostname in [traefik_base_domain] + dnsproxy_alternative_hostnames %}https://{{ hostname }}{{ traefik_doh_proxy_path_prefix }}/{{ upstream.name }}{% if not loop.last %}<br>{% endif %}{% endfor %} |
+      {% endfor %}
+  when: traefik_doh_proxy_enabled | bool

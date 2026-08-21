@@ -1,1 +1,2 @@
 ---
+traefik_doh_proxy_enabled: true

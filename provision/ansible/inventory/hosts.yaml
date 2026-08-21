@@ -16,6 +16,10 @@ ubuntu:
     k3s-server: {}
     # vps-1: {}
 
+reverse-proxy:
+  hosts:
+    vps-3: {}
+
 vpn-server:
   hosts:
     # vps-1: {}

@@ -30,10 +30,10 @@
     name: download_docker_com_linux_ubuntu
     types: deb
     uris: https://download.docker.com/linux/ubuntu
-    suites: "{{ ansible_distribution_release }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
     components: stable
     architectures:
-      - "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+      - "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' }}"
     signed_by: /etc/apt/keyrings/docker.asc
     state: present
 
