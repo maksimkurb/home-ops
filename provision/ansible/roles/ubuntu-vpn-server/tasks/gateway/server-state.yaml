@@ -1,0 +1,46 @@
+---
+- name: Find local Git repository root for shared server state
+  ansible.builtin.command: git rev-parse --show-toplevel
+  delegate_to: localhost
+  become: false
+  register: server_state_repo_root
+  changed_when: false
+  when: vpn_server_private_key is not defined or vpn_server_public_key is not defined
+
+- name: Create shared local server state directory
+  ansible.builtin.file:
+    path: "{{ server_state_repo_root.stdout }}/provision/vpn-server-state"
+    state: directory
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+  when: vpn_server_private_key is not defined or vpn_server_public_key is not defined
+
+- name: Install shared server state allocator
+  ansible.builtin.template:
+    src: awg-server-state.py.j2
+    dest: "{{ server_state_repo_root.stdout }}/provision/vpn-server-state/.awg-server-state.py"
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+  when: vpn_server_private_key is not defined or vpn_server_public_key is not defined
+
+- name: Create or reuse shared server keypair locally
+  ansible.builtin.command:
+    argv:
+      - "{{ server_state_repo_root.stdout }}/provision/vpn-server-state/.awg-server-state.py"
+  environment:
+    AWG_SERVER_STATE_PATH: "{{ server_state_repo_root.stdout }}/provision/vpn-server-state/awg-server.json"
+  register: vpn_server_state_cmd
+  changed_when: false
+  delegate_to: localhost
+  become: false
+  no_log: true
+  when: vpn_server_private_key is not defined or vpn_server_public_key is not defined
+
+- name: Set shared server key facts
+  ansible.builtin.set_fact:
+    vpn_server_private_key: "{{ (vpn_server_state_cmd.stdout | from_json).private_key }}"
+    vpn_server_public_key: "{{ (vpn_server_state_cmd.stdout | from_json).public_key }}"
+  no_log: true
+  when: vpn_server_private_key is not defined or vpn_server_public_key is not defined

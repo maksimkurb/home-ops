@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Create or reuse the shared controller-local AWG server identity."""
+import base64
+import fcntl
+import json
+import os
+from pathlib import Path
+import tempfile
+
+P = 2**255 - 19
+
+def public_key(private):
+    scalar = bytearray(private); scalar[0] &= 248; scalar[31] &= 127; scalar[31] |= 64
+    scalar = int.from_bytes(scalar, "little")
+    x1, x2, z2, x3, z3, swap = 9, 1, 0, 9, 1, 0
+    for bit in range(254, -1, -1):
+        current = (scalar >> bit) & 1; swap ^= current
+        if swap: x2, x3, z2, z3 = x3, x2, z3, z2
+        swap = current
+        a, b = (x2 + z2) % P, (x2 - z2) % P
+        aa, bb = a * a % P, b * b % P; e = (aa - bb) % P
+        c, d = (x3 + z3) % P, (x3 - z3) % P; da, cb = d * a % P, c * b % P
+        x3, z3 = (da + cb) ** 2 % P, x1 * (da - cb) ** 2 % P
+        x2, z2 = aa * bb % P, e * (aa + 121665 * e) % P
+    if swap: x2, x3, z2, z3 = x3, x2, z3, z2
+    return (x2 * pow(z2, P - 2, P) % P).to_bytes(32, "little")
+
+def atomic_write(path, data):
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w") as handle:
+            handle.write(data); handle.flush(); os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        try: os.unlink(temporary)
+        except FileNotFoundError: pass
+
+def main():
+    path = Path(os.environ["AWG_SERVER_STATE_PATH"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with (path.parent / ".lock").open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        if path.exists():
+            state = json.loads(path.read_text())
+            if not {"private_key", "public_key"} <= state.keys(): raise SystemExit(f"Invalid server state: {path}")
+        else:
+            private = bytearray(os.urandom(32)); private[0] &= 248; private[31] &= 127; private[31] |= 64; private = bytes(private)
+            state = {"private_key": base64.b64encode(private).decode(), "public_key": base64.b64encode(public_key(private)).decode()}
+            atomic_write(path, json.dumps(state, indent=2) + "\n")
+        print(json.dumps(state))
+
+if __name__ == "__main__": main()

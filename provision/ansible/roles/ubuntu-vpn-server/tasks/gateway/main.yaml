@@ -1,0 +1,6 @@
+---
+- name: Prepare gateway software
+  ansible.builtin.import_tasks: gateway/prepare.yaml
+
+- name: Apply gateway and client configuration
+  ansible.builtin.import_tasks: gateway/config-update.yaml

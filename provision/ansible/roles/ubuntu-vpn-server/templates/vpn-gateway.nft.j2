@@ -1,0 +1,18 @@
+table ip awg_gateway {
+{% if keen_pbr_api_enabled | bool %}
+    chain input {
+        type filter hook input priority filter; policy accept;
+
+        ip saddr { {{ keen_pbr_api_lan_cidrs | join(', ') }} } tcp dport {{ keen_pbr_api_port }} accept
+        iifname { "{{ vpn_legacy_interface }}", "{{ vpn_new_interface }}" } tcp dport {{ keen_pbr_api_port }} accept
+        tcp dport {{ keen_pbr_api_port }} drop
+    }
+{% endif %}
+
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+
+        ip saddr {{ vpn_subnet }} oifname "{{ vpn_wan_interface_effective }}" masquerade
+        ip saddr {{ vpn_subnet }} oifname "{{ vpn_warp_interface }}" masquerade
+    }
+}

@@ -1,0 +1,114 @@
+---
+- name: Resolve gateway facts
+  ansible.builtin.import_tasks: gateway/facts.yaml
+
+- name: Load shared server keypair
+  ansible.builtin.import_tasks: gateway/server-state.yaml
+
+- name: Configure inbound AWG interfaces
+  ansible.builtin.import_tasks: gateway/inbound.yaml
+
+- name: Configure owned NAT rules
+  ansible.builtin.import_tasks: gateway/nat.yaml
+
+- name: Prepare local client reconciliation workspace
+  ansible.builtin.import_tasks: gateway/client-workspace.yaml
+
+- name: Install local client-state manifest validator
+  ansible.builtin.template:
+    src: awg-client-manifest.py.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-client-state/.awg-client-manifest.py"
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+
+- name: Load and validate all client states
+  ansible.builtin.command:
+    argv:
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state/.awg-client-manifest.py"
+      - --state-root
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
+      - --clients
+      - "{{ vpn_initial_clients | join(',') }}"
+      - --legacy-interface
+      - "{{ vpn_legacy_interface }}"
+      - --new-interface
+      - "{{ vpn_new_interface }}"
+  register: vpn_client_manifest
+  changed_when: false
+  delegate_to: localhost
+  become: false
+  no_log: true
+
+- name: Use validated client manifest
+  ansible.builtin.set_fact:
+    vpn_reconciled_clients: "{{ vpn_client_manifest.stdout | from_json }}"
+  no_log: true
+
+- name: Export AWG 1.5 peer fragments
+  ansible.builtin.copy:
+    content: |-
+      [Peer]
+      PublicKey = {{ item.legacy.public_key }}
+      {% if item.legacy.preshared_key | default('') | length > 0 %}PresharedKey = {{ item.legacy.preshared_key }}
+      {% endif %}AllowedIPs = {{ item.legacy.address }}/32
+    dest: "/etc/amnezia/amneziawg/peers/{{ vpn_legacy_interface }}/{{ item.name }}.conf"
+    mode: "0600"
+  loop: "{{ vpn_reconciled_clients }}"
+  no_log: true
+
+- name: Export AWG 2.x peer fragments
+  ansible.builtin.copy:
+    content: |-
+      [Peer]
+      PublicKey = {{ item.new.public_key }}
+      {% if item.new.preshared_key | default('') | length > 0 %}PresharedKey = {{ item.new.preshared_key }}
+      {% endif %}AllowedIPs = {{ item.new.address }}/32
+    dest: "/etc/amnezia/amneziawg/peers/{{ vpn_new_interface }}/{{ item.name }}.conf"
+    mode: "0600"
+  loop: "{{ vpn_reconciled_clients }}"
+  no_log: true
+
+- name: Render AWG 1.5 client profiles
+  ansible.builtin.template:
+    src: client.conf.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ item.name }}-legacy.conf"
+    mode: "0600"
+  loop: "{{ vpn_reconciled_clients }}"
+  delegate_to: localhost
+  become: false
+  vars:
+    client_state: "{{ item.legacy }}"
+    client_server_ip: "{{ vpn_legacy_server_ip }}"
+    client_server_public_key: "{{ vpn_server_public_key }}"
+    client_port: "{{ vpn_legacy_port }}"
+    awg_params: "{{ awg_legacy }}"
+    awg_generation: legacy
+  no_log: true
+
+- name: Render AWG 2.x client profiles
+  ansible.builtin.template:
+    src: client.conf.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ item.name }}-new.conf"
+    mode: "0600"
+  loop: "{{ vpn_reconciled_clients }}"
+  delegate_to: localhost
+  become: false
+  vars:
+    client_state: "{{ item.new }}"
+    client_server_ip: "{{ vpn_new_server_ip }}"
+    client_server_public_key: "{{ vpn_server_public_key }}"
+    client_port: "{{ vpn_new_port }}"
+    awg_params: "{{ awg_new }}"
+    awg_generation: new
+  no_log: true
+
+- name: Load all reconciled peers once
+  ansible.builtin.command:
+    argv:
+      - /usr/local/libexec/awg-load-peers
+      - "{{ item }}"
+  loop:
+    - "{{ vpn_legacy_interface }}"
+    - "{{ vpn_new_interface }}"
+  changed_when: false

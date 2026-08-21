@@ -1,0 +1,164 @@
+#!/usr/bin/env python3
+"""Create or reuse controller-local WireGuard client state."""
+import argparse, base64, fcntl, ipaddress, json, os, re, secrets, tempfile
+from pathlib import Path
+
+P = 2**255 - 19
+NAME_RE = re.compile(r"[A-Za-z0-9_.-]+$")
+
+def atomic_write(path, data):
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w") as handle:
+            handle.write(data); handle.flush(); os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        try: os.unlink(temporary)
+        except FileNotFoundError: pass
+
+def public_key(private):
+    scalar = bytearray(private); scalar[0] &= 248; scalar[31] &= 127; scalar[31] |= 64
+    scalar = int.from_bytes(scalar, "little")
+    x1, x2, z2, x3, z3, swap = 9, 1, 0, 9, 1, 0
+    for bit in range(254, -1, -1):
+        current = (scalar >> bit) & 1; swap ^= current
+        if swap: x2, x3, z2, z3 = x3, x2, z3, z2
+        swap = current
+        a, b = (x2 + z2) % P, (x2 - z2) % P
+        aa, bb = a * a % P, b * b % P; e = (aa - bb) % P
+        c, d = (x3 + z3) % P, (x3 - z3) % P; da, cb = d * a % P, c * b % P
+        x3, z3 = (da + cb) ** 2 % P, x1 * (da - cb) ** 2 % P
+        x2, z2 = aa * bb % P, e * (aa + 121665 * e) % P
+    if swap: x2, x3, z2, z3 = x3, x2, z3, z2
+    return (x2 * pow(z2, P - 2, P) % P).to_bytes(32, "little")
+
+def load_junk_packets(items):
+    packets = {}
+    for item in items:
+        try:
+            name, file_path = item.split("=", 1)
+            if name not in {"I1", "I2", "I3"}: raise ValueError
+            values = list(json.loads(Path(file_path).read_text()).get("packets", {}).values())
+            values = [value for value in values if isinstance(value, str) and value]
+            if values: packets[name] = secrets.choice(values)
+        except (OSError, ValueError, json.JSONDecodeError):
+            continue
+    return packets
+
+def new_state(name, junk_list_files):
+    private = bytearray(os.urandom(32)); private[0] &= 248; private[31] &= 127; private[31] |= 64; private = bytes(private)
+    return {"name": name, "private_key": base64.b64encode(private).decode(), "public_key": base64.b64encode(public_key(private)).decode(), "preshared_key": base64.b64encode(os.urandom(32)).decode(), "junk_packets": load_junk_packets(junk_list_files), "profiles": {}}
+
+def normalize(state, name):
+    required = {"name", "private_key", "public_key", "preshared_key"}
+    if not required <= state.keys() or state["name"] != name: raise SystemExit(f"Invalid client state for {name}")
+    if "profiles" not in state:
+        profiles = [item.get("profiles", {}) for item in state.pop("hosts", {}).values()]
+        if len({json.dumps(item, sort_keys=True) for item in profiles}) > 1:
+            raise SystemExit(f"Conflicting per-host profiles in {name}; resolve before migration")
+        state["profiles"] = profiles[0] if profiles else {}
+    if not isinstance(state["profiles"], dict): raise SystemExit(f"Invalid profiles for {name}")
+
+def parse_mappings(items):
+    mappings = {}
+    for item in items:
+        try: profile, interface = item.split("=", 1)
+        except ValueError: raise SystemExit("--profile-interface must be profile=interface")
+        if not NAME_RE.fullmatch(profile) or not NAME_RE.fullmatch(interface): raise SystemExit("invalid profile-interface mapping")
+        mappings[interface] = profile
+    return mappings
+
+def used_addresses(root, interface):
+    used = set()
+    for path in root.glob("*.json"):
+        try:
+            state = json.loads(path.read_text())
+            profiles = state.get("profiles", {})
+            if not profiles:
+                host_profiles = [item.get("profiles", {}) for item in state.get("hosts", {}).values()]
+                profiles = host_profiles[0] if host_profiles else {}
+            used.update(ipaddress.ip_address(item["address"]) for item in profiles.values() if item.get("interface") == interface)
+        except (KeyError, OSError, ValueError, json.JSONDecodeError): raise SystemExit(f"Invalid client state file: {path}")
+    return used
+
+def allocate(network, server_ip, used):
+    server = ipaddress.ip_address(server_ip)
+    for address in network.hosts():
+        if address != server and address not in used: return str(address)
+    raise SystemExit(f"No free IPv4 addresses remain in {network}")
+
+def import_legacy(root, name, mappings):
+    unified = root / f"{name}.json"
+    if unified.exists():
+        state = json.loads(unified.read_text()); required = {"name", "private_key", "public_key", "preshared_key", "profiles"}
+        if not required <= state.keys() or state["name"] != name: raise SystemExit(f"Invalid legacy client state file: {unified}")
+        return state
+    old = []
+    for path in root.glob(f"{name}-*.json"):
+        try:
+            state = json.loads(path.read_text()); required = {"name", "interface", "address", "private_key", "public_key", "preshared_key"}
+            if not required <= state.keys() or state["name"] != name: raise ValueError
+            old.append(state)
+        except (OSError, ValueError, json.JSONDecodeError): raise SystemExit(f"Invalid legacy client state file: {path}")
+    if not old: return None
+    identity = next((item for item in old if mappings.get(item["interface"]) == "legacy"), old[0])
+    return {key: identity[key] for key in ("name", "private_key", "public_key", "preshared_key")} | {"profiles": {mappings.get(item["interface"], item["interface"]): {"interface": item["interface"], "address": item["address"]} for item in old}}
+
+def main():
+    parser = argparse.ArgumentParser()
+    for option in ("name", "host", "profile", "interface", "subnet", "server-ip", "state-root", "legacy-state-root"): parser.add_argument(f"--{option}", required=True)
+    parser.add_argument("--paired-address")
+    parser.add_argument("--paired-subnet")
+    parser.add_argument("--junk-list-file", action="append", default=[])
+    parser.add_argument("--profile-interface", action="append", default=[])
+    args = parser.parse_args()
+    if not all(NAME_RE.fullmatch(value) for value in (args.name, args.host, args.profile, args.interface)): raise SystemExit("invalid client name, host, profile, or interface")
+    network = ipaddress.ip_network(args.subnet, strict=True)
+    if network.version != 4: raise SystemExit("IPv4 subnet required")
+    root = Path(args.state_root); root.mkdir(parents=True, exist_ok=True); path = root / f"{args.name}.json"; mappings = parse_mappings(args.profile_interface)
+    with (root / ".lock").open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX); changed = False
+        if path.exists(): state = json.loads(path.read_text()); normalize(state, args.name)
+        else:
+            legacy = import_legacy(Path(args.legacy_state_root), args.name, mappings)
+            state = new_state(args.name, args.junk_list_file) if legacy is None else {key: legacy[key] for key in ("name", "private_key", "public_key", "preshared_key")} | {"profiles": legacy["profiles"]}
+            changed = True
+        profiles = state["profiles"]
+        used = used_addresses(root, args.interface)
+        current_profile = profiles.get(args.profile)
+        if current_profile and args.profile == "legacy":
+            current_address = ipaddress.ip_address(current_profile["address"])
+            if current_address not in network:
+                # Repair addresses imported from a former unrelated interface
+                # while retaining the client's host offset in the configured
+                # legacy /24.
+                repaired = ipaddress.ip_address(
+                    int(network.network_address) + (int(current_address) & 0xff)
+                )
+                if repaired == ipaddress.ip_address(args.server_ip) or repaired in used:
+                    raise SystemExit(f"Cannot repair legacy address {current_address} in {network}")
+                current_profile["address"] = str(repaired)
+                changed = True
+        if current_profile and current_profile.get("interface") == args.interface:
+            used.discard(ipaddress.ip_address(current_profile["address"]))
+        paired_address = None
+        if args.paired_address or args.paired_subnet:
+            if not (args.paired_address and args.paired_subnet): raise SystemExit("paired address and subnet must be provided together")
+            source_network = ipaddress.ip_network(args.paired_subnet, strict=True)
+            paired_address = ipaddress.ip_address(args.paired_address)
+            offset = int(paired_address) - int(source_network.network_address)
+            paired_address = ipaddress.ip_address(int(network.network_address) + offset)
+            if paired_address not in network or paired_address == ipaddress.ip_address(args.server_ip) or paired_address in used:
+                raise SystemExit(f"Matching address {paired_address} is unavailable on {network}")
+            paired_address = str(paired_address)
+        if args.profile not in profiles:
+            profiles[args.profile] = {"interface": args.interface, "address": paired_address or allocate(network, args.server_ip, used)}; changed = True
+        elif profiles[args.profile].get("interface") != args.interface: raise SystemExit(f"Profile {args.profile} has a different interface in {path}")
+        elif paired_address and profiles[args.profile]["address"] != paired_address:
+            profiles[args.profile]["address"] = paired_address; changed = True
+        if changed: atomic_write(path, json.dumps(state, indent=2) + "\n")
+        item = profiles[args.profile]
+        print(json.dumps({"name": state["name"], "private_key": state["private_key"], "public_key": state["public_key"], "preshared_key": state["preshared_key"], "junk_packets": state.get("junk_packets", {}), "interface": item["interface"], "address": item["address"], "created": changed, "reused": not changed}))
+
+if __name__ == "__main__": main()

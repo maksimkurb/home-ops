@@ -1,0 +1,67 @@
+---
+- name: Install shared server keys on each inbound interface
+  ansible.builtin.copy:
+    content: "{{ item.value }}\n"
+    dest: "/etc/amnezia/amneziawg/keys/{{ item.interface }}.{{ item.kind }}"
+    owner: root
+    group: root
+    mode: "0600"
+  loop:
+    - { interface: "{{ vpn_legacy_interface }}", kind: key, value: "{{ vpn_server_private_key }}" }
+    - { interface: "{{ vpn_new_interface }}", kind: key, value: "{{ vpn_server_private_key }}" }
+    - { interface: "{{ vpn_legacy_interface }}", kind: pub, value: "{{ vpn_server_public_key }}" }
+    - { interface: "{{ vpn_new_interface }}", kind: pub, value: "{{ vpn_server_public_key }}" }
+  no_log: true
+
+- name: Configure legacy inbound
+  ansible.builtin.template:
+    src: inbound-awg.conf.j2
+    dest: "/etc/amnezia/amneziawg/{{ vpn_legacy_interface }}.conf"
+    owner: root
+    group: root
+    mode: "0600"
+  vars:
+    inbound_name: "{{ vpn_legacy_interface }}"
+    inbound_address: "{{ vpn_legacy_server_ip }}/{{ vpn_legacy_subnet.split('/')[1] }}"
+    inbound_port: "{{ vpn_legacy_port }}"
+    inbound_private_key: "{{ vpn_server_private_key }}"
+    awg_params: "{{ awg_legacy }}"
+    awg_generation: legacy
+  register: legacy_inbound_config
+  no_log: true
+
+- name: Configure new inbound
+  ansible.builtin.template:
+    src: inbound-awg.conf.j2
+    dest: "/etc/amnezia/amneziawg/{{ vpn_new_interface }}.conf"
+    owner: root
+    group: root
+    mode: "0600"
+  vars:
+    inbound_name: "{{ vpn_new_interface }}"
+    inbound_address: "{{ vpn_new_server_ip }}/{{ vpn_new_subnet.split('/')[1] }}"
+    inbound_port: "{{ vpn_new_port }}"
+    inbound_private_key: "{{ vpn_server_private_key }}"
+    awg_params: "{{ awg_new }}"
+    awg_generation: new
+  register: new_inbound_config
+  no_log: true
+
+- name: Enable and start inbound AWG services
+  ansible.builtin.systemd_service:
+    name: "awg-quick@{{ item }}"
+    enabled: true
+    state: restarted
+  loop:
+    - "{{ vpn_legacy_interface }}"
+    - "{{ vpn_new_interface }}"
+  when: legacy_inbound_config.changed or new_inbound_config.changed
+
+- name: Ensure inbound AWG services are running
+  ansible.builtin.systemd_service:
+    name: "awg-quick@{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - "{{ vpn_legacy_interface }}"
+    - "{{ vpn_new_interface }}"

@@ -21,11 +21,23 @@ tasks:
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --list-hosts {{ .CLI_ARGS }}"
 
-  playbook:vpn-server-install:
-    desc: Configure VPN Server
+  playbook:vpn-gateway-install:
+    desc: Deploy the dual-interface AWG gateway, WARP, and keen-pbr
     dir: provision/ansible
     cmds:
-      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-server-install.yaml {{ .CLI_ARGS }}"
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-gateway-install.yaml {{ .CLI_ARGS }}"
+
+  playbook:vpn-gateway-config-update:
+    desc: Reconcile dual-interface AWG gateway and clients
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-gateway-config-update.yaml {{ .CLI_ARGS }}"
+
+  playbook:vpn-client-add:
+    desc: Add a dual-profile AWG client
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-client-add.yaml {{ .CLI_ARGS }}"
 
 
   playbook:signal-tls-proxy-install:

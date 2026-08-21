@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Import legacy IPv4 assignments from generated client configs."""
+import argparse, ipaddress, json, os, re, tempfile
+from pathlib import Path
+
+ADDRESS = re.compile(r"^Address\s*=\s*([^,\s/]+)/", re.MULTILINE)
+
+def write(path, state):
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w") as handle:
+            json.dump(state, handle, indent=2); handle.write("\n")
+            handle.flush(); os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        try: os.unlink(temporary)
+        except FileNotFoundError: pass
+
+def profiles(state):
+    if isinstance(state.get("profiles"), dict): return state["profiles"]
+    old = list(state.pop("hosts", {}).values())
+    state["profiles"] = old[0].get("profiles", {}) if old else {}
+    return state["profiles"]
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--configs", required=True, type=Path)
+    parser.add_argument("--state-root", required=True, type=Path)
+    parser.add_argument("--interface", required=True)
+    args = parser.parse_args(); changed = imported = skipped = 0
+    for config in args.configs.glob("*.conf"):
+        path = args.state_root / f"{config.stem}.json"
+        if not path.exists(): skipped += 1; continue
+        match = ADDRESS.search(config.read_text())
+        if not match: skipped += 1; continue
+        address = str(ipaddress.ip_address(match.group(1)))
+        state = json.loads(path.read_text()); current = profiles(state).get("legacy")
+        desired = {"interface": args.interface, "address": address}
+        if current != desired:
+            profiles(state)["legacy"] = desired; write(path, state); changed += 1
+        imported += 1
+    print(json.dumps({"imported": imported, "changed": changed, "skipped": skipped}))
+
+if __name__ == "__main__": main()

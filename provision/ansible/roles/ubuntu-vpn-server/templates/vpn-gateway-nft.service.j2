@@ -1,0 +1,14 @@
+[Unit]
+Description=Owned nftables rules for AWG VPN gateway
+After=network-online.target
+Wants=network-online.target
+Before=awg-quick@{{ vpn_legacy_interface }}.service awg-quick@{{ vpn_new_interface }}.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c '/usr/sbin/nft list table ip awg_gateway >/dev/null 2>&1 && /usr/sbin/nft delete table ip awg_gateway || true; /usr/sbin/nft -f /etc/nftables.d/awg-gateway.nft'
+ExecStop=-/usr/sbin/nft delete table ip awg_gateway
+
+[Install]
+WantedBy=multi-user.target

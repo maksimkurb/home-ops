@@ -1,0 +1,66 @@
+---
+- name: Resolve grouped gateway configuration
+  ansible.builtin.set_fact:
+    vpn_subnet: "{{ vpn_server.amneziawg.common.subnet }}"
+    vpn_public_host: "{{ vpn_server.amneziawg.common.public_host }}"
+    vpn_wan_interface: "{{ vpn_server.amneziawg.common.wan_interface }}"
+    vpn_client_mtu: "{{ vpn_server.amneziawg.common.client_mtu }}"
+    vpn_client_allowed_ips: "{{ vpn_server.amneziawg.common.client_allowed_ips | default('0.0.0.0/0') }}"
+    vpn_client_persistent_keepalive: "{{ vpn_server.amneziawg.common.client_persistent_keepalive | default(25) }}"
+    vpn_initial_clients: "{{ vpn_server.amneziawg.common.clients }}"
+    vpn_legacy_interface: "{{ vpn_server.amneziawg.awg15.interface }}"
+    vpn_legacy_port: "{{ vpn_server.amneziawg.awg15.port }}"
+    vpn_legacy_subnet: "{{ vpn_server.amneziawg.awg15.subnet }}"
+    vpn_legacy_server_ip: "{{ vpn_server.amneziawg.awg15.server_ip }}"
+    awg_legacy: "{{ vpn_server.amneziawg.awg15.params }}"
+    vpn_new_interface: "{{ vpn_server.amneziawg.awg20.interface }}"
+    vpn_new_port: "{{ vpn_server.amneziawg.awg20.port }}"
+    vpn_new_subnet: "{{ vpn_server.amneziawg.awg20.subnet }}"
+    vpn_new_server_ip: "{{ vpn_server.amneziawg.awg20.server_ip }}"
+    awg_new: "{{ vpn_server.amneziawg.awg20.params }}"
+    amneziawg_ppa_release: "{{ vpn_server.amneziawg.common.ppa_release }}"
+    vpn_warp_interface: "{{ vpn_server.wgcf.interface }}"
+    warp_auto_register: "{{ vpn_server.wgcf.auto_register }}"
+    warp_config_source: "{{ vpn_server.wgcf.config_source }}"
+    wgcf_version: "{{ vpn_server.wgcf.version }}"
+    keen_pbr_package: "{{ vpn_server.keen_pbr.package }}"
+    vpn_dns_upstream: "{{ vpn_server.keen_pbr.dns_upstream }}"
+    keen_pbr_urltest_url: "{{ vpn_server.keen_pbr.urltest_url }}"
+    keen_pbr_urltest_interval_ms: "{{ vpn_server.keen_pbr.urltest_interval_ms }}"
+    keen_pbr_urltest_probe_timeout_ms: "{{ vpn_server.keen_pbr.urltest_probe_timeout_ms }}"
+    keen_pbr_api_enabled: "{{ (vpn_server.keen_pbr.api | default({})).enabled | default(false) }}"
+    keen_pbr_api_listen: "{{ (vpn_server.keen_pbr.api | default({})).listen | default('0.0.0.0:12121') }}"
+    keen_pbr_api_port: "{{ ((vpn_server.keen_pbr.api | default({})).listen | default('0.0.0.0:12121') | regex_replace('^.*:', '')) | int }}"
+    keen_pbr_api_lan_cidrs: "{{ (vpn_server.keen_pbr.api | default({})).lan_cidrs | default(['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']) }}"
+    keen_pbr_api_allowed_origins: "{{ (vpn_server.keen_pbr.api | default({})).allowed_origins | default(['http://localhost:5173']) }}"
+    keen_pbr_device_name: "{{ ansible_facts['hostname'] }}"
+    awg_client_junk_packet_files:
+      - I-list1.json
+      - I-list2.json
+      - I-list3.json
+
+- name: Validate kernel gateway configuration
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Ubuntu"
+      - ansible_facts["distribution_version"] in ["24.04", "26.04"]
+      - vpn_subnet | length > 0
+      - vpn_public_host | length > 0
+      - vpn_legacy_subnet | length > 0
+      - vpn_legacy_server_ip | length > 0
+      - vpn_new_subnet | length > 0
+      - vpn_new_server_ip | length > 0
+      - not (keen_pbr_api_enabled | bool) or keen_pbr_api_password_hash | length > 0
+    fail_msg: >-
+      Define the gateway network settings and, when enabling the keen-pbr API,
+      set keen_pbr_api_password_hash in encrypted inventory.
+
+- name: Resolve WAN interface and static gateway facts
+  ansible.builtin.set_fact:
+    vpn_wan_interface_effective: >-
+      {{
+        vpn_wan_interface
+        if (vpn_wan_interface | default('') | length > 0)
+        else ansible_facts["default_ipv4"]["interface"]
+      }}
+    vpn_public_host_effective: "{{ vpn_public_host }}"

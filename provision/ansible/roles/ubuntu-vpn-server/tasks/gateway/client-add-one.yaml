@@ -1,0 +1,186 @@
+---
+- name: Validate client name
+  ansible.builtin.assert:
+    that:
+      - vpn_client_name_effective is match('^[A-Za-z0-9_.-]+$')
+    fail_msg: "Client name may contain only A-Z, a-z, 0-9, _, . and -."
+
+- name: Create/reuse legacy client state locally
+  ansible.builtin.command:
+    argv:
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state/.awg-client-state.py"
+      - --name
+      - "{{ vpn_client_name_effective }}"
+      - --host
+      - "{{ inventory_hostname }}"
+      - --profile
+      - legacy
+      - --profile-interface
+      - "legacy={{ vpn_legacy_interface }}"
+      - --profile-interface
+      - "new={{ vpn_new_interface }}"
+      - --interface
+      - "{{ vpn_legacy_interface }}"
+      - --subnet
+      - "{{ vpn_legacy_subnet }}"
+      - --server-ip
+      - "{{ vpn_legacy_server_ip }}"
+      - --state-root
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
+      - --legacy-state-root
+      - "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/state"
+      - --junk-list-file
+      - "I1={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[0] }}"
+      - --junk-list-file
+      - "I2={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[1] }}"
+      - --junk-list-file
+      - "I3={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[2] }}"
+  register: legacy_client_state_cmd
+  changed_when: false
+  failed_when: false
+  delegate_to: localhost
+  become: false
+  no_log: true
+
+- name: Require legacy client-state allocation to succeed
+  ansible.builtin.assert:
+    that:
+      - legacy_client_state_cmd.rc == 0
+    fail_msg: "Legacy client-state allocation failed: {{ legacy_client_state_cmd.stderr | default('no diagnostic output') }}"
+
+- name: Create/reuse new client state locally
+  ansible.builtin.command:
+    argv:
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state/.awg-client-state.py"
+      - --name
+      - "{{ vpn_client_name_effective }}"
+      - --host
+      - "{{ inventory_hostname }}"
+      - --profile
+      - new
+      - --profile-interface
+      - "legacy={{ vpn_legacy_interface }}"
+      - --profile-interface
+      - "new={{ vpn_new_interface }}"
+      - --interface
+      - "{{ vpn_new_interface }}"
+      - --subnet
+      - "{{ vpn_new_subnet }}"
+      - --server-ip
+      - "{{ vpn_new_server_ip }}"
+      - --state-root
+      - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
+      - --legacy-state-root
+      - "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/state"
+      - --junk-list-file
+      - "I1={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[0] }}"
+      - --junk-list-file
+      - "I2={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[1] }}"
+      - --junk-list-file
+      - "I3={{ role_path }}/files/junk-packets/{{ awg_client_junk_packet_files[2] }}"
+      - --paired-address
+      - "{{ (legacy_client_state_cmd.stdout | from_json).address }}"
+      - --paired-subnet
+      - "{{ vpn_legacy_subnet }}"
+  register: new_client_state_cmd
+  changed_when: false
+  failed_when: false
+  delegate_to: localhost
+  become: false
+  no_log: true
+
+- name: Require new client-state allocation to succeed
+  ansible.builtin.assert:
+    that:
+      - new_client_state_cmd.rc == 0
+    fail_msg: "New client-state allocation failed: {{ new_client_state_cmd.stderr | default('no diagnostic output') }}"
+
+- name: Collect reconciled client state for deferred rendering
+  ansible.builtin.set_fact:
+    vpn_reconciled_clients: "{{ (vpn_reconciled_clients | default([])) + [{'name': vpn_client_name_effective, 'legacy': (legacy_client_state_cmd.stdout | from_json), 'new': (new_client_state_cmd.stdout | from_json)}] }}"
+  when: vpn_collect_clients | default(false)
+
+- name: Reconcile legacy peer from local client state
+  ansible.builtin.copy:
+    content: |-
+      {% set legacy_state = legacy_client_state_cmd.stdout | from_json %}
+      [Peer]
+      PublicKey = {{ legacy_state.public_key }}
+      {% if legacy_state.preshared_key | default('') | length > 0 %}
+      PresharedKey = {{ legacy_state.preshared_key }}
+      {% endif %}
+      AllowedIPs = {{ legacy_state.address }}/32
+    dest: "/etc/amnezia/amneziawg/peers/{{ vpn_legacy_interface }}/{{ vpn_client_name_effective }}.conf"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  when: not (vpn_collect_clients | default(false))
+
+- name: Reconcile new peer from local client state
+  ansible.builtin.copy:
+    content: |-
+      {% set new_state = new_client_state_cmd.stdout | from_json %}
+      [Peer]
+      PublicKey = {{ new_state.public_key }}
+      {% if new_state.preshared_key | default('') | length > 0 %}
+      PresharedKey = {{ new_state.preshared_key }}
+      {% endif %}
+      AllowedIPs = {{ new_state.address }}/32
+    dest: "/etc/amnezia/amneziawg/peers/{{ vpn_new_interface }}/{{ vpn_client_name_effective }}.conf"
+    owner: root
+    group: root
+    mode: "0600"
+  no_log: true
+  when: not (vpn_collect_clients | default(false))
+
+- name: Load peers from local client state
+  ansible.builtin.command:
+    argv:
+      - /usr/local/libexec/awg-load-peers
+      - "{{ item }}"
+  loop:
+    - "{{ vpn_legacy_interface }}"
+    - "{{ vpn_new_interface }}"
+  changed_when: false
+  when: vpn_reload_peers_after_client | default(true)
+
+- name: Write legacy client config locally
+  ansible.builtin.template:
+    src: client.conf.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ vpn_client_name_effective }}-legacy.conf"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+  vars:
+    client_state: "{{ legacy_client_state_cmd.stdout | from_json }}"
+    client_server_ip: "{{ vpn_legacy_server_ip }}"
+    client_server_public_key: "{{ vpn_server_public_key }}"
+    client_port: "{{ vpn_legacy_port }}"
+    awg_params: "{{ awg_legacy }}"
+    awg_generation: legacy
+  no_log: true
+  when: not (vpn_collect_clients | default(false))
+
+- name: Write new client config locally
+  ansible.builtin.template:
+    src: client.conf.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ vpn_client_name_effective }}-new.conf"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+  vars:
+    client_state: "{{ new_client_state_cmd.stdout | from_json }}"
+    client_server_ip: "{{ vpn_new_server_ip }}"
+    client_server_public_key: "{{ vpn_server_public_key }}"
+    client_port: "{{ vpn_new_port }}"
+    awg_params: "{{ awg_new }}"
+    awg_generation: new
+  no_log: true
+  when: not (vpn_collect_clients | default(false))
+
+- name: Show generated client files
+  ansible.builtin.debug:
+    msg:
+      - "provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ vpn_client_name_effective }}-legacy.conf"
+      - "provision/vpn-server-awg-configs/{{ inventory_hostname }}/{{ vpn_client_name_effective }}-new.conf"

@@ -13,258 +13,106 @@ amneziawg_ppa_supported_releases:
   - jammy
   - noble
   - oracular
-# Optional override for newer Ubuntu releases not yet published in the PPA.
-# Example: amneziawg_ppa_release: noble
-# amneziawg_ppa_release: ""
+# AWG gateway configuration. All user-facing values live under vpn_server.
+vpn_server:
+  amneziawg:
+    # Shared settings applied to both AWG interfaces and every gateway target.
+    common:
+      # Parent IPv4 range encompassing awg15 and awg20 (normally a /23).
+      subnet: ""
+      # Stable DNS name embedded in all generated client profiles.
+      public_host: ""
+      # Public egress NIC; leave empty to use the default IPv4 interface.
+      wan_interface: ""
+      # Tunnel MTU used by both server interfaces and generated client configs.
+      client_mtu: 1280
+      # IPv4 routes installed by generated client profiles.
+      client_allowed_ips: "0.0.0.0/0"
+      # NAT keepalive interval for generated client profiles, in seconds.
+      client_persistent_keepalive: 25
+      # Amnezia PPA suite used to install the kernel DKMS package on Ubuntu 26.04.
+      ppa_release: noble
+      # Client-state names reconciled by the gateway config-update workflow.
+      clients: []
 
-# ============================================================================
-# EXTERNALIZED CLIENT REGISTRY (Reusable Clients)
-# ============================================================================
-#
-# Define clients once and reuse them across multiple interfaces/servers.
-# IP addresses are automatically calculated from interface network + ip_suffix.
-#
-# amneziawg_clients_group:
-#   laptop:
-#     private_key: "xxxxx"
-#     public_key: "xxxxx"
-#     preshared_key: "xxxxx"          # Optional, adds extra security layer
-#     endpoint: "192.168.1.100"       # Optional, client's IP without port
-#     ip_suffix: 10                   # Gets .10 for IPv4 and ::a for IPv6
-#     allowed_ips: "0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1"  # Optional
-#
-#   phone:
-#     private_key: "xxxxx"
-#     public_key: "xxxxx"
-#     ip_suffix: 15                   # Gets .15 for IPv4 and ::f for IPv6
-#
-#   keenetic-router:
-#     private_key: "xxxxx"
-#     public_key: "xxxxx"
-#     endpoint: "192.168.1.1"
-#     ip_suffix: 2
-#
-# Then in interfaces, just reference by name:
-#   amneziawg_interfaces_group:
-#     awg0:
-#       address_v4: 10.9.9.1
-#       address_v6: fd00:1234:5678::1
-#       peers: ["laptop", "phone", "keenetic-router"]
-#       # laptop gets 10.9.9.10 and fd00:1234:5678::a
-#       # phone gets 10.9.9.15 and fd00:1234:5678::f
-#       # keenetic-router gets 10.9.9.2 and fd00:1234:5678::2
-#
-# Supports hierarchical config:
-#   - amneziawg_clients_group: Common clients for all hosts
-#   - amneziawg_clients_host: Host-specific clients
-#   - amneziawg_clients: Direct (no group/host split)
-#
-# Mixed inline + references:
-#   peers:
-#     - "laptop"                      # From registry
-#     - name: special                 # Inline definition
-#       public_key: "..."
-#       private_key: "..."
-#       address_v4: 10.9.9.99
-#
-# ============================================================================
+    # AWG 1.5-compatible listener. Preserve its values for existing clients.
+    awg15:
+      # Linux interface name and UDP listen port.
+      interface: awg0
+      port: 51820
+      # IPv4 client range and the server address within that range.
+      subnet: ""
+      server_ip: ""
+      # AWG 1.5 packet-obfuscation parameters shared with AWG 1.5 clients.
+      params:
+        Jc: 4
+        Jmin: 40
+        Jmax: 70
+        S1: 20
+        S2: 20
+        H1: "911111111"
+        H2: "922222222"
+        H3: "933333333"
+        H4: "944444444"
 
-# ============================================================================
-# INTERFACE CONFIGURATION
-# ============================================================================
-#
-# Method 1: Direct configuration (simple)
-#   amneziawg_interfaces:
-#     awg0: { ... }
-#
-# Method 2: Hierarchical (recommended for multiple hosts)
-#   - group_vars/vpn-server/awg.yaml:
-#       amneziawg_interfaces_group: { ... }
-#   - host_vars/vps-4/awg.yaml:
-#       amneziawg_interfaces_host: { ... }
-#
-# ============================================================================
+    # AWG 2.x listener. It uses a separate IPv4 range and UDP port.
+    awg20:
+      # Linux interface name and UDP listen port.
+      interface: awg1
+      port: 51821
+      # IPv4 client range and the server address within that range.
+      subnet: ""
+      server_ip: ""
+      # AWG 2.x packet-obfuscation parameters for generated AWG 2.x profiles.
+      params:
+        Jc: 4
+        Jmin: 40
+        Jmax: 120
+        S1: 30
+        S2: 30
+        H1: "100000000-149999999"
+        H2: "500000000-549999999"
+        H3: "900000000-949999999"
+        H4: "1300000000-1349999999"
+        S3: 0
+        S4: 0
 
-amneziawg_interface_defaults:
-  mode: server
-  mtu: 1412
-  subnet_v4: 24
-  clients_subnet_v4: 32
-  address_v6: "fd42:42:42::1"
-  subnet_v6: 48
-  clients_subnet_v6: 56
-  port: 51820
-  public_host: ""
-  jc: 3
-  jmin: 2
-  jmax: 6
-  s1: 1
-  s2: 2
-  h1: 3
-  h2: 4
-  h3: 5
-  h4: 6
-  peers: []
+  # Cloudflare WARP is the optional outbound interface managed by wgcf.
+  wgcf:
+    # Linux WireGuard interface name used as the WARP egress.
+    interface: warp
+    # Register and generate a WARP account/profile automatically on first run.
+    auto_register: true
+    # Controller-local WARP config to copy when auto_register is false.
+    config_source: ""
+    # wgcf release version to download for automatic registration.
+    version: "2.2.32"
 
-amneziawg_interfaces:
-  awg0:
-    # ========================================================================
-    # Basic Settings
-    # ========================================================================
-    mode: server  # 'server' or 'client'
-    private_key: ""
-    public_key: ""
-    mtu: 1412
+  # keen-pbr selects WARP or WAN for traffic arriving through AWG.
+  keen_pbr:
+    # keen-pbr Debian package variant.
+    package: keen-pbr
+    # Fallback DNS resolver for VPN clients.
+    dns_upstream: "1.1.1.1"
+    # URL and timing used to check outbound reachability.
+    urltest_url: "https://www.gstatic.com/generate_204"
+    urltest_interval_ms: 60000
+    urltest_probe_timeout_ms: 3000
+    # Web UI / API settings. Keep it disabled unless an API password hash is set.
+    api:
+      # Enable keen-pbr's HTTP API and web UI.
+      enabled: false
+      # Address and TCP port on which the API listens.
+      listen: "0.0.0.0:12121"
+      # Trusted RFC1918 LAN source ranges permitted to access the API.
+      lan_cidrs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+      # Browser origins permitted to call the API.
+      allowed_origins:
+        - "http://localhost:5173"
 
-    # ========================================================================
-    # Network Configuration
-    # ========================================================================
-    address_v4: "10.8.0.1"
-    subnet_v4: 24
-    clients_subnet_v4: 32           # Subnet for each client
-
-    address_v6: "fd42:42:42::1"     # Optional
-    subnet_v6: 48
-    clients_subnet_v6: 56
-
-    # ========================================================================
-    # Server Mode Settings (mode: server)
-    # ========================================================================
-    port: 51820
-    public_host: ""                 # Your server's public IP/hostname
-    public_interface: "eth0"        # Interface for NAT (or null to disable)
-    private_interface: "awg0"       # Usually same as interface name
-
-    # Peers (clients connecting to this server)
-    peers: []
-    # Examples:
-    # peers: ["laptop", "phone"]                    # Reference from registry
-    # peers:
-    #   - "laptop"                                  # From registry
-    #   - name: inline-client                       # Inline definition
-    #     public_key: "..."
-    #     private_key: "..."
-    #     address_v4: 10.8.0.100
-    #     address_v6: fd42:42:42::100
-
-    # ========================================================================
-    # Client Mode Settings (mode: client) - Site-to-Site
-    # ========================================================================
-    # remote_endpoint: "vpn.example.com:51820"
-    # remote_public_key: "server_public_key"
-    # remote_preshared_key: "preshared_key"      # Optional, for extra security
-    # remote_allowed_ips: "0.0.0.0/0, ::/0"       # Routes to add
-    # private_interface: "awg0"       # Usually same as interface name
-
-
-    # ========================================================================
-    # Obfuscation Parameters (Required - must match between client/server)
-    # ========================================================================
-    jc: 3
-    jmin: 2
-    jmax: 6
-    s1: 1
-    s2: 2
-    h1: 3
-    h2: 4
-    h3: 5
-    h4: 6
-
-    # ========================================================================
-    # Advanced Routing
-    # ========================================================================
-
-    # Custom routing table
-    # routing_table: 100
-    # routing_table_name: "awg_vpn"               # Optional, auto-generated
-    # target_routing_table: 100                   # Route traffic entering this interface through another table
-    # target_routing_table_name: "awg_target"     # Optional, auto-generated
-
-    # Policy-based routing rules
-    # routing_rules:
-    #   - from: "10.9.9.0/24"                     # Traffic from this network
-    #     table: 100                              # Use this table
-    #   - to: "8.8.8.8"                           # Traffic to this destination
-    #     table: 100
-    #   - iif: "awg0"                             # Traffic from interface
-    #     table: 100
-    #   - oif: "eth0"                             # Traffic to interface
-    #     table: 100
-    #     table_name: "custom_name"               # Optional
-
-# ============================================================================
-# COMPLETE EXAMPLE: VPS with Server + Site-to-Site
-# ============================================================================
-#
-# group_vars/vpn-server/awg.yaml:
-# ---
-# vpn_amnezia_enabled: true
-# vpn_wan_interface: eth0
-#
-# # Shared clients
-# amneziawg_clients_group:
-#   laptop:
-#     private_key: "CLIENT_PRIV"
-#     public_key: "CLIENT_PUB"
-#     ip_suffix: 10
-#   phone:
-#     private_key: "PHONE_PRIV"
-#     public_key: "PHONE_PUB"
-#     ip_suffix: 15
-#
-# # Common interface settings
-# amneziawg_interfaces_group:
-#   awg0:
-#     mode: server
-#     mtu: 1412
-#     subnet_v4: 24
-#     subnet_v6: 64
-#     jc: 6
-#     jmin: 373
-#     jmax: 1087
-#     s1: 54
-#     s2: 99
-#     h1: 410286658
-#     h2: 925748336
-#     h3: 1535569001
-#     h4: 336366358
-#
-# host_vars/vps-4/awg.yaml:
-# ---
-# amneziawg_interfaces_host:
-#   awg0:
-#     # Server interface
-#     port: 19731
-#     public_host: cdn.node.kurb.me
-#     private_key: "SERVER_PRIV"
-#     public_key: "SERVER_PUB"
-#     address_v4: 10.9.9.1
-#     address_v6: fd00:1234:5678::1
-#     public_interface: awg1
-#     target_routing_table: 100                   # Send awg0 client traffic to awg1's table
-#     peers: ["laptop", "phone"]                  # Reference clients
-#
-#   awg1:
-#     # Site-to-site client
-#     mode: client
-#     private_key: "CLIENT_PRIV"
-#     public_key: "CLIENT_PUB"
-#     address_v4: 10.10.10.2
-#     subnet_v4: 24
-#     remote_endpoint: "upstream.example.com:51820"
-#     remote_public_key: "UPSTREAM_PUB"
-#     remote_allowed_ips: "0.0.0.0/0, ::/0"
-#     routing_table: 100                          # Same table as awg0
-#     jc: 3
-#     jmin: 50
-#     jmax: 1000
-#     s1: 10
-#     s2: 20
-#     h1: 123456
-#     h2: 654321
-#     h3: 111111
-#     h4: 222222
-#
-# Result: awg0 clients' traffic routes through awg1 site-to-site connection
-#
-# ============================================================================
+# Argon2id hash required when vpn_server.keen_pbr.api.enabled is true.
+# Define this secret in encrypted inventory; never put it in awg.yaml.
+keen_pbr_api_password_hash: ""

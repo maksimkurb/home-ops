@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import argparse, json, re
+from pathlib import Path
+
+NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
+p = argparse.ArgumentParser()
+p.add_argument("--state-root", required=True)
+p.add_argument("--clients", required=True)
+p.add_argument("--legacy-interface", required=True)
+p.add_argument("--new-interface", required=True)
+a = p.parse_args()
+
+items = []
+for name in a.clients.split(","):
+    if not NAME.fullmatch(name): raise SystemExit(f"invalid client name: {name}")
+    path = Path(a.state_root) / f"{name}.json"
+    try:
+        state = json.loads(path.read_text())
+        required = {"name", "private_key", "public_key", "preshared_key", "profiles"}
+        if not required <= state.keys() or state["name"] != name: raise ValueError
+        profiles = state["profiles"]
+        legacy, new = profiles["legacy"], profiles["new"]
+        if legacy["interface"] != a.legacy_interface or new["interface"] != a.new_interface: raise ValueError
+        for profile in (legacy, new):
+            if not isinstance(profile.get("address"), str): raise ValueError
+    except (OSError, KeyError, ValueError, json.JSONDecodeError):
+        raise SystemExit(f"invalid client state: {path}")
+    identity = {key: state[key] for key in ("private_key", "public_key", "preshared_key")}
+    items.append({"name": name, "legacy": identity | legacy | {"junk_packets": state.get("junk_packets", {})}, "new": identity | new | {"junk_packets": state.get("junk_packets", {})}})
+print(json.dumps(items))

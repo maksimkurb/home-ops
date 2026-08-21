@@ -1,0 +1,42 @@
+[Interface]
+PrivateKey = {{ client_state.private_key }}
+Address = {{ client_state.address }}/32
+MTU = {{ vpn_client_mtu }}
+
+Jc = {{ awg_params.Jc }}
+Jmin = {{ awg_params.Jmin }}
+Jmax = {{ awg_params.Jmax }}
+S1 = {{ awg_params.S1 }}
+S2 = {{ awg_params.S2 }}
+H1 = {{ awg_params.H1 }}
+H2 = {{ awg_params.H2 }}
+H3 = {{ awg_params.H3 }}
+H4 = {{ awg_params.H4 }}
+{% if awg_generation == 'new' and (awg_params.S3 | default(0) | int) > 0 %}
+S3 = {{ awg_params.S3 }}
+{% endif %}
+{% if awg_generation == 'new' and (awg_params.S4 | default(0) | int) > 0 %}
+S4 = {{ awg_params.S4 }}
+{% endif %}
+{% if awg_generation == 'new' and client_state.junk_packets is defined %}
+{% for junk_name in ['I1', 'I2', 'I3'] %}
+{% if junk_name in client_state.junk_packets %}
+{{ junk_name }} = {{ client_state.junk_packets[junk_name] }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+[Peer]
+PublicKey = {{ client_server_public_key }}
+PresharedKey = {{ client_state.preshared_key }}
+AllowedIPs = {{ vpn_client_allowed_ips }}
+Endpoint = {{ vpn_public_host_effective }}:{{ client_port }}
+PersistentKeepalive = {{ vpn_client_persistent_keepalive }}
+
+{% if awg_generation == 'new' %}
+# Keenetic AWG 2.0: I4/I5 не используются; I1-I3 взяты из client-state.
+# interface Wireguard0 wireguard asc {{ awg_params.Jc }} {{ awg_params.Jmin }} {{ awg_params.Jmax }} {{ awg_params.S1 }} {{ awg_params.S2 }} {{ awg_params.H1 }} {{ awg_params.H2 }} {{ awg_params.H3 }} {{ awg_params.H4 }} [{{ awg_params.S3 | default(0) }} {{ awg_params.S4 | default(0) }}{% for junk_name in ['I1', 'I2', 'I3'] %}{% if client_state.junk_packets is defined and junk_name in client_state.junk_packets %} "{{ client_state.junk_packets[junk_name] }}"{% endif %}{% endfor %}]
+{% else %}
+# Keenetic AWG 1.5:
+# interface Wireguard0 wireguard asc {{ awg_params.Jc }} {{ awg_params.Jmin }} {{ awg_params.Jmax }} {{ awg_params.S1 }} {{ awg_params.S2 }} {{ awg_params.H1 }} {{ awg_params.H2 }} {{ awg_params.H3 }} {{ awg_params.H4 }}
+{% endif %}

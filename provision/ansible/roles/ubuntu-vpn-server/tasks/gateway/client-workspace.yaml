@@ -1,0 +1,26 @@
+---
+- name: Find local Git repository root
+  ansible.builtin.command: git rev-parse --show-toplevel
+  delegate_to: localhost
+  become: false
+  register: local_repo_root
+  changed_when: false
+
+- name: Create local client-state and output directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop:
+    - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
+    - "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
+  delegate_to: localhost
+  become: false
+
+- name: Install local client-state allocator
+  ansible.builtin.template:
+    src: awg-client-state.py.j2
+    dest: "{{ local_repo_root.stdout }}/provision/vpn-client-state/.awg-client-state.py"
+    mode: "0700"
+  delegate_to: localhost
+  become: false

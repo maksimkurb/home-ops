@@ -1,0 +1,12 @@
+---
+- name: Update AWG gateway and client configuration
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+
+  tasks:
+    - name: Update VPN gateway configuration
+      ansible.builtin.include_role:
+        name: ubuntu-vpn-server
+        tasks_from: gateway/config-update

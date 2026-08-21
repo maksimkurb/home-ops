@@ -1,0 +1,31 @@
+---
+- name: Find local repository root for client IP import
+  ansible.builtin.command: git rev-parse --show-toplevel
+  delegate_to: localhost
+  become: false
+  register: client_ip_import_repo_root
+  changed_when: false
+
+- name: Install local legacy-IP importer
+  ansible.builtin.template:
+    src: awg-import-legacy-ips.py.j2
+    dest: "{{ client_ip_import_repo_root.stdout }}/provision/vpn-client-state/.awg-import-legacy-ips.py"
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+
+- name: Import legacy client addresses from generated configs
+  ansible.builtin.command:
+    argv:
+      - "{{ client_ip_import_repo_root.stdout }}/provision/vpn-client-state/.awg-import-legacy-ips.py"
+      - --configs
+      - "{{ client_ip_import_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
+      - --state-root
+      - "{{ client_ip_import_repo_root.stdout }}/provision/vpn-client-state"
+      - --interface
+      - "{{ vpn_legacy_interface | default('awg0') }}"
+  register: client_ip_import_result
+  changed_when: "(client_ip_import_result.stdout | from_json).changed | int > 0"
+  delegate_to: localhost
+  become: false
+  no_log: true

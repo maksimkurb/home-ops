@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+iface="${1:?interface is required}"
+dir="/etc/amnezia/amneziawg/peers/${iface}"
+
+[[ -d "$dir" ]] || exit 0
+
+shopt -s nullglob
+compgen -G "$dir/*.conf" > /dev/null || exit 0
+fragments=("$dir"/*.conf)
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+for fragment in "${fragments[@]}"; do
+    cat "$fragment" >> "$tmp"
+    printf '\n' >> "$tmp"
+done
+
+awg addconf "$iface" "$tmp"

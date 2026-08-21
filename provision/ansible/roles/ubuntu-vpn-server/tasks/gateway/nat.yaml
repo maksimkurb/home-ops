@@ -1,0 +1,36 @@
+---
+- name: Install owned nftables NAT rules
+  ansible.builtin.template:
+    src: vpn-gateway.nft.j2
+    dest: /etc/nftables.d/awg-gateway.nft
+    owner: root
+    group: root
+    mode: "0644"
+  register: vpn_nat_rules
+
+- name: Install nftables oneshot unit
+  ansible.builtin.template:
+    src: vpn-gateway-nft.service.j2
+    dest: /etc/systemd/system/vpn-gateway-nft.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: vpn_nat_unit
+
+- name: Reload systemd for NAT unit
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  when: vpn_nat_unit.changed
+
+- name: Enable and apply NAT rules
+  ansible.builtin.systemd_service:
+    name: vpn-gateway-nft.service
+    enabled: true
+    state: restarted
+  when: vpn_nat_rules.changed or vpn_nat_unit.changed
+
+- name: Ensure NAT service is running
+  ansible.builtin.systemd_service:
+    name: vpn-gateway-nft.service
+    enabled: true
+    state: started

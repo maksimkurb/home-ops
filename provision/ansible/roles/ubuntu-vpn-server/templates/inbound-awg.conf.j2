@@ -1,0 +1,22 @@
+[Interface]
+PrivateKey = {{ inbound_private_key }}
+Address = {{ inbound_address }}
+ListenPort = {{ inbound_port }}
+MTU = {{ vpn_client_mtu }}
+
+Jc = {{ awg_params.Jc }}
+Jmin = {{ awg_params.Jmin }}
+Jmax = {{ awg_params.Jmax }}
+S1 = {{ awg_params.S1 }}
+S2 = {{ awg_params.S2 }}
+H1 = {{ awg_params.H1 }}
+H2 = {{ awg_params.H2 }}
+H3 = {{ awg_params.H3 }}
+H4 = {{ awg_params.H4 }}
+{% if awg_generation == 'new' and (awg_params.S3 | default(0) | int) > 0 %}
+S3 = {{ awg_params.S3 }}
+{% endif %}
+{% if awg_generation == 'new' and (awg_params.S4 | default(0) | int) > 0 %}
+S4 = {{ awg_params.S4 }}
+{% endif %}
+PostUp = /usr/local/libexec/awg-load-peers %i

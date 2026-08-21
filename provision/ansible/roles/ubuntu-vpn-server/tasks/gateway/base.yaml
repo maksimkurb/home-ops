@@ -1,0 +1,37 @@
+---
+- name: Install common packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - git
+      - jq
+      - nftables
+      - python3
+      - unzip
+      - wireguard-tools
+    state: present
+    update_cache: true
+
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Create configuration directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  loop:
+    - /etc/amnezia/amneziawg
+    - /etc/amnezia/amneziawg/keys
+    - "/etc/amnezia/amneziawg/peers/{{ vpn_legacy_interface }}"
+    - "/etc/amnezia/amneziawg/peers/{{ vpn_new_interface }}"
+    - /etc/wireguard/warp-state
+    - /etc/nftables.d

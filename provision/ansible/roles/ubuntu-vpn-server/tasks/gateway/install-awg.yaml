@@ -1,0 +1,44 @@
+---
+- name: Add Amnezia PPA
+  ansible.builtin.deb822_repository:
+    name: "amnezia-ubuntu-ppa-{{ amneziawg_ppa_release }}"
+    types: deb
+    uris: https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu
+    suites: "{{ amneziawg_ppa_release }}"
+    components: main
+    signed_by: >-
+      https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x75C9DD72C799870E310542E24166F2C257290828
+    state: present
+
+- name: Update APT cache after adding Amnezia PPA
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install headers for the running kernel
+  ansible.builtin.apt:
+    name:
+      - dkms
+      - build-essential
+      - "linux-headers-{{ ansible_facts['kernel'] }}"
+    state: present
+
+- name: Install AmneziaWG kernel packages
+  ansible.builtin.apt:
+    name:
+      - amneziawg
+      - amneziawg-dkms
+    state: present
+
+- name: Build AmneziaWG module for the running kernel
+  ansible.builtin.command:
+    cmd: "dkms autoinstall -k {{ ansible_facts['kernel'] }}"
+  changed_when: false
+
+- name: Load AmneziaWG kernel module
+  community.general.modprobe:
+    name: amneziawg
+    state: present
+
+- name: Verify AmneziaWG CLI
+  ansible.builtin.command: awg --version
+  changed_when: false

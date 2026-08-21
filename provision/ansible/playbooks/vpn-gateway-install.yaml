@@ -1,0 +1,12 @@
+---
+- name: Deploy AWG gateway
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+
+  tasks:
+    - name: Deploy full VPN gateway stack
+      ansible.builtin.include_role:
+        name: ubuntu-vpn-server
+        tasks_from: gateway/main

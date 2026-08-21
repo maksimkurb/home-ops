@@ -1,16 +1,4 @@
 ---
-- import_tasks: amneziawg-install.yaml
-  tags:
-    - amneziawg
-    - amneziawg-install
-  when: vpn_amnezia_enabled | default(false)
-
-- import_tasks: amneziawg-configure.yaml
-  tags:
-    - amneziawg
-    - amneziawg-configure
-  when: vpn_amnezia_enabled | default(false)
-
 - import_tasks: 3x-ui-install.yaml
   tags:
     - 3x-ui

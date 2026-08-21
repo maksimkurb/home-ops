@@ -1,0 +1,18 @@
+---
+- name: Resolve gateway facts
+  ansible.builtin.import_tasks: gateway/facts.yaml
+
+- name: Install common packages and forwarding
+  ansible.builtin.import_tasks: gateway/base.yaml
+
+- name: Install AmneziaWG
+  ansible.builtin.import_tasks: gateway/install-awg.yaml
+
+- name: Install peer helper scripts
+  ansible.builtin.import_tasks: gateway/helpers.yaml
+
+- name: Provision Cloudflare WARP
+  ansible.builtin.import_tasks: gateway/warp.yaml
+
+- name: Install and configure keen-pbr
+  ansible.builtin.import_tasks: gateway/keen-pbr.yaml

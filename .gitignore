@@ -20,6 +20,8 @@ bin
 # Ansible
 ansible/inventory/e2e/hosts.yml
 provision/vpn-server-awg-configs
+provision/vpn-client-state
+provision/vpn-server-state
 nvidia.nvidia_driver*
 node_modules
 .venv/

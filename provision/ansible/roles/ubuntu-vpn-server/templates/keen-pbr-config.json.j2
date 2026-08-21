@@ -1,0 +1,78 @@
+{
+{% if keen_pbr_api_enabled | bool %}
+  "api": {
+    "enabled": true,
+    "listen": "{{ keen_pbr_api_listen }}",
+    "authentication": {
+      "enabled": true,
+      "password_hash": "{{ keen_pbr_api_password_hash }}"
+    },
+    "cors": {
+      "allowed_origins": {{ keen_pbr_api_allowed_origins | to_json }}
+    }
+  },
+{% endif %}
+  "device_name": "{{ keen_pbr_device_name }}",
+  "daemon": {
+    "firewall_backend": "nftables",
+    "skip_marked_packets": true,
+    "strict_enforcement": true
+  },
+  "outbounds": [
+    {
+      "type": "interface",
+      "tag": "warp",
+      "interface": "{{ vpn_warp_interface }}",
+      "strict_enforcement": true
+    },
+    {
+      "type": "table",
+      "tag": "wan",
+      "table": 254
+    },
+    {
+      "type": "urltest",
+      "tag": "warp_or_wan",
+      "url": "{{ keen_pbr_urltest_url }}",
+      "interval_ms": {{ keen_pbr_urltest_interval_ms }},
+      "probe_timeout_ms": {{ keen_pbr_urltest_probe_timeout_ms }},
+      "outbound_groups": [
+        {
+          "weight": 1,
+          "outbounds": ["warp"]
+        },
+        {
+          "weight": 2,
+          "outbounds": ["wan"]
+        }
+      ]
+    }
+  ],
+  "lists": {},
+  "dns": {
+    "system_resolver": {
+      "address": "127.0.0.1"
+    },
+    "servers": [
+      {
+        "tag": "fallback_dns",
+        "type": "static",
+        "address": "{{ vpn_dns_upstream }}"
+      }
+    ],
+    "rules": [],
+    "fallback": ["fallback_dns"]
+  },
+  "route": {
+    "inbound_interfaces": [
+      "{{ vpn_legacy_interface }}",
+      "{{ vpn_new_interface }}"
+    ],
+    "rules": [
+      {
+        "src_addr": "{{ vpn_subnet }}",
+        "outbound": "warp_or_wan"
+      }
+    ]
+  }
+}

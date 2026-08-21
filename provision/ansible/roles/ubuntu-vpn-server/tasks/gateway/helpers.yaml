@@ -1,0 +1,16 @@
+---
+- name: Ensure local helper directory exists
+  ansible.builtin.file:
+    path: /usr/local/libexec
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install peer loader
+  ansible.builtin.template:
+    src: awg-load-peers.sh.j2
+    dest: /usr/local/libexec/awg-load-peers
+    owner: root
+    group: root
+    mode: "0755"

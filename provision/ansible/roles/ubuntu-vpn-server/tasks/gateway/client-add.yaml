@@ -1,0 +1,25 @@
+---
+- name: Resolve gateway facts for client creation
+  ansible.builtin.import_tasks: gateway/facts.yaml
+
+- name: Load shared server keypair for client config
+  ansible.builtin.import_tasks: gateway/server-state.yaml
+
+- name: Ensure the AWG peer loader exists
+  ansible.builtin.stat:
+    path: /usr/local/libexec/awg-load-peers
+  register: awg_client_helper
+
+- name: Require a deployed gateway
+  ansible.builtin.assert:
+    that:
+      - awg_client_helper.stat.exists
+    fail_msg: "Deploy vpn-gateway-install.yaml on this host first."
+
+- name: Prepare local client reconciliation workspace
+  ansible.builtin.import_tasks: gateway/client-workspace.yaml
+
+- name: Add one logical client
+  ansible.builtin.include_tasks: gateway/client-add-one.yaml
+  vars:
+    vpn_client_name_effective: "{{ vpn_client_name }}"

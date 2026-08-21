@@ -1,0 +1,92 @@
+---
+- name: Map Debian package architecture
+  ansible.builtin.set_fact:
+    keen_pbr_arch: >-
+      {{
+        {
+          'x86_64': 'amd64',
+          'aarch64': 'arm64'
+        }.get(ansible_facts["architecture"], '')
+      }}
+
+- name: Validate keen-pbr architecture
+  ansible.builtin.assert:
+    that:
+      - keen_pbr_arch | length > 0
+      - keen_pbr_package in ["keen-pbr", "keen-pbr-headless"]
+
+- name: Query latest stable keen-pbr release
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/maksimkurb/keen-pbr/releases/latest
+    method: GET
+    return_content: true
+    headers:
+      Accept: application/vnd.github+json
+      X-GitHub-Api-Version: "2022-11-28"
+  register: keen_pbr_release
+  changed_when: false
+
+- name: Select current Debian release asset
+  ansible.builtin.set_fact:
+    keen_pbr_asset: >-
+      {{
+        (
+          keen_pbr_release.json.assets
+          | selectattr(
+              'name',
+              'match',
+              '^' ~ keen_pbr_package ~ '_[0-9].*_debian_bullseye_' ~ keen_pbr_arch ~ '\.deb$'
+            )
+          | list
+          | first
+        )
+      }}
+
+- name: Download latest keen-pbr package
+  ansible.builtin.get_url:
+    url: "{{ keen_pbr_asset.browser_download_url }}"
+    dest: "/var/tmp/{{ keen_pbr_asset.name }}"
+    mode: "0644"
+
+- name: Install latest keen-pbr package
+  ansible.builtin.apt:
+    deb: "/var/tmp/{{ keen_pbr_asset.name }}"
+    state: present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    KEEN_PBR_REPLACE_DNSMASQ_DEFAULTS: "Y"
+
+- name: Ensure keen-pbr config directory exists
+  ansible.builtin.file:
+    path: /etc/keen-pbr
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure keen-pbr
+  ansible.builtin.template:
+    src: keen-pbr-config.json.j2
+    dest: /etc/keen-pbr/config.json
+    owner: root
+    group: root
+    mode: "0644"
+  register: keen_pbr_config
+
+- name: Restart dnsmasq after keen-pbr configuration
+  ansible.builtin.systemd_service:
+    name: dnsmasq
+    enabled: true
+    state: restarted
+
+- name: Enable and restart keen-pbr
+  ansible.builtin.systemd_service:
+    name: keen-pbr
+    enabled: true
+    state: restarted
+
+- name: Verify keen-pbr status
+  ansible.builtin.command: keen-pbr status
+  register: keen_pbr_status
+  changed_when: false
+  failed_when: false

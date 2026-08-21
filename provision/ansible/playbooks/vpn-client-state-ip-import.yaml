@@ -1,0 +1,11 @@
+---
+- name: Import legacy AWG client IPs from generated configs
+  hosts: "{{ target | default('vpn-server') }}"
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Import client IP assignments
+      ansible.builtin.include_role:
+        name: ubuntu-vpn-server
+        tasks_from: gateway/client-state-ip-import

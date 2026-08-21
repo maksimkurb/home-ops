@@ -1,0 +1,20 @@
+---
+- name: Add AWG client
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: Require a client name
+      ansible.builtin.assert:
+        that:
+          - vpn_client_name is defined
+          - vpn_client_name | length > 0
+        fail_msg: "Pass -e vpn_client_name=<name>."
+
+  tasks:
+    - name: Add VPN client
+      ansible.builtin.include_role:
+        name: ubuntu-vpn-server
+        tasks_from: gateway/client-add
