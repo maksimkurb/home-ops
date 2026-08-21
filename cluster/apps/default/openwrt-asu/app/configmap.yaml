@@ -39,6 +39,6 @@ data:
       "RWR06DuN3p3XkO7fQ1ERQqhwpQnASyu19nYKMtLaoPO9Gm0fC70NarXa",
     ]
     "25.12" = [
-      "-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfDfwi91j7jXK4UVbTpoYX4CmkESy\\nG6iQxZMKGNpm01sLl6OU7EWN8LHlGZDnJfjzJ441kIbhgIc6bTjNY9UHew==\\n-----END PUBLIC KEY-----",
-      "-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1t08qno7dxzSfXYaDBp50KU0k4N7\\n0fzYnk8gIltrG+jGVT/zb7sWbZKyQGOtpQbZjc3jTYIqgq/M/l2RRyCNsg==\\n-----END PUBLIC KEY-----",
+      "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEfDfwi91j7jXK4UVbTpoYX4CmkESy\nG6iQxZMKGNpm01sLl6OU7EWN8LHlGZDnJfjzJ441kIbhgIc6bTjNY9UHew==\n-----END PUBLIC KEY-----",
+      "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1t08qno7dxzSfXYaDBp50KU0k4N7\n0fzYnk8gIltrG+jGVT/zb7sWbZKyQGOtpQbZjc3jTYIqgq/M/l2RRyCNsg==\n-----END PUBLIC KEY-----",
     ]
