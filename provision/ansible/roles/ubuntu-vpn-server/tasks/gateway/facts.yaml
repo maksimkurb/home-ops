@@ -65,3 +65,33 @@
         else ansible_facts["default_ipv4"]["interface"]
       }}
     vpn_public_host_effective: "{{ vpn_public_host }}"
+
+- name: Inspect the WAN default route in the main table
+  ansible.builtin.command:
+    argv:
+      - ip
+      - -j
+      - -4
+      - route
+      - show
+      - table
+      - main
+      - default
+      - dev
+      - "{{ vpn_wan_interface_effective }}"
+  register: vpn_wan_default_routes
+  changed_when: false
+
+- name: Resolve the WAN gateway from the main table
+  ansible.builtin.set_fact:
+    vpn_wan_gateway_effective: >-
+      {{
+        (
+          vpn_wan_default_routes.stdout
+          | from_json
+          | selectattr('gateway', 'defined')
+          | map(attribute='gateway')
+          | first
+        )
+        | default('', true)
+      }}

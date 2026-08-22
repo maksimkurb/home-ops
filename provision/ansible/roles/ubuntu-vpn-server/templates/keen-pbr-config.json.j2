@@ -28,7 +28,9 @@
     {
       "type": "interface",
       "tag": "wan",
-      "interface": "{{ vpn_wan_interface_effective }}"
+      "interface": "{{ vpn_wan_interface_effective }}"{% if vpn_wan_gateway_effective | default('', true) | length > 0 %},
+      "gateway": "{{ vpn_wan_gateway_effective }}"
+{% endif %}
     },
     {
       "type": "urltest",
@@ -36,6 +38,7 @@
       "url": "{{ keen_pbr_urltest_url }}",
       "interval_ms": {{ keen_pbr_urltest_interval_ms }},
       "probe_timeout_ms": {{ keen_pbr_urltest_probe_timeout_ms }},
+      "conntrack_on_switch": "delete",
       "outbound_groups": [
         {
           "weight": 1,
