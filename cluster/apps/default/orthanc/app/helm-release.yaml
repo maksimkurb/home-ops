@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: orthancteam/orthanc
-              tag: 26.7.0
+              tag: 26.8.1
             env:
               TZ: "${TIMEZONE}"
               ORTHANC__NAME: "Orthanc"
