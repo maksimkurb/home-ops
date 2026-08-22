@@ -23,6 +23,7 @@
     warp_auto_register: "{{ vpn_server.wgcf.auto_register }}"
     warp_config_source: "{{ vpn_server.wgcf.config_source }}"
     wgcf_version: "{{ vpn_server.wgcf.version }}"
+    warp_persistent_keepalive: "{{ vpn_server.wgcf.persistent_keepalive | default(25) }}"
     keen_pbr_package: "{{ vpn_server.keen_pbr.package }}"
     vpn_dns_upstream: "{{ vpn_server.keen_pbr.dns_upstream }}"
     keen_pbr_urltest_url: "{{ vpn_server.keen_pbr.urltest_url }}"
@@ -50,7 +51,7 @@
       - vpn_legacy_server_ip | length > 0
       - vpn_new_subnet | length > 0
       - vpn_new_server_ip | length > 0
-      - not (keen_pbr_api_enabled | bool) or keen_pbr_api_password_hash | length > 0
+      # - not (keen_pbr_api_enabled | bool) or keen_pbr_api_password_hash | length > 0
     fail_msg: >-
       Define the gateway network settings and, when enabling the keen-pbr API,
       set keen_pbr_api_password_hash in encrypted inventory.

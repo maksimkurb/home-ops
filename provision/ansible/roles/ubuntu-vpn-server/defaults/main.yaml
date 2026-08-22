@@ -87,6 +87,8 @@ vpn_server:
     config_source: ""
     # wgcf release version to download for automatic registration.
     version: "2.2.32"
+    # Keep the WARP NAT mapping alive while the gateway has no client traffic.
+    persistent_keepalive: 25
 
   # keen-pbr selects WARP or WAN for traffic arriving through AWG.
   keen_pbr:

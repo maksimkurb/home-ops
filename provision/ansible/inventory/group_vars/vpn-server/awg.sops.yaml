@@ -115,7 +115,7 @@ vpn_server:
             #ENC[AES256_GCM,data:vWp98isAW5V1fFfjK5+t9JjU4yJlZAKQIXy2Llp14LuPSpwTGt/VaIqAAA==,iv:2M9x7hpV4oY4qmn0inGtJ5UeiLxA87FXrN2GwiHReq0=,tag:p/XqcBtol/8vTextPpLPiA==,type:comment]
             allowed_origins:
                 - ENC[AES256_GCM,data:TBKpWni4H6mPsWIwK6NvVrYAAgPS,iv:qWw7k9WKYmvn48ikd22WBpwcResgHz5LIs3ACWptIo4=,tag:2G3kUpZ/mPQjqF2rJGEodQ==,type:str]
-keen_pbr_api_password_hash: ENC[AES256_GCM,data:J4H6BVThCxo+lRXnlgjjEkox3/bguOZ3Ufv8HwH+GzK6+9wukUJwiLDu8H3vb3ERDankkar67keQEEO907qIMMJ3NLZWvyM6m2wPks3zeqzhU13bIkjH1a4ZhYxEwioIq96stO7mg/PjclkiipCW6yc7d5EnQI95THVdX5GG,iv:IFX9EHk6fzIU4HaFJLCanKuldG2N+2nzhjLtL6e3Re0=,tag:bSdE4hoELsso4eLF0QD3xA==,type:str]
+keen_pbr_api_password_hash: null
 sops:
     age:
         - enc: |
@@ -127,7 +127,7 @@ sops:
             kVnVXCYsiir5HjYesmBg0wfNE7RZ9Qi/XrL9Bjoi0gX9gClFIAWnLw==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-08-21T20:01:05Z"
-    mac: ENC[AES256_GCM,data:Tp7quCvkp6x5NqhmW+GUMQOnujo9D9U5dBvP7+6FfZ8cISssnn8ut6FtlL4h0V6t2Kt21D2EIxuSu1+VlextXiyS1WPpsUiWmwETz/c+/qvmy0r733MsRWKjEaViwxtmUsgyp6X6MiB7JDMkvuJNMhEIWZuO6RFovhbZdrvlHD0=,iv:dJg7uKTDNCMi2NMj96EKsj+CCvWu0+SBVBTLWxgiQv0=,tag:xYnUUEWdnmUUp9lseAwVIQ==,type:str]
+    lastmodified: "2026-08-21T22:04:45Z"
+    mac: ENC[AES256_GCM,data:/lfm9R3TNc/hEIUM9ZyjW1G7itT9hGrNtgNvzLPLqxB12I4vkE5zsisDPLebIaW5QWgsmAC73iu8vxiEU2ljzb/84jqVSc2v0hWDz6C9Qvard8ExISQmtmzd401bsH9x3n6O38SuDQ01uau9306riaSIXJ84z9TV/Xc8fJbY7Rs=,iv:RG36BEtsWDqGILQD7HHhm/7vN6b19R0jnxxqnHUAxf8=,tag:IMXhVm0dOa5fbbQFEoYPig==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

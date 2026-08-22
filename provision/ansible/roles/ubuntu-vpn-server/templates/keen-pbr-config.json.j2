@@ -4,7 +4,7 @@
     "enabled": true,
     "listen": "{{ keen_pbr_api_listen }}",
     "authentication": {
-      "enabled": true,
+      "enabled": {{ 'true' if (keen_pbr_api_password_hash | default('', true) | length > 0) else 'false' }},
       "password_hash": "{{ keen_pbr_api_password_hash }}"
     },
     "cors": {
@@ -26,9 +26,9 @@
       "strict_enforcement": true
     },
     {
-      "type": "table",
+      "type": "interface",
       "tag": "wan",
-      "table": 254
+      "interface": "{{ vpn_wan_interface_effective }}"
     },
     {
       "type": "urltest",

@@ -11,6 +11,9 @@
 - name: Configure owned NAT rules
   ansible.builtin.import_tasks: gateway/nat.yaml
 
+- name: Apply keen-pbr configuration
+  ansible.builtin.import_tasks: gateway/keen-pbr-config.yaml
+
 - name: Prepare local client reconciliation workspace
   ansible.builtin.import_tasks: gateway/client-workspace.yaml
 

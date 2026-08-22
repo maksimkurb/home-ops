@@ -1,0 +1,34 @@
+---
+- name: Ensure keen-pbr config directory exists
+  ansible.builtin.file:
+    path: /etc/keen-pbr
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure keen-pbr
+  ansible.builtin.template:
+    src: keen-pbr-config.json.j2
+    dest: /etc/keen-pbr/config.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart dnsmasq after keen-pbr configuration
+  ansible.builtin.systemd_service:
+    name: dnsmasq
+    enabled: true
+    state: restarted
+
+- name: Enable and restart keen-pbr
+  ansible.builtin.systemd_service:
+    name: keen-pbr
+    enabled: true
+    state: restarted
+
+- name: Verify keen-pbr status
+  ansible.builtin.command: keen-pbr status
+  register: keen_pbr_status
+  changed_when: false
+  failed_when: false

@@ -85,6 +85,13 @@
     insertafter: '^\[Interface\]'
     line: "Table = off"
 
+- name: Keep the WARP peer NAT mapping alive
+  ansible.builtin.lineinfile:
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
+    regexp: '^\s*PersistentKeepalive\s*='
+    insertafter: '^\[Peer\]'
+    line: "PersistentKeepalive = {{ warp_persistent_keepalive }}"
+
 - name: Retire the standard WireGuard WARP unit
   ansible.builtin.systemd_service:
     name: "wg-quick@{{ vpn_warp_interface }}"
