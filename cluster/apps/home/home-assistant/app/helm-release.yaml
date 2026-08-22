@@ -11,7 +11,7 @@ spec:
     spec:
       # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts/
       chart: app-template
-      version: 5.0.1
+      version: 5.1.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/home-assistant/home-assistant
-              tag: 2026.8.2
+              tag: 2026.8.3
             env:
               TZ: "${TIMEZONE}"
               # https://github.com/blakeblackshear/frigate-hass-integration/issues/762

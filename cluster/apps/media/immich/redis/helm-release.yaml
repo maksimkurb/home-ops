@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: redis
-              tag: 8.10.0
+              tag: 8.10.1
             env:
               REDIS_REPLICATION_MODE: master
             resources:
