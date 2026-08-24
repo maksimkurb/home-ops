@@ -32,7 +32,7 @@ spec:
               tag: v1.13.2
             env:
               - name: HOMEPAGE_ALLOWED_HOSTS
-                value: "start.${SECRET_PUBLIC_DOMAIN}"
+                value: "start.${SECRET_PUBLIC_DOMAIN},homepage-app.default:3000"
               - name: LOG_TARGETS
                 value: "stdout"
             resources:
