@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname openquester
+  name: &appname sigame
   namespace: flux-system
 spec:
   targetNamespace: games
@@ -12,16 +12,12 @@ spec:
       app.kubernetes.io/name: *appname
   interval: 30m
   timeout: 5m
-  path: "./cluster/apps/games/openquester/app"
+  path: "./cluster/apps/games/sigame/app"
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-cluster
   wait: false
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   postBuild:
     substitute:
       APP: *appname
