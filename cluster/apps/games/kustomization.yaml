@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ./icarus/ks.yaml
-  - ./sigame/ks.yaml
+  - ./openquester/ks.yaml
