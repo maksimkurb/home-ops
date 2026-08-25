@@ -2,7 +2,9 @@
 PrivateKey = {{ inbound_private_key }}
 Address = {{ inbound_address }}
 ListenPort = {{ inbound_port }}
-MTU = {{ vpn_client_mtu }}
+{% if vpn_tunnel_mtu is not none and (vpn_tunnel_mtu | string | length > 0) %}
+MTU = {{ vpn_tunnel_mtu }}
+{% endif %}
 
 Jc = {{ awg_params.Jc }}
 Jmin = {{ awg_params.Jmin }}

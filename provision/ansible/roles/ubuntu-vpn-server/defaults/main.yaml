@@ -25,7 +25,8 @@ vpn_server:
       # Public egress NIC; leave empty to use the default IPv4 interface.
       wan_interface: ""
       # Tunnel MTU used by both server interfaces and generated client configs.
-      client_mtu: 1280
+      # Set to null to omit MTU and let awg-quick choose it automatically.
+      mtu: 1280
       # IPv4 routes installed by generated client profiles.
       client_allowed_ips: "0.0.0.0/0"
       # NAT keepalive interval for generated client profiles, in seconds.
@@ -81,6 +82,8 @@ vpn_server:
   wgcf:
     # Linux WireGuard interface name used as the WARP egress.
     interface: warp
+    # WARP tunnel MTU. Set to null to omit MTU and let awg-quick choose it.
+    mtu: 1280
     # Register and generate a WARP account/profile automatically on first run.
     auto_register: true
     # Controller-local WARP config to copy when auto_register is false.

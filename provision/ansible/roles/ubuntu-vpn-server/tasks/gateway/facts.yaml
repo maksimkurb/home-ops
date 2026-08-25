@@ -4,7 +4,11 @@
     vpn_subnet: "{{ vpn_server.amneziawg.common.subnet }}"
     vpn_public_host: "{{ vpn_server.amneziawg.common.public_host }}"
     vpn_wan_interface: "{{ vpn_server.amneziawg.common.wan_interface }}"
-    vpn_client_mtu: "{{ vpn_server.amneziawg.common.client_mtu }}"
+    vpn_tunnel_mtu: >-
+      {{
+        vpn_server.amneziawg.common.client_mtu
+        | default(vpn_server.amneziawg.common.mtu | default(1280))
+      }}
     vpn_client_allowed_ips: "{{ vpn_server.amneziawg.common.client_allowed_ips | default('0.0.0.0/0') }}"
     vpn_client_persistent_keepalive: "{{ vpn_server.amneziawg.common.client_persistent_keepalive | default(25) }}"
     vpn_initial_clients: "{{ vpn_server.amneziawg.common.clients }}"
@@ -20,6 +24,7 @@
     awg_new: "{{ vpn_server.amneziawg.awg20.params }}"
     amneziawg_ppa_release: "{{ vpn_server.amneziawg.common.ppa_release }}"
     vpn_warp_interface: "{{ vpn_server.wgcf.interface }}"
+    warp_mtu: "{{ vpn_server.wgcf.mtu | default(1280) }}"
     warp_auto_register: "{{ vpn_server.wgcf.auto_register }}"
     warp_config_source: "{{ vpn_server.wgcf.config_source }}"
     wgcf_version: "{{ vpn_server.wgcf.version }}"

@@ -85,6 +85,21 @@
     insertafter: '^\[Interface\]'
     line: "Table = off"
 
+- name: Configure WARP tunnel MTU
+  ansible.builtin.lineinfile:
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
+    regexp: '^\s*MTU\s*='
+    insertafter: '^\[Interface\]'
+    line: "MTU = {{ warp_mtu }}"
+  when: warp_mtu is not none and (warp_mtu | string | length > 0)
+
+- name: Preserve automatic WARP MTU when no override is configured
+  ansible.builtin.lineinfile:
+    path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
+    regexp: '^\s*MTU\s*='
+    state: absent
+  when: warp_mtu is none or (warp_mtu | string | length == 0)
+
 - name: Keep the WARP peer NAT mapping alive
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"

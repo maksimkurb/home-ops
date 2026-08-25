@@ -67,6 +67,7 @@ spec:
     default.plik: []
     default.snapotter: []
     default.frappe: []
+    games.openquester: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -98,6 +99,7 @@ spec:
     plik: default.plik
     snapotter: default.snapotter
     frappe: default.frappe
+    openquester: games.openquester
   enableMasterLoadBalancer: true
   enableConnectionPooler: false
   enableLogicalBackup: true

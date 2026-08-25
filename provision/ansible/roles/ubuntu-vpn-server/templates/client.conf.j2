@@ -1,7 +1,9 @@
 [Interface]
 PrivateKey = {{ client_state.private_key }}
 Address = {{ client_state.address }}/32
-MTU = {{ vpn_client_mtu }}
+{% if vpn_tunnel_mtu is not none and (vpn_tunnel_mtu | string | length > 0) %}
+MTU = {{ vpn_tunnel_mtu }}
+{% endif %}
 
 Jc = {{ awg_params.Jc }}
 Jmin = {{ awg_params.Jmin }}
