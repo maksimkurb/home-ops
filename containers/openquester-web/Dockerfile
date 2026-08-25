@@ -23,9 +23,12 @@ RUN git config --system --add safe.directory /opt/flutter \
 
 WORKDIR /build
 
+COPY runtime-origin.patch /tmp/runtime-origin.patch
+
 RUN git clone https://github.com/OpenQuester/OpenQuester.git /build/OpenQuester \
     && cd /build/OpenQuester \
-    && git checkout "${OPENQUESTER_REF}"
+    && git checkout "${OPENQUESTER_REF}" \
+    && git apply /tmp/runtime-origin.patch
 
 WORKDIR /build/OpenQuester/client
 

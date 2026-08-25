@@ -1,0 +1,21 @@
+diff --git a/client/apps/client/lib/src/core/env.dart b/client/apps/client/lib/src/core/env.dart
+index 83ca941..c323ba1 100644
+--- a/client/apps/client/lib/src/core/env.dart
++++ b/client/apps/client/lib/src/core/env.dart
+@@ -1,3 +1,4 @@
+ import 'package:envied/envied.dart';
++import 'package:flutter/foundation.dart';
+
+ part 'env.g.dart';
+@@ -6,10 +7,10 @@ part 'env.g.dart';
+ final class Env {
+   @EnviedField()
+-  static Uri apiUrl = _Env.apiUrl;
++  static Uri apiUrl = kIsWeb ? Uri.base : _Env.apiUrl;
+
+   @EnviedField()
+-  static Uri clientAppUrl = _Env.clientAppUrl;
++  static Uri clientAppUrl = kIsWeb ? Uri.base : _Env.clientAppUrl;
+
+   @EnviedField()
+   static const String discordAuthClientId = _Env.discordAuthClientId;
