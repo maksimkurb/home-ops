@@ -55,11 +55,15 @@ spec:
               CORS_ORIGINS: "https://si.${SECRET_PUBLIC_DOMAIN}"
               SOCKET_IO_CORS_ORIGINS: "https://si.${SECRET_PUBLIC_DOMAIN}"
               DB_TYPE: pg
-              DB_NAME: openquester
-              DB_USER: openquester
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: "5432"
               DB_POOL_SIZE: "8"
+              DB_NAME: openquester
+              DB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: games.openquester.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
               DB_PASS:
                 valueFrom:
                   secretKeyRef:
