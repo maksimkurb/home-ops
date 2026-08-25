@@ -28,10 +28,16 @@ spec:
   values:
     service:
       main:
-        controller: main
+        controller: web
         ports:
           http:
             port: 80
+            targetPort: 8080
+      api:
+        controller: main
+        ports:
+          http:
+            port: 3000
             targetPort: 3000
       redis:
         controller: redis
@@ -40,6 +46,40 @@ spec:
             port: 6379
 
     controllers:
+      web:
+        initContainers:
+          build-web:
+            image:
+              repository: ghcr.io/cirruslabs/flutter
+              tag: 3.44.2
+            command:
+              - /bin/sh
+              - -ec
+              - |
+                git clone --depth 1 https://github.com/OpenQuester/OpenQuester.git /source
+                cd /source/client
+                printf '%s\n' \
+                  'API_URL=https://si.${SECRET_PUBLIC_DOMAIN}' \
+                  'CLIENT_APP_URL=https://si.${SECRET_PUBLIC_DOMAIN}' \
+                  'DISCORD_AUTH_CLIENT_ID=' > apps/client/.env
+                flutter pub get
+                dart pub global activate melos
+                melos bootstrap
+                melos run pre_build
+                cd apps/client
+                flutter build web --no-web-resources-cdn --wasm
+                cp -a build/web/. /output/
+        containers:
+          web:
+            image:
+              repository: docker.io/library/nginx
+              tag: 1.27.5-alpine
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
       main:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -128,6 +168,22 @@ spec:
                 memory: 128Mi
 
     persistence:
+      web-assets:
+        type: emptyDir
+        advancedMounts:
+          web:
+            build-web:
+              - path: /output
+            web:
+              - path: /usr/share/nginx/html
+      nginx-config:
+        type: configMap
+        name: openquester-nginx-config
+        advancedMounts:
+          web:
+            web:
+              - path: /etc/nginx/conf.d/default.conf
+                subPath: default.conf
       redis:
         storageClass: local-path
         accessMode: ReadWriteOnce
