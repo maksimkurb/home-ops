@@ -1,4 +1,4 @@
-FROM ghcr.io/cirruslabs/flutter:3.44.0 AS build
+FROM docker.io/library/ubuntu:24.04 AS build
 
 ARG OPENQUESTER_REF=f083d460f77adf3b5ec7a260cce124342c9844a1
 ARG API_URL=/
@@ -6,20 +6,20 @@ ARG CLIENT_APP_URL=/
 
 USER root
 
-# Cirrus Labs does not publish a 3.44.2 image tag, but this OpenQuester
-# revision requires that exact SDK release.
+# Install the exact SDK required by the pinned OpenQuester revision.
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends curl git xz-utils \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+      ca-certificates curl git libglu1-mesa unzip xz-utils zip \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /opt/flutter \
     && mkdir -p /opt \
     && curl --fail --location --silent --show-error \
       https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.44.2-stable.tar.xz \
       | tar --extract --xz --file - --directory /opt
 
-ENV PATH=/opt/flutter/bin:${PATH}
+ENV PATH=/opt/flutter/bin:/root/.pub-cache/bin:${PATH}
 
-RUN flutter --version
+RUN git config --system --add safe.directory /opt/flutter \
+    && flutter --version
 
 WORKDIR /build
 
