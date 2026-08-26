@@ -1,4 +1,4 @@
-FROM docker.io/library/ubuntu:24.04 AS build
+FROM docker.io/library/ubuntu:26.04 AS build
 
 ARG OPENQUESTER_REF=f083d460f77adf3b5ec7a260cce124342c9844a1
 ARG API_URL=/
