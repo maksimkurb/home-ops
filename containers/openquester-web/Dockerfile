@@ -1,8 +1,8 @@
 FROM docker.io/library/ubuntu:24.04 AS build
 
 ARG OPENQUESTER_REF=f083d460f77adf3b5ec7a260cce124342c9844a1
-ARG API_URL=/
-ARG CLIENT_APP_URL=/
+ARG API_URL
+ARG CLIENT_APP_URL
 
 USER root
 
@@ -23,12 +23,9 @@ RUN git config --system --add safe.directory /opt/flutter \
 
 WORKDIR /build
 
-COPY runtime-origin.patch /tmp/runtime-origin.patch
-
 RUN git clone https://github.com/OpenQuester/OpenQuester.git /build/OpenQuester \
     && cd /build/OpenQuester \
-    && git checkout "${OPENQUESTER_REF}" \
-    && git apply /tmp/runtime-origin.patch
+    && git checkout "${OPENQUESTER_REF}"
 
 WORKDIR /build/OpenQuester/client
 

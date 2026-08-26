@@ -12,6 +12,7 @@ on: # yamllint disable-line rule:truthy
 
 env:
   OPENQUESTER_REF: f083d460f77adf3b5ec7a260cce124342c9844a1
+  OPENQUESTER_API_URL: ${{ vars.OPENQUESTER_API_URL }}
 
 permissions:
   contents: read
@@ -22,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - name: Validate build configuration
+        run: test -n "${OPENQUESTER_API_URL}"
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v4
         with:
@@ -34,8 +37,8 @@ jobs:
           push: true
           build-args: |
             OPENQUESTER_REF=${{ env.OPENQUESTER_REF }}
-            API_URL=/
-            CLIENT_APP_URL=/
+            API_URL=${{ env.OPENQUESTER_API_URL }}
+            CLIENT_APP_URL=${{ env.OPENQUESTER_API_URL }}
           tags: ghcr.io/${{ github.repository_owner }}/openquester-web:${{ env.OPENQUESTER_REF }}
           labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha
