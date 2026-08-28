@@ -25,6 +25,7 @@ access_control:
       subject:
         - "group:frigate-admin"
         - "group:frigate-khoroshkina"
+        - "group:frigate-home"
 
     - domain: "frigate.${SECRET_PUBLIC_DOMAIN}"
       policy: deny
