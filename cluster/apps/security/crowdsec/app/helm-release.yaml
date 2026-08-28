@@ -32,6 +32,42 @@ spec:
     recreate: true
     force: true
     cleanupOnFail: true
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: crowdsec-agent
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: crowdsec-agent
+              spec:
+                template:
+                  spec:
+                    initContainers:
+                      - name: wait-for-lapi-and-register
+                        command:
+                          - sh
+                          - -c
+                          - |
+                            if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
+                              until nc "$LAPI_HOST" "$LAPI_PORT" -z; do echo waiting for lapi to start; sleep 5; done
+                              ln -s /staging/etc/crowdsec /etc/crowdsec
+                              cscli lapi register --machine crowdsec-agent -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"
+                              cp /etc/crowdsec/local_api_credentials.yaml /tmp_config/local_api_credentials.yaml
+                            fi
+          - target:
+              kind: Deployment
+              name: crowdsec-agent
+            patch: |
+              - op: replace
+                path: /spec/template/spec/initContainers/0/volumeMounts/0/name
+                value: crowdsec-agent-config
+              - op: replace
+                path: /spec/template/spec/containers/0/volumeMounts/0/name
+                value: crowdsec-agent-config
   uninstall:
     keepHistory: false
   driftDetection:
@@ -187,6 +223,11 @@ spec:
           storageClassName: "local-path"
           size: 100Mi
     agent:
+      isDeployment: true
+      persistentVolume:
+        config:
+          enabled: true
+          storageClassName: local-path
       acquisition:
         - namespace: networking
           podName: ingress-nginx-controller-*
