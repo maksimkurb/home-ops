@@ -10,6 +10,10 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
     fallthrough
   }
 
+  template IN A ${SECRET_ROUTER_OUTBOUND_HOST} {
+    answer "{{ .Name }} 60 IN A ${SECRET_ROUTER_OUTBOUND_IP}"
+  }
+
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress
     fallthrough

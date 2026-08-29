@@ -6,6 +6,34 @@ traefik_base_domain: ENC[AES256_GCM,data:aD35w+CD+IgaxG+vJcUfTMF1,iv:qfh3ULsvvsb
 acme_email: ENC[AES256_GCM,data:uf0wzb1KhAIk9evsSY6YCoMDFt4wnCKovBbYDWQKLg==,iv:W2nNZvbEq9dHvpHZ9+4zo0uPEbAFbXPmNp78dgRpqHA=,tag:sbaOWTHmcqKpaeUMb3TA0g==,type:str]
 dnsproxy_alternative_hostnames:
     - ENC[AES256_GCM,data:Gh+696HF5Bf3y2UmumiZ+Q==,iv:67+8ARmMLjHohAi219fz140XHGHIx5uVH0CgLX5//4s=,tag:BMhEm5mJ1HOQDauQyvh7Tg==,type:str]
+traefik_file_config:
+    http:
+        middlewares:
+            router-origin:
+                headers:
+                    customRequestHeaders:
+                        Origin: ENC[AES256_GCM,data:0pvuX30tsg9QIsz7NHZ3dQ==,iv:1b5ycnwlm8TFiSfNr+dVBAGFDQ4N3b3NMEsQQJG5rhg=,tag:VRtNJr03lwOTB7wEqbqoGQ==,type:str]
+                        Referer: ENC[AES256_GCM,data:q69G22mbTizg4sT8QrmWtg==,iv:lNudtO0F/QZ2dvF4EYogZugkKqAQsNwldO8Wxvx+LxU=,tag:O+EOr2uuvsBDKunObZ8RQw==,type:str]
+        routers:
+            router:
+                entryPoints:
+                    - ENC[AES256_GCM,data:wY54b35UX+78,iv:ZenjHKAO0xiaUqM8SHkgsERBZ/ITMkgN6TkN0tB7kNk=,tag:+1FxX/YgPEOwJN4Xi3F9tw==,type:str]
+                rule: ENC[AES256_GCM,data:n6OKtZdjO/aUU4Z2qOM36nkt7ALbaR9uiVq8S9JvboiQz+cDG1VYNnTWolP9RmOZWeSRDLDOIkzK4qw=,iv:zNYuAQe/FOOIYhajCkBVLaa9lg3nXk38MEPqm3oGaPE=,tag:conK8QCYqze+ECKRMXopkg==,type:str]
+                middlewares:
+                    - ENC[AES256_GCM,data:N2khHLxKAQnhybX97g==,iv:E13N7kJXQ8W2qXUd0oT7nzf75wKo7mmPIBS5Kme3c9c=,tag:mEW5yoC73K2+7X+bnXUWOw==,type:str]
+                service: ENC[AES256_GCM,data:CccHp1K1,iv:DdMSq2lcfEl0y1qcEDJ8wClfsPwEpecjjtajBUM+glQ=,tag:X/XxGEytsYbhxOFSP+B7NQ==,type:str]
+                tls:
+                    certResolver: ENC[AES256_GCM,data:lmo=,iv:igqC0RXNe3/CbAasJziD/YOqTBEK05tk93E0PxEWRYw=,tag:udakzeYBQHOUv7Tk+DYgJA==,type:str]
+        services:
+            router:
+                loadBalancer:
+                    passHostHeader: ENC[AES256_GCM,data:yCpINS0=,iv:H5mufys8PhI3O5xbtZtyHb3XCGZCR+KQNulj2LVhFbM=,tag:RE1Vex8xq75GxzRd2/Fpuw==,type:bool]
+                    serversTransport: ENC[AES256_GCM,data:+l66mf2P,iv:rgcg9dnSPhlKV1+xY8xRWTEy12LoDbzBR7bI+dj1coI=,tag:5+T8kQnEz4WBjUGoaAy+YA==,type:str]
+                    servers:
+                        - url: ENC[AES256_GCM,data:R19nxkDb2da590ibz5g2IQ==,iv:xtcPF6msBspOxbumxWl4Sy5bW0P3vmlTUQNWe7WyfNg=,tag:0WBkBWjdM9YYPGIkcnVRXw==,type:str]
+        serversTransports:
+            router:
+                insecureSkipVerify: ENC[AES256_GCM,data:kTUKcg==,iv:GBmyNnnysNxNcTHNXrMNFmIcm6ejdyMxAHvmULy2FVU=,tag:H8S2iDkXEnb63waq2GYawg==,type:bool]
 sops:
     age:
         - enc: |
@@ -17,7 +45,7 @@ sops:
             nItkATY2pidSwBmpIBPt64brx+0lPCKFg7phdO1DiRUZ12l8a+BOGg==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-08-21T20:01:08Z"
-    mac: ENC[AES256_GCM,data:k71eQ0V1Zsdjwr8EPRq3h6dKLLHQXatl7wNiLtqcXxapxk5XTQqzmkJkisvwl4Rnkw36j1Qu8EgMA6r/8jK+h4SXTTBiASgR7cQP8BKgUf9roP/3IAbX1wpbAv2H0owksxS2J7CtA4ipI9yYK8dlu+FiylNGDyClGxYK6ILkTGI=,iv:Z/ijFIPyk/0VhwXdkouk6geXt/WSd1BRsFIld8FEqXQ=,tag:KFtonof6ZQUB1flTZH8+Bw==,type:str]
+    lastmodified: "2026-08-29T19:44:07Z"
+    mac: ENC[AES256_GCM,data:ZjSW+1AkYhgv4o6vVOtRBi4qpO9IiEnSSP6ga6FBA5g3imolJIIHAqYPMNCV60slRL7iVXj/HRLwb+RW7ByW5ekwQHj3dmOVYdyZAYsZzE2FunfObl0ZrE9zO3cfnZJMpmkQ0vWmi2TbUpZJDakYhLCiUMf6miZ4/oq1dkG18Sg=,iv:MexEBQWdgs17BiKQxJFLaV+oxItjD6ns1KrkBOo0tHY=,tag:r799awHUXgVFvnejFBMJUQ==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

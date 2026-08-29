@@ -6,4 +6,4 @@ metadata:
   namespace: kube-system
 data:
   cubly.override: |
-    forward cubly.ru ${SVC_K8S_GATEWAY_ADDR}:53
+    forward ${SECRET_DOMAIN} ${SVC_K8S_GATEWAY_ADDR}:53

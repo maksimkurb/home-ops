@@ -27,11 +27,12 @@ subsets:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ext-svc-router-dashboard
+  name: ext-svc-router-dashboard-outbound
   namespace: default
   annotations:
     external-dns.alpha.kubernetes.io/enabled: 'true'
-    external-dns.alpha.kubernetes.io/target: '${INGRESS_TUNNEL}'
+    external-dns.alpha.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: 'false'
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
     nginx.ingress.kubernetes.io/upstream-vhost: "${ROUTER_IP}"
@@ -46,7 +47,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ext-router.${SECRET_PUBLIC_DOMAIN}
+    - host: ${SECRET_ROUTER_OUTBOUND_HOST}
       http:
         paths:
           - path: /
@@ -56,7 +57,26 @@ spec:
                 name: ext-svc-router-dashboard
                 port:
                   number: 443
-    - host: rt-1.${SECRET_PUBLIC_DOMAIN}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ext-svc-router-dashboard-cloudflare
+  namespace: default
+  annotations:
+    external-dns.alpha.kubernetes.io/enabled: 'true'
+    external-dns.alpha.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
+    nginx.ingress.kubernetes.io/upstream-vhost: "${ROUTER_IP}"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Origin "https://${ROUTER_IP}";
+      proxy_set_header Referer "https://${ROUTER_IP}";
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ${SECRET_ROUTER_CLOUDFLARE_HOST}
       http:
         paths:
           - path: /
