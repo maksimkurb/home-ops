@@ -6,5 +6,6 @@ resources:
   - authelia
   - authelia-redis
   - crowdsec/ks.yaml
+  - crowdsec-web-ui/ks.yaml
   - glauth
   - vaultwarden

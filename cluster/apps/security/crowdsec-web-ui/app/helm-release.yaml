@@ -1,0 +1,89 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app crowdsec-web-ui
+  namespace: security
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: crowdsec
+      namespace: security
+  values:
+    global:
+      nameOverride: *app
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: &port 3000
+    ingress:
+      main:
+        enabled: true
+        className: nginx-intra
+        annotations:
+          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+        hosts:
+          - host: "crowdsec.${SECRET_PRIVATE_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: *port
+    persistence:
+      config:
+        enabled: true
+        existingClaim: crowdsec-web-ui-config
+        globalMounts:
+          - path: /app/data
+    controllers:
+      main:
+        initContainers:
+          register-lapi:
+            image:
+              repository: crowdsecurity/crowdsec
+              tag: v1.7.8
+            command:
+              - sh
+              - -c
+            args:
+              - |
+                if [ ! -s /app/data/lapi-password ]; then
+                  until nc crowdsec-service.security.svc.cluster.local 8080 -z; do sleep 5; done
+                  cscli lapi register --machine crowdsec-web-ui -u http://crowdsec-service.security.svc.cluster.local:8080 --token "$REGISTRATION_TOKEN"
+                  awk -F ': ' '$1 == "password" {print $2}' /etc/crowdsec/local_api_credentials.yaml > /app/data/lapi-password
+                  chmod 0600 /app/data/lapi-password
+                fi
+            env:
+              REGISTRATION_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: crowdsec-lapi-keys
+                    key: registrationToken
+        containers:
+          main:
+            image:
+              repository: ghcr.io/theduffman85/crowdsec-web-ui
+              tag: 2026.8.1
+            env:
+              CONFIG_INSTANCE_LAPI_URL: http://crowdsec-service.security.svc.cluster.local:8080
+              CONFIG_INSTANCE_LAPI_AUTH_USERNAME: crowdsec-web-ui
+              CONFIG_INSTANCE_LAPI_AUTH_PASSWORD_FILE: /app/data/lapi-password
