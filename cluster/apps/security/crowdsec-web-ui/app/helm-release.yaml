@@ -82,7 +82,7 @@ spec:
           main:
             image:
               repository: ghcr.io/theduffman85/crowdsec-web-ui
-              tag: 2026.8.1
+              tag: 2026.8.3
             env:
               CONFIG_INSTANCE_LAPI_URL: http://crowdsec-service.security.svc.cluster.local:8080
               CONFIG_INSTANCE_LAPI_AUTH_USERNAME: crowdsec-web-ui
