@@ -74,7 +74,7 @@ spec:
                   fi
                 fi
                 if [ ! -s /app/data/lapi-password ]; then
-                  until cscli lapi register --machine crowdsec-web-ui -u http://crowdsec-service.security.svc.cluster.local:8080 --token "$REGISTRATION_TOKEN"; do sleep 5; done
+                  until cscli lapi register --machine "$HOSTNAME" -u http://crowdsec-service.security.svc.cluster.local:8080 --token "$REGISTRATION_TOKEN"; do sleep 5; done
                   awk -F ': ' '$1 == "password" {print $2}' /etc/crowdsec/local_api_credentials.yaml > /app/data/lapi-password
                   chmod 0600 /app/data/lapi-password
                 fi

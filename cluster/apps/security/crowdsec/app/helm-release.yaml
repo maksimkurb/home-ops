@@ -61,8 +61,7 @@ spec:
                               fi
                             fi
                             if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
-                              until cscli machines delete crowdsec-agent --ignore-missing; do sleep 5; done
-                              until cscli lapi register --machine crowdsec-agent -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"; do sleep 5; done
+                              until cscli lapi register --machine "$HOSTNAME" -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"; do sleep 5; done
                               cp /etc/crowdsec/local_api_credentials.yaml /tmp_config/local_api_credentials.yaml
                             fi
           - target:
@@ -111,7 +110,7 @@ spec:
           port: 5432
           flush:
             agents_autodelete:
-              login_password: 6h
+              login_password: 15m
       profiles.yaml: |
         name: captcha_remediation
         filters:
