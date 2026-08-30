@@ -1,0 +1,155 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  namespace: ml
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts/
+      chart: app-template
+      version: 5.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+
+  uninstall:
+    keepHistory: false
+
+  values:
+    global:
+      nameOverride: ${APP}
+
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/oliverbravery/printguard
+              tag: 2.4.0
+              pullPolicy: IfNotPresent
+
+            env:
+              TZ: "${TIMEZONE}"
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              privileged: false
+              seccompProfile:
+                type: RuntimeDefault
+
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: 8000
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  failureThreshold: 36
+
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: 8000
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 2Gi
+
+    service:
+      main:
+        controller: main
+        type: ClusterIP
+        ports:
+          http:
+            port: 8000
+          rtsp:
+            port: 8554
+            protocol: TCP
+          rtmp:
+            port: 1935
+            protocol: TCP
+
+    ingress:
+      main:
+        enabled: true
+        className: nginx-intra
+        annotations:
+          # PrintGuard has no built-in authentication. Keep the same
+          # nginx-intra + Authelia pattern already used by home-ops.
+          nginx.ingress.kubernetes.io/auth-method: GET
+          nginx.ingress.kubernetes.io/auth-url: |-
+            http://authelia.security.svc.cluster.local:8000/api/verify
+          nginx.ingress.kubernetes.io/auth-signin: |-
+            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
+          nginx.ingress.kubernetes.io/auth-response-headers: |-
+            Remote-User,Remote-Name,Remote-Groups,Remote-Email
+          nginx.ingress.kubernetes.io/auth-snippet: |
+            proxy_set_header X-Forwarded-Method $request_method;
+
+          # Dashboard/API use WebSockets and may keep video/control requests open.
+          nginx.ingress.kubernetes.io/proxy-buffering: "off"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+        hosts:
+          - host: "printguard.${SECRET_PRIVATE_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /data
