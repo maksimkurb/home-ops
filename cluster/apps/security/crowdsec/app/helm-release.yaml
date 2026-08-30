@@ -61,7 +61,7 @@ spec:
                               fi
                             fi
                             if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
-                              cscli lapi register --machine crowdsec-agent -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"
+                              until cscli lapi register --machine crowdsec-agent -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"; do sleep 5; done
                               cp /etc/crowdsec/local_api_credentials.yaml /tmp_config/local_api_credentials.yaml
                             fi
           - target:
