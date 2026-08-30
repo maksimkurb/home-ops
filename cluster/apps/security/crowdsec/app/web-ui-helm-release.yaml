@@ -67,16 +67,16 @@ spec:
             args:
               - |
                 until nc crowdsec-service.security.svc.cluster.local 8080 -z; do sleep 5; done
+                printf 'api:\n  client:\n    credentials_path: /tmp/local_api_credentials.yaml\n' > /tmp/crowdsec.yaml
                 if [ -s /app/data/lapi-password ]; then
                   printf 'url: http://crowdsec-service.security.svc.cluster.local:8080\nlogin: crowdsec-web-ui\npassword: %s\n' "$(cat /app/data/lapi-password)" > /tmp/local_api_credentials.yaml
-                  printf 'api:\n  client:\n    credentials_path: /tmp/local_api_credentials.yaml\n' > /tmp/crowdsec.yaml
                   if ! cscli lapi status -c /tmp/crowdsec.yaml; then
                     rm -f /app/data/lapi-password
                   fi
                 fi
                 if [ ! -s /app/data/lapi-password ]; then
-                  until cscli lapi register --machine "$HOSTNAME" -u http://crowdsec-service.security.svc.cluster.local:8080 --token "$REGISTRATION_TOKEN"; do sleep 5; done
-                  awk -F ': ' '$1 == "password" {print $2}' /etc/crowdsec/local_api_credentials.yaml > /app/data/lapi-password
+                  until cscli lapi register -c /tmp/crowdsec.yaml --file /tmp/local_api_credentials.yaml --machine "$HOSTNAME" -u http://crowdsec-service.security.svc.cluster.local:8080 --token "$REGISTRATION_TOKEN"; do sleep 5; done
+                  awk -F ': ' '$1 == "password" {print $2}' /tmp/local_api_credentials.yaml > /app/data/lapi-password
                   chmod 0600 /app/data/lapi-password
                 fi
             env:
