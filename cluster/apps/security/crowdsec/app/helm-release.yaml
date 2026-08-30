@@ -58,6 +58,7 @@ spec:
                               cp /tmp_config/local_api_credentials.yaml /etc/crowdsec/local_api_credentials.yaml
                               if ! cscli lapi status; then
                                 rm -f /tmp_config/local_api_credentials.yaml
+                                cscli machines delete crowdsec-agent --ignore-missing
                               fi
                             fi
                             if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
