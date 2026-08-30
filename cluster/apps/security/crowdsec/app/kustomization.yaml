@@ -5,3 +5,5 @@ kind: Kustomization
 resources:
   - secret.sops.yaml
   - helm-release.yaml
+  - web-ui-config-pvc.yaml
+  - web-ui-helm-release.yaml
