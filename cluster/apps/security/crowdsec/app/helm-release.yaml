@@ -52,9 +52,15 @@ spec:
                           - sh
                           - -c
                           - |
+                            until nc "$LAPI_HOST" "$LAPI_PORT" -z; do echo waiting for lapi to start; sleep 5; done
+                            ln -s /staging/etc/crowdsec /etc/crowdsec
+                            if [ -s /tmp_config/local_api_credentials.yaml ]; then
+                              cp /tmp_config/local_api_credentials.yaml /etc/crowdsec/local_api_credentials.yaml
+                              if ! cscli lapi status; then
+                                rm -f /tmp_config/local_api_credentials.yaml
+                              fi
+                            fi
                             if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
-                              until nc "$LAPI_HOST" "$LAPI_PORT" -z; do echo waiting for lapi to start; sleep 5; done
-                              ln -s /staging/etc/crowdsec /etc/crowdsec
                               cscli lapi register --machine crowdsec-agent -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"
                               cp /etc/crowdsec/local_api_credentials.yaml /tmp_config/local_api_credentials.yaml
                             fi
@@ -104,7 +110,7 @@ spec:
           port: 5432
           flush:
             agents_autodelete:
-              login_password: 15m
+              login_password: 6h
       profiles.yaml: |
         name: captcha_remediation
         filters:
