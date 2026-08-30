@@ -77,8 +77,8 @@ spec:
         initContainers:
           setup-certs:
             image:
-              repository: mirror.gcr.io/rxchi1d/n8n-ffmpeg
-              tag: 2.17.3
+              repository: docker.io/rxchi1d/n8n-ffmpeg
+              tag: 2.36.8
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -96,8 +96,8 @@ spec:
         containers:
           app:
             image:
-              repository: mirror.gcr.io/rxchi1d/n8n-ffmpeg
-              tag: 2.17.3
+              repository: docker.io/rxchi1d/n8n-ffmpeg
+              tag: 2.36.8
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
@@ -184,8 +184,8 @@ spec:
         initContainers:
           setup-certs:
             image:
-              repository: ghcr.io/n8n-io/runners
-              tag: 2.37.4
+              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              tag: 2.36.8
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -203,8 +203,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/n8n-io/runners
-              tag: 2.37.4
+              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              tag: 2.36.8
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
