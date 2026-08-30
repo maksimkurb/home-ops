@@ -98,3 +98,11 @@ spec:
                   fieldRef:
                     fieldPath: metadata.name
               CONFIG_INSTANCE_LAPI_AUTH_PASSWORD_FILE: /app/data/lapi-password
+              CONFIG_AUTH_ENABLED: "true"
+              CONFIG_AUTH_OIDC_ISSUER_URL: https://auth.${SECRET_PUBLIC_DOMAIN}
+              CONFIG_AUTH_OIDC_CLIENT_ID: crowdsec-web-ui
+              CONFIG_AUTH_OIDC_CLIENT_SECRET: ${SECRET_CROWDSEC_WEB_UI_OAUTH_CLIENT_SECRET}
+              CONFIG_AUTH_OIDC_SCOPE: "openid profile email groups"
+              CONFIG_AUTH_OIDC_GROUPS_CLAIM: groups
+              CONFIG_AUTH_OIDC_ADMIN_GROUPS_0: admins
+              CONFIG_AUTH_OIDC_UNMATCHED_ROLE: deny
