@@ -67,7 +67,8 @@ spec:
             args:
               - |
                 until nc crowdsec-service.security.svc.cluster.local 8080 -z; do sleep 5; done
-                printf 'api:\n  client:\n    credentials_path: /tmp/local_api_credentials.yaml\n' > /tmp/crowdsec.yaml
+                printf 'config_paths:\n  config_dir: /tmp\n  data_dir: /tmp\n  hub_dir: /tmp\n  index_path: /tmp/index.json\n  simulation_path: /tmp/simulation.yaml\n  notification_dir: /tmp\n  plugin_dir: /tmp\napi:\n  client:\n    credentials_path: /tmp/local_api_credentials.yaml\n' > /tmp/crowdsec.yaml
+                printf 'url: http://crowdsec-service.security.svc.cluster.local:8080\nlogin: placeholder\npassword: placeholder\n' > /tmp/local_api_credentials.yaml
                 if [ -s /app/data/lapi-password ]; then
                   printf 'url: http://crowdsec-service.security.svc.cluster.local:8080\nlogin: crowdsec-web-ui\npassword: %s\n' "$(cat /app/data/lapi-password)" > /tmp/local_api_credentials.yaml
                   if ! cscli lapi status -c /tmp/crowdsec.yaml; then
@@ -92,5 +93,8 @@ spec:
               tag: 2026.8.3
             env:
               CONFIG_INSTANCE_LAPI_URL: http://crowdsec-service.security.svc.cluster.local:8080
-              CONFIG_INSTANCE_LAPI_AUTH_USERNAME: crowdsec-web-ui
+              CONFIG_INSTANCE_LAPI_AUTH_USERNAME:
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.name
               CONFIG_INSTANCE_LAPI_AUTH_PASSWORD_FILE: /app/data/lapi-password
