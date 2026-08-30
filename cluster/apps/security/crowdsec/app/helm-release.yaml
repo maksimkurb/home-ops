@@ -147,7 +147,7 @@ spec:
             whitelist:
               reason: "trusted source IP"
               expression:
-                - "evt.Meta.source_ip in [${SECRET_CROWDSEC_WHITELISTED_IPS}]"
+                - 'evt.Meta.source_ip in [${SECRET_CROWDSEC_WHITELISTED_IPS}]'
       scenarios:
         wp-admin-ban.yaml: |
           type: trigger
