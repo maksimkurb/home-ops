@@ -68,8 +68,9 @@ spec:
               - |
                 until nc crowdsec-service.security.svc.cluster.local 8080 -z; do sleep 5; done
                 if [ -s /app/data/lapi-password ]; then
-                  printf 'url: http://crowdsec-service.security.svc.cluster.local:8080\nlogin: crowdsec-web-ui\npassword: %s\n' "$(cat /app/data/lapi-password)" > /etc/crowdsec/local_api_credentials.yaml
-                  if ! cscli lapi status; then
+                  printf 'url: http://crowdsec-service.security.svc.cluster.local:8080\nlogin: crowdsec-web-ui\npassword: %s\n' "$(cat /app/data/lapi-password)" > /tmp/local_api_credentials.yaml
+                  printf 'api:\n  client:\n    credentials_path: /tmp/local_api_credentials.yaml\n' > /tmp/crowdsec.yaml
+                  if ! cscli lapi status -c /tmp/crowdsec.yaml; then
                     rm -f /app/data/lapi-password
                   fi
                 fi
