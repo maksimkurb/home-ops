@@ -1,10 +1,10 @@
 ---
-- name: Add Amnezia PPA
+- name: Add Amnezia repository
   ansible.builtin.deb822_repository:
     name: "amnezia-ubuntu-ppa-{{ amneziawg_ppa_release }}"
     types: deb
     uris: https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu
-    suites: "{{ amneziawg_ppa_release }}"
+    suites: "{{ amneziawg_ppa_release_effective }}"
     components: main
     signed_by: >-
       https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x75C9DD72C799870E310542E24166F2C257290828
@@ -14,13 +14,45 @@
   ansible.builtin.apt:
     update_cache: true
 
-- name: Install headers for the running kernel
+- name: Install headers for the running Ubuntu kernel
   ansible.builtin.apt:
     name:
       - dkms
       - build-essential
       - "linux-headers-{{ ansible_facts['kernel'] }}"
     state: present
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Resolve Debian package architecture
+  ansible.builtin.command: dpkg --print-architecture
+  register: debian_package_architecture
+  changed_when: false
+  when: ansible_facts['distribution'] == 'Debian'
+
+- name: Install current Debian kernel and headers
+  ansible.builtin.apt:
+    name:
+      - dkms
+      - build-essential
+      - "linux-image-{{ debian_package_architecture.stdout }}"
+      - "linux-headers-{{ debian_package_architecture.stdout }}"
+    state: present
+  when: ansible_facts['distribution'] == 'Debian'
+
+- name: Require headers for the running Debian kernel
+  ansible.builtin.stat:
+    path: "/lib/modules/{{ ansible_facts['kernel'] }}/build"
+  register: debian_running_kernel_headers
+  when: ansible_facts['distribution'] == 'Debian'
+
+- name: Require reboot into the updated Debian kernel
+  ansible.builtin.assert:
+    that:
+      - debian_running_kernel_headers.stat.exists
+    fail_msg: >-
+      Debian installed a newer kernel and headers, but the running kernel lacks headers.
+      Reboot the host, then rerun this playbook.
+  when: ansible_facts['distribution'] == 'Debian'
 
 - name: Install AmneziaWG kernel packages
   ansible.builtin.apt:

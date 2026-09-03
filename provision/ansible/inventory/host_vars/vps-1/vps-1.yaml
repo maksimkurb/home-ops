@@ -1,7 +1,8 @@
 enable_unattended_upgrades: false
 
-vpn_wan_interface: ens3
+vpn_wan_interface: eth0
 vpn_xui_enabled: true
 vpn_tgproxy_enabled: false
+vpn_warp_enabled: false
 
 traefik_enabled: true

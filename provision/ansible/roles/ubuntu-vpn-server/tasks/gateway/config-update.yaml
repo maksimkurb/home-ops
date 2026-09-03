@@ -39,9 +39,16 @@
       - "{{ vpn_new_interface }}"
   register: vpn_client_manifest
   changed_when: false
+  failed_when: false
   delegate_to: localhost
   become: false
   no_log: true
+
+- name: Require valid client states
+  ansible.builtin.assert:
+    that:
+      - vpn_client_manifest.rc == 0
+    fail_msg: "Client-state validation failed: {{ vpn_client_manifest.stderr | default('no diagnostic output') }}"
 
 - name: Use validated client manifest
   ansible.builtin.set_fact:

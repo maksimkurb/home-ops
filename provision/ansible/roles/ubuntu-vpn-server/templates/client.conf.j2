@@ -23,7 +23,7 @@ S4 = {{ awg_params.S4 }}
 {% if awg_generation == 'new' and client_state.junk_packets is defined %}
 {% for junk_name in ['I1', 'I2', 'I3', 'I4', 'I5'] %}
 {% if junk_name in client_state.junk_packets %}
-{{ junk_name }} = "{{ client_state.junk_packets[junk_name] }}"
+{{ junk_name }} = {{ client_state.junk_packets[junk_name] }}
 {% endif %}
 {% endfor %}
 {% endif %}

@@ -1,7 +1,6 @@
 {
-{% if keen_pbr_api_enabled | bool %}
   "api": {
-    "enabled": true,
+    "enabled": {{ 'true' if keen_pbr_api_enabled | bool else 'false' }},
     "listen": "{{ keen_pbr_api_listen }}",
     "authentication": {
       "enabled": {{ 'true' if (keen_pbr_api_password_hash | default('', true) | length > 0) else 'false' }},
@@ -11,10 +10,13 @@
       "allowed_origins": {{ keen_pbr_api_allowed_origins | to_json }}
     }
   },
-{% endif %}
   "device_name": "{{ keen_pbr_device_name }}",
   "daemon": {
+    "clear_dynamic_sets_on_apply": true,
     "firewall_backend": "nftables",
+    "ipv6_enabled": true,
+    "pid_file": "/var/run/keen-pbr.pid",
+    "reuse_static_sets_on_runtime_refresh": true,
     "skip_marked_packets": true,
     "strict_enforcement": true
   },
@@ -22,7 +24,10 @@
     {
       "type": "interface",
       "tag": "warp",
-      "interface": "{{ vpn_warp_interface }}",
+      "interface": "{{ vpn_warp_interface if vpn_warp_enabled | bool else vpn_wan_interface_effective }}",
+{% if not (vpn_warp_enabled | bool) and vpn_wan_gateway_effective | default('', true) | length > 0 %}
+      "gateway": "{{ vpn_wan_gateway_effective }}",
+{% endif %}
       "strict_enforcement": true
     },
     {
@@ -49,12 +54,36 @@
           "outbounds": ["wan"]
         }
       ]
+    },
+    {
+      "type": "ignore",
+      "tag": "ignore"
     }
   ],
-  "lists": {},
+  "lists": {
+    "direct": {
+      "domains": ["ifconfig.me"],
+      "ttl_ms": 7200000
+    },
+    "google": {
+      "ttl_ms": 7200000,
+      "url": "https://raw.githubusercontent.com/v2fly/domain-list-community/refs/heads/master/data/google"
+    },
+    "google_ai": {
+      "ttl_ms": 7200000,
+      "url": "https://raw.githubusercontent.com/v2fly/domain-list-community/refs/heads/master/data/google-deepmind"
+    },
+    "warp": {
+      "domains": ["2ip.io", "ru", "su", "xn--p1ai"],
+      "ttl_ms": 7200000
+    }
+  },
   "dns": {
     "system_resolver": {
       "address": "127.0.0.1"
+    },
+    "dns_test_server": {
+      "listen": "127.0.0.88:12153"
     },
     "servers": [
       {
@@ -73,6 +102,17 @@
     ],
     "rules": [
       {
+        "enabled": true,
+        "list": ["google", "google_ai", "direct"],
+        "outbound": "ignore"
+      },
+      {
+        "enabled": true,
+        "list": ["warp"],
+        "outbound": "warp"
+      },
+      {
+        "enabled": false,
         "src_addr": "{{ vpn_subnet }}",
         "outbound": "warp_or_wan"
       }

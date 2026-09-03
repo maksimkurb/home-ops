@@ -8,6 +8,7 @@
 
 vpn_tgproxy_mtproto_enabled: false
 vpn_tgproxy_mtproto: []
+vpn_warp_enabled: true
 amneziawg_ppa_supported_releases:
   - focal
   - jammy
@@ -31,7 +32,7 @@ vpn_server:
       client_allowed_ips: "0.0.0.0/0"
       # NAT keepalive interval for generated client profiles, in seconds.
       client_persistent_keepalive: 25
-      # Amnezia PPA suite used to install the kernel DKMS package on Ubuntu 26.04.
+      # Amnezia PPA suite used on Ubuntu; Debian uses the supported focal suite.
       ppa_release: noble
       # Client-state names reconciled by the gateway config-update workflow.
       clients: []

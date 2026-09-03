@@ -22,7 +22,7 @@ reverse-proxy:
 
 vpn-server:
   hosts:
-    # vps-1: {}
+    vps-1: {}
     vps-3: {}
     # vps-4: {}
     # vps-5: {}
@@ -44,9 +44,9 @@ iperf3-stats:
     owrt-spb:
       iperf3_server_enabled: true
       iperf3_client_enabled: true
-    casa-sok:
-      iperf3_server_enabled: false
-      iperf3_client_enabled: true
+    #casa-sok:
+    #  iperf3_server_enabled: false
+    #  iperf3_client_enabled: true
 
 # reverse-proxy:
 #   hosts:

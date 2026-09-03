@@ -13,6 +13,7 @@
 
 - name: Provision Cloudflare WARP
   ansible.builtin.import_tasks: gateway/warp.yaml
+  when: vpn_warp_enabled | bool
 
 - name: Install and configure keen-pbr
   ansible.builtin.import_tasks: gateway/keen-pbr.yaml

@@ -1,8 +1,8 @@
 ---
 - name: Resolve grouped gateway configuration
   ansible.builtin.set_fact:
-    vpn_subnet: "{{ vpn_server.amneziawg.common.subnet }}"
-    vpn_public_host: "{{ vpn_server.amneziawg.common.public_host }}"
+    vpn_subnet: "{{ vpn_awg_subnet | default(vpn_server.amneziawg.common.subnet, true) }}"
+    vpn_public_host: "{{ vpn_awg_public_host | default(vpn_server.amneziawg.common.public_host, true) }}"
     vpn_wan_interface: "{{ vpn_server.amneziawg.common.wan_interface }}"
     vpn_tunnel_mtu: >-
       {{
@@ -11,18 +11,20 @@
       }}
     vpn_client_allowed_ips: "{{ vpn_server.amneziawg.common.client_allowed_ips | default('0.0.0.0/0') }}"
     vpn_client_persistent_keepalive: "{{ vpn_server.amneziawg.common.client_persistent_keepalive | default(25) }}"
-    vpn_initial_clients: "{{ vpn_server.amneziawg.common.clients }}"
+    vpn_initial_clients: "{{ vpn_awg_clients | default(vpn_server.amneziawg.common.clients) }}"
     vpn_legacy_interface: "{{ vpn_server.amneziawg.awg15.interface }}"
     vpn_legacy_port: "{{ vpn_server.amneziawg.awg15.port }}"
-    vpn_legacy_subnet: "{{ vpn_server.amneziawg.awg15.subnet }}"
-    vpn_legacy_server_ip: "{{ vpn_server.amneziawg.awg15.server_ip }}"
+    vpn_legacy_subnet: "{{ vpn_awg15_subnet | default(vpn_server.amneziawg.awg15.subnet, true) }}"
+    vpn_legacy_server_ip: "{{ vpn_awg15_server_ip | default(vpn_server.amneziawg.awg15.server_ip, true) }}"
     awg_legacy: "{{ vpn_server.amneziawg.awg15.params }}"
     vpn_new_interface: "{{ vpn_server.amneziawg.awg20.interface }}"
     vpn_new_port: "{{ vpn_server.amneziawg.awg20.port }}"
-    vpn_new_subnet: "{{ vpn_server.amneziawg.awg20.subnet }}"
-    vpn_new_server_ip: "{{ vpn_server.amneziawg.awg20.server_ip }}"
+    vpn_new_subnet: "{{ vpn_awg20_subnet | default(vpn_server.amneziawg.awg20.subnet, true) }}"
+    vpn_new_server_ip: "{{ vpn_awg20_server_ip | default(vpn_server.amneziawg.awg20.server_ip, true) }}"
     awg_new: "{{ vpn_server.amneziawg.awg20.params }}"
     amneziawg_ppa_release: "{{ vpn_server.amneziawg.common.ppa_release }}"
+    amneziawg_ppa_release_effective: >-
+      {{ 'focal' if ansible_facts['distribution'] == 'Debian' else vpn_server.amneziawg.common.ppa_release }}
     vpn_warp_interface: "{{ vpn_server.wgcf.interface }}"
     warp_mtu: "{{ vpn_server.wgcf.mtu | default(1280) }}"
     warp_auto_register: "{{ vpn_server.wgcf.auto_register }}"
@@ -45,21 +47,27 @@
       - I-list2.json
       - I-list3.json
 
-- name: Validate kernel gateway configuration
+- name: Validate supported gateway platform
   ansible.builtin.assert:
     that:
-      - ansible_facts["distribution"] == "Ubuntu"
-      - ansible_facts["distribution_version"] in ["24.04", "26.04"]
+      - >-
+        (ansible_facts["distribution"] == "Ubuntu" and ansible_facts["distribution_version"] in ["24.04", "26.04"])
+        or (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "13")
+    fail_msg: >-
+      Unsupported gateway platform: {{ ansible_facts["distribution"] }} {{ ansible_facts["distribution_version"] }}.
+      Supported platforms are Ubuntu 24.04/26.04 and Debian 13.
+
+- name: Validate gateway network configuration
+  ansible.builtin.assert:
+    that:
       - vpn_subnet | length > 0
       - vpn_public_host | length > 0
       - vpn_legacy_subnet | length > 0
       - vpn_legacy_server_ip | length > 0
       - vpn_new_subnet | length > 0
       - vpn_new_server_ip | length > 0
-      # - not (keen_pbr_api_enabled | bool) or keen_pbr_api_password_hash | length > 0
     fail_msg: >-
-      Define the gateway network settings and, when enabling the keen-pbr API,
-      set keen_pbr_api_password_hash in encrypted inventory.
+      Define the gateway network settings
 
 - name: Resolve WAN interface and static gateway facts
   ansible.builtin.set_fact:
