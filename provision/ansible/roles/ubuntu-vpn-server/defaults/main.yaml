@@ -9,6 +9,7 @@
 vpn_tgproxy_mtproto_enabled: false
 vpn_tgproxy_mtproto: []
 vpn_warp_enabled: true
+vpn_keen_pbr_enabled: true
 amneziawg_ppa_supported_releases:
   - focal
   - jammy

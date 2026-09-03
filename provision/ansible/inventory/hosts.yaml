@@ -24,7 +24,7 @@ vpn-server:
   hosts:
     vps-1: {}
     vps-3: {}
-    # vps-4: {}
+    vps-4: {}
     # vps-5: {}
     # vps-6: {}
 

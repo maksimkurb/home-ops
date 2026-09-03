@@ -25,6 +25,8 @@
       - "{{ vpn_legacy_subnet }}"
       - --server-ip
       - "{{ vpn_legacy_server_ip }}"
+      - --subnet-v6
+      - "{{ vpn_legacy_subnet_v6 }}"
       - --state-root
       - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
       - --legacy-state-root
@@ -68,6 +70,8 @@
       - "{{ vpn_new_subnet }}"
       - --server-ip
       - "{{ vpn_new_server_ip }}"
+      - --subnet-v6
+      - "{{ vpn_new_subnet_v6 }}"
       - --state-root
       - "{{ local_repo_root.stdout }}/provision/vpn-client-state"
       - --legacy-state-root
@@ -109,7 +113,7 @@
       {% if legacy_state.preshared_key | default('') | length > 0 %}
       PresharedKey = {{ legacy_state.preshared_key }}
       {% endif %}
-      AllowedIPs = {{ legacy_state.address }}/32
+      AllowedIPs = {{ legacy_state.address }}/32{% if legacy_state.address_v6 | default('') | length > 0 %}, {{ legacy_state.address_v6 }}/128{% endif %}
     dest: "/etc/amnezia/amneziawg/peers/{{ vpn_legacy_interface }}/{{ vpn_client_name_effective }}.conf"
     owner: root
     group: root
@@ -126,7 +130,7 @@
       {% if new_state.preshared_key | default('') | length > 0 %}
       PresharedKey = {{ new_state.preshared_key }}
       {% endif %}
-      AllowedIPs = {{ new_state.address }}/32
+      AllowedIPs = {{ new_state.address }}/32{% if new_state.address_v6 | default('') | length > 0 %}, {{ new_state.address_v6 }}/128{% endif %}
     dest: "/etc/amnezia/amneziawg/peers/{{ vpn_new_interface }}/{{ vpn_client_name_effective }}.conf"
     owner: root
     group: root

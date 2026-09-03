@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, json, re
+import argparse, ipaddress, json, re
 from pathlib import Path
 
 NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -8,6 +8,8 @@ p.add_argument("--state-root", required=True)
 p.add_argument("--clients", required=True)
 p.add_argument("--legacy-interface", required=True)
 p.add_argument("--new-interface", required=True)
+p.add_argument("--legacy-subnet-v6", default="")
+p.add_argument("--new-subnet-v6", default="")
 a = p.parse_args()
 
 items = []
@@ -26,5 +28,12 @@ for name in a.clients.split(","):
     except (OSError, KeyError, ValueError, json.JSONDecodeError):
         raise SystemExit(f"invalid client state: {path}")
     identity = {key: state[key] for key in ("private_key", "public_key", "preshared_key")}
-    items.append({"name": name, "legacy": identity | legacy | {"junk_packets": state.get("junk_packets", {})}, "new": identity | new | {"junk_packets": state.get("junk_packets", {})}})
+    def result(profile, subnet_v6):
+        value = identity | profile | {"junk_packets": state.get("junk_packets", {})}
+        if subnet_v6:
+            network_v6 = ipaddress.ip_network(subnet_v6, strict=True)
+            if network_v6.version != 6: raise ValueError
+            value["address_v6"] = str(ipaddress.ip_address(int(network_v6.network_address) + ipaddress.ip_address(profile["address"]).packed[-1]))
+        return value
+    items.append({"name": name, "legacy": result(legacy, a.legacy_subnet_v6), "new": result(new, a.new_subnet_v6)})
 print(json.dumps(items))

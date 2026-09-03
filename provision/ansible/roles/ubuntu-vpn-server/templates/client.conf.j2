@@ -1,6 +1,6 @@
 [Interface]
 PrivateKey = {{ client_state.private_key }}
-Address = {{ client_state.address }}/32
+Address = {{ client_state.address }}/32{% if client_state.address_v6 | default('') | length > 0 %}, {{ client_state.address_v6 }}/128{% endif %}
 {% if vpn_tunnel_mtu is not none and (vpn_tunnel_mtu | string | length > 0) %}
 MTU = {{ vpn_tunnel_mtu }}
 {% endif %}
@@ -31,7 +31,8 @@ S4 = {{ awg_params.S4 }}
 [Peer]
 PublicKey = {{ client_server_public_key }}
 PresharedKey = {{ client_state.preshared_key }}
-AllowedIPs = {{ vpn_client_allowed_ips }}
+AllowedIPs = {{ vpn_client_allowed_ips }}{% if client_state.address_v6 | default('') | length > 0 %}, ::/0{% endif %}
+
 Endpoint = {{ vpn_public_host_effective }}:{{ client_port }}
 PersistentKeepalive = {{ vpn_client_persistent_keepalive }}
 

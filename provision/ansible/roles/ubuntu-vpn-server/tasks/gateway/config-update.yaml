@@ -13,6 +13,7 @@
 
 - name: Apply keen-pbr configuration
   ansible.builtin.import_tasks: gateway/keen-pbr-config.yaml
+  when: vpn_keen_pbr_enabled | bool
 
 - name: Prepare local client reconciliation workspace
   ansible.builtin.import_tasks: gateway/client-workspace.yaml
@@ -37,6 +38,10 @@
       - "{{ vpn_legacy_interface }}"
       - --new-interface
       - "{{ vpn_new_interface }}"
+      - --legacy-subnet-v6
+      - "{{ vpn_legacy_subnet_v6 }}"
+      - --new-subnet-v6
+      - "{{ vpn_new_subnet_v6 }}"
   register: vpn_client_manifest
   changed_when: false
   failed_when: false
@@ -61,7 +66,7 @@
       [Peer]
       PublicKey = {{ item.legacy.public_key }}
       {% if item.legacy.preshared_key | default('') | length > 0 %}PresharedKey = {{ item.legacy.preshared_key }}
-      {% endif %}AllowedIPs = {{ item.legacy.address }}/32
+      {% endif %}AllowedIPs = {{ item.legacy.address }}/32{% if item.legacy.address_v6 | default('') | length > 0 %}, {{ item.legacy.address_v6 }}/128{% endif %}
     dest: "/etc/amnezia/amneziawg/peers/{{ vpn_legacy_interface }}/{{ item.name }}.conf"
     mode: "0600"
   loop: "{{ vpn_reconciled_clients }}"
@@ -73,7 +78,7 @@
       [Peer]
       PublicKey = {{ item.new.public_key }}
       {% if item.new.preshared_key | default('') | length > 0 %}PresharedKey = {{ item.new.preshared_key }}
-      {% endif %}AllowedIPs = {{ item.new.address }}/32
+      {% endif %}AllowedIPs = {{ item.new.address }}/32{% if item.new.address_v6 | default('') | length > 0 %}, {{ item.new.address_v6 }}/128{% endif %}
     dest: "/etc/amnezia/amneziawg/peers/{{ vpn_new_interface }}/{{ item.name }}.conf"
     mode: "0600"
   loop: "{{ vpn_reconciled_clients }}"

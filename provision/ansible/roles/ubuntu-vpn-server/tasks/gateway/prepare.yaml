@@ -17,3 +17,4 @@
 
 - name: Install and configure keen-pbr
   ansible.builtin.import_tasks: gateway/keen-pbr.yaml
+  when: vpn_keen_pbr_enabled | bool

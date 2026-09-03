@@ -20,6 +20,15 @@
     sysctl_set: true
     reload: true
 
+- name: Enable IPv6 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: vpn_legacy_subnet_v6 | length > 0 or vpn_new_subnet_v6 | length > 0
+
 - name: Create configuration directories
   ansible.builtin.file:
     path: "{{ item }}"

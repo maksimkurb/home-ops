@@ -19,3 +19,10 @@ for fragment in "${fragments[@]}"; do
 done
 
 awg addconf "$iface" "$tmp"
+
+for fragment in "${fragments[@]}"; do
+    awk -F'= ' '/^AllowedIPs =/ {print $2}' "$fragment" | tr ',' '\n' | while read -r cidr; do
+        cidr="${cidr// /}"
+        [[ "$cidr" == *:* ]] && ip -6 route replace "$cidr" dev "$iface"
+    done
+done

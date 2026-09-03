@@ -1,6 +1,6 @@
 [Interface]
 PrivateKey = {{ inbound_private_key }}
-Address = {{ inbound_address }}
+Address = {{ inbound_address }}{% if inbound_address_v6 | length > 1 %}, {{ inbound_address_v6 }}{% endif %}
 ListenPort = {{ inbound_port }}
 {% if vpn_tunnel_mtu is not none and (vpn_tunnel_mtu | string | length > 0) %}
 MTU = {{ vpn_tunnel_mtu }}

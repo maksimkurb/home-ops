@@ -15,42 +15,25 @@
       - keen_pbr_arch | length > 0
       - keen_pbr_package in ["keen-pbr", "keen-pbr-headless"]
 
-- name: Query latest stable keen-pbr release
-  ansible.builtin.uri:
-    url: https://api.github.com/repos/maksimkurb/keen-pbr/releases/latest
-    method: GET
-    return_content: true
-    headers:
-      Accept: application/vnd.github+json
-      X-GitHub-Api-Version: "2022-11-28"
-  register: keen_pbr_release
-  changed_when: false
-
-- name: Select current Debian release asset
+- name: Resolve keen-pbr APT release
   ansible.builtin.set_fact:
-    keen_pbr_asset: >-
-      {{
-        (
-          keen_pbr_release.json.assets
-          | selectattr(
-              'name',
-              'match',
-              '^' ~ keen_pbr_package ~ '_[0-9].*_debian_bullseye_' ~ keen_pbr_arch ~ '\.deb$'
-            )
-          | list
-          | first
-        )
-      }}
+    keen_pbr_apt_release: "{{ 'bookworm' if ansible_facts['distribution'] == 'Ubuntu' else ansible_facts['distribution_release'] }}"
 
-- name: Download latest keen-pbr package
+- name: Install keen-pbr repository signing key
   ansible.builtin.get_url:
-    url: "{{ keen_pbr_asset.browser_download_url }}"
-    dest: "/var/tmp/{{ keen_pbr_asset.name }}"
+    url: https://repo.keen-pbr.fyi/keys/debian_public.pem
+    dest: /usr/share/keyrings/keen-pbr-archive-keyring.asc
     mode: "0644"
 
-- name: Install latest keen-pbr package
+- name: Configure keen-pbr APT repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/keen-pbr-archive-keyring.asc] https://repo.keen-pbr.fyi/repository/main/debian/{{ keen_pbr_apt_release }}/{{ keen_pbr_arch }} ./"
+    filename: keen-pbr
+    state: present
+
+- name: Install keen-pbr package
   ansible.builtin.apt:
-    deb: "/var/tmp/{{ keen_pbr_asset.name }}"
+    name: "{{ keen_pbr_package }}"
     state: present
   environment:
     DEBIAN_FRONTEND: noninteractive

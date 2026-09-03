@@ -5,4 +5,5 @@ vpn_wan_interface: eth0
 vpn_xui_enabled: false
 vpn_tgproxy_enabled: false
 vpn_tgproxy_mtproto_enabled: false
+vpn_warp_enabled: false
 amneziawg_ppa_release: noble

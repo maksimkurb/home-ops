@@ -23,6 +23,7 @@
   vars:
     inbound_name: "{{ vpn_legacy_interface }}"
     inbound_address: "{{ vpn_legacy_server_ip }}/{{ vpn_legacy_subnet.split('/')[1] }}"
+    inbound_address_v6: "{{ vpn_legacy_server_ip_v6 }}/{{ vpn_legacy_subnet_v6.split('/')[1] if vpn_legacy_subnet_v6 | length > 0 else '' }}"
     inbound_port: "{{ vpn_legacy_port }}"
     inbound_private_key: "{{ vpn_server_private_key }}"
     awg_params: "{{ awg_legacy }}"
@@ -40,6 +41,7 @@
   vars:
     inbound_name: "{{ vpn_new_interface }}"
     inbound_address: "{{ vpn_new_server_ip }}/{{ vpn_new_subnet.split('/')[1] }}"
+    inbound_address_v6: "{{ vpn_new_server_ip_v6 }}/{{ vpn_new_subnet_v6.split('/')[1] if vpn_new_subnet_v6 | length > 0 else '' }}"
     inbound_port: "{{ vpn_new_port }}"
     inbound_private_key: "{{ vpn_server_private_key }}"
     awg_params: "{{ awg_new }}"

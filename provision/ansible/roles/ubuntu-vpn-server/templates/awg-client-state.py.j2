@@ -113,6 +113,7 @@ def import_legacy(root, name, mappings):
 def main():
     parser = argparse.ArgumentParser()
     for option in ("name", "host", "profile", "interface", "subnet", "server-ip", "state-root", "legacy-state-root"): parser.add_argument(f"--{option}", required=True)
+    parser.add_argument("--subnet-v6", default="")
     parser.add_argument("--paired-address")
     parser.add_argument("--paired-subnet")
     parser.add_argument("--junk-list-file", action="append", default=[])
@@ -167,6 +168,11 @@ def main():
             profiles[args.profile]["address"] = paired_address; changed = True
         if changed: atomic_write(path, json.dumps(state, indent=2) + "\n")
         item = profiles[args.profile]
-        print(json.dumps({"name": state["name"], "private_key": state["private_key"], "public_key": state["public_key"], "preshared_key": state["preshared_key"], "junk_packets": state.get("junk_packets", {}), "interface": item["interface"], "address": item["address"], "created": changed, "reused": not changed}))
+        result = {"name": state["name"], "private_key": state["private_key"], "public_key": state["public_key"], "preshared_key": state["preshared_key"], "junk_packets": state.get("junk_packets", {}), "interface": item["interface"], "address": item["address"], "created": changed, "reused": not changed}
+        if args.subnet_v6:
+            network_v6 = ipaddress.ip_network(args.subnet_v6, strict=True)
+            if network_v6.version != 6: raise SystemExit("IPv6 subnet required")
+            result["address_v6"] = str(ipaddress.ip_address(int(network_v6.network_address) + (int(ipaddress.ip_address(item["address"])) & 0xff)))
+        print(json.dumps(result))
 
 if __name__ == "__main__": main()
