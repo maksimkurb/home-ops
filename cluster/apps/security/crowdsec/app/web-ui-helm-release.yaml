@@ -60,7 +60,7 @@ spec:
           register-lapi:
             image:
               repository: crowdsecurity/crowdsec
-              tag: v1.7.8
+              tag: v1.8.1
             command:
               - sh
               - -c

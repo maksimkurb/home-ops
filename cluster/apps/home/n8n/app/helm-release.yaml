@@ -78,7 +78,7 @@ spec:
           setup-certs:
             image:
               repository: docker.io/rxchi1d/n8n-ffmpeg
-              tag: 2.36.8
+              tag: 2.37.10
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -97,7 +97,7 @@ spec:
           app:
             image:
               repository: docker.io/rxchi1d/n8n-ffmpeg
-              tag: 2.36.8
+              tag: 2.37.10
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
@@ -185,7 +185,7 @@ spec:
           setup-certs:
             image:
               repository: docker.io/rxchi1d/n8n-runners-ffmpeg
-              tag: 2.36.8
+              tag: 2.37.10
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -204,7 +204,7 @@ spec:
           app:
             image:
               repository: docker.io/rxchi1d/n8n-runners-ffmpeg
-              tag: 2.36.8
+              tag: 2.37.10
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
