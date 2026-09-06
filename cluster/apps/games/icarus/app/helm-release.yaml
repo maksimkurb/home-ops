@@ -40,7 +40,7 @@ spec:
         containers:
           main:
             image:
-              repository: maksimkurb/icarus-server
+              repository: ghcr.io/maksimkurb/icarus-server
               tag: 1.0.0@sha256:4d482d1b194d6afe4ea6180cac7407352b645f824aecd6214a2f0f4c5ca6bdcf
               pullPolicy: IfNotPresent
             env:
