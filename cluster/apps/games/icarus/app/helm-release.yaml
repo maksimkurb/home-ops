@@ -40,8 +40,8 @@ spec:
         containers:
           main:
             image:
-              repository: mornedhels/icarus-server
-              tag: 1.0.0@sha256:a3d932c10dc042622ca234d8ac713e607b1f081701efe42e68f253c712ada67b
+              repository: maksimkurb/icarus-server
+              tag: 1.0.0@sha256:4d482d1b194d6afe4ea6180cac7407352b645f824aecd6214a2f0f4c5ca6bdcf
               pullPolicy: IfNotPresent
             env:
               SERVER_NAME: "cubly server"
@@ -52,6 +52,9 @@ spec:
               PUID: "777"
               PGID: "777"
               UPDATE_CRON: "*/30 * * * *"
+              WINEDEBUG: "-all"
+              DXVK_LOG_LEVEL: "none"
+              VKD3D_DEBUG: "none"
             envFrom:
               - secretRef:
                   name: ${APP}-secret
@@ -77,6 +80,13 @@ spec:
             protocol: UDP
 
     persistence:
+      ntsync:
+        enabled: true
+        type: hostPath
+        hostPath: /dev/ntsync
+        hostPathType: CharDevice
+        globalMounts:
+          - path: /dev/ntsync
       data:
         enabled: true
         type: persistentVolumeClaim
