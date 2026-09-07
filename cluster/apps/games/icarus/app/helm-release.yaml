@@ -42,7 +42,7 @@ spec:
               privileged: true
             image:
               repository: mornedhels/icarus-server
-              tag: 1.0.0@sha256:a3d932c10dc042622ca234d8ac713e607b1f081701efe42e68f253c712ada67b
+              tag: dev-wine-staging@sha256:9a3c9de9bca0a79ed18ce5ff6166786390f87eb0fa950e9e3fac85d6e7c64492
               pullPolicy: IfNotPresent
             env:
               SERVER_NAME: "cubly server"
