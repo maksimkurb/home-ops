@@ -42,7 +42,7 @@ spec:
           main:
             image:
               repository: ghcr.io/oliverbravery/printguard
-              tag: 2.4.0
+              tag: 2.4.1
               pullPolicy: IfNotPresent
 
             env:
