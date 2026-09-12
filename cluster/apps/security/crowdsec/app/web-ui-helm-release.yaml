@@ -38,8 +38,8 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
-          external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         hosts:
           - host: "crowdsec.${SECRET_PRIVATE_DOMAIN}"
             paths:

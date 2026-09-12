@@ -39,7 +39,7 @@ spec:
       - --zone-id-filter=a56a47c1afe71dd7d1f796210055152c
       - --cloudflare-dns-records-per-page=5000
       - --cloudflare-record-comment="provisioned by external-dns"
-      - --annotation-filter=external-dns.alpha.kubernetes.io/enabled in (true)
+      - --annotation-filter=external-dns.kubernetes.io/enabled in (true)
     policy: sync
     sources:
       - ingress

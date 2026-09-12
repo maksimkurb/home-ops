@@ -224,9 +224,9 @@ spec:
         enabled: true
         className: nginx
         annotations:
-          external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           nginx.ingress.kubernetes.io/proxy-body-size: 50m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
           gethomepage.dev/enabled: "true"

@@ -46,9 +46,9 @@ spec:
       main:
         enabled: true
         annotations:
-          external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.alpha.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/authelia/${HOMEPAGE_ICONS_COLOR}
