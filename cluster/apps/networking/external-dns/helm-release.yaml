@@ -42,6 +42,7 @@ spec:
       - --annotation-filter=external-dns.kubernetes.io/enabled in (true)
     policy: sync
     sources:
+      - gateway-httproute
       - ingress
       - service
     txtPrefix: "k8s."

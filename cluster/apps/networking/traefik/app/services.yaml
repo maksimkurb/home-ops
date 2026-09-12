@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-public
+  annotations:
+    io.cilium/lb-ipam-ips: ${SVC_TRAEFIK_ADDR}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/instance: traefik-networking
+    app.kubernetes.io/name: traefik
+  ports:
+    - name: http
+      port: 80
+      targetPort: web
+    - name: https
+      port: 443
+      targetPort: websecure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-private
+  annotations:
+    io.cilium/lb-ipam-ips: ${SVC_TRAEFIK_INTRA_ADDR}
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/instance: traefik-networking
+    app.kubernetes.io/name: traefik
+  ports:
+    - name: http
+      port: 80
+      targetPort: web-intra
+    - name: https
+      port: 443
+      targetPort: websecure-intra

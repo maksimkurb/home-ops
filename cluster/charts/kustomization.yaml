@@ -16,4 +16,5 @@ resources:
   - node-feature-discovery-charts.yaml
   - nvidia-charts.yaml
   - stakater-charts.yaml
+  - traefik-charts.yaml
   - zalando-postgres-operator-charts.yaml

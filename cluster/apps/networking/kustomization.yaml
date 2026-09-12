@@ -8,3 +8,4 @@ resources:
   - external-dns
   - ./k8s-gateway/ks.yaml
   - speedtest
+  - ./traefik/ks.yaml

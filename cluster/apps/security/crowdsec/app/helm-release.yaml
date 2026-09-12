@@ -246,9 +246,12 @@ spec:
         - namespace: networking
           podName: ingress-nginx-controller-*
           program: nginx
+        - namespace: networking
+          podName: traefik-*
+          program: traefik
       env:
         - name: COLLECTIONS
-          value: "crowdsecurity/nginx crowdsecurity/base-http-scenarios"
+          value: "crowdsecurity/nginx crowdsecurity/traefik crowdsecurity/base-http-scenarios"
       metrics:
         enabled: true
         serviceMonitor:
