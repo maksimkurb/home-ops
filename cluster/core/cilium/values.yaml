@@ -28,6 +28,11 @@ hubble:
     enabled: true
   ui:
     enabled: true
+    ingress:
+      enabled: true
+      className: nginx-intra
+      hosts:
+        - "hubble.${SECRET_PRIVATE_DOMAIN}"
   metrics:
     enabled:
       - dns
