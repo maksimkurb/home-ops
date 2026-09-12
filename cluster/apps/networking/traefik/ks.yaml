@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app traefik
+  name: &app traefik-app
   namespace: flux-system
 spec:
   targetNamespace: networking
@@ -12,7 +12,7 @@ spec:
       app.kubernetes.io/name: *app
   interval: 30m
   timeout: 5m
-  path: ./cluster/apps/networking/traefik/app
+  path: ./cluster/apps/networking/traefik
   prune: true
   sourceRef:
     kind: GitRepository
@@ -20,6 +20,8 @@ spec:
   wait: true
   dependsOn:
     - name: gateway-api
+      namespace: flux-system
+    - name: traefik-crds
       namespace: flux-system
     - name: crowdsec
       namespace: flux-system

@@ -16,9 +16,11 @@ spec:
         name: traefik-charts
         namespace: flux-system
   install:
+    crds: Skip
     remediation:
       retries: 5
   upgrade:
+    crds: Skip
     remediation:
       retries: 5
   values:

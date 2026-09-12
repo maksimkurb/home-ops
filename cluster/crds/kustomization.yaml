@@ -3,6 +3,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - gateway-api.yaml
+  - traefik.yaml
   - cert-manager
   - kube-prometheus-stack
   - zalando
