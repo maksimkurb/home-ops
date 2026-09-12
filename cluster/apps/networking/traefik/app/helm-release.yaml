@@ -35,6 +35,7 @@ spec:
     providers:
       kubernetesCRD:
         enabled: true
+        safeNaming: true
       kubernetesIngress:
         enabled: false
       kubernetesGateway:
@@ -93,11 +94,15 @@ spec:
         expose:
           default: false
     additionalArguments:
+      - --entrypoints.web.http.aliasheadersstrategy=reject
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.http.aliasheadersstrategy=reject
       - --entrypoints.websecure.http.middlewares=networking-crowdsec@kubernetescrd
+      - --entrypoints.web-intra.http.aliasheadersstrategy=reject
       - --entrypoints.web-intra.http.redirections.entrypoint.to=websecure-intra
       - --entrypoints.web-intra.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure-intra.http.aliasheadersstrategy=reject
       - --entrypoints.websecure-intra.http.middlewares=networking-private-allowlist@kubernetescrd
     log:
       level: INFO
