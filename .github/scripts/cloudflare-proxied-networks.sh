@@ -4,7 +4,7 @@
 # ipv4_rfc1918='[ "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16" ]'
 
 # Add VPS proxy IP
-ip_vps='[ "${SECRET_VPS_IPS}" ]'
+ip_vps='[ "${SECRET_VPS_IPS_ESCAPED}" ]'
 
 # Get all cloudflare ipv4 ranges in an array
 ipv4_cloudflare="$(curl -sL https://www.cloudflare.com/ips-v4 | jq --raw-input --slurp 'split("\n")')"
