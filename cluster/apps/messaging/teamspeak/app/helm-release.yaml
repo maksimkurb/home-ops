@@ -81,6 +81,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_TEAMSPEAK_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_TEAMSPEAK_ADDR}"
         ports:
           voice:
             port: 9987

@@ -37,7 +37,7 @@ spec:
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_FRIGATE_ADDR}"
         annotations:
-          io.cilium/lb-ipam-ips: "${SVC_FRIGATE_ADDR}"
+          lbipam.cilium.io/ips: "${SVC_FRIGATE_ADDR}"
         ports:
           go2rtc:
             port: 1984

@@ -72,6 +72,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_ICARUS_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_ICARUS_ADDR}"
         ports:
           game:
             port: 17777

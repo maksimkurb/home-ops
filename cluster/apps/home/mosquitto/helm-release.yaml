@@ -29,7 +29,7 @@ spec:
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_MQTT_ADDR}"
         annotations:
-          io.cilium/lb-ipam-ips: "${SVC_MQTT_ADDR}"
+          lbipam.cilium.io/ips: "${SVC_MQTT_ADDR}"
         ports:
           mqtt:
             enabled: true

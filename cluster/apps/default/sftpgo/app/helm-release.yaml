@@ -33,6 +33,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_SFTPGO_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_SFTPGO_ADDR}"
         ports:
           http:
             enabled: true

@@ -39,7 +39,7 @@ spec:
       service:
         loadBalancerIP: "${SVC_NGINX_ADDR}"
         annotations:
-          io.cilium/lb-ipam-ips: "${SVC_NGINX_ADDR}"
+          lbipam.cilium.io/ips: "${SVC_NGINX_ADDR}"
         externalTrafficPolicy: Local
       publishService:
         enabled: true

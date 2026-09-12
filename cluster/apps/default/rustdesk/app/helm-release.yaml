@@ -31,6 +31,8 @@ spec:
         controller: main
         type: LoadBalancer
         loadBalancerIP: "${SVC_RUSTDESK_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_RUSTDESK_ADDR}"
         externalTrafficPolicy: Local
         ports:
           rustdesk-1:

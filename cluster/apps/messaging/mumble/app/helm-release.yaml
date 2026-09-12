@@ -83,6 +83,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         loadBalancerIP: "${SVC_MUMBLE_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_MUMBLE_ADDR}"
         ports:
           http:
             port: 80

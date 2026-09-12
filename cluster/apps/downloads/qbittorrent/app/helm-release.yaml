@@ -40,7 +40,7 @@ spec:
         type: LoadBalancer
         loadBalancerIP: "${SVC_QBITTORRENT_ADDR}"
         annotations:
-          io.cilium/lb-ipam-ips: "${SVC_QBITTORRENT_ADDR}"
+          lbipam.cilium.io/ips: "${SVC_QBITTORRENT_ADDR}"
         externalTrafficPolicy: Local
     ingress:
       main:

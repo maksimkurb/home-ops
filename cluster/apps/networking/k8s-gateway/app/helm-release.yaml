@@ -33,6 +33,8 @@ spec:
         controller: main
         type: LoadBalancer
         loadBalancerIP: "${SVC_K8S_GATEWAY_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_K8S_GATEWAY_ADDR}"
         externalTrafficPolicy: Cluster
         ports:
           http:

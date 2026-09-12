@@ -105,6 +105,7 @@ spec:
         type: LoadBalancer
         loadBalancerIP: "${SVC_COTURN_ADDR}"
         annotations:
+          lbipam.cilium.io/ips: "${SVC_COTURN_ADDR}"
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/hostname: "turn.${SECRET_PUBLIC_DOMAIN}"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

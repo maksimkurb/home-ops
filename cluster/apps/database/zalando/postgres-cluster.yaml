@@ -101,6 +101,9 @@ spec:
     frappe: default.frappe
     openquester: games.openquester
   enableMasterLoadBalancer: true
+  masterServiceAnnotations:
+    metallb.io/loadBalancerIPs: "${SVC_DATABASE_ADDR}"
+    lbipam.cilium.io/ips: "${SVC_DATABASE_ADDR}"
   enableConnectionPooler: false
   enableLogicalBackup: true
   additionalVolumes:

@@ -31,6 +31,8 @@ spec:
         controller: main
         type: LoadBalancer
         loadBalancerIP: "${SVC_JELLYFIN_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_JELLYFIN_ADDR}"
         externalTrafficPolicy: Local
         ports:
           http:

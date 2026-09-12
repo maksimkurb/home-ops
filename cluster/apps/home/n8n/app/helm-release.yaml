@@ -233,6 +233,9 @@ spec:
       app:
         controller: n8n
         type: LoadBalancer
+        loadBalancerIP: "${SVC_N8N_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_N8N_ADDR}"
         externalTrafficPolicy: Local
         ports:
           http:

@@ -4,7 +4,7 @@ metadata:
   name: homelab-pgsql-external
   namespace: database
   annotations:
-    io.cilium/lb-ipam-ips: "${SVC_DATABASE_ADDR}"
+    lbipam.cilium.io/ips: "${SVC_DATABASE_ADDR}"
 spec:
   selector:
     application: spilo

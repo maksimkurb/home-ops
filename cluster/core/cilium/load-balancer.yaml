@@ -1,0 +1,22 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: services
+spec:
+  blocks:
+    - cidr: 10.5.0.0/24
+    - cidr: 10.5.2.0/23
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: services
+spec:
+  serviceSelector:
+    matchExpressions:
+      - key: somekey
+        operator: NotIn
+        values:
+          - never-used-value
+  loadBalancerIPs: true

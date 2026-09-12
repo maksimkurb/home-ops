@@ -53,7 +53,7 @@ spec:
         type: LoadBalancer
         loadBalancerIP: ${SVC_SYNCTHING_ADDR}
         annotations:
-          io.cilium/lb-ipam-ips: "${SVC_SYNCTHING_ADDR}"
+          lbipam.cilium.io/ips: "${SVC_SYNCTHING_ADDR}"
         externalTrafficPolicy: Local
         ports:
           tcp:
