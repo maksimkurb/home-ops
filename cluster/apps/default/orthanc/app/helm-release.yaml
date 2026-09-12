@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: orthancteam/orthanc
-              tag: 26.8.2
+              tag: 26.9.0
             env:
               TZ: "${TIMEZONE}"
               ORTHANC__NAME: "Orthanc"
