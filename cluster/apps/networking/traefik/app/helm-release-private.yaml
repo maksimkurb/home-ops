@@ -38,10 +38,6 @@ spec:
       kubernetesGateway:
         enabled: true
         labelSelector: gatewayclass=private
-        statusAddress:
-          service:
-            name: traefik-private
-            namespace: networking
     gateway:
       enabled: false
     gatewayClass:
@@ -62,6 +58,8 @@ spec:
         expose:
           default: false
     additionalArguments:
+      - --providers.kubernetesgateway.statusaddress.service.name=traefik-private
+      - --providers.kubernetesgateway.statusaddress.service.namespace=networking
       - --entrypoints.web-private.http.aliasheadersstrategy=reject
       - --entrypoints.web-private.http.redirections.entrypoint.to=websecure-private
       - --entrypoints.web-private.http.redirections.entrypoint.scheme=https
