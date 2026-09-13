@@ -4,6 +4,10 @@ kind: Service
 metadata:
   name: ext-svc-router-dashboard
   namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+    traefik.ingress.kubernetes.io/service.serverstransport: router-insecure@kubernetescrd
+    traefik.ingress.kubernetes.io/service.passhostheader: "false"
 spec:
   ports:
     - name: https
@@ -33,19 +37,16 @@ metadata:
     external-dns.kubernetes.io/enabled: 'true'
     external-dns.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
     external-dns.kubernetes.io/cloudflare-proxied: 'false'
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
-    nginx.ingress.kubernetes.io/upstream-vhost: "${ROUTER_IP}"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Origin "https://${ROUTER_IP}";
-      proxy_set_header Referer "https://${ROUTER_IP}";
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: router-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.tls: "true"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Middleware
     gethomepage.dev/icon: mdi-router-wireless
     gethomepage.dev/name: Router
     gethomepage.dev/pod-selector: "app.kubernetes.io/name=homepage" # Just to have something valid
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: ${SECRET_ROUTER_OUTBOUND_HOST}
       http:
@@ -67,14 +68,11 @@ metadata:
     external-dns.kubernetes.io/enabled: 'true'
     external-dns.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
     external-dns.kubernetes.io/cloudflare-proxied: 'true'
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/proxy-ssl-verify: "false"
-    nginx.ingress.kubernetes.io/upstream-vhost: "${ROUTER_IP}"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Origin "https://${ROUTER_IP}";
-      proxy_set_header Referer "https://${ROUTER_IP}";
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: router-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: ${SECRET_ROUTER_CLOUDFLARE_HOST}
       http:

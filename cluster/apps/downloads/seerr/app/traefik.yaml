@@ -1,0 +1,10 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: seerr-redirect
+spec:
+  redirectRegex:
+    regex: ^https?://jellyseerr\.${SECRET_PUBLIC_DOMAIN}(.*)
+    replacement: https://seerr.${SECRET_PUBLIC_DOMAIN}$1
+    permanent: true

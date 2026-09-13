@@ -1,0 +1,28 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: router-insecure
+  namespace: default
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: parents-insecure
+  namespace: default
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: router-headers
+  namespace: default
+spec:
+  headers:
+    customRequestHeaders:
+      Host: "${ROUTER_IP}"
+      Origin: "https://${ROUTER_IP}"
+      Referer: "https://${ROUTER_IP}"

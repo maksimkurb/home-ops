@@ -4,6 +4,9 @@ kind: Service
 metadata:
   name: ext-svc-parents
   namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+    traefik.ingress.kubernetes.io/service.serverstransport: parents-insecure@kubernetescrd
 spec:
   ports:
     - name: https
@@ -29,10 +32,10 @@ metadata:
   name: parents-passthrough-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: "${SECRET_PARENTS_DOMAIN}"
       http:

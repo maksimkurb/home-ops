@@ -120,23 +120,6 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
           traefik.ingress.kubernetes.io/router.tls: "true"
-          # PrintGuard has no built-in authentication. Keep the same
-          # traefik-intra + Authelia pattern already used by home-ops.
-          nginx.ingress.kubernetes.io/auth-method: GET
-          nginx.ingress.kubernetes.io/auth-url: |-
-            http://authelia.security.svc.cluster.local:8000/api/verify
-          nginx.ingress.kubernetes.io/auth-signin: |-
-            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
-          nginx.ingress.kubernetes.io/auth-response-headers: |-
-            Remote-User,Remote-Name,Remote-Groups,Remote-Email
-          nginx.ingress.kubernetes.io/auth-snippet: |
-            proxy_set_header X-Forwarded-Method $request_method;
-
-          # Dashboard/API use WebSockets and may keep video/control requests open.
-          nginx.ingress.kubernetes.io/proxy-buffering: "off"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-          nginx.ingress.kubernetes.io/proxy-body-size: "64m"
         hosts:
           - host: "printguard.${SECRET_PRIVATE_DOMAIN}"
             paths:

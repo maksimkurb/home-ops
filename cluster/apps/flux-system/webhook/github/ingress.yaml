@@ -5,11 +5,13 @@ metadata:
   name: webhook-receiver
   namespace: flux-system
   annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
     external-dns.kubernetes.io/enabled: "true"
     external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: "traefik"
   rules:
     - host: "flux-webhook.${SECRET_PUBLIC_DOMAIN}"
       http:

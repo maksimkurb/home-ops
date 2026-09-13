@@ -1,0 +1,9 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: homepage-icons
+spec:
+  replacePathRegex:
+    regex: ^/icons(?:/|$)(.*)
+    replacement: /$1

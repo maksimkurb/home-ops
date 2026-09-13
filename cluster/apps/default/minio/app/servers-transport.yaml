@@ -1,0 +1,9 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: minio
+  namespace: default
+spec:
+  forwardingTimeouts:
+    dialTimeout: 300s

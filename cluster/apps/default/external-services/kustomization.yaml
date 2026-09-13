@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - router.yaml
   - parents.yaml
+  - traefik.yaml

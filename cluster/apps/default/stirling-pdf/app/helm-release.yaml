@@ -43,17 +43,9 @@ spec:
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          # ForwardAuth start
-          nginx.ingress.kubernetes.io/auth-method: GET
-          nginx.ingress.kubernetes.io/auth-url: |-
-            http://authelia.security.svc.cluster.local:8000/api/verify
-          nginx.ingress.kubernetes.io/auth-signin: |-
-            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
-          nginx.ingress.kubernetes.io/auth-response-headers: |-
-            Remote-User,Remote-Name,Remote-Groups,Remote-Email
-          nginx.ingress.kubernetes.io/auth-snippet: |
-            proxy_set_header X-Forwarded-Method $request_method;
-          # ForwardAuth end
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
+          traefik.ingress.kubernetes.io/router.tls: "true"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/stirling-pdf/${HOMEPAGE_ICONS_COLOR}
@@ -66,7 +58,7 @@ spec:
                 service:
                   identifier: main
                   port: 8080
-        className: nginx
+        className: traefik
 
     persistence:
       config:

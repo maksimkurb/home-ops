@@ -263,15 +263,16 @@ spec:
       enabled: true
     ingress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: "traefik"
       annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
         external-dns.kubernetes.io/enabled: "true"
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-        nginx.ingress.kubernetes.io/affinity: "cookie"
-        nginx.ingress.kubernetes.io/session-cookie-name: "grafana"
-        nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
-        nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+        traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+        traefik.ingress.kubernetes.io/service.sticky.cookie.name: "grafana"
+        traefik.ingress.kubernetes.io/service.sticky.cookie.maxage: "172800"
         gethomepage.dev/enabled: "true"
         gethomepage.dev/group: Maintenance
         gethomepage.dev/icon: /icons/grafana/${HOMEPAGE_ICONS_COLOR}

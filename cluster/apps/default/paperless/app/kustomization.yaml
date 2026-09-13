@@ -5,4 +5,5 @@ kind: Kustomization
 resources:
   - ./secret.sops.yaml
   - ./config-pvc.yaml
+  - ./traefik.yaml
   - ./helm-release.yaml

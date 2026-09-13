@@ -118,10 +118,7 @@ spec:
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.tls: "true"
-          nginx.ingress.kubernetes.io/enable-cors: "true"
-          nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-          nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, HEAD, OPTIONS"
-          nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type, Accept, Origin, User-Agent"
+          traefik.ingress.kubernetes.io/router.middlewares: default_openwrt-asu-cors@kubernetescrd
         hosts:
           - host: asu.${SECRET_PRIVATE_DOMAIN}
             paths:

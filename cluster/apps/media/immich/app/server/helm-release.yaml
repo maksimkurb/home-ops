@@ -38,28 +38,15 @@ spec:
     ingress:
       main:
         enabled: true
-        className: nginx
+        className: traefik
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/service.serverstransport: media-immich@kubernetescrd
+          traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-          nginx.ingress.kubernetes.io/proxy-body-size: 200g
-          nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-          nginx.ingress.kubernetes.io/configuration-snippet: |
-            chunked_transfer_encoding off;
-            set $forwarded_client_ip "";
-            if ($http_x_forwarded_for ~ "^([^,]+)") {
-              set $forwarded_client_ip $1;
-            }
-            set $client_ip $remote_addr;
-            if ($forwarded_client_ip != "") {
-              set $client_ip $forwarded_client_ip;
-            }
-          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/upstream-hash-by: "$client_ip"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/weight: "-100"
           gethomepage.dev/group: Personal Services

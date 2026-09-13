@@ -91,8 +91,10 @@ spec:
     ingress:
       main:
         enabled: true
-        className: "nginx"
+        className: "traefik"
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}

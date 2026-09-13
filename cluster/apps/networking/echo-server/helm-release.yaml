@@ -41,6 +41,8 @@ spec:
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
         hosts:
           - host: "echo-server.${SECRET_PUBLIC_DOMAIN}"
             paths:
@@ -49,24 +51,16 @@ spec:
                 service:
                   identifier: main
                   port: *port
-        className: nginx
+        className: traefik
       auth:
         enabled: true
         annotations:
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          # ForwardAuth start
-          nginx.ingress.kubernetes.io/auth-method: GET
-          nginx.ingress.kubernetes.io/auth-url: |-
-            http://authelia.security.svc.cluster.local:8000/api/verify
-          nginx.ingress.kubernetes.io/auth-signin: |-
-            https://auth.${SECRET_PUBLIC_DOMAIN}?rm=$request_method
-          nginx.ingress.kubernetes.io/auth-response-headers: |-
-            Remote-User,Remote-Name,Remote-Groups,Remote-Email
-          nginx.ingress.kubernetes.io/auth-snippet: |
-            proxy_set_header X-Forwarded-Method $request_method;
-          # ForwardAuth end
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
 
         hosts:
           - host: "echo-server-auth.${SECRET_PUBLIC_DOMAIN}"
@@ -76,17 +70,14 @@ spec:
                 service:
                   identifier: main
                   port: *port
-        className: nginx
+        className: traefik
 
       home:
         enabled: true
         annotations:
-          nginx.ingress.kubernetes.io/enable-cors: "true"
-          nginx.ingress.kubernetes.io/cors-allow-origin: "*"
-          nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
-          nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
-          nginx.ingress.kubernetes.io/cors-expose-headers: "Content-Length,Content-Range"
-          nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: networking_echo-cors@kubernetescrd
         hosts:
           - host: "echo-server.${SECRET_PRIVATE_DOMAIN}"
             paths:
@@ -95,7 +86,7 @@ spec:
                 service:
                   identifier: main
                   port: *port
-        className: nginx
+        className: traefik-intra
 
     defaultPodOptions:
       topologySpreadConstraints:

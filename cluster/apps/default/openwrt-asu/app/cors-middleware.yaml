@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: openwrt-asu-cors
+  namespace: default
+spec:
+  headers:
+    accessControlAllowHeaders:
+      - Content-Type
+      - Accept
+      - Origin
+      - User-Agent
+    accessControlAllowMethods:
+      - GET
+      - POST
+      - HEAD
+      - OPTIONS
+    accessControlAllowOriginList:
+      - "*"

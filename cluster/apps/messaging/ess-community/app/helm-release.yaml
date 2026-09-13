@@ -37,10 +37,12 @@ spec:
       pullPolicy: IfNotPresent
 
     ingress:
-      className: nginx
-      controllerType: ingress-nginx
+      className: traefik
+      controllerType: traefik
       tlsEnabled: false
       annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
         external-dns.kubernetes.io/enabled: "true"
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         external-dns.kubernetes.io/cloudflare-proxied: "false"
@@ -85,11 +87,9 @@ spec:
       ingress:
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
-          nginx.ingress.kubernetes.io/enable-cors: "true"
-          nginx.ingress.kubernetes.io/cors-allow-origin: "https://matrix.${SECRET_PUBLIC_DOMAIN}, https://*.matrix.${SECRET_PUBLIC_DOMAIN}"
-          nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
-          nginx.ingress.kubernetes.io/cors-allow-headers: "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token"
-          nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: messaging_ess-matrixrtc-cors@kubernetescrd
       resources:
         requests:
           cpu: 100m
@@ -148,11 +148,6 @@ spec:
           secretKey: password
       ingress:
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
-        annotations:
-          nginx.ingress.kubernetes.io/proxy-buffering: "off"
-          nginx.ingress.kubernetes.io/server-snippet: |
-            gzip off;
-            brotli off;
       media:
         storage:
           size: 20Gi

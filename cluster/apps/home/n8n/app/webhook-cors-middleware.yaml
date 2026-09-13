@@ -1,0 +1,35 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: n8n-webhook-cors
+  namespace: home
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowHeaders:
+      - DNT
+      - User-Agent
+      - X-Requested-With
+      - If-Modified-Since
+      - Cache-Control
+      - Content-Type
+      - Range
+      - Authorization
+      - anonymousid
+    accessControlAllowMethods:
+      - GET
+      - PUT
+      - POST
+      - DELETE
+      - PATCH
+      - OPTIONS
+    accessControlAllowOriginList:
+      - https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}
+      - https://grist.${SECRET_PUBLIC_DOMAIN}
+      - https://n8n.${SECRET_PRIVATE_DOMAIN}
+    accessControlAllowOriginListRegex:
+      - "^https://[^.]+\\.${SECRET_PUBLIC_DOMAIN}$"
+    accessControlExposeHeaders:
+      - Content-Length
+      - Content-Range
