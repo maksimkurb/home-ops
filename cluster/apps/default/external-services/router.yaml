@@ -54,7 +54,6 @@ spec:
             group: traefik.io
             kind: Middleware
             name: router-headers
-            namespace: default
       backendRefs:
         - name: ext-svc-router-dashboard
           port: 443
@@ -82,7 +81,6 @@ spec:
             group: traefik.io
             kind: Middleware
             name: router-headers
-            namespace: default
       backendRefs:
         - name: ext-svc-router-dashboard
           port: 443
