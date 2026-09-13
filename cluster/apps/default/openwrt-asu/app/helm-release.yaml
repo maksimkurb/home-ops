@@ -116,6 +116,8 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.tls: "true"
           nginx.ingress.kubernetes.io/enable-cors: "true"
           nginx.ingress.kubernetes.io/cors-allow-origin: "*"
           nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, HEAD, OPTIONS"

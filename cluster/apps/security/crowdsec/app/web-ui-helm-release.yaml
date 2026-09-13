@@ -38,6 +38,8 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.tls: "true"
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         hosts:

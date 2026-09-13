@@ -42,6 +42,8 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.tls: "true"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/node-red/${HOMEPAGE_ICONS_COLOR}

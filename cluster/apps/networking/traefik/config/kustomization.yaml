@@ -5,5 +5,8 @@ namespace: networking
 resources:
   - services.yaml
   - gateways.yaml
+  - certificate.yaml
+  - ingress-classes.yaml
+  - tls-store.yaml
   - middlewares.yaml
   - canary-routes.yaml

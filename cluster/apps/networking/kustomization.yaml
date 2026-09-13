@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - echo-server
-  - ./ingress-nginx/ks.yaml
   - external-dns
   - ./k8s-gateway/ks.yaml
   - speedtest

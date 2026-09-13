@@ -1,0 +1,9 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: scrutiny-api-auth
+  namespace: monitoring
+spec:
+  basicAuth:
+    secret: scrutiny-api-auth

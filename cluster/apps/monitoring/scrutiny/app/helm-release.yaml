@@ -87,6 +87,9 @@ spec:
       main:
         className: "nginx-intra"
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
+          traefik.ingress.kubernetes.io/router.tls: "true"
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
           nginx.ingress.kubernetes.io/auth-url: |-
@@ -120,6 +123,9 @@ spec:
       api:
         className: "nginx-intra"
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.middlewares: monitoring_scrutiny-api-auth@kubernetescrd
+          traefik.ingress.kubernetes.io/router.tls: "true"
           nginx.ingress.kubernetes.io/auth-type: basic
           nginx.ingress.kubernetes.io/auth-secret: scrutiny-api-auth
           nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"

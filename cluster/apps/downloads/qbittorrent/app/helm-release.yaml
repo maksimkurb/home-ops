@@ -47,6 +47,9 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
+          traefik.ingress.kubernetes.io/router.tls: "true"
           # ForwardAuth start
           nginx.ingress.kubernetes.io/auth-method: GET
           nginx.ingress.kubernetes.io/auth-url: |-
@@ -81,6 +84,8 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.tls: "true"
           gethomepage.dev/enabled: "false"
         hosts:
           - host: *host-release

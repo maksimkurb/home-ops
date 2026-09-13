@@ -76,6 +76,9 @@ spec:
         enabled: true
         className: nginx-intra
         annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
+          traefik.ingress.kubernetes.io/router.tls: "true"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
