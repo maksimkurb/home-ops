@@ -74,7 +74,7 @@ spec:
               - -c
             args:
               - >-
-                if [ -d /icons/.git ]; then git -C /icons pull --ff-only; else git clone --depth=1 https://github.com/selfhst/icons.git /icons; fi
+                if [ -d /icons/.git ]; then git -c safe.directory=/icons -C /icons pull --ff-only; else git clone --depth=1 https://github.com/selfhst/icons.git /icons; fi
             resources:
               requests:
                 cpu: 10m
