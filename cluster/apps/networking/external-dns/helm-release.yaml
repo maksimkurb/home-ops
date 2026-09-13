@@ -44,6 +44,7 @@ spec:
     sources:
       - gateway-httproute
       - ingress
+      - traefik-proxy
       - service
     txtPrefix: "k8s."
     txtOwnerId: "default"

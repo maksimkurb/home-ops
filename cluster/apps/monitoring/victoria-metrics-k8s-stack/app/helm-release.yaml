@@ -115,7 +115,7 @@ spec:
               - targets: ["${ROUTER_IP}:9100", "${ROUTER_3_IP}:9100"]
       ingress:
         enabled: true
-        ingressClassName: "nginx-intra"
+        ingressClassName: "traefik-intra"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -154,7 +154,7 @@ spec:
               storage: 30Gi
       ingress:
         enabled: true
-        ingressClassName: "nginx-intra"
+        ingressClassName: "traefik-intra"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -182,7 +182,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: nginx-intra
+        ingressClassName: traefik-intra
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -284,7 +284,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: "nginx-intra"
+        ingressClassName: "traefik-intra"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd

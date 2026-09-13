@@ -85,7 +85,7 @@ spec:
             port: 8086
     ingress:
       main:
-        className: "nginx-intra"
+        className: "traefik-intra"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -121,7 +121,7 @@ spec:
           - hosts:
               - *host
       api:
-        className: "nginx-intra"
+        className: "traefik-intra"
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
           traefik.ingress.kubernetes.io/router.middlewares: monitoring_scrutiny-api-auth@kubernetescrd

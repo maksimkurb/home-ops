@@ -121,7 +121,7 @@ spec:
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
           traefik.ingress.kubernetes.io/router.tls: "true"
           # PrintGuard has no built-in authentication. Keep the same
-          # nginx-intra + Authelia pattern already used by home-ops.
+          # traefik-intra + Authelia pattern already used by home-ops.
           nginx.ingress.kubernetes.io/auth-method: GET
           nginx.ingress.kubernetes.io/auth-url: |-
             http://authelia.security.svc.cluster.local:8000/api/verify
