@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -54,6 +55,32 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 64Mi
+      icons-update:
+        type: cronjob
+        cronjob:
+          schedule: "0 0 * * 0"
+          timeZone: ${TIMEZONE}
+          concurrencyPolicy: Forbid
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          ttlSecondsAfterFinished: 86400
+        containers:
+          sync:
+            image:
+              repository: alpine/git
+              tag: v2.54.0
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - >-
+                if [ -d /icons/.git ]; then git -C /icons pull --ff-only; else git clone --depth=1 https://github.com/selfhst/icons.git /icons; fi
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
     service:
       app:
         controller: main
@@ -230,4 +257,8 @@ spec:
           main:
             icons:
               - path: /app/icons
+                subPath: icons
+          icons-update:
+            sync:
+              - path: /icons
                 subPath: icons

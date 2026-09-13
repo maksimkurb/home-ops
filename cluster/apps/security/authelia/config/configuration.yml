@@ -1,10 +1,9 @@
 ---
 access_control:
-  default_policy: one_factor
+  default_policy: deny
   networks:
     - name: internal
       networks: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-
   rules:
     - domain: "*.${SECRET_PUBLIC_DOMAIN}"
       policy: bypass
@@ -12,24 +11,69 @@ access_control:
         - "^/manifest.json$"
         - "^/.well-known/(.*)$"
         - "^/favicon\\\\.(.*)$"
-
     - domain: "*.${SECRET_PRIVATE_DOMAIN}"
       policy: bypass
       resources:
         - "^/manifest.json$"
         - "^/.well-known/(.*)$"
         - "^/favicon\\\\.(.*)$"
-
     - domain: "frigate.${SECRET_PUBLIC_DOMAIN}"
       policy: one_factor
       subject:
         - "group:frigate-admin"
         - "group:frigate-khoroshkina"
         - "group:frigate-home"
-
     - domain: "frigate.${SECRET_PUBLIC_DOMAIN}"
       policy: deny
-
+    - domain:
+        - "hubble.${SECRET_PRIVATE_DOMAIN}"
+        - "traefik.${SECRET_PUBLIC_DOMAIN}"
+        - "capacitor.${SECRET_PRIVATE_DOMAIN}"
+        - "scrutiny.${SECRET_PRIVATE_DOMAIN}"
+        - "vmagent.${SECRET_PRIVATE_DOMAIN}"
+        - "vmsingle.${SECRET_PRIVATE_DOMAIN}"
+        - "vmalert.${SECRET_PRIVATE_DOMAIN}"
+        - "alertmanager.${SECRET_PRIVATE_DOMAIN}"
+        - "kopia.${SECRET_PRIVATE_DOMAIN}"
+      policy: one_factor
+      subject: "group:admins"
+    - domain:
+        - "start.${SECRET_PUBLIC_DOMAIN}"
+        - "snapotter.${SECRET_PUBLIC_DOMAIN}"
+      policy: one_factor
+      subject: "group:people"
+    - domain:
+        - "orthanc.${SECRET_PUBLIC_DOMAIN}"
+        - "stirling-pdf.${SECRET_PUBLIC_DOMAIN}"
+        - "scanservjs.${SECRET_PUBLIC_DOMAIN}"
+      policy: one_factor
+      subject: "group:documents"
+    - domain:
+        - "gatus.${SECRET_PUBLIC_DOMAIN}"
+      policy: one_factor
+    - domain:
+        - "hass-config.${SECRET_PRIVATE_DOMAIN}"
+      policy: one_factor
+      subject: "group:home"
+    - domain:
+        - "syncthing.${SECRET_PRIVATE_DOMAIN}"
+        - "z2m.${SECRET_PRIVATE_DOMAIN}"
+        - "printguard.${SECRET_PRIVATE_DOMAIN}"
+      policy: one_factor
+      subject: "group:admins"
+    - domain:
+        - "radarr.${SECRET_PUBLIC_DOMAIN}"
+        - "sonarr.${SECRET_PUBLIC_DOMAIN}"
+        - "prowlarr.${SECRET_PUBLIC_DOMAIN}"
+        - "qbittorrent.${SECRET_PRIVATE_DOMAIN}"
+      policy: one_factor
+      subject: "group:media"
+    # ponytail: test endpoints share the internal group; remove them once gateway testing moves elsewhere.
+    - domain:
+        - "echo-gateway-auth.${SECRET_PUBLIC_DOMAIN}"
+        - "echo-server-auth.${SECRET_PUBLIC_DOMAIN}"
+      policy: one_factor
+      subject: "group:internal"
 telemetry:
   metrics:
     enabled: true
@@ -41,17 +85,14 @@ telemetry:
       read: '6s'
       write: '6s'
       idle: '30s'
-
 log:
   level: 'debug'
-
 server:
   address: 'tcp://:8000/'
   disable_healthcheck: true
   buffers:
     read: 16384
     write: 4096
-
 notifier:
   disable_startup_check: true
   smtp:
@@ -65,7 +106,6 @@ notifier:
     disable_require_tls: false
     disable_starttls: false
     disable_html_emails: false
-
 session:
   secret: '{{ env "SECRET_SESSION_SECRET" }}'
   redis:
@@ -76,7 +116,6 @@ session:
     - domain: '${SECRET_PUBLIC_DOMAIN}'
       authelia_url: 'https://auth.${SECRET_PUBLIC_DOMAIN}'
       default_redirection_url: 'https://start.${SECRET_PUBLIC_DOMAIN}'
-
 storage:
   encryption_key: '{{ env "SECRET_STORAGE_ENCRYPTION_KEY" }}'
   postgres:
@@ -86,12 +125,10 @@ storage:
     username: 'authelia'
     password: '{{ env "SECRET_POSTGRES_PASSWORD" }}'
     timeout: '5s'
-
 ntp:
   address: 'udp://pool.ntp.org:123'
   max_desync: '3s'
   disable_startup_check: true
-
 totp:
   disable: false
   issuer: 'auth.${SECRET_PUBLIC_DOMAIN}'
@@ -107,7 +144,6 @@ totp:
   allowed_periods:
     - 30
   disable_reuse_security_policy: false
-
 identity_validation:
   elevated_session:
     code_lifespan: '5 minutes'
@@ -115,7 +151,6 @@ identity_validation:
     characters: 8
     require_second_factor: false
     skip_second_factor: false
-
 authentication_backend:
   password_reset:
     disable: true
@@ -139,7 +174,6 @@ authentication_backend:
       mail: 'mail'
       member_of: 'memberOf'
       group_name: 'ou'
-
 identity_providers:
   oidc:
     hmac_secret: '{{ env "SECRET_HMAC_SECRET" }}'
@@ -152,8 +186,8 @@ identity_providers:
       - key_id: 'default'
         algorithm: 'RS256'
         use: 'sig'
-        key: {{ secret "/config/jwks/rsa.2048.pem" | mindent 10 "|" | msquote }}
-        certificate_chain: {{ secret "/config/jwks/rsa.2048.cert" | mindent 10 "|" | msquote }}
+        key: {? {secret "/config/jwks/rsa.2048.pem" | mindent 10 "|" | msquote: ''} : ''}
+        certificate_chain: {? {secret "/config/jwks/rsa.2048.cert" | mindent 10 "|" | msquote: ''} : ''}
     enforce_pkce: public_clients_only
     cors:
       endpoints:
@@ -165,8 +199,17 @@ identity_providers:
     claims_policies:
       default:
         id_token: ['groups', 'email', 'preferred_username', 'name']
-
     authorization_policies:
+      require_group_internal:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:internal'
+      require_group_people:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:people'
       require_group_home:
         default_policy: 'deny'
         rules:
@@ -181,30 +224,39 @@ identity_providers:
         default_policy: 'deny'
         rules:
           - policy: 'one_factor'
-            subject: 'group:home'
+            subject: 'group:media'
       require_group_files:
         default_policy: 'deny'
         rules:
           - policy: 'one_factor'
-            subject: 'group:home'
+            subject: 'group:files'
       require_group_photos:
         default_policy: 'deny'
         rules:
           - policy: 'one_factor'
-            subject: 'group:home'
+            subject: 'group:photos'
+      require_group_documents:
+        default_policy: 'deny'
+        rules:
+          - policy: 'one_factor'
+            subject: 'group:documents'
+      require_group_documents_two_factor:
+        default_policy: 'deny'
+        rules:
+          - policy: 'two_factor'
+            subject: 'group:documents'
       require_group_admins:
         default_policy: 'deny'
         rules:
           - policy: 'one_factor'
-            subject: 'group:home'
-
+            subject: 'group:admins'
     clients:
       - client_id: crowdsec-web-ui
         client_name: CrowdSec Web UI
         client_secret: ${SECRET_CROWDSEC_WEB_UI_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_admins
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -215,13 +267,12 @@ identity_providers:
           - https://crowdsec.${SECRET_PRIVATE_DOMAIN}/api/auth/oidc/callback
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: client_secret_post
-
       - client_id: grafana
         client_name: Grafana
         client_secret: ${SECRET_GRAFANA_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_admins
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -232,13 +283,12 @@ identity_providers:
           - https://grafana.${SECRET_PRIVATE_DOMAIN}/login/generic_oauth
           - https://grafana.${SECRET_PUBLIC_DOMAIN}/login/generic_oauth
         userinfo_signed_response_alg: 'none'
-
       - client_id: sftpgo
         client_name: SFTPGo
         client_secret: ${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_files
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -248,13 +298,12 @@ identity_providers:
         redirect_uris:
           - https://f.${SECRET_PUBLIC_DOMAIN}/web/oidc/redirect
         userinfo_signed_response_alg: 'none'
-
       - client_id: plik
         client_name: Plik
         client_secret: ${SECRET_PLIK_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_people
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -264,13 +313,12 @@ identity_providers:
         redirect_uris:
           - https://plik.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback
         userinfo_signed_response_alg: 'none'
-
       - client_id: nodered
         client_name: NodeRED
         client_secret: ${SECRET_NODERED_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_home
         pre_configured_consent_duration: 1y
         token_endpoint_auth_method: client_secret_post
         scopes:
@@ -281,13 +329,12 @@ identity_providers:
         redirect_uris:
           - https://nodered.${SECRET_PRIVATE_DOMAIN}/auth/strategy/callback
         userinfo_signed_response_alg: 'none'
-
       - client_id: immich
         client_name: Immich
         client_secret: ${SECRET_IMMICH_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: one_factor
+        authorization_policy: require_group_photos
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -300,13 +347,12 @@ identity_providers:
           - https://photos.${SECRET_PUBLIC_DOMAIN}/user-settings
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
-
       - client_id: paperless
         client_name: Paperless-ngx
         client_secret: ${SECRET_PAPERLESS_OAUTH_CLIENT_SECRET}
         claims_policy: 'default'
         public: false
-        authorization_policy: two_factor
+        authorization_policy: require_group_documents_two_factor
         pre_configured_consent_duration: 1y
         scopes:
           - openid
@@ -317,7 +363,6 @@ identity_providers:
           - 'https://paperless.${SECRET_PUBLIC_DOMAIN}/accounts/oidc/authelia/login/callback/'
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
-
       - client_id: 'homeassistant'
         client_name: 'Home Assistant'
         client_secret: ${SECRET_HASS_OAUTH_CLIENT_SECRET}
@@ -325,7 +370,7 @@ identity_providers:
         require_pkce: true
         claims_policy: 'default'
         pkce_challenge_method: 'S256'
-        authorization_policy: 'one_factor'
+        authorization_policy: 'require_group_home'
         redirect_uris:
           - 'https://hass.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback'
         scopes:
@@ -335,7 +380,6 @@ identity_providers:
           - email
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_post'
-
       - client_id: 'grist'
         client_name: 'Grist'
         client_secret: ${SECRET_GRIST_OAUTH_CLIENT_SECRET}
@@ -343,7 +387,7 @@ identity_providers:
         require_pkce: true
         claims_policy: 'default'
         pkce_challenge_method: 'S256'
-        authorization_policy: 'one_factor'
+        authorization_policy: 'require_group_documents'
         redirect_uris:
           - 'https://grist.${SECRET_PUBLIC_DOMAIN}/oauth2/callback'
         scopes:
@@ -352,14 +396,13 @@ identity_providers:
           - email
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_basic'
-
       - client_id: 'snapotter'
         client_name: 'SnapOtter'
         client_secret: ${SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET}
         public: false
         require_pkce: false
         claims_policy: 'default'
-        authorization_policy: 'one_factor'
+        authorization_policy: 'require_group_people'
         pre_configured_consent_duration: 1y
         redirect_uris:
           - 'https://snapotter.${SECRET_PUBLIC_DOMAIN}/api/auth/oidc/callback'
@@ -369,14 +412,13 @@ identity_providers:
           - email
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
-
       - client_id: 'envrouter'
         client_name: 'EnvRouter'
         client_secret: '${SECRET_ENVROUTER_OAUTH_CLIENT_SECRET}'
         public: false
         require_pkce: false
         claims_policy: 'default'
-        authorization_policy: 'one_factor'
+        authorization_policy: 'require_group_admins'
         pre_configured_consent_duration: 1y
         redirect_uris:
           - 'https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback'
@@ -387,14 +429,13 @@ identity_providers:
           - groups
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
-
       - client_id: 'frappe'
         client_name: 'Frappe'
         client_secret: '${SECRET_FRAPPE_OAUTH_CLIENT_SECRET}'
         public: false
         require_pkce: false
         claims_policy: 'default'
-        authorization_policy: 'one_factor'
+        authorization_policy: 'require_group_documents'
         pre_configured_consent_duration: 1y
         redirect_uris:
           - 'https://erp.${SECRET_PUBLIC_DOMAIN}/api/method/frappe.integrations.oauth2_logins.custom/authelia'
