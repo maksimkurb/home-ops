@@ -45,6 +45,7 @@ spec:
         enabled: true
         statusAddress:
           service:
+            enabled: true
             name: traefik-public
             namespace: networking
     gateway:
