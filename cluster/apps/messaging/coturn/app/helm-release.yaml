@@ -1,5 +1,4 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -52,7 +51,6 @@ spec:
               - path: /etc/coturn/tls/tls.key
                 subPath: tls.key
                 readOnly: true
-
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -61,14 +59,12 @@ spec:
         fsGroup: 777
         seccompProfile:
           type: RuntimeDefault
-
     resources:
       requests:
         cpu: 10m
         memory: 32Mi
       limits:
         memory: 256Mi
-
     controllers:
       coturn:
         annotations:
@@ -98,7 +94,6 @@ spec:
                 valueFrom:
                   fieldRef:
                     fieldPath: status.podIP
-
     service:
       coturn:
         controller: coturn

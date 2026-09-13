@@ -1,5 +1,4 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -47,19 +46,16 @@ spec:
         type: persistentVolumeClaim
         globalMounts:
           - path: /data
-
     resources:
       requests:
         cpu: 1m
         memory: 10Mi
       limits:
         memory: 100Mi
-
     defaultPodOptions:
       securityContext:
         fsGroup: 777
         fsGroupChangePolicy: "OnRootMismatch"
-
     controllers:
       main:
         type: cronjob
@@ -71,7 +67,6 @@ spec:
           startingDeadlineSeconds: 30
           successfulJobsHistory: 3
           suspend: false
-
         containers:
           main:
             image:

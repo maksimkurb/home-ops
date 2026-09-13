@@ -1,5 +1,4 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -16,11 +15,9 @@ spec:
         name: bjw-s-charts
         namespace: flux-system
   values:
-
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
-
     persistence:
       config-file:
         enabled: true
@@ -32,7 +29,6 @@ spec:
               - path: /app/config.yml
                 subPath: config_yaml
                 readOnly: true
-
     controllers:
       notifier:
         annotations:

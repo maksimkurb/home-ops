@@ -1,5 +1,4 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -50,14 +49,12 @@ spec:
             port: 21118
           rustdesk-7-relay:
             port: 21119
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
         fsGroupChangePolicy: "OnRootMismatch"
-
     persistence:
       data:
         storageClass: local-path
@@ -75,7 +72,6 @@ spec:
             subPath: id_ed25519
           - path: /root/id_ed25519.pub
             subPath: id_ed25519.pub
-
     controllers:
       main:
         containers:
