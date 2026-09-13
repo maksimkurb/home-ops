@@ -10,3 +10,4 @@ resources:
   - tls-store.yaml
   - middlewares.yaml
   - canary-routes.yaml
+  - dashboard-route.yaml

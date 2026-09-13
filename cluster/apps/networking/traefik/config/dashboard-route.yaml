@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${INGRESS_DIRECT}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`traefik.${SECRET_PUBLIC_DOMAIN}`)
+      middlewares:
+        - name: authelia
+      services:
+        - kind: TraefikService
+          name: api@internal
+  tls: {}
