@@ -1,3 +1,6 @@
+exclude:
+  - cluster/apps/security/authelia/config/configuration.yml
+
 formatter:
   type: basic
   include_document_start: true

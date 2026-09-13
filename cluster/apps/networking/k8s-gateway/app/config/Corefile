@@ -16,8 +16,24 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
 
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
     resources Ingress HTTPRoute
-    gatewayClasses traefik-public traefik-private
+    gatewayClasses traefik-public
     fallthrough
+  }
+
+  forward . 192.168.40.1
+  prometheus 0.0.0.0:9153
+  loadbalance
+}
+
+${SECRET_PRIVATE_DOMAIN}:1053 {
+  errors
+  log
+  health
+  ready
+
+  k8s_gateway ${SECRET_PRIVATE_DOMAIN} {
+    resources Ingress HTTPRoute
+    gatewayClasses traefik-private
   }
 
   forward . 192.168.40.1
