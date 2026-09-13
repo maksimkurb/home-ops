@@ -53,11 +53,11 @@ spec:
     service:
       enabled: false
     ports:
-      web-public:
+      web:
         port: 8000
         expose:
           default: false
-      websecure-public:
+      websecure:
         port: 8443
         expose:
           default: false
@@ -97,11 +97,11 @@ spec:
         expose:
           default: false
     additionalArguments:
-      - --entrypoints.web-public.http.aliasheadersstrategy=reject
-      - --entrypoints.web-public.http.redirections.entrypoint.to=websecure-public
-      - --entrypoints.web-public.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure-public.http.aliasheadersstrategy=reject
-      - --entrypoints.websecure-public.http.middlewares=networking_crowdsec@kubernetescrd
+      - --entrypoints.web.http.aliasheadersstrategy=reject
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.http.aliasheadersstrategy=reject
+      - --entrypoints.websecure.http.middlewares=networking_crowdsec@kubernetescrd
       - --entrypoints.web-private.http.aliasheadersstrategy=reject
       - --entrypoints.web-private.http.redirections.entrypoint.to=websecure-private
       - --entrypoints.web-private.http.redirections.entrypoint.scheme=https
