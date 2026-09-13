@@ -40,13 +40,6 @@ spec:
       kubernetesIngress:
         enabled: true
         ingressClass: traefik-intra
-      kubernetesIngressNginx:
-        allowSnippetAnnotations: true
-        enabled: true
-        httpEntryPoint: web
-        httpsEntryPoint: websecure
-        ingressClass: nginx
-        ingressClassByName: true
       kubernetesGateway:
         enabled: true
     gateway:
@@ -103,6 +96,13 @@ spec:
         expose:
           default: false
     additionalArguments:
+      - --experimental.kubernetesingressnginx=true
+      - --providers.kubernetesingressnginx=true
+      - --providers.kubernetesingressnginx.allowsnippetannotations=true
+      - --providers.kubernetesingressnginx.httpentrypoint=web
+      - --providers.kubernetesingressnginx.httpsentrypoint=websecure
+      - --providers.kubernetesingressnginx.ingressclass=nginx
+      - --providers.kubernetesingressnginx.ingressclassbyname=true
       - --entrypoints.web.http.aliasheadersstrategy=reject
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
