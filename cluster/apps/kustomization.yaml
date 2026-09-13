@@ -6,7 +6,7 @@ resources:
   - default
   - database
   - downloads
-  - envrouter
+  # - envrouter
   - flux-system
   - games
   - home
