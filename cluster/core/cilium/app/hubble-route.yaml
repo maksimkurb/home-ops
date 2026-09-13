@@ -17,7 +17,6 @@ spec:
             group: traefik.io
             kind: Middleware
             name: authelia
-            namespace: networking
       backendRefs:
         - name: hubble-ui
           port: 8081

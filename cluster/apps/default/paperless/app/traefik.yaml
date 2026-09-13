@@ -31,7 +31,6 @@ spec:
             group: traefik.io
             kind: Middleware
             name: paperless-admin-deny
-            namespace: default
       backendRefs:
         - name: paperless-app
           port: 8000
