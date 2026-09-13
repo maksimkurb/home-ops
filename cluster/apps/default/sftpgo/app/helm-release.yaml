@@ -67,14 +67,14 @@ spec:
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 13280
           - matches:
               - path:
                   type: PathPrefix
                   value: /dav
             backendRefs:
               - identifier: main
-                port: 80
+                port: 13288
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

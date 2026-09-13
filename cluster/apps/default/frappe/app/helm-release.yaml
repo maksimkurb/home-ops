@@ -230,7 +230,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 8080
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

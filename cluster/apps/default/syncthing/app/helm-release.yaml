@@ -87,7 +87,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 8384
             filters:
               - type: ExtensionRef
                 extensionRef:

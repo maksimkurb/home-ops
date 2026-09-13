@@ -98,7 +98,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: app
-                port: 80
+                port: 8080
             filters:
               - type: ExtensionRef
                 extensionRef:

@@ -99,7 +99,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: web
-                port: 80
+                port: 8080
             filters:
               - type: ExtensionRef
                 extensionRef:
@@ -131,7 +131,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: web
-                port: 80
+                port: 8080
             filters:
               - type: ExtensionRef
                 extensionRef:

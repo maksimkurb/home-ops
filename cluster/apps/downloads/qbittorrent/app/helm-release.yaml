@@ -55,7 +55,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 50400
             filters:
               - type: ExtensionRef
                 extensionRef:
@@ -90,7 +90,7 @@ spec:
                   value: /api
             backendRefs:
               - identifier: main
-                port: 80
+                port: 50400
         annotations:
           gethomepage.dev/enabled: 'false'
     persistence:

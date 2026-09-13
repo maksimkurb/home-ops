@@ -82,14 +82,14 @@ spec:
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 9001
           - matches:
               - path:
                   type: PathPrefix
                   value: /
             backendRefs:
               - identifier: main
-                port: 80
+                port: 9001
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

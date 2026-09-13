@@ -17,7 +17,7 @@ spec:
     - filters:
         - type: ExtensionRef
           extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
-      backendRefs: [{name: vm-k8s-stack-vmagent, port: 8429}]
+      backendRefs: [{name: vmagent-vm-k8s-stack, port: 8429}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -38,7 +38,7 @@ spec:
     - filters:
         - type: ExtensionRef
           extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
-      backendRefs: [{name: vm-k8s-stack-vmsingle, port: 8428}]
+      backendRefs: [{name: vmsingle-vm-k8s-stack, port: 8428}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -59,7 +59,7 @@ spec:
     - filters:
         - type: ExtensionRef
           extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
-      backendRefs: [{name: vm-k8s-stack-vmalert, port: 8880}]
+      backendRefs: [{name: vmalert-vm-k8s-stack, port: 8080}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -80,4 +80,4 @@ spec:
     - filters:
         - type: ExtensionRef
           extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
-      backendRefs: [{name: vm-k8s-stack-alertmanager, port: 9093}]
+      backendRefs: [{name: vmalertmanager-vm-k8s-stack, port: 9093}]
