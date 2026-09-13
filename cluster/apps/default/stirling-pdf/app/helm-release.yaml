@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -25,41 +24,47 @@ spec:
       retries: 5
     timeout: 15m0s
   values:
-
     global:
       nameOverride: ${APP}
-
     service:
       main:
         controller: main
         ports:
           http:
             port: 8080
-
-    ingress:
+    route:
       main:
         enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}'
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8080
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/stirling-pdf/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Stirling PDF
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: 8080
-        className: traefik
-
     persistence:
       config:
         enabled: true
@@ -77,30 +82,28 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /usr/share/tessdata
-
     defaultPodOptions:
       securityContext:
         supplementalGroups:
           - 777
-
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: ghcr.io/stirling-tools/s-pdf
               tag: 2.14.3@sha256:3b3670fce70b396ec56ba380a3cc7858e0abf83fe13f31c88f7737847763a396
             env:
-              TZ: "${TIMEZONE}"
-              DOCKER_ENABLE_SECURITY: "false"
-              SECURITY_ENABLE_LOGIN: "true"
-              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: "false"
-              DISABLE_ADDITIONAL_FEATURES: "true"
-              SYSTEM_ENABLEANALYTICS: "false"
-              SYSTEM_ENABLEPOSTHOG: "false"
-              SYSTEM_ENABLESCARF: "false"
+              TZ: ${TIMEZONE}
+              DOCKER_ENABLE_SECURITY: 'false'
+              SECURITY_ENABLE_LOGIN: 'true'
+              INSTALL_BOOK_AND_ADVANCED_HTML_OPS: 'false'
+              DISABLE_ADDITIONAL_FEATURES: 'true'
+              SYSTEM_ENABLEANALYTICS: 'false'
+              SYSTEM_ENABLEPOSTHOG: 'false'
+              SYSTEM_ENABLESCARF: 'false'
             resources:
               requests:
                 cpu: 1m
@@ -114,7 +117,7 @@ spec:
                 path: /api/v1/info/status
               readiness: *probe
               startup:
-                <<: *probe
+                !!merge <<: *probe
                 spec:
                   failureThreshold: 90
                   periodSeconds: 5

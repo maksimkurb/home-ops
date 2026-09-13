@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -30,14 +29,13 @@ spec:
       main:
         controller: main
         type: LoadBalancer
-        loadBalancerIP: "${SVC_JELLYFIN_ADDR}"
+        loadBalancerIP: ${SVC_JELLYFIN_ADDR}
         annotations:
-          lbipam.cilium.io/ips: "${SVC_JELLYFIN_ADDR}"
+          lbipam.cilium.io/ips: ${SVC_JELLYFIN_ADDR}
         externalTrafficPolicy: Local
         ports:
           http:
             port: 8096
-
     defaultPodOptions:
       affinity:
         nodeAffinity:
@@ -47,71 +45,77 @@ spec:
                   - key: feature.node.kubernetes.io/custom-nvidia-gpu
                     operator: In
                     values:
-                      - "true"
+                      - 'true'
       runtimeClassName: nvidia
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
-    ingress:
+        fsGroupChangePolicy: OnRootMismatch
+    route:
       main:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - jellyfin.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Media
-          gethomepage.dev/weight: "-110"
+          gethomepage.dev/weight: '-110'
           gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
-          gethomepage.dev/widget.type: "jellyfin"
-          gethomepage.dev/widget.url: "http://jellyfin.media:8096"
-          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_JELLYFIN_API_KEY}"
-          gethomepage.dev/widget.enableBlocks: "true"
-          gethomepage.dev/widget.enableNowPlaying: "false"
-        hosts:
-          - host: "jellyfin.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=${APP}
+          gethomepage.dev/widget.type: jellyfin
+          gethomepage.dev/widget.url: http://jellyfin.media:8096
+          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_JELLYFIN_API_KEY}
+          gethomepage.dev/widget.enableBlocks: 'true'
+          gethomepage.dev/widget.enableNowPlaying: 'false'
       main-cf:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - jellyfin-cf.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/weight: "-100"
-          gethomepage.dev/group: "Media"
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/weight: '-100'
+          gethomepage.dev/group: Media
           gethomepage.dev/icon: /icons/jellyfin/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Jellyfin (CF)
-          gethomepage.dev/pod-selector: "app.kubernetes.io/name=${APP}"
-          gethomepage.dev/widget.type: "jellyfin"
-          gethomepage.dev/widget.url: "http://jellyfin.media:8096"
-          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_JELLYFIN_API_KEY}"
-          gethomepage.dev/widget.enableBlocks: "true"
-          gethomepage.dev/widget.enableNowPlaying: "false"
-        hosts:
-          - host: "jellyfin-cf.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=${APP}
+          gethomepage.dev/widget.type: jellyfin
+          gethomepage.dev/widget.url: http://jellyfin.media:8096
+          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_JELLYFIN_API_KEY}
+          gethomepage.dev/widget.enableBlocks: 'true'
+          gethomepage.dev/widget.enableNowPlaying: 'false'
     persistence:
       config:
         existingClaim: jellyfin-config-v1
@@ -124,7 +128,6 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /transcode
-
     controllers:
       main:
         containers:
@@ -133,7 +136,7 @@ spec:
               repository: ghcr.io/jellyfin/jellyfin
               tag: 12.0@sha256:74f4d87d9cf262c52d62be6be265c0355c6a7e21d0477ab6c654a49a4f8b1fd4
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: all
             resources:

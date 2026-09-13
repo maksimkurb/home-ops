@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -30,7 +29,7 @@ spec:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
@@ -40,19 +39,19 @@ spec:
               - secretRef:
                   name: *app
             env:
-              TZ: "${TIMEZONE}"
-              PLIKD_DEBUG: "false"
+              TZ: ${TIMEZONE}
+              PLIKD_DEBUG: 'false'
               PLIKD_LOG_LEVEL: INFO
-              PLIKD_LISTEN_PORT: "8080"
+              PLIKD_LISTEN_PORT: '8080'
               PLIKD_LISTEN_ADDRESS: 0.0.0.0
-              PLIKD_SSL_ENABLED: "false"
-              PLIKD_NO_WEB_INTERFACE: "false"
+              PLIKD_SSL_ENABLED: 'false'
+              PLIKD_NO_WEB_INTERFACE: 'false'
               PLIKD_PLIK_DOMAIN: https://plik.${SECRET_PUBLIC_DOMAIN}
               PLIKD_SESSION_TIMEOUT: 365d
               PLIKD_STREAM_TIMEOUT_STR: 5m
               PLIKD_MAX_FILE_SIZE_STR: 10GB
               PLIKD_MAX_USER_SIZE_STR: unlimited
-              PLIKD_MAX_FILE_PER_UPLOAD: "1000"
+              PLIKD_MAX_FILE_PER_UPLOAD: '1000'
               PLIKD_DEFAULT_TTL_STR: 30d
               PLIKD_MAX_TTL_STR: 30d
               PLIKD_FEATURE_AUTHENTICATION: forced
@@ -72,7 +71,7 @@ spec:
               PLIKD_DATA_BACKEND: s3
               PLIKD_OIDC_CLIENT_ID: plik
               PLIKD_OIDC_PROVIDER_NAME: Authelia
-              PLIKD_OIDC_REQUIRE_VERIFIED_EMAIL: "false"
+              PLIKD_OIDC_REQUIRE_VERIFIED_EMAIL: 'false'
               PLIKD_OIDC_PROVIDER_URL: https://auth.${SECRET_PUBLIC_DOMAIN}
             probes:
               liveness:
@@ -90,33 +89,35 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 4Gi
-
     service:
       main:
         controller: main
         ports:
           http:
             port: &port 8080
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - plik.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8080
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Personal Services
           gethomepage.dev/icon: /icons/file-explorer/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Plik (File Sharing)
-        hosts:
-          - host: plik.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: *port

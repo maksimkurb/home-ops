@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -17,11 +16,9 @@ spec:
         name: bjw-s-charts
         namespace: flux-system
   values:
-
     controller:
       annotations:
-        reloader.stakater.com/auto: "true"
-
+        reloader.stakater.com/auto: 'true'
     service:
       main:
         controller: frigate
@@ -35,9 +32,9 @@ spec:
         controller: frigate
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: "${SVC_FRIGATE_ADDR}"
+        loadBalancerIP: ${SVC_FRIGATE_ADDR}
         annotations:
-          lbipam.cilium.io/ips: "${SVC_FRIGATE_ADDR}"
+          lbipam.cilium.io/ips: ${SVC_FRIGATE_ADDR}
         ports:
           go2rtc:
             port: 1984
@@ -51,32 +48,40 @@ spec:
           webrtc-udp:
             port: 8555
             protocol: UDP
-
-    ingress:
+    route:
       main:
         enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - frigate.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Home
-          gethomepage.dev/weight: "-90"
+          gethomepage.dev/weight: '-90'
           gethomepage.dev/icon: /icons/frigate/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Frigate
-        hosts:
-          - host: "frigate.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: authenticated
-        className: traefik
-
     persistence:
       data:
         enabled: true
@@ -106,7 +111,6 @@ spec:
         existingClaim: frigate-media
         globalMounts:
           - path: /media/frigate
-
     defaultPodOptions:
       affinity:
         nodeAffinity:
@@ -116,18 +120,17 @@ spec:
                   - key: feature.node.kubernetes.io/custom-nvidia-gpu
                     operator: In
                     values:
-                      - "true"
+                      - 'true'
       runtimeClassName: nvidia
-
     controllers:
       frigate:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         initContainers:
           seed-config:
             image:
               repository: ghcr.io/blakeblackshear/frigate
-              tag: "0.17.2-tensorrt"
+              tag: 0.17.2-tensorrt
             command:
               - sh
               - -c
@@ -140,9 +143,9 @@ spec:
           app:
             image:
               repository: ghcr.io/blakeblackshear/frigate
-              tag: "0.17.2-tensorrt"
+              tag: 0.17.2-tensorrt
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: frigate-secret
@@ -150,11 +153,11 @@ spec:
               requests:
                 cpu: 200m
                 memory: 3500Mi
-                nvidia.com/gpu: "1"
+                nvidia.com/gpu: '1'
               limits:
                 cpu: 4000m
                 memory: 6Gi
-                nvidia.com/gpu: "1"
+                nvidia.com/gpu: '1'
             probes:
               liveness:
                 enabled: true

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -46,16 +45,16 @@ spec:
       - name: grafana-env-secret
     grafana.ini:
       server:
-        root_url: "https://grafana.${SECRET_PUBLIC_DOMAIN}"
+        root_url: https://grafana.${SECRET_PUBLIC_DOMAIN}
       auth:
-        signout_redirect_url: "https://auth.${SECRET_PUBLIC_DOMAIN}/logout"
+        signout_redirect_url: https://auth.${SECRET_PUBLIC_DOMAIN}/logout
         oauth_auto_login: true
       auth.basic:
         disable_login_form: false
       auth.generic_oauth:
         enabled: true
         name: 56k
-        scopes: "openid profile email groups"
+        scopes: openid profile email groups
         empty_scopes: false
         auth_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/authorization
         token_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/token
@@ -83,9 +82,9 @@ spec:
       datasources.yaml:
         apiVersion: 1
         deleteDatasources:
-          - { name: Alertmanager, orgId: 1 }
-          - { name: Loki, orgId: 1 }
-          - { name: Prometheus, orgId: 1 }
+          - {name: Alertmanager, orgId: 1}
+          - {name: Loki, orgId: 1}
+          - {name: Prometheus, orgId: 1}
         datasources:
           - name: Prometheus
             type: prometheus
@@ -113,7 +112,7 @@ spec:
         providers:
           - name: default
             orgId: 1
-            folder: ""
+            folder: ''
             type: file
             disableDeletion: false
             editable: true
@@ -158,7 +157,7 @@ spec:
           gnetId: 17457
           revision: 6
           datasource:
-            - { name: DS_PROMETHEUS, value: Prometheus }
+            - {name: DS_PROMETHEUS, value: Prometheus}
         external-dns:
           # renovate: depName="External-dns"
           gnetId: 15038
@@ -214,7 +213,7 @@ spec:
           gnetId: 22604
           revision: 2
           datasource:
-            - { name: DS_PROMETHEUS, value: Prometheus }
+            - {name: DS_PROMETHEUS, value: Prometheus}
         zfs:
           # renovate: depName="ZFS"
           gnetId: 7845
@@ -225,19 +224,19 @@ spec:
           gnetId: 13502
           revision: 26
           datasource:
-            - { name: DS_PROMETHEUS, value: Prometheus }
+            - {name: DS_PROMETHEUS, value: Prometheus}
         minio-buckets:
           # renovate: depName="MinIO Buckets Dashboard"
           gnetId: 19237
           revision: 2
           datasource:
-            - { name: DS_PROMETHEUS, value: Prometheus }
+            - {name: DS_PROMETHEUS, value: Prometheus}
         openwrt:
           # renovate: depName="OpenWRT Dashboard"
           gnetId: 18153
           revision: 4
           datasource:
-            - { name: DS_PROMETHEUS, value: Prometheus }
+            - {name: DS_PROMETHEUS, value: Prometheus}
     sidecar:
       dashboards:
         enabled: true
@@ -251,7 +250,7 @@ spec:
         enabled: true
         searchNamespace: ALL
         label: grafana_datasource
-        labelValue: ""
+        labelValue: ''
     plugins:
       - grafana-clock-panel
       - grafana-piechart-panel
@@ -262,23 +261,23 @@ spec:
     serviceMonitor:
       enabled: true
     ingress:
-      enabled: true
-      ingressClassName: "traefik"
+      enabled: false
+      ingressClassName: traefik
       annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: websecure
-        traefik.ingress.kubernetes.io/router.tls: "true"
-        external-dns.kubernetes.io/enabled: "true"
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+        traefik.ingress.kubernetes.io/router.tls: 'true'
+        external-dns.kubernetes.io/enabled: 'true'
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-        traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-        traefik.ingress.kubernetes.io/service.sticky.cookie.name: "grafana"
-        traefik.ingress.kubernetes.io/service.sticky.cookie.maxage: "172800"
-        gethomepage.dev/enabled: "true"
+        traefik.ingress.kubernetes.io/service.sticky.cookie: 'true'
+        traefik.ingress.kubernetes.io/service.sticky.cookie.name: grafana
+        traefik.ingress.kubernetes.io/service.sticky.cookie.maxage: '172800'
+        gethomepage.dev/enabled: 'true'
         gethomepage.dev/group: Maintenance
         gethomepage.dev/icon: /icons/grafana/${HOMEPAGE_ICONS_COLOR}
         gethomepage.dev/name: Grafana
       hosts:
-        - "grafana.${SECRET_PUBLIC_DOMAIN}"
+        - grafana.${SECRET_PUBLIC_DOMAIN}
     persistence:
       enabled: true
       storageClassName: local-path

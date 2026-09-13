@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -15,16 +14,13 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
   values:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         serviceAccount:
           identifier: homepage
-
         containers:
           app:
             image:
@@ -32,9 +28,9 @@ spec:
               tag: v2.3.0
             env:
               - name: HOMEPAGE_ALLOWED_HOSTS
-                value: "start.${SECRET_PUBLIC_DOMAIN},homepage-app.default:3000"
+                value: start.${SECRET_PUBLIC_DOMAIN},homepage-app.default:3000
               - name: LOG_TARGETS
-                value: "stdout"
+                value: stdout
             resources:
               requests:
                 cpu: 50m
@@ -58,7 +54,6 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 64Mi
-
     service:
       app:
         controller: main
@@ -72,58 +67,75 @@ spec:
           http:
             primary: true
             port: 4050
-
-    ingress:
+    route:
       app:
-        className: traefik
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - start.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-        hosts:
-          - host: start.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
       icons:
-        className: traefik
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: default_homepage-icons@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-        hosts:
-          - host: start.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /icons(/|$)(.*)
-                pathType: ImplementationSpecific
-                service:
-                  identifier: icons
-                  port: http
-
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - start.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /icons
+            backendRefs:
+              - identifier: icons
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: homepage-icons
+                  namespace: default
     defaultPodOptions:
       automountServiceAccountToken: true
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
+        fsGroupChangePolicy: OnRootMismatch
     serviceAccount:
       homepage: {}
-
     rbac:
       roles:
         homepage:
           type: ClusterRole
           rules:
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - namespaces
                 - pods
@@ -170,8 +182,6 @@ spec:
             identifier: homepage
           subjects:
             - identifier: homepage
-
-
     persistence:
       config:
         enabled: true

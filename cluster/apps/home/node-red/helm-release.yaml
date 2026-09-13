@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -29,42 +28,42 @@ spec:
     - name: home-assistant
       namespace: home
   values:
-
     service:
       main:
         controller: main
         ports:
           http:
             port: &port 1880
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik-intra
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - nodered.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 1880
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: /icons/node-red/${HOMEPAGE_ICONS_COLOR}
-          gethomepage.dev/weight: "-90"
+          gethomepage.dev/weight: '-90'
           gethomepage.dev/name: Node-RED
-        hosts:
-          - host: "nodered.${SECRET_PRIVATE_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: *port
-
     persistence:
       config:
         enabled: true
         existingClaim: node-red-config
         globalMounts:
           - path: /data
-
       passwd:
         enabled: true
         type: configMap
@@ -75,7 +74,6 @@ spec:
               - path: /etc/passwd
                 subPath: nodered-passwd
                 readOnly: true
-
       settingsjs:
         enabled: true
         type: secret
@@ -86,28 +84,26 @@ spec:
               - path: /data/settings.js
                 subPath: settingsjs
                 readOnly: true
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
+        fsGroupChangePolicy: OnRootMismatch
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: docker.io/nodered/node-red
               tag: 5.0.7-debian
             env:
-              TZ: "${TIMEZONE}"
-              NODE_RED_ENABLE_PROJECTS: "true"
-              NODE_RED_ENABLE_SAFE_MODE: "false"
-              REDBOT_ENABLE_MISSION_CONTROL: "true"
+              TZ: ${TIMEZONE}
+              NODE_RED_ENABLE_PROJECTS: 'true'
+              NODE_RED_ENABLE_SAFE_MODE: 'false'
+              REDBOT_ENABLE_MISSION_CONTROL: 'true'
               # HTTP_PROXY: "http://gluetun.default:8888"
               # HTTPS_PROXY: "http://gluetun.default:8888"
             resources:

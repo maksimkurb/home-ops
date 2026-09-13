@@ -1,16 +1,15 @@
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: echo-public
   annotations:
-    external-dns.kubernetes.io/enabled: "true"
-    external-dns.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.kubernetes.io/enabled: 'true'
+    external-dns.kubernetes.io/cloudflare-proxied: 'false'
 spec:
   parentRefs:
     - name: public
       namespace: networking
-      sectionName: websecure
+      sectionName: websecure-public
   hostnames:
     - echo-gateway.${SECRET_PUBLIC_DOMAIN}
   rules:
@@ -23,13 +22,13 @@ kind: HTTPRoute
 metadata:
   name: echo-public-auth
   annotations:
-    external-dns.kubernetes.io/enabled: "true"
-    external-dns.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.kubernetes.io/enabled: 'true'
+    external-dns.kubernetes.io/cloudflare-proxied: 'false'
 spec:
   parentRefs:
     - name: public
       namespace: networking
-      sectionName: websecure
+      sectionName: websecure-public
   hostnames:
     - echo-gateway-auth.${SECRET_PUBLIC_DOMAIN}
   rules:
@@ -51,7 +50,7 @@ spec:
   parentRefs:
     - name: private
       namespace: networking
-      sectionName: websecure-intra
+      sectionName: websecure-private
   hostnames:
     - echo-gateway.${SECRET_PRIVATE_DOMAIN}
   rules:

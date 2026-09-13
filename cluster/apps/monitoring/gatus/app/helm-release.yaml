@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -15,13 +14,11 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
   values:
     controllers:
       gatus:
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
@@ -33,7 +30,6 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
-
     service:
       app:
         controller: gatus
@@ -41,33 +37,42 @@ spec:
           http:
             primary: true
             port: 8080
-
-    ingress:
+    route:
       app:
-        className: traefik
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - gatus.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: /icons/gatus/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Gatus
-          gethomepage.dev/weight: "-100"
-          gethomepage.dev/widget.type: "gatus"
-          gethomepage.dev/widget.url: "http://gatus.monitoring:8080"
-        hosts:
-          - host: gatus.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-
+          gethomepage.dev/weight: '-100'
+          gethomepage.dev/widget.type: gatus
+          gethomepage.dev/widget.url: http://gatus.monitoring:8080
     persistence:
       config:
         enabled: true

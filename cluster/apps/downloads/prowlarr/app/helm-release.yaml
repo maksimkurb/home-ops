@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -23,73 +22,77 @@ spec:
     remediation:
       retries: 5
   values:
-
     global:
       nameOverride: *app
-
     service:
       main:
         controller: main
         ports:
           http:
             port: 80
-
-    ingress:
+    route:
       main:
         enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}'
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Media
           gethomepage.dev/icon: /icons/prowlarr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Prowlarr
-          gethomepage.dev/widget.type: "prowlarr"
-          gethomepage.dev/widget.url: "http://prowlarr.downloads"
-          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_PROWLARR_API_KEY}"
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-        className: traefik
-
+          gethomepage.dev/widget.type: prowlarr
+          gethomepage.dev/widget.url: http://prowlarr.downloads
+          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_PROWLARR_API_KEY}
     persistence:
       config:
         enabled: true
         existingClaim: prowlarr-config-v1
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
+        fsGroupChangePolicy: OnRootMismatch
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: ghcr.io/home-operations/prowlarr
               tag: 2.6.3.5592@sha256:8c9ee448bb6de0e3e8b9c2f536b7a3455ec6ff5e184c2fb2a8602791b2757442
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               PROWLARR__APP__INSTANCE_NAME: Prowlarr
               PROWLARR__SERVER__PORT: 80
               PROWLARR__LOG_LEVEL: info
               PROWLARR__AUTH__METHOD: External
               PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              PROWLARR__LOG__DBENABLED: "False"
+              PROWLARR__LOG__DBENABLED: 'False'
               PROWLARR__LOG__LEVEL: info
               PROWLARR__POSTGRES_HOST: homelab-pgsql.database.svc.cluster.local
               PROWLARR__POSTGRES_MAIN_DB: prowlarr

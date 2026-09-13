@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -39,14 +38,12 @@ spec:
           redis:
             port: 6379
             targetPort: 6379
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
+        fsGroupChangePolicy: OnRootMismatch
     persistence:
       data:
         storageClass: local-path
@@ -64,24 +61,24 @@ spec:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: gristlabs/grist
               tag: 1.7.19
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               GRIST_SANDBOX_FLAVOR: gvisor
-              APP_HOME_URL: "https://${APP}.${SECRET_PUBLIC_DOMAIN}"
+              APP_HOME_URL: https://${APP}.${SECRET_PUBLIC_DOMAIN}
               GRIST_SERVE_SAME_ORIGIN: true
-              GRIST_SINGLE_ORG: "homelab"
-              GRIST_TELEMETRY_LEVEL: "off"
-              GRIST_DOCS_MINIO_USE_SSL: "0"
+              GRIST_SINGLE_ORG: homelab
+              GRIST_TELEMETRY_LEVEL: off
+              GRIST_DOCS_MINIO_USE_SSL: '0'
               GRIST_DOCS_MINIO_BUCKET: grist-docs
               GRIST_DOCS_MINIO_ENDPOINT: minio
-              GRIST_DOCS_MINIO_PORT: "9000"
-              REDIS_URL: "redis://grist-redis:6379"
+              GRIST_DOCS_MINIO_PORT: '9000'
+              REDIS_URL: redis://grist-redis:6379
               GRIST_OIDC_SP_HOST: https://${APP}.${SECRET_PUBLIC_DOMAIN}
               GRIST_OIDC_IDP_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
               GRIST_OIDC_IDP_SCOPES: openid profile email
@@ -128,25 +125,29 @@ spec:
                 memory: 32Mi
               limits:
                 memory: 128Mi
-    ingress:
+    route:
       main:
         enabled: true
-        className: "traefik"
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - ${APP}.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Personal Services
           gethomepage.dev/icon: /icons/grist/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Grist
-        hosts:
-          - host: ${APP}.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http

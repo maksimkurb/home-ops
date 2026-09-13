@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -53,11 +52,11 @@ spec:
     service:
       enabled: false
     ports:
-      web:
+      web-public:
         port: 8000
         expose:
           default: false
-      websecure:
+      websecure-public:
         port: 8443
         expose:
           default: false
@@ -86,27 +85,27 @@ spec:
             - 2405:8100::/32
             - 2a06:98c0::/29
             - 2c0f:f248::/32
-      web-intra:
+      web-private:
         port: 9080
         exposedPort: 80
         expose:
           default: false
-      websecure-intra:
+      websecure-private:
         port: 9443
         exposedPort: 443
         expose:
           default: false
     additionalArguments:
-      - --entrypoints.web.http.aliasheadersstrategy=reject
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure.http.aliasheadersstrategy=reject
-      - --entrypoints.websecure.http.middlewares=networking_crowdsec@kubernetescrd
-      - --entrypoints.web-intra.http.aliasheadersstrategy=reject
-      - --entrypoints.web-intra.http.redirections.entrypoint.to=websecure-intra
-      - --entrypoints.web-intra.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure-intra.http.aliasheadersstrategy=reject
-      - --entrypoints.websecure-intra.http.middlewares=networking_private-allowlist@kubernetescrd
+      - --entrypoints.web-public.http.aliasheadersstrategy=reject
+      - --entrypoints.web-public.http.redirections.entrypoint.to=websecure-public
+      - --entrypoints.web-public.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure-public.http.aliasheadersstrategy=reject
+      - --entrypoints.websecure-public.http.middlewares=networking_crowdsec@kubernetescrd
+      - --entrypoints.web-private.http.aliasheadersstrategy=reject
+      - --entrypoints.web-private.http.redirections.entrypoint.to=websecure-private
+      - --entrypoints.web-private.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure-private.http.aliasheadersstrategy=reject
+      - --entrypoints.websecure-private.http.middlewares=networking_private-allowlist@kubernetescrd
     log:
       level: INFO
     accessLog:

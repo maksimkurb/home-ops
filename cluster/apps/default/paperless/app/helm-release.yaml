@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -15,13 +14,11 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
   values:
     controllers:
       paperless:
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
@@ -40,24 +37,24 @@ spec:
                     name: paperless
                     key: PAPERLESS_SECRET_KEY
               PAPERLESS_URL: https://paperless.${SECRET_PUBLIC_DOMAIN}
-              PAPERLESS_PORT: "8000"
-              PAPERLESS_TIME_ZONE: "${TIMEZONE}"
-              PAPERLESS_WEBSERVER_WORKERS: "2"
-              PAPERLESS_TASK_WORKERS: "2"
+              PAPERLESS_PORT: '8000'
+              PAPERLESS_TIME_ZONE: ${TIMEZONE}
+              PAPERLESS_WEBSERVER_WORKERS: '2'
+              PAPERLESS_TASK_WORKERS: '2'
               # Configure folders
               PAPERLESS_DATA_DIR: /data/local/data
               PAPERLESS_MEDIA_ROOT: /data/docs/media
               PAPERLESS_CONSUMPTION_DIR: /data/docs/incoming
               PAPERLESS_EXPORT_DIR: /data/docs/export
               # Configure folder importer
-              PAPERLESS_CONSUMER_POLLING: "60"
-              PAPERLESS_CONSUMER_INOTIFY_DELAY: "60"
-              PAPERLESS_CONSUMER_RECURSIVE: "true"
-              PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
+              PAPERLESS_CONSUMER_POLLING: '60'
+              PAPERLESS_CONSUMER_INOTIFY_DELAY: '60'
+              PAPERLESS_CONSUMER_RECURSIVE: 'true'
+              PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: 'true'
               # Configure Barcode Recognition
-              PAPERLESS_CONSUMER_ENABLE_BARCODES: "true"
-              PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: "true"
-              PAPERLESS_CONSUMER_BARCODE_SCANNER: "ZXING"
+              PAPERLESS_CONSUMER_ENABLE_BARCODES: 'true'
+              PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: 'true'
+              PAPERLESS_CONSUMER_BARCODE_SCANNER: ZXING
               # Configure Tika
               PAPERLESS_TIKA_ENABLED: 1
               PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.default.svc.cluster.local:3000
@@ -72,19 +69,19 @@ spec:
                     name: paperless
                     key: PAPERLESS_DBPASS
               # Configure user ID
-              USERMAP_UID: "777"
-              USERMAP_GID: "777"
+              USERMAP_UID: '777'
+              USERMAP_GID: '777'
               # Enable SSO
-              PAPERLESS_APPS: "allauth.socialaccount.providers.openid_connect"
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
               PAPERLESS_SOCIALACCOUNT_PROVIDERS:
                 valueFrom:
                   secretKeyRef:
                     name: paperless
                     key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
-              PAPERLESS_DISABLE_REGULAR_LOGIN: "false"
-              PAPERLESS_REDIRECT_LOGIN_TO_SSO: "false"
+              PAPERLESS_DISABLE_REGULAR_LOGIN: 'false'
+              PAPERLESS_REDIRECT_LOGIN_TO_SSO: 'false'
               # Configure OCR
-              PAPERLESS_OCR_LANGUAGES: "rus eng"
+              PAPERLESS_OCR_LANGUAGES: rus eng
               PAPERLESS_OCR_LANGUAGE: rus
               # Configure redis integration
               PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
@@ -118,8 +115,8 @@ spec:
             securityContext:
               runAsGroup: 777
               fsGroup: 777
-              fsGroupChangePolicy: "OnRootMismatch"
-              supplementalGroups: ["777"]
+              fsGroupChangePolicy: OnRootMismatch
+              supplementalGroups: ['777']
       gotenberg:
         containers:
           app:
@@ -129,8 +126,8 @@ spec:
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
-              DISABLE_GOOGLE_CHROME: "0"
-              CHROMIUM_DISABLE_JAVASCRIPT: "true"
+              DISABLE_GOOGLE_CHROME: '0'
+              CHROMIUM_DISABLE_JAVASCRIPT: 'true'
             resources:
               requests:
                 memory: 256Mi
@@ -139,8 +136,8 @@ spec:
             securityContext:
               runAsUser: 65534
               runAsGroup: 65534
-              fsGroupChangePolicy: "OnRootMismatch"
-              supplementalGroups: ["65534"]
+              fsGroupChangePolicy: OnRootMismatch
+              supplementalGroups: ['65534']
       tika:
         containers:
           app:
@@ -170,7 +167,6 @@ spec:
                 memory: 32Mi
               limits:
                 memory: 128Mi
-
     service:
       app:
         controller: paperless
@@ -192,33 +188,35 @@ spec:
         ports:
           http:
             port: 6379
-
-    ingress:
+    route:
       app:
         enabled: true
-        className: "traefik"
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - paperless.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Personal Services
           gethomepage.dev/icon: /icons/paperless-ngx/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Paperless
-          gethomepage.dev/widget.type: "paperlessngx"
-          gethomepage.dev/widget.url: "http://paperless-app.default:8000"
-          gethomepage.dev/widget.key: "${SECRET_HOMEPAGE_PAPERLESSNGX_API_KEY}"
-        hosts:
-          - host: paperless.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-
+          gethomepage.dev/widget.type: paperlessngx
+          gethomepage.dev/widget.url: http://paperless-app.default:8000
+          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_PAPERLESSNGX_API_KEY}
     persistence:
       data:
         existingClaim: paperless-data

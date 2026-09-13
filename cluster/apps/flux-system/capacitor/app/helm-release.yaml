@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -27,7 +26,6 @@ spec:
   values:
     defaultPodOptions:
       automountServiceAccountToken: true
-
     controllers:
       capacitor:
         strategy: RollingUpdate
@@ -48,7 +46,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: [ALL] }
+              capabilities: {drop: [ALL]}
     serviceAccount:
       capacitor: {}
     service:
@@ -58,63 +56,47 @@ spec:
           http:
             enabled: true
             port: 9000
-    ingress:
+    route:
       app:
         enabled: true
-        className: traefik-intra
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - capacitor.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-cog-sync-outline
           gethomepage.dev/name: Capacitor
-        hosts:
-          - host: capacitor.${SECRET_PRIVATE_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
     rbac:
       roles:
         capacitor:
           type: ClusterRole
           rules:
-            - apiGroups: ["networking.k8s.io", "apps", ""]
-              resources:
-                [
-                  "pods",
-                  "pods/log",
-                  "ingresses",
-                  "deployments",
-                  "services",
-                  "secrets",
-                  "events",
-                  "configmaps",
-                ]
-              verbs: ["get", "watch", "list"]
-            - apiGroups:
-                [
-                  "source.toolkit.fluxcd.io",
-                  "kustomize.toolkit.fluxcd.io",
-                  "helm.toolkit.fluxcd.io",
-                  "infra.contrib.fluxcd.io",
-                ]
-              resources:
-                [
-                  "gitrepositories",
-                  "ocirepositories",
-                  "buckets",
-                  "helmrepositories",
-                  "helmcharts",
-                  "kustomizations",
-                  "helmreleases",
-                  "terraforms",
-                ]
-              verbs: ["get", "watch", "list", "patch"]
+            - apiGroups: [networking.k8s.io, apps, '']
+              resources: [pods, pods/log, ingresses, deployments, services, secrets, events, configmaps]
+              verbs: [get, watch, list]
+            - apiGroups: [source.toolkit.fluxcd.io, kustomize.toolkit.fluxcd.io, helm.toolkit.fluxcd.io, infra.contrib.fluxcd.io]
+              resources: [gitrepositories, ocirepositories, buckets, helmrepositories, helmcharts, kustomizations, helmreleases, terraforms]
+              verbs: [get, watch, list, patch]
       bindings:
         capacitor:
           type: ClusterRoleBinding

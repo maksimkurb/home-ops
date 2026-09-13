@@ -1,0 +1,83 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vmagent
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: mdi-face-agent
+    gethomepage.dev/name: VM Agent
+spec:
+  parentRefs:
+    - name: private
+      namespace: networking
+      sectionName: websecure-private
+  hostnames: ['vmagent.${SECRET_PRIVATE_DOMAIN}']
+  rules:
+    - filters:
+        - type: ExtensionRef
+          extensionRef: {group: traefik.io, kind: Middleware, name: authelia, namespace: networking}
+      backendRefs: [{name: vm-k8s-stack-vmagent, port: 8429}]
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vmsingle
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: mdi-database-alert
+    gethomepage.dev/name: VM Single
+spec:
+  parentRefs:
+    - name: private
+      namespace: networking
+      sectionName: websecure-private
+  hostnames: ['vmsingle.${SECRET_PRIVATE_DOMAIN}']
+  rules:
+    - filters:
+        - type: ExtensionRef
+          extensionRef: {group: traefik.io, kind: Middleware, name: authelia, namespace: networking}
+      backendRefs: [{name: vm-k8s-stack-vmsingle, port: 8428}]
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vmalert
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: mdi-alert-circle-outline
+    gethomepage.dev/name: VM Alert
+spec:
+  parentRefs:
+    - name: private
+      namespace: networking
+      sectionName: websecure-private
+  hostnames: ['vmalert.${SECRET_PRIVATE_DOMAIN}']
+  rules:
+    - filters:
+        - type: ExtensionRef
+          extensionRef: {group: traefik.io, kind: Middleware, name: authelia, namespace: networking}
+      backendRefs: [{name: vm-k8s-stack-vmalert, port: 8880}]
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: alertmanager
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: mdi-bell-alert-outline
+    gethomepage.dev/name: VM Alert Manager
+spec:
+  parentRefs:
+    - name: private
+      namespace: networking
+      sectionName: websecure-private
+  hostnames: ['alertmanager.${SECRET_PRIVATE_DOMAIN}']
+  rules:
+    - filters:
+        - type: ExtensionRef
+          extensionRef: {group: traefik.io, kind: Middleware, name: authelia, namespace: networking}
+      backendRefs: [{name: vm-k8s-stack-alertmanager, port: 9093}]

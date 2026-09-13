@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -102,7 +101,7 @@ spec:
     grafana:
       enabled: false
       forceDeployDashboards: true
-    fullnameOverride: "vm-k8s-stack"
+    fullnameOverride: vm-k8s-stack
     vmagent:
       enabled: true
       spec:
@@ -114,19 +113,19 @@ spec:
             static_configs:
               - targets: ["${ROUTER_IP}:9100", "${ROUTER_3_IP}:9100"]
       ingress:
-        enabled: true
-        ingressClassName: "traefik-intra"
+        enabled: false
+        ingressClassName: traefik-intra
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-face-agent
           gethomepage.dev/name: VM Agent
-          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmagent"
+          gethomepage.dev/pod-selector: app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmagent
         hosts:
-          - "vmagent.${SECRET_PRIVATE_DOMAIN}"
+          - vmagent.${SECRET_PRIVATE_DOMAIN}
     vmsingle:
       enabled: true
       spec:
@@ -135,47 +134,45 @@ spec:
           limits:
             memory: 2Gi
         extraArgs:
-          dedup.minScrapeInterval: "60s"
+          dedup.minScrapeInterval: 60s
         storage:
-          storageClassName: "local-path"
+          storageClassName: local-path
           resources:
             requests:
               storage: 30Gi
       ingress:
-        enabled: true
-        ingressClassName: "traefik-intra"
+        enabled: false
+        ingressClassName: traefik-intra
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-database-alert
           gethomepage.dev/name: VM Single
-          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmsingle"
+          gethomepage.dev/pod-selector: app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmsingle
         hosts:
-          - "vmsingle.${SECRET_PRIVATE_DOMAIN}"
-
+          - vmsingle.${SECRET_PRIVATE_DOMAIN}
     vmalert:
       enabled: true
       ingress:
-        enabled: true
+        enabled: false
         ingressClassName: traefik-intra
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-alert-circle-outline
           gethomepage.dev/name: VM Alert
-          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalert"
+          gethomepage.dev/pod-selector: app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalert
         hosts:
-          - 'vmalert.${SECRET_PRIVATE_DOMAIN}'
+          - vmalert.${SECRET_PRIVATE_DOMAIN}
       spec:
         extraArgs:
-          external.url: 'https://vmalert.${SECRET_PRIVATE_DOMAIN}'
-
+          external.url: https://vmalert.${SECRET_PRIVATE_DOMAIN}
     # -- Provide custom recording or alerting rules to be deployed into the cluster.
     additionalVictoriaMetricsMap:
       # dockerhub-rules:
@@ -208,7 +205,6 @@ spec:
                 expr: node_zfs_zpool_state{state!="online"} > 0
                 labels:
                   severity: critical
-
     prometheus-node-exporter:
       fullnameOverride: node-exporter
       prometheus:
@@ -224,14 +220,14 @@ spec:
     kubelet:
       vmScrape:
         spec:
-          scheme: "https"
+          scheme: https
           honorLabels: true
-          interval: "60s"
-          scrapeTimeout: "5s"
+          interval: 60s
+          scrapeTimeout: 5s
           tlsConfig:
             insecureSkipVerify: true
-            caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-          bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
           # Keep target identity, but don't copy every Kubernetes node label to
           # every kubelet, cAdvisor, probe, and resource metric.
           metricRelabelConfigs:
@@ -245,34 +241,34 @@ spec:
           relabelConfigs:
             - sourceLabels: [__metrics_path__]
               targetLabel: metrics_path
-            - targetLabel: "job"
-              replacement: "kubelet"
+            - targetLabel: job
+              replacement: kubelet
     alertmanager:
       enabled: true
       ingress:
-        enabled: true
-        ingressClassName: "traefik-intra"
+        enabled: false
+        ingressClassName: traefik-intra
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: mdi-bell-alert-outline
           gethomepage.dev/name: VM Alert Manager
-          gethomepage.dev/pod-selector: "app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalertmanager"
+          gethomepage.dev/pod-selector: app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalertmanager
         hosts:
-          - "alertmanager.${SECRET_PRIVATE_DOMAIN}"
+          - alertmanager.${SECRET_PRIVATE_DOMAIN}
       useManagedConfig: true
       config:
         route:
-          group_by: ["alertname", "job"]
+          group_by: [alertname, job]
           group_interval: 10m
           group_wait: 1m
           receiver: discord
           repeat_interval: 12h
           routes:
-            - receiver: "null"
+            - receiver: 'null'
               matchers:
                 - alertname="InfoInhibitor"
             - receiver: heartbeat
@@ -285,13 +281,13 @@ spec:
               matchers:
                 - severity="critical"
         inhibit_rules:
-          - equal: ["alertname", "namespace"]
+          - equal: [alertname, namespace]
             source_matchers:
-              - "severity = critical"
+              - severity = critical
             target_matchers:
-              - "severity = warning"
+              - severity = warning
         receivers:
-          - name: "null"
+          - name: 'null'
           - name: heartbeat
             webhook_configs:
               - url_secret:
@@ -303,7 +299,7 @@ spec:
                   name: *secret
                   key: DISCORD_WEBHOOK_URL
       spec:
-        externalURL: 'https://alertmanager.${SECRET_PRIVATE_DOMAIN}'
+        externalURL: https://alertmanager.${SECRET_PRIVATE_DOMAIN}
         disableNamespaceMatcher: true
         storage:
           volumeClaimTemplate:

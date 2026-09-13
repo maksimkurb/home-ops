@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/ocirepository-source-v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -37,7 +36,6 @@ spec:
     keepHistory: false
   values:
     replicaCount: 1
-
     config:
       namespaces:
         - dev1
@@ -53,31 +51,30 @@ spec:
         existingSecret: envrouter
         existingSecretKey: api-token
       trustedProxies:
-        - "${NETWORK_K8S_CLUSTER_CIDR}"
-        - "${NETWORK_BGP_SVC_RANGE}"
-        - "${SVC_NGINX_ADDR}/32"
+        - ${NETWORK_K8S_CLUSTER_CIDR}
+        - ${NETWORK_BGP_SVC_RANGE}
+        - ${SVC_NGINX_ADDR}/32
       oidc:
         enabled: true
-        issuer: "https://auth.${SECRET_PUBLIC_DOMAIN}"
+        issuer: https://auth.${SECRET_PUBLIC_DOMAIN}
         clientId:
           existingConfigMap: envrouter
           existingConfigMapKey: oidc-client-id
         clientSecret:
           existingSecret: envrouter
           existingSecretKey: oidc-client-secret
-        redirectUrl: "https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback"
-
+        redirectUrl: https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback
     ingress:
-      enabled: true
+      enabled: false
       className: traefik
       annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: websecure
-        traefik.ingress.kubernetes.io/router.tls: "true"
-        external-dns.kubernetes.io/enabled: "true"
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+        traefik.ingress.kubernetes.io/router.tls: 'true'
+        external-dns.kubernetes.io/enabled: 'true'
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
       hosts:
-        - host: "envrouter.${SECRET_PUBLIC_DOMAIN}"
+        - host: envrouter.${SECRET_PUBLIC_DOMAIN}
           paths:
             - path: /
               pathType: Prefix

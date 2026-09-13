@@ -1,24 +1,24 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: webhook-receiver
-  namespace: flux-system
+  name: grafana
+  namespace: monitoring
   annotations:
     external-dns.kubernetes.io/enabled: 'true'
-    external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
+    external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: /icons/grafana/${HOMEPAGE_ICONS_COLOR}
+    gethomepage.dev/name: Grafana
 spec:
   parentRefs:
     - name: public
       namespace: networking
       sectionName: websecure-public
   hostnames:
-    - flux-webhook.${SECRET_PUBLIC_DOMAIN}
+    - grafana.${SECRET_PUBLIC_DOMAIN}
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /hook/
-      backendRefs:
-        - name: webhook-receiver
+    - backendRefs:
+        - name: grafana
           port: 80

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -53,7 +52,7 @@ spec:
         type: LoadBalancer
         loadBalancerIP: ${SVC_SYNCTHING_ADDR}
         annotations:
-          lbipam.cilium.io/ips: "${SVC_SYNCTHING_ADDR}"
+          lbipam.cilium.io/ips: ${SVC_SYNCTHING_ADDR}
         externalTrafficPolicy: Local
         ports:
           tcp:
@@ -71,26 +70,36 @@ spec:
             port: 21027
             protocol: UDP
             targetPort: 21027
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik-intra
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - syncthing.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: mdi-cloud
           gethomepage.dev/name: Syncthing
-        hosts:
-          - host: syncthing.${SECRET_PRIVATE_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
     persistence:
       config:
         enabled: true

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -32,9 +31,9 @@ spec:
         controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: "${SVC_SFTPGO_ADDR}"
+        loadBalancerIP: ${SVC_SFTPGO_ADDR}
         annotations:
-          lbipam.cilium.io/ips: "${SVC_SFTPGO_ADDR}"
+          lbipam.cilium.io/ips: ${SVC_SFTPGO_ADDR}
         ports:
           http:
             enabled: true
@@ -51,37 +50,40 @@ spec:
             port: 13222
             protocol: TCP
             targetPort: 2022
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - f.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /dav
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/service.serverstransport: default-sftpgo@kubernetescrd
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Personal Services
-          gethomepage.dev/weight: "-90"
+          gethomepage.dev/weight: '-90'
           gethomepage.dev/icon: /icons/sftpgo/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: File Manager (SFTPGo)
-        hosts:
-          - host: f.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-              - path: /dav
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: dav
-
     persistence:
       config:
         enabled: true
@@ -107,25 +109,22 @@ spec:
         existingClaim: sftpgo-filehosting
         globalMounts:
           - path: /data/filehosting
-
     resources:
       requests:
         cpu: 1m
         memory: 10Mi
       limits:
         memory: 200Mi
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
-
+        fsGroupChangePolicy: OnRootMismatch
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         initContainers:
           migrate-db:
             image:
@@ -135,7 +134,7 @@ spec:
               - sftpgo
               - initprovider
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: *app
@@ -145,7 +144,7 @@ spec:
               repository: ghcr.io/drakkan/sftpgo
               tag: v2.7-distroless-slim
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: *app

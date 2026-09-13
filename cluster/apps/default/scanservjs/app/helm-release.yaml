@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -15,13 +14,11 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
   values:
     controllers:
       scanservjs:
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
@@ -29,9 +26,9 @@ spec:
               tag: release-v3.0.3
             command: [node, /usr/lib/scanservjs/server/server.js]
             env:
-              TZ: "${TIMEZONE}"
-              LANG: "C"
-              LC_ALL: "C"
+              TZ: ${TIMEZONE}
+              LANG: C
+              LC_ALL: C
             envFrom:
               - secretRef:
                   name: scanservjs-env
@@ -54,41 +51,48 @@ spec:
             securityContext:
               runAsGroup: 777
               fsGroup: 777
-              fsGroupChangePolicy: "OnRootMismatch"
-              supplementalGroups: ["777"]
+              fsGroupChangePolicy: OnRootMismatch
+              supplementalGroups: ['777']
               readOnlyRootFilesystem: true
-
     service:
       app:
         controller: scanservjs
         ports:
           http:
             port: 8080
-
-    ingress:
+    route:
       app:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - scanservjs.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: mdi-scanner
           gethomepage.dev/name: ScanServJS
-        hosts:
-          - host: scanservjs.${SECRET_PUBLIC_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-
     persistence:
       config:
         existingClaim: scanservjs-config

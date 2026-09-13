@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -28,10 +27,8 @@ spec:
     - name: authelia-redis
       namespace: security
   values:
-
     global:
       nameOverride: *app
-
     service:
       main:
         controller: main
@@ -41,30 +38,32 @@ spec:
           metrics:
             enabled: true
             port: 8080
-
-    ingress:
+    route:
       main:
         enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - auth.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8000
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/authelia/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Authelia (SSO)
-        hosts:
-          - host: "auth.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: *port
-        className: traefik
-
     persistence:
       config:
         enabled: true
@@ -89,14 +88,13 @@ spec:
               - path: /config/jwks/rsa.2048.pem
                 subPath: pem
                 readOnly: true
-
     defaultPodOptions:
       enableServiceLinks: false
       securityContext:
         runAsUser: 568
         runAsGroup: 568
         fsGroup: 568
-        fsGroupChangePolicy: "OnRootMismatch"
+        fsGroupChangePolicy: OnRootMismatch
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -104,7 +102,6 @@ spec:
           labelSelector:
             matchLabels:
               app.kubernetes.io/name: *app
-
     controllers:
       main:
         replicas: 2
@@ -113,14 +110,14 @@ spec:
           surge: 1
           unavailable: 1
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: docker.io/authelia/authelia
               tag: 4.39.25
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               X_AUTHELIA_CONFIG_FILTERS: template
               SECRET_REDIS_PASSWORD:
                 valueFrom:

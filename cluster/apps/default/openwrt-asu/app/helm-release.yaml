@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -29,7 +28,7 @@ spec:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           server:
             image:
@@ -43,7 +42,7 @@ spec:
               - --host
               - 0.0.0.0
               - --port
-              - "8000"
+              - '8000'
               - asu.main:app
             resources:
               requests:
@@ -75,9 +74,9 @@ spec:
             command:
               - redis-server
               - --save
-              - ""
+              - ''
               - --appendonly
-              - "no"
+              - no
             resources:
               requests:
                 cpu: 10m
@@ -103,7 +102,7 @@ spec:
                 cpu: 250m
                 memory: 512Mi
               limits:
-                cpu: "4"
+                cpu: '4'
                 memory: 6Gi
     service:
       main:
@@ -111,22 +110,31 @@ spec:
         ports:
           http:
             port: 8000
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik-intra
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/router.middlewares: default_openwrt-asu-cors@kubernetescrd
-        hosts:
-          - host: asu.${SECRET_PRIVATE_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - asu.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: openwrt-asu-cors
+                  namespace: default
     persistence:
       config:
         type: configMap

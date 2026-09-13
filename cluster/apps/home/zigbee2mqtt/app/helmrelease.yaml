@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -15,13 +14,11 @@ spec:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
   values:
     controllers:
       zigbee2mqtt:
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         pod:
           securityContext:
             runAsUser: 1000
@@ -30,7 +27,6 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
               - 20
-
         containers:
           app:
             image:
@@ -63,7 +59,7 @@ spec:
               ZIGBEE2MQTT_CONFIG_MQTT_INCLUDE_DEVICE_INFORMATION: true
               ZIGBEE2MQTT_CONFIG_MQTT_KEEPALIVE: 60
               ZIGBEE2MQTT_CONFIG_MQTT_REJECT_UNAUTHORIZED: true
-              ZIGBEE2MQTT_CONFIG_MQTT_SERVER: "mqtt://mosquitto.home.svc.cluster.local:1883"
+              ZIGBEE2MQTT_CONFIG_MQTT_SERVER: mqtt://mosquitto.home.svc.cluster.local:1883
               ZIGBEE2MQTT_CONFIG_MQTT_VERSION: 5
               ZIGBEE2MQTT_CONFIG_PERMIT_JOIN: false
             resources:
@@ -78,7 +74,6 @@ spec:
               capabilities:
                 drop:
                   - ALL
-
     service:
       app:
         controller: zigbee2mqtt
@@ -86,27 +81,36 @@ spec:
           http:
             primary: true
             port: 8080
-
-    ingress:
+    route:
       app:
-        className: traefik-intra
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - z2m.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Home
           gethomepage.dev/icon: /icons/zigbee2mqtt/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Zigbee2MQTT
-        hosts:
-          - host: z2m.${SECRET_PRIVATE_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-
     persistence:
       data:
         existingClaim: zigbee2mqtt-data
@@ -124,13 +128,13 @@ spec:
       #       app:
       #         - path: /dev/ttyACM0
 
-    # defaultPodOptions:
-    #   affinity:
-    #     nodeAffinity:
-    #       requiredDuringSchedulingIgnoredDuringExecution:
-    #         nodeSelectorTerms:
-    #           - matchExpressions:
-    #               - key: feature.node.kubernetes.io/custom-zigbee
-    #                 operator: In
-    #                 values:
-    #                   - "true"
+# defaultPodOptions:
+#   affinity:
+#     nodeAffinity:
+#       requiredDuringSchedulingIgnoredDuringExecution:
+#         nodeSelectorTerms:
+#           - matchExpressions:
+#               - key: feature.node.kubernetes.io/custom-zigbee
+#                 operator: In
+#                 values:
+#                   - "true"

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -25,10 +24,8 @@ spec:
       retries: 5
     timeout: 15m0s
   values:
-
     global:
       nameOverride: ${APP}
-
     initContainers:
       wait-for-repo:
         image: kopia/kopia:0.23
@@ -43,7 +40,6 @@ spec:
         volumeMounts:
           - name: snapshots
             mountPath: /snapshots
-
     service:
       main:
         controller: main
@@ -53,28 +49,36 @@ spec:
           metrics:
             enabled: true
             port: 8080
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik-intra
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}'
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/kopia/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Kopia backups
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_PRIVATE_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: 80
-
     persistence:
       config:
         enabled: true
@@ -116,31 +120,29 @@ spec:
           main:
             main:
               - path: /data-rw
-      # snapshots:
-      #   enabled: true
-      #   type: persistentVolumeClaim
-      #   existingClaim: kopia-snapshots-nfs
-      #   globalMounts:
-      #     - path: /snapshots
-
+                # snapshots:
+                #   enabled: true
+                #   type: persistentVolumeClaim
+                #   existingClaim: kopia-snapshots-nfs
+                #   globalMounts:
+                #     - path: /snapshots
     defaultPodOptions:
       securityContext:
         supplementalGroups:
           - 777
-
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: kopia/kopia
               tag: 0.23.1
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               KOPIA_CONFIG_PATH: /config/repository.config
-              KOPIA_PASSWORD: "${SECRET_KOPIA_REPO_PASSWORD}"
+              KOPIA_PASSWORD: ${SECRET_KOPIA_REPO_PASSWORD}
             command: kopia
             args:
               - --log-level=debug
@@ -169,20 +171,19 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 15
-
       rclone-setup:
         enabled: true
         type: deployment
-        replicas: 0  # Scaled to 0 - manually scale up when needed
+        replicas: 0 # Scaled to 0 - manually scale up when needed
         containers:
           main:
             image:
               repository: kopia/kopia
               tag: 0.23.1
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               KOPIA_CONFIG_PATH: /config/repository.config
-              KOPIA_PASSWORD: "${SECRET_KOPIA_REPO_PASSWORD}"
+              KOPIA_PASSWORD: ${SECRET_KOPIA_REPO_PASSWORD}
             command:
               - /bin/sh
               - -c

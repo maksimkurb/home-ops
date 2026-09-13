@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -30,45 +29,46 @@ spec:
     - name: mosquitto
       namespace: home
   values:
-
     service:
       main:
         controller: main
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: "${SVC_HOME_ASSISTANT_ADDR}"
+        loadBalancerIP: ${SVC_HOME_ASSISTANT_ADDR}
         annotations:
-          lbipam.cilium.io/ips: "${SVC_HOME_ASSISTANT_ADDR}"
+          lbipam.cilium.io/ips: ${SVC_HOME_ASSISTANT_ADDR}
         ports:
           http:
             port: 8123
           debug:
             port: 5678
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - hass.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8123
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Home
           gethomepage.dev/icon: /icons/home-assistant/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Home Assistant
-          gethomepage.dev/weight: "-100"
-        hosts:
-          - host: "hass.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: 8123
-
+          gethomepage.dev/weight: '-100'
     persistence:
       config:
         enabled: true
@@ -88,22 +88,20 @@ spec:
               - subPath: auth_oicd_ini
                 readOnly: true
                 path: /config/scripts/auth-oidc.ini
-
     defaultPodOptions:
       hostNetwork: false
       dnsPolicy: ClusterFirstWithHostNet
-
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
               repository: ghcr.io/home-assistant/home-assistant
               tag: 2026.9.2
             env:
-              TZ: "${TIMEZONE}"
+              TZ: ${TIMEZONE}
               # https://github.com/blakeblackshear/frigate-hass-integration/issues/762
               PYTHONPATH: /config/deps
             envFrom:
@@ -124,7 +122,6 @@ spec:
               repository: postgres
               tag: 18.6
             command:
-              - "sh"
-              - "-c"
-              - 'until pg_isready -h homelab-pgsql.database.svc.cluster.local -p
-                5432; do echo "waiting for database to be ready"; sleep 2; done;'
+              - sh
+              - -c
+              - until pg_isready -h homelab-pgsql.database.svc.cluster.local -p 5432; do echo "waiting for database to be ready"; sleep 2; done;

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -29,7 +28,7 @@ spec:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
@@ -39,17 +38,17 @@ spec:
             args:
               - serve
             env:
-              TZ: "${TIMEZONE}"
-              NTFY_BASE_URL: "https://${APP}.${SECRET_PUBLIC_DOMAIN}"
-              NTFY_LISTEN_HTTP: ":80"
-              NTFY_BEHIND_PROXY: "true"
+              TZ: ${TIMEZONE}
+              NTFY_BASE_URL: https://${APP}.${SECRET_PUBLIC_DOMAIN}
+              NTFY_LISTEN_HTTP: :80
+              NTFY_BEHIND_PROXY: 'true'
               NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
               NTFY_ATTACHMENT_CACHE_DIR: /var/cache/ntfy/attachments
               NTFY_UPSTREAM_BASE_URL: https://ntfy.sh
-              NTFY_WEB_PUSH_PUBLIC_KEY: "${NTFY_WEB_PUSH_PUBLIC_KEY}"
-              NTFY_WEB_PUSH_PRIVATE_KEY: "${SECRET_NTFY_WEB_PUSH_PRIVATE_KEY}"
+              NTFY_WEB_PUSH_PUBLIC_KEY: ${NTFY_WEB_PUSH_PUBLIC_KEY}
+              NTFY_WEB_PUSH_PRIVATE_KEY: ${SECRET_NTFY_WEB_PUSH_PRIVATE_KEY}
               NTFY_WEB_PUSH_FILE: /var/cache/ntfy/webpush.db
-              NTFY_WEB_PUSH_EMAIL_ADDRESS: "${SECRET_EMAIL}"
+              NTFY_WEB_PUSH_EMAIL_ADDRESS: ${SECRET_EMAIL}
             resources:
               requests:
                 cpu: 5m
@@ -72,38 +71,38 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 5
-
     service:
       main:
         controller: main
         ports:
           http:
             port: 80
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - ${APP}.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/service.serverstransport: messaging-unified-push@kubernetescrd
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Messaging
           gethomepage.dev/icon: /icons/ntfy/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: UnifiedPush
-        hosts:
-          - host: "${APP}.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-
     persistence:
       cache:
         enabled: true
@@ -114,13 +113,12 @@ spec:
         retain: true
         globalMounts:
           - path: /var/cache/ntfy
-
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
-        fsGroupChangePolicy: "OnRootMismatch"
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault

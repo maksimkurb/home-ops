@@ -1,4 +1,3 @@
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -8,13 +7,13 @@ metadata:
 spec:
   gatewayClassName: traefik
   listeners:
-    - name: web
+    - name: web-public
       protocol: HTTP
       port: 8000
       allowedRoutes:
         namespaces:
           from: All
-    - name: websecure
+    - name: websecure-public
       protocol: HTTPS
       port: 8443
       tls:
@@ -33,13 +32,13 @@ metadata:
 spec:
   gatewayClassName: traefik
   listeners:
-    - name: web-intra
+    - name: web-private
       protocol: HTTP
       port: 9080
       allowedRoutes:
         namespaces:
           from: All
-    - name: websecure-intra
+    - name: websecure-private
       protocol: HTTPS
       port: 9443
       tls:

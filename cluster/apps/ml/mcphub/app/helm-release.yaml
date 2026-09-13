@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -38,11 +37,10 @@ spec:
         retain: true
         globalMounts:
           - path: /data
-
     controllers:
       app:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
@@ -50,12 +48,12 @@ spec:
               tag: 1.0.36
               pullPolicy: IfNotPresent
             env:
-              TZ: "${TIMEZONE_FAILSAFE}"
+              TZ: ${TIMEZONE_FAILSAFE}
               NODE_ENV: production
-              PORT: "3000"
-              USE_DB: "false"
+              PORT: '3000'
+              USE_DB: 'false'
               MCPHUB_SETTING_PATH: /data/mcp_settings.json
-              INSTALL_BASE_URL: "https://mcphub.${SECRET_PRIVATE_DOMAIN}"
+              INSTALL_BASE_URL: https://mcphub.${SECRET_PRIVATE_DOMAIN}
               ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
@@ -104,26 +102,27 @@ spec:
                 memory: 128Mi
               limits:
                 memory: 1Gi
-
     service:
       app:
         controller: app
         ports:
           http:
             port: &port 3000
-
-    ingress:
+    route:
       app:
         enabled: true
-        className: "traefik-intra"
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.tls: "true"
-        hosts:
-          - host: "mcphub.${SECRET_PRIVATE_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: *port
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - mcphub.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 3000

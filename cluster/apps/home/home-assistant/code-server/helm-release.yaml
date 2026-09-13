@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -31,7 +30,6 @@ spec:
     - name: zigbee2mqtt
       namespace: home
   values:
-
     service:
       main:
         enabled: true
@@ -39,28 +37,36 @@ spec:
         ports:
           http:
             port: 8080
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: traefik-intra
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - hass-config.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8080
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia
+                  namespace: networking
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Home
           gethomepage.dev/icon: /icons/visual-studio-code/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Home Assistant Config
-        hosts:
-          - host: "hass-config.${SECRET_PRIVATE_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: 8080
-
     persistence:
       hass:
         enabled: true
@@ -72,22 +78,21 @@ spec:
         existingClaim: zigbee2mqtt-data
         globalMounts:
           - path: /config/z2m
-
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             enabled: true
             image:
               repository: ghcr.io/coder/code-server
               tag: 4.137.0
-            workingDir: "/config"
+            workingDir: /config
             args:
               - --auth
-              - "none"
+              - none
               - --user-data-dir
-              - "/config/hass/.vscode"
+              - /config/hass/.vscode
               - --extensions-dir
-              - "/config/hass/.vscode"
+              - /config/hass/.vscode

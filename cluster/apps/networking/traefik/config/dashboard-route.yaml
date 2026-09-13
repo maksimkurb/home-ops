@@ -1,17 +1,16 @@
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: dashboard
   annotations:
-    external-dns.kubernetes.io/enabled: "true"
+    external-dns.kubernetes.io/enabled: 'true'
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
 spec:
   hostnames:
     - traefik.${SECRET_PUBLIC_DOMAIN}
   parentRefs:
     - name: public
-      sectionName: websecure
+      sectionName: websecure-public
   rules:
     - filters:
         - type: ExtensionRef

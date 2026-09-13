@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -27,7 +26,7 @@ spec:
     controllers:
       main:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         containers:
           main:
             image:
@@ -39,12 +38,12 @@ spec:
               - --console-address
               - :9001
             env:
-              TZ: "${TIMEZONE}"
-              MINIO_UPDATE: "off"
+              TZ: ${TIMEZONE}
+              MINIO_UPDATE: off
               MINIO_PROMETHEUS_URL: http://prometheus-operated.monitoring:9090
               MINIO_PROMETHEUS_JOB_ID: minio
-              MINIO_BROWSER_REDIRECT_URL: "https://s3-console.${SECRET_PUBLIC_DOMAIN}"
-              MINIO_SERVER_URL: "https://s3.${SECRET_PUBLIC_DOMAIN}"
+              MINIO_BROWSER_REDIRECT_URL: https://s3-console.${SECRET_PUBLIC_DOMAIN}
+              MINIO_SERVER_URL: https://s3.${SECRET_PUBLIC_DOMAIN}
             envFrom:
               - secretRef:
                   name: minio
@@ -57,7 +56,6 @@ spec:
             securityContext:
               runAsUser: 777
               runAsGroup: 777
-
     service:
       main:
         controller: main
@@ -66,38 +64,40 @@ spec:
             port: 9001
           api:
             port: 9000
-
-    ingress:
+    route:
       main:
         enabled: true
-        className: "traefik"
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - s3-console.${SECRET_PUBLIC_DOMAIN}
+          - s3.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 80
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/service.serverstransport: default-minio@kubernetescrd
-          external-dns.kubernetes.io/enabled: "true"
+          external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          gethomepage.dev/enabled: "true"
+          gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/minio/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: MinIO
-        hosts:
-          - host: "s3-console.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: http
-          - host: "s3.${SECRET_PUBLIC_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: main
-                  port: api
-
     persistence:
       config:
         enabled: true
@@ -106,10 +106,9 @@ spec:
           main:
             main:
               - path: /data
-
     defaultPodOptions:
       securityContext:
         runAsUser: 777
         runAsGroup: 777
         fsGroup: 777
-        fsGroupChangePolicy: "OnRootMismatch"
+        fsGroupChangePolicy: OnRootMismatch

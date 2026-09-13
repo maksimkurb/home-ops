@@ -1,6 +1,9 @@
----
 fail_fast: false
 repos:
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.21.0
+    hooks:
+      - id: yamlfmt
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:

@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -82,7 +81,7 @@ spec:
   values:
     image:
       repository: crowdsecurity/crowdsec
-      tag: "v1.8.1"
+      tag: v1.8.1
     container_runtime: containerd
     secrets:
       externalSecret:
@@ -193,16 +192,14 @@ spec:
             {{end -}}
 
           webhook: ${SECRET_CROWDSEC_WEBHOOK_URL}
-
-
     lapi:
       ingress:
-        enabled: true
+        enabled: false
         ingressClassName: traefik-intra
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
-          traefik.ingress.kubernetes.io/router.tls: "true"
-        host: "crowdsec-lapi.${SECRET_PRIVATE_DOMAIN}"
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+        host: crowdsec-lapi.${SECRET_PRIVATE_DOMAIN}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -219,9 +216,9 @@ spec:
               name: crowdsec-lapi-keys
               key: enrollKey
         - name: ENROLL_INSTANCE_NAME
-          value: "k3s-server"
+          value: k3s-server
         - name: ENROLL_TAGS
-          value: "k8s k3s linux homelab"
+          value: k8s k3s linux homelab
       metrics:
         enabled: true
         serviceMonitor:
@@ -231,13 +228,13 @@ spec:
           enabled: false
           accessModes:
             - ReadWriteOnce
-          storageClassName: "local-path"
+          storageClassName: local-path
           size: 1Gi
         config:
           enabled: true
           accessModes:
             - ReadWriteOnce
-          storageClassName: "local-path"
+          storageClassName: local-path
           size: 100Mi
     agent:
       isDeployment: true
@@ -254,7 +251,7 @@ spec:
           program: traefik
       env:
         - name: COLLECTIONS
-          value: "crowdsecurity/nginx crowdsecurity/traefik crowdsecurity/base-http-scenarios"
+          value: crowdsecurity/nginx crowdsecurity/traefik crowdsecurity/base-http-scenarios
       metrics:
         enabled: true
         serviceMonitor:

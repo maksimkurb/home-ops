@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/ocirepository-source-v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -32,30 +31,29 @@ spec:
       retries: 3
   values:
     serverName: matrix.${SECRET_PUBLIC_DOMAIN}
-
     image:
       pullPolicy: IfNotPresent
-
     ingress:
+      enabled: false
       className: traefik
       tlsEnabled: false
       annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: websecure
-        traefik.ingress.kubernetes.io/router.tls: "true"
-        external-dns.kubernetes.io/enabled: "true"
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+        traefik.ingress.kubernetes.io/router.tls: 'true'
+        external-dns.kubernetes.io/enabled: 'true'
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
-        external-dns.kubernetes.io/cloudflare-proxied: "false"
-
+        external-dns.kubernetes.io/cloudflare-proxied: 'false'
     elementWeb:
       ingress:
+        enabled: false
         host: matrix.${SECRET_PUBLIC_DOMAIN}
-
     elementAdmin:
       ingress:
+        enabled: false
         host: admin.matrix.${SECRET_PUBLIC_DOMAIN}
-
     matrixAuthenticationService:
       ingress:
+        enabled: false
         host: account.matrix.${SECRET_PUBLIC_DOMAIN}
       additional:
         00-registration-token.yaml:
@@ -76,7 +74,6 @@ spec:
         password:
           secret: messaging.mas.homelab-pgsql.credentials.postgresql.acid.zalan.do
           secretKey: password
-
     matrixRTC:
       hostAliases:
         - ip: ${SVC_NGINX_ADDR}
@@ -84,10 +81,11 @@ spec:
             - matrix.${SECRET_PUBLIC_DOMAIN}
             - synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       ingress:
+        enabled: false
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+          traefik.ingress.kubernetes.io/router.tls: 'true'
           traefik.ingress.kubernetes.io/router.middlewares: messaging_ess-matrixrtc-cors@kubernetescrd
       resources:
         requests:
@@ -108,7 +106,7 @@ spec:
         periodSeconds: 10
         timeoutSeconds: 5
       sfu:
-        manualIP: "${SECRET_COTURN_PUBLIC_IP}"
+        manualIP: ${SECRET_COTURN_PUBLIC_IP}
         useStunToDiscoverPublicIP: false
         exposedServices:
           rtcTcp:
@@ -123,10 +121,8 @@ spec:
             port: 30882
             internalTrafficPolicy: Cluster
             externalTrafficPolicy: Cluster
-
     postgres:
       enabled: false
-
     synapse:
       # Re-create DB manually to set collate:
       # CREATE DATABASE synapse
@@ -146,6 +142,7 @@ spec:
           secret: messaging.synapse.homelab-pgsql.credentials.postgresql.acid.zalan.do
           secretKey: password
       ingress:
+        enabled: false
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       media:
         storage:
@@ -188,7 +185,6 @@ spec:
               - "10.24.0.0/16"
               - "10.64.0.0/16"
               - "192.168.0.0/16"
-
     wellKnownDelegation:
       baseDomainRedirect:
         enabled: false
