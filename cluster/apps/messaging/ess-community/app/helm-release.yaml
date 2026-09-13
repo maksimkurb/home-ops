@@ -38,7 +38,6 @@ spec:
 
     ingress:
       className: traefik
-      controllerType: traefik
       tlsEnabled: false
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure
