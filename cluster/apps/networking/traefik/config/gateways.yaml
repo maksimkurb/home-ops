@@ -4,8 +4,7 @@ kind: Gateway
 metadata:
   name: public
   annotations:
-    external-dns.kubernetes.io/enabled: "true"
-    external-dns.kubernetes.io/target: ${SVC_TRAEFIK_ADDR}
+    external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
 spec:
   gatewayClassName: traefik
   listeners:

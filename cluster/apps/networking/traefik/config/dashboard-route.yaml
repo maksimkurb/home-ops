@@ -6,7 +6,6 @@ metadata:
   annotations:
     external-dns.kubernetes.io/enabled: "true"
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-    external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
 spec:
   hostnames:
     - traefik.${SECRET_PUBLIC_DOMAIN}
