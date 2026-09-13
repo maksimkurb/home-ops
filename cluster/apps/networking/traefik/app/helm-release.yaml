@@ -43,11 +43,6 @@ spec:
         enabled: true
       kubernetesGateway:
         enabled: true
-        statusAddress:
-          service:
-            enabled: true
-            name: traefik-public
-            namespace: networking
     gateway:
       enabled: false
     gatewayClass:
@@ -102,6 +97,8 @@ spec:
         expose:
           default: false
     additionalArguments:
+      - --providers.kubernetesgateway.statusaddress.service.name=traefik-public
+      - --providers.kubernetesgateway.statusaddress.service.namespace=networking
       - --entrypoints.web.http.aliasheadersstrategy=reject
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
