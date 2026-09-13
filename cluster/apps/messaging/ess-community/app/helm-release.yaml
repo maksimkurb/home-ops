@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/ocirepository-source-v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -34,7 +35,6 @@ spec:
     image:
       pullPolicy: IfNotPresent
     ingress:
-      enabled: false
       className: traefik
       tlsEnabled: false
       annotations:
@@ -45,15 +45,12 @@ spec:
         external-dns.kubernetes.io/cloudflare-proxied: 'false'
     elementWeb:
       ingress:
-        enabled: false
         host: matrix.${SECRET_PUBLIC_DOMAIN}
     elementAdmin:
       ingress:
-        enabled: false
         host: admin.matrix.${SECRET_PUBLIC_DOMAIN}
     matrixAuthenticationService:
       ingress:
-        enabled: false
         host: account.matrix.${SECRET_PUBLIC_DOMAIN}
       additional:
         00-registration-token.yaml:
@@ -81,7 +78,6 @@ spec:
             - matrix.${SECRET_PUBLIC_DOMAIN}
             - synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       ingress:
-        enabled: false
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
@@ -142,7 +138,6 @@ spec:
           secret: messaging.synapse.homelab-pgsql.credentials.postgresql.acid.zalan.do
           secretKey: password
       ingress:
-        enabled: false
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
       media:
         storage:
