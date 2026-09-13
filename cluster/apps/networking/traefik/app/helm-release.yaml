@@ -43,6 +43,10 @@ spec:
         enabled: true
       kubernetesGateway:
         enabled: true
+        statusAddress:
+          service:
+            name: traefik-public
+            namespace: networking
     gateway:
       enabled: false
     gatewayClass:
