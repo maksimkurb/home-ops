@@ -38,7 +38,7 @@ metadata:
     external-dns.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
     external-dns.kubernetes.io/cloudflare-proxied: 'false'
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.middlewares: router-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: default_router-headers@kubernetescrd
     traefik.ingress.kubernetes.io/router.tls: "true"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Middleware
@@ -69,7 +69,7 @@ metadata:
     external-dns.kubernetes.io/target: '${SECRET_ROUTER_OUTBOUND_IP}'
     external-dns.kubernetes.io/cloudflare-proxied: 'true'
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.middlewares: router-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: default_router-headers@kubernetescrd
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: traefik
