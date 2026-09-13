@@ -1,8 +1,9 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: traefik
+  name: traefik-public
   namespace: networking
 spec:
   interval: 30m
@@ -41,13 +42,15 @@ spec:
         safeNaming: true
       kubernetesIngress:
         enabled: true
+        ingressClass: traefik-public
       kubernetesGateway:
         enabled: true
+        labelSelector: gatewayclass=public
     gateway:
       enabled: false
     gatewayClass:
-      enabled: true
-      name: traefik
+      enabled: false
+      name: traefik-public
     ingressClass:
       enabled: false
     service:

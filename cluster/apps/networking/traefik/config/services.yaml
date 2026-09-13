@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,7 +9,7 @@ spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
   selector:
-    app.kubernetes.io/instance: traefik-networking
+    app.kubernetes.io/instance: traefik-public-networking
     app.kubernetes.io/name: traefik
   ports:
     - name: http
@@ -23,12 +24,12 @@ kind: Service
 metadata:
   name: traefik-private
   annotations:
-    io.cilium/lb-ipam-ips: ${SVC_TRAEFIK_INTRA_ADDR}
+    io.cilium/lb-ipam-ips: ${SVC_TRAEFIK_PRIVATE_ADDR}
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
   selector:
-    app.kubernetes.io/instance: traefik-networking
+    app.kubernetes.io/instance: traefik-private-networking
     app.kubernetes.io/name: traefik
   ports:
     - name: http

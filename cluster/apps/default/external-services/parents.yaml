@@ -29,7 +29,7 @@ metadata:
   name: parents-passthrough
   namespace: default
 spec:
-  gatewayClassName: traefik
+  gatewayClassName: traefik-public
   listeners:
     - name: parents
       hostname: "${SECRET_PARENTS_DOMAIN}"

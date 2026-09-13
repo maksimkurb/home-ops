@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: networking
 resources:
   - services.yaml
+  - gateway-classes.yaml
   - gateways.yaml
   - certificate.yaml
   - ingress-classes.yaml

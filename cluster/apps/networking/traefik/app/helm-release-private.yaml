@@ -1,0 +1,85 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik-private
+  namespace: networking
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: traefik
+      version: 41.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: traefik-charts
+        namespace: flux-system
+  install:
+    crds: Skip
+    remediation:
+      retries: 5
+  upgrade:
+    crds: Skip
+    remediation:
+      retries: 5
+  values:
+    deployment:
+      replicas: 1
+    api:
+      dashboard: true
+    providers:
+      kubernetesCRD:
+        enabled: true
+        allowCrossNamespace: true
+        safeNaming: true
+      kubernetesIngress:
+        enabled: true
+        ingressClass: traefik-private
+      kubernetesGateway:
+        enabled: true
+        labelSelector: gatewayclass=private
+        statusAddress:
+          service:
+            name: traefik-private
+            namespace: networking
+    gateway:
+      enabled: false
+    gatewayClass:
+      enabled: false
+    ingressClass:
+      enabled: false
+    service:
+      enabled: false
+    ports:
+      web-private:
+        port: 9080
+        exposedPort: 80
+        expose:
+          default: false
+      websecure-private:
+        port: 9443
+        exposedPort: 443
+        expose:
+          default: false
+    additionalArguments:
+      - --entrypoints.web-private.http.aliasheadersstrategy=reject
+      - --entrypoints.web-private.http.redirections.entrypoint.to=websecure-private
+      - --entrypoints.web-private.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure-private.http.aliasheadersstrategy=reject
+      - --entrypoints.websecure-private.http.middlewares=networking_private-allowlist@kubernetescrd
+    log:
+      level: INFO
+    accessLog:
+      enabled: true
+      format: json
+    metrics:
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 500Mi

@@ -1,0 +1,18 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: traefik-public
+  labels:
+    gatewayclass: public
+spec:
+  controllerName: traefik.io/gateway-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: traefik-private
+  labels:
+    gatewayclass: private
+spec:
+  controllerName: traefik.io/gateway-controller

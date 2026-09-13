@@ -1,3 +1,4 @@
+---
 kubeProxyReplacement: true
 k8sServiceHost: 10.75.40.21
 k8sServicePort: 6443
@@ -24,9 +25,9 @@ hubble:
     enabled: true
     ingress:
       enabled: false
-      className: traefik-intra
+      className: traefik-private
       annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
         traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
         traefik.ingress.kubernetes.io/router.tls: 'true'
       hosts:

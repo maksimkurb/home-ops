@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -114,7 +115,7 @@ spec:
               - targets: ["${ROUTER_IP}:9100", "${ROUTER_3_IP}:9100"]
       ingress:
         enabled: false
-        ingressClassName: traefik-intra
+        ingressClassName: traefik-private
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -142,7 +143,7 @@ spec:
               storage: 30Gi
       ingress:
         enabled: false
-        ingressClassName: traefik-intra
+        ingressClassName: traefik-private
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -158,7 +159,7 @@ spec:
       enabled: true
       ingress:
         enabled: false
-        ingressClassName: traefik-intra
+        ingressClassName: traefik-private
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd
@@ -247,7 +248,7 @@ spec:
       enabled: true
       ingress:
         enabled: false
-        ingressClassName: traefik-intra
+        ingressClassName: traefik-private
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-private
           traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd

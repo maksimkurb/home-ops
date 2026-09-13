@@ -1,3 +1,4 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -5,7 +6,7 @@ metadata:
   annotations:
     external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
 spec:
-  gatewayClassName: traefik
+  gatewayClassName: traefik-public
   listeners:
     - name: web-public
       protocol: HTTP
@@ -30,7 +31,7 @@ kind: Gateway
 metadata:
   name: private
 spec:
-  gatewayClassName: traefik
+  gatewayClassName: traefik-private
   listeners:
     - name: web-private
       protocol: HTTP
