@@ -4,9 +4,6 @@ kind: Service
 metadata:
   name: ext-svc-parents
   namespace: default
-  annotations:
-    traefik.ingress.kubernetes.io/service.serversscheme: https
-    traefik.ingress.kubernetes.io/service.serverstransport: default_parents-insecure@kubernetescrd
 spec:
   ports:
     - name: https
@@ -27,15 +24,37 @@ subsets:
         name: https
 ---
 apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+kind: Gateway
+metadata:
+  name: parents-passthrough
+  namespace: default
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: parents
+      hostname: "${SECRET_PARENTS_DOMAIN}"
+      protocol: TLS
+      port: 8443
+      tls:
+        mode: Passthrough
+    - name: parents-wildcard
+      hostname: "*.${SECRET_PARENTS_DOMAIN}"
+      protocol: TLS
+      port: 8443
+      tls:
+        mode: Passthrough
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
 metadata:
   name: parents-passthrough
   namespace: default
 spec:
   parentRefs:
-    - name: public
-      namespace: networking
-      sectionName: websecure
+    - name: parents-passthrough
+      sectionName: parents
+    - name: parents-passthrough
+      sectionName: parents-wildcard
   hostnames:
     - "${SECRET_PARENTS_DOMAIN}"
     - "*.${SECRET_PARENTS_DOMAIN}"

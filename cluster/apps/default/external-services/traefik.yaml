@@ -8,14 +8,6 @@ spec:
   insecureSkipVerify: true
 ---
 apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: parents-insecure
-  namespace: default
-spec:
-  insecureSkipVerify: true
----
-apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: router-headers
