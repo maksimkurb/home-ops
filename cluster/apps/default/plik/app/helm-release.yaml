@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -55,7 +56,7 @@ spec:
               PLIKD_DEFAULT_TTL_STR: 30d
               PLIKD_MAX_TTL_STR: 30d
               PLIKD_FEATURE_AUTHENTICATION: forced
-              PLIKD_FEATURE_LOCAL_LOGIN: disabled
+              PLIKD_FEATURE_LOCAL_LOGIN: enabled
               PLIKD_FEATURE_DELETE_ACCOUNT: disabled
               PLIKD_FEATURE_ONE_SHOT: enabled
               PLIKD_FEATURE_REMOVABLE: enabled
