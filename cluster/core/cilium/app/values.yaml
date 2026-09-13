@@ -30,7 +30,7 @@ hubble:
     enabled: true
     ingress:
       enabled: true
-      className: nginx-intra
+      className: traefik-intra
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure-intra
         traefik.ingress.kubernetes.io/router.middlewares: networking_authelia@kubernetescrd

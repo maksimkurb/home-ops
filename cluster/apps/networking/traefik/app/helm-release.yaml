@@ -39,7 +39,7 @@ spec:
         safeNaming: true
       kubernetesIngress:
         enabled: true
-        ingressClass: nginx-intra
+        ingressClass: traefik-intra
       kubernetesIngressNginx:
         allowSnippetAnnotations: true
         enabled: true

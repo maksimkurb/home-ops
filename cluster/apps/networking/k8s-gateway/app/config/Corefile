@@ -6,7 +6,7 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
 
   template IN ANY ${SECRET_PARENTS_DOMAIN} {
     match "\w*\.(${SECRET_PARENTS_DOMAIN}\.)$"
-    answer "{{ .Name }} 3600 IN A ${SVC_NGINX_ADDR}"
+    answer "{{ .Name }} 3600 IN A ${SVC_TRAEFIK_INTRA_ADDR}"
     fallthrough
   }
 

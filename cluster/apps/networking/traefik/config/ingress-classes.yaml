@@ -11,6 +11,6 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
-  name: nginx-intra
+  name: traefik-intra
 spec:
   controller: traefik.io/ingress-controller
