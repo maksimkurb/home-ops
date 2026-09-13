@@ -1,0 +1,319 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.0.1/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.1.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    persistence:
+      data:
+        enabled: true
+        existingClaim: ${APP}-data
+        advancedMounts:
+          n8n:
+            app:
+              - path: /home/node/
+              - path: /.npm/
+                subPath: _community-npm-modules
+          taskrunner:
+            app:
+              - path: /.n8n/
+                subPath: _taskrunner-n8n
+      certs-source:
+        type: secret
+        name: n8n-supabase-ca
+        globalMounts:
+          - path: /tmp/certs-source
+      certs:
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - path: /opt/custom-certificates
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 777
+        runAsGroup: 777
+        fsGroup: 777
+        fsGroupChangePolicy: "OnRootMismatch"
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        memory: 500Mi
+    controllers:
+      n8n:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          setup-certs:
+            image:
+              repository: docker.io/rxchi1d/n8n-ffmpeg
+              tag: 2.38.7
+              pullPolicy: IfNotPresent
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+            command:
+              - sh
+              - -c
+              - |
+                mkdir -p /opt/custom-certificates
+                cp /tmp/certs-source/* /opt/custom-certificates/
+                c_rehash /opt/custom-certificates
+                chmod 555 /opt/custom-certificates
+                chmod 444 /opt/custom-certificates/*
+        containers:
+          app:
+            image:
+              repository: docker.io/rxchi1d/n8n-ffmpeg
+              tag: 2.38.7
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE_FAILSAFE}"
+              DB_TYPE: postgresdb
+              DB_POSTGRESDB_HOST: homelab-pgsql.database
+              DB_POSTGRESDB_PORT: "5432"
+              DB_POSTGRESDB_DATABASE: n8n
+              DB_POSTGRESDB_USER: n8n
+              DB_POSTGRESDB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: DB_POSTGRESDB_PASSWORD
+              N8N_USER_FOLDER: /home/node/
+              N8N_EXTERNAL_STORAGE_S3_HOST: minio.default:9000
+              N8N_EXTERNAL_STORAGE_S3_BUCKET_NAME: n8n
+              N8N_EXTERNAL_STORAGE_S3_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: MINIO_ACCESS_KEY
+              N8N_EXTERNAL_STORAGE_S3_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: MINIO_SECRET_KEY
+              N8N_RUNNERS_ENABLED: true
+              N8N_RUNNERS_MODE: external
+              N8N_NATIVE_PYTHON_RUNNER: true
+              N8N_RUNNERS_BROKER_LISTEN_ADDRESS: 0.0.0.0
+              N8N_RUNNERS_AUTH_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: N8N_RUNNERS_AUTH_TOKEN
+              N8N_BLOCK_ENV_ACCESS_IN_NODE: true
+              EXECUTIONS_DATA_PRUNE: true
+              EXECUTIONS_DATA_MAX_AGE: 7
+              EXECUTIONS_DATA_PRUNE_MAX_COUNT: 50000
+              GENERIC_TIMEZONE: "${TIMEZONE_FAILSAFE}"
+              N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
+              N8N_PROTOCOL: "https"
+              N8N_PORT: 8080
+              N8N_HOST: n8n.${SECRET_PRIVATE_DOMAIN}
+              WEBHOOK_URL: https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}/
+              N8N_SKIP_AUTH_ON_OAUTH_CALLBACK: true
+              N8N_PROXY_HOPS: 1
+              N8N_LOG_LEVEL: info
+              N8N_LOG_OUTPUT: console
+              N8N_ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: N8N_ENCRYPTION_KEY
+              CODEX_BINARY: /home/node/.n8n/nodes/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex
+              CODEX_HOME: /home/node/.codex
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz/readiness
+                    port: 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  failureThreshold: 2
+      taskrunner:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          setup-certs:
+            image:
+              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              tag: 2.38.7
+              pullPolicy: IfNotPresent
+            securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
+            command:
+              - sh
+              - -c
+              - |
+                mkdir -p /opt/custom-certificates
+                cp /tmp/certs-source/* /opt/custom-certificates/
+                c_rehash /opt/custom-certificates
+                chmod 555 /opt/custom-certificates
+                chmod 444 /opt/custom-certificates/*
+        containers:
+          app:
+            image:
+              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              tag: 2.38.7
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TIMEZONE_FAILSAFE}"
+              GENERIC_TIMEZONE: "${TIMEZONE_FAILSAFE}"
+              N8N_RUNNERS_TASK_BROKER_URI: http://n8n:5679
+              N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT: 15
+              N8N_RUNNERS_AUTH_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: N8N_RUNNERS_AUTH_TOKEN
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 5680
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+    service:
+      app:
+        controller: n8n
+        type: LoadBalancer
+        loadBalancerIP: "${SVC_N8N_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_N8N_ADDR}"
+        externalTrafficPolicy: Local
+        ports:
+          http:
+            port: 8080
+            protocol: TCP
+          taskrunner:
+            port: 5679
+            protocol: TCP
+    route:
+      main:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - n8n.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 8080
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: /icons/n8n/${HOMEPAGE_ICONS_COLOR}
+          gethomepage.dev/name: n8n
+          gethomepage.dev/weight: '-100'
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=${APP}
+      webhook:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - n8n-webhook.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /signin
+              - path:
+                  type: PathPrefix
+                  value: /assets
+              - path:
+                  type: PathPrefix
+                  value: /static
+              - path:
+                  type: PathPrefix
+                  value: /rest
+              - path:
+                  type: PathPrefix
+                  value: /webhook
+              - path:
+                  type: PathPrefix
+                  value: /webhook-waiting
+              - path:
+                  type: PathPrefix
+                  value: /webhook-test
+              - path:
+                  type: PathPrefix
+                  value: /form
+              - path:
+                  type: PathPrefix
+                  value: /form-waiting
+              - path:
+                  type: PathPrefix
+                  value: /form-test
+              - path:
+                  type: PathPrefix
+                  value: /rest/oauth2-credential
+            backendRefs:
+              - identifier: app
+                port: 8080
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: n8n-webhook-cors
+        annotations:
+          external-dns.kubernetes.io/enabled: 'true'
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
