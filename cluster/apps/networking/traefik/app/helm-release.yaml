@@ -19,6 +19,7 @@ spec:
     remediation:
       retries: 5
   upgrade:
+    force: true
     crds: Skip
     remediation:
       retries: 5
