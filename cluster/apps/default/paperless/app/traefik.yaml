@@ -15,7 +15,7 @@ metadata:
   name: paperless-admin-deny
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.middlewares: paperless-admin-deny@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: default_paperless-admin-deny@kubernetescrd
     traefik.ingress.kubernetes.io/router.priority: "100"
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
