@@ -15,7 +15,8 @@ ${SECRET_PUBLIC_DOMAIN}:1053 {
   }
 
   k8s_gateway ${SECRET_PUBLIC_DOMAIN} {
-    resources Ingress
+    resources Ingress HTTPRoute
+    gatewayClasses traefik
     fallthrough
   }
 

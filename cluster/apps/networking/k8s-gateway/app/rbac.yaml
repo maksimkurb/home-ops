@@ -9,6 +9,14 @@ metadata:
     app.kubernetes.io/name: k8s-gateway
 rules:
   - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - ""
     resources:
       - services
@@ -25,9 +33,6 @@ rules:
       - list
       - watch
   - apiGroups: ["gateway.networking.k8s.io"]
-    resources: ["*"]
-    verbs: ["watch", "list"]
-  - apiGroups: ["k8s.nginx.org"]
     resources: ["*"]
     verbs: ["watch", "list"]
 ---
