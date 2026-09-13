@@ -67,7 +67,7 @@ spec:
           external-dns.kubernetes.io/enabled: "true"
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
-          traefik.ingress.kubernetes.io/router.middlewares: seerr-redirect@kubernetescrd
+          traefik.ingress.kubernetes.io/router.middlewares: downloads_seerr-redirect@kubernetescrd
           traefik.ingress.kubernetes.io/router.tls: "true"
         hosts:
           - host: "jellyseerr.${SECRET_PUBLIC_DOMAIN}"

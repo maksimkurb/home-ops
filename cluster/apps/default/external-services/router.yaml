@@ -6,7 +6,7 @@ metadata:
   namespace: default
   annotations:
     traefik.ingress.kubernetes.io/service.serversscheme: https
-    traefik.ingress.kubernetes.io/service.serverstransport: router-insecure@kubernetescrd
+    traefik.ingress.kubernetes.io/service.serverstransport: default_router-insecure@kubernetescrd
     traefik.ingress.kubernetes.io/service.passhostheader: "false"
 spec:
   ports:
