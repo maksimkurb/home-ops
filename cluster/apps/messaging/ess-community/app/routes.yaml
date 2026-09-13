@@ -73,5 +73,5 @@ spec:
   rules:
     - filters:
         - type: ExtensionRef
-          extensionRef: {group: traefik.io, kind: Middleware, name: ess-matrixrtc-cors, namespace: messaging}
+          extensionRef: {group: traefik.io, kind: Middleware, name: ess-matrixrtc-cors}
       backendRefs: [{name: '${APP}-matrix-rtc-authorisation-service', port: 8080}]
