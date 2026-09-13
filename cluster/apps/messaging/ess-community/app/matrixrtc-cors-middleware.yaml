@@ -6,20 +6,15 @@ metadata:
   namespace: messaging
 spec:
   headers:
-    accessControlAllowCredentials: true
     accessControlAllowHeaders:
-      - Accept
-      - Authorization
+      - X-Requested-With
       - Content-Type
-      - Content-Length
-      - Accept-Encoding
-      - X-CSRF-Token
+      - Authorization
     accessControlAllowMethods:
       - GET
       - POST
+      - PUT
+      - DELETE
       - OPTIONS
     accessControlAllowOriginList:
-      - https://matrix.${SECRET_PUBLIC_DOMAIN}
-      - https://appassets.androidplatform.net
-    accessControlAllowOriginListRegex:
-      - "^https://[^.]+\\.matrix\\.${SECRET_PUBLIC_DOMAIN}$"
+      - "*"
