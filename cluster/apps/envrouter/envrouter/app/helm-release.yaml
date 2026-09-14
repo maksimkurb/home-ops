@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/ocirepository-source-v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -66,7 +67,7 @@ spec:
         redirectUrl: https://envrouter.${SECRET_PUBLIC_DOMAIN}/auth/callback
     ingress:
       enabled: false
-      className: traefik
+      className: traefik-public
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
         traefik.ingress.kubernetes.io/router.tls: 'true'
