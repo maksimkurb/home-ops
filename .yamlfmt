@@ -1,5 +1,7 @@
 exclude:
   - cluster/apps/security/authelia/config/configuration.yml
+  - **/*.sops.yaml
+  - **/*.sops.yml
 
 formatter:
   type: basic
