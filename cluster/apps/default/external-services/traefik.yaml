@@ -8,6 +8,20 @@ spec:
   insecureSkipVerify: true
 ---
 apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: router
+  namespace: default
+spec:
+  weighted:
+    services:
+      - name: ext-svc-router-dashboard
+        port: 443
+        scheme: https
+        serversTransport: router-insecure
+        passHostHeader: false
+---
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: router-headers
