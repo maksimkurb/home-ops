@@ -35,7 +35,7 @@ spec:
     image:
       pullPolicy: IfNotPresent
     ingress:
-      className: traefik
+      className: traefik-public
       tlsEnabled: false
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
