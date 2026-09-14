@@ -3,6 +3,8 @@ exclude:
   - **/*.sops.yaml
   - **/*.sops.yml
 
+match_type: doublestar
+
 formatter:
   type: basic
   include_document_start: true
