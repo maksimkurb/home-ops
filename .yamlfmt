@@ -1,7 +1,7 @@
 exclude:
   - cluster/apps/security/authelia/config/configuration.yml
-  - **/*.sops.yaml
-  - **/*.sops.yml
+  - "**/*.sops.yaml"
+  - "**/*.sops.yml"
 
 match_type: doublestar
 
