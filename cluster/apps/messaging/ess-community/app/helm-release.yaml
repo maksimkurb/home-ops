@@ -38,7 +38,7 @@ spec:
       className: traefik-public
       tlsEnabled: false
       annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
         traefik.ingress.kubernetes.io/router.tls: 'true'
         external-dns.kubernetes.io/enabled: 'true'
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
@@ -80,7 +80,7 @@ spec:
       ingress:
         host: mrtc.matrix.${SECRET_PUBLIC_DOMAIN}
         annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-public
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
           traefik.ingress.kubernetes.io/router.tls: 'true'
           traefik.ingress.kubernetes.io/router.middlewares: messaging_ess-matrixrtc-cors@kubernetescrd
       resources:
