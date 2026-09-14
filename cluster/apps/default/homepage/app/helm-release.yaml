@@ -64,6 +64,19 @@ spec:
           successfulJobsHistory: 1
           failedJobsHistory: 1
           ttlSecondsAfterFinished: 86400
+        initContainers:
+          fix-icons-permissions:
+            image:
+              repository: alpine
+              tag: 3.22.2
+            securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+            command:
+              - chown
+              - -R
+              - 777:777
+              - /icons
         containers:
           sync:
             image:
@@ -74,7 +87,7 @@ spec:
               - -c
             args:
               - >-
-                if [ -d /icons/.git ]; then git -c safe.directory=/icons -C /icons pull --ff-only; else git clone --depth=1 https://github.com/selfhst/icons.git /icons; fi
+                if [ -d /icons/.git ]; then git -c safe.directory=/icons -C /icons sparse-checkout set --no-cone svg && git -c safe.directory=/icons -C /icons pull --ff-only; else git clone --depth=1 --filter=blob:none --sparse https://github.com/selfhst/icons.git /icons && git -C /icons sparse-checkout set --no-cone svg; fi
             resources:
               requests:
                 cpu: 10m
@@ -259,6 +272,9 @@ spec:
               - path: /app/icons
                 subPath: icons
           icons-update:
+            fix-icons-permissions:
+              - path: /icons
+                subPath: icons
             sync:
               - path: /icons
                 subPath: icons
