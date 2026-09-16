@@ -27,21 +27,6 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: authelia
-spec:
-  forwardAuth:
-    address: http://authelia.security.svc.cluster.local:8000/api/authz/forward-auth
-    trustForwardHeader: true
-    maxResponseBodySize: 8192
-    authResponseHeaders:
-      - Remote-User
-      - Remote-Name
-      - Remote-Groups
-      - Remote-Email
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
   name: echo-cors
 spec:
   headers:
@@ -67,3 +52,210 @@ spec:
     accessControlExposeHeaders:
       - Content-Length
       - Content-Range
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-authenticated
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_AUTHENTICATED_BEARER_TOKEN}`)'
+      Headers:
+        - Name: Remote-User
+          Value: '{{ .claims.preferred_username }}'
+        - Name: Remote-Name
+          Value: '{{ .claims.name }}'
+        - Name: Remote-Groups
+          Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'
+        - Name: Remote-Email
+          Value: '{{ .claims.email }}'
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-admins
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_ADMINS_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [admins]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-people
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_PEOPLE_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [people]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-documents
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_DOCUMENTS_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [documents]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-home
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_HOME_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [home]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-media
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_MEDIA_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [media]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-internal
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_INTERNAL_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [internal]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-frigate
+spec:
+  plugin:
+    traefik-oidc-auth:
+      Secret: ${SECRET_TRAEFIK_OIDC_ENCRYPTION_SECRET}
+      Provider:
+        Url: https://auth.${SECRET_PUBLIC_DOMAIN}
+        ClientId: traefik
+        UsePkce: true
+      Scopes: [openid, profile, email, groups]
+      CallbackUri: /_gateway-oidc/callback
+      BypassAuthenticationRule: 'Header(`Authorization`, `Bearer ${SECRET_GATUS_OIDC_FRIGATE_BEARER_TOKEN}`)'
+      Headers:
+        - {Name: Remote-User, Value: '{{ .claims.preferred_username }}'}
+        - {Name: Remote-Name, Value: '{{ .claims.name }}'}
+        - {Name: Remote-Groups, Value: '{{ range $i, $g := .claims.groups }}{{if $i}},{{end}}{{ $g }}{{end}}'}
+        - {Name: Remote-Email, Value: '{{ .claims.email }}'}
+      Authorization:
+        CheckOnEveryRequest: true
+        AssertClaims:
+          - Name: groups
+            AnyOf: [frigate-admin, frigate-khoroshkina, frigate-home]

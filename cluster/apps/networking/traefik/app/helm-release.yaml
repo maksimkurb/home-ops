@@ -35,6 +35,9 @@ spec:
         crowdsec-bouncer:
           moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
           version: v1.4.5
+        traefik-oidc-auth:
+          moduleName: github.com/sevensolutions/traefik-oidc-auth
+          version: v0.21.0
     providers:
       kubernetesCRD:
         allowCrossNamespace: true

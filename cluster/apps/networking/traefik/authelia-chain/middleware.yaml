@@ -1,9 +1,64 @@
+---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: authelia
+  name: oidc-authenticated
 spec:
   chain:
-    middlewares:
-      - name: authelia
-        namespace: networking
+    middlewares: [{name: oidc-authenticated, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-admins
+spec:
+  chain:
+    middlewares: [{name: oidc-admins, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-people
+spec:
+  chain:
+    middlewares: [{name: oidc-people, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-documents
+spec:
+  chain:
+    middlewares: [{name: oidc-documents, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-home
+spec:
+  chain:
+    middlewares: [{name: oidc-home, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-media
+spec:
+  chain:
+    middlewares: [{name: oidc-media, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-internal
+spec:
+  chain:
+    middlewares: [{name: oidc-internal, namespace: networking}]
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: oidc-frigate
+spec:
+  chain:
+    middlewares: [{name: oidc-frigate, namespace: networking}]

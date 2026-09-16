@@ -1,3 +1,4 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -16,7 +17,7 @@ spec:
   rules:
     - filters:
         - type: ExtensionRef
-          extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
+          extensionRef: {group: traefik.io, kind: Middleware, name: oidc-admins}
       backendRefs: [{name: vmagent-vm-k8s-stack, port: 8429}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -37,7 +38,7 @@ spec:
   rules:
     - filters:
         - type: ExtensionRef
-          extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
+          extensionRef: {group: traefik.io, kind: Middleware, name: oidc-admins}
       backendRefs: [{name: vmsingle-vm-k8s-stack, port: 8428}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -58,7 +59,7 @@ spec:
   rules:
     - filters:
         - type: ExtensionRef
-          extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
+          extensionRef: {group: traefik.io, kind: Middleware, name: oidc-admins}
       backendRefs: [{name: vmalert-vm-k8s-stack, port: 8080}]
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -79,5 +80,5 @@ spec:
   rules:
     - filters:
         - type: ExtensionRef
-          extensionRef: {group: traefik.io, kind: Middleware, name: authelia}
+          extensionRef: {group: traefik.io, kind: Middleware, name: oidc-admins}
       backendRefs: [{name: vmalertmanager-vm-k8s-stack, port: 9093}]

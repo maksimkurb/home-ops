@@ -130,7 +130,7 @@ spec:
                 extensionRef:
                   group: traefik.io
                   kind: Middleware
-                  name: authelia
+                  name: oidc-people
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

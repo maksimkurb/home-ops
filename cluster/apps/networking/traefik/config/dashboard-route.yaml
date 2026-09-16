@@ -18,7 +18,7 @@ spec:
           extensionRef:
             group: traefik.io
             kind: Middleware
-            name: authelia
+            name: oidc-admins
       backendRefs:
         - group: traefik.io
           kind: TraefikService
@@ -41,7 +41,7 @@ spec:
           extensionRef:
             group: traefik.io
             kind: Middleware
-            name: authelia
+            name: oidc-admins
       backendRefs:
         - group: traefik.io
           kind: TraefikService
