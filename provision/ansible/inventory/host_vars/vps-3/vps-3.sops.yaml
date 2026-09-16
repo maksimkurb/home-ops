@@ -34,6 +34,11 @@ traefik_file_config:
         serversTransports:
             router:
                 insecureSkipVerify: ENC[AES256_GCM,data:kTUKcg==,iv:GBmyNnnysNxNcTHNXrMNFmIcm6ejdyMxAHvmULy2FVU=,tag:H8S2iDkXEnb63waq2GYawg==,type:bool]
+mptcp_shadowsocks_client:
+    server_address: ENC[AES256_GCM,data:s27plb+kOot6woFXercD0EwU,iv:WFBAQ4BRO/Ny4ojv2IjxoQ92uq3AzTodlyeYSmkrXt8=,tag:q8ED3o58aixmspLFz8NKiQ==,type:str]
+    tun_name: ENC[AES256_GCM,data:5OrB7xCo,iv:LXNbOjmvgTDPS3FfRLQmlvwvc2z547FLPbmyg8y94iQ=,tag:J5207kvZrE0KYLK7w7V+JA==,type:str]
+    tun_address: ENC[AES256_GCM,data:sfb9/NRds4JLJVS/Xw==,iv:Y0tgAB8r7Jsh1hgPlQCn9Euw9kFg+YqS2pWJ4QcPyrE=,tag:hL+IWaKSk6rZy8M2R0glKw==,type:str]
+    default_route: ENC[AES256_GCM,data:dkDAzSM=,iv:yrMfDdkYke6frEh/vuusrHZX5ATLNgLECRvKcJn0wY4=,tag:lkmYRIgBvfXn4vmHcosreQ==,type:bool]
 sops:
     age:
         - enc: |
@@ -45,7 +50,7 @@ sops:
             nItkATY2pidSwBmpIBPt64brx+0lPCKFg7phdO1DiRUZ12l8a+BOGg==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-08-29T19:44:07Z"
-    mac: ENC[AES256_GCM,data:ZjSW+1AkYhgv4o6vVOtRBi4qpO9IiEnSSP6ga6FBA5g3imolJIIHAqYPMNCV60slRL7iVXj/HRLwb+RW7ByW5ekwQHj3dmOVYdyZAYsZzE2FunfObl0ZrE9zO3cfnZJMpmkQ0vWmi2TbUpZJDakYhLCiUMf6miZ4/oq1dkG18Sg=,iv:MexEBQWdgs17BiKQxJFLaV+oxItjD6ns1KrkBOo0tHY=,tag:r799awHUXgVFvnejFBMJUQ==,type:str]
+    lastmodified: "2026-09-15T13:10:33Z"
+    mac: ENC[AES256_GCM,data:gzbJz2k6VCJYSaQ6E/YU+iDrQXdaW51XuJPfHgvCi8JxtOTqgwpSc1shzZzuGJKVCVROX5I1A+NwJYG5LvNASttoj0tzuAmYmCjhUPldRZj+mSG6Pt03WuyGXZz+AK6qUb6xQ9pXqWZ7QLPfGWv+FXNYaRm5+kts6QOa/R8njpg=,iv:CCq/zfQalSnCSjHz+gb6y8cmcSBjB89FQerogjIxb/4=,tag:URsnkK38FDrsXYZ/AfSNbw==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

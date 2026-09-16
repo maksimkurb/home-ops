@@ -1,0 +1,72 @@
+---
+- name: Select Shadowsocks Rust release platform
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_release_platform: >-
+      {{ 'Debian' if mptcp_shadowsocks_endpoint == 'server' else 'OpenWrt' }}
+- name: Require a supported Shadowsocks Rust release target
+  ansible.builtin.assert:
+    that:
+      - mptcp_shadowsocks_release_platform in mptcp_shadowsocks_release_targets
+      - ansible_facts['architecture'] in mptcp_shadowsocks_release_targets[mptcp_shadowsocks_release_platform]
+    fail_msg: >-
+      No Shadowsocks Rust release target for {{ mptcp_shadowsocks_release_platform }} {{ ansible_facts['architecture'] }}. Set mptcp_shadowsocks_release_targets accordingly.
+- name: Select Shadowsocks Rust release target
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_release_target: >-
+      {{ mptcp_shadowsocks_release_targets[mptcp_shadowsocks_release_platform][ansible_facts['architecture']] }}
+- name: Build Shadowsocks Rust release URL
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_release_url: >-
+      {{ 'https://github.com/shadowsocks/shadowsocks-rust/releases/download/' ~ mptcp_shadowsocks_release_version ~ '/shadowsocks-' ~ mptcp_shadowsocks_release_version ~ '.' ~ mptcp_shadowsocks_release_target ~ '.tar.xz' }}
+- name: Check installed Shadowsocks Rust version
+  ansible.builtin.command:
+    argv:
+      - "/usr/local/bin/{{ 'ssserver' if mptcp_shadowsocks_endpoint == 'server' else 'sslocal' }}"
+      - --version
+  register: mptcp_shadowsocks_installed_version
+  changed_when: false
+  failed_when: false
+- name: Detect matching Shadowsocks Rust release
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_release_installed: >-
+      {{ mptcp_shadowsocks_installed_version.rc == 0 and (mptcp_shadowsocks_release_version | regex_replace('^v', '')) in mptcp_shadowsocks_installed_version.stdout }}
+- name: Download verified Shadowsocks Rust release
+  ansible.builtin.get_url:
+    url: "{{ mptcp_shadowsocks_release_url }}"
+    dest: "/var/cache/shadowsocks-{{ mptcp_shadowsocks_release_version }}.tar.xz"
+    checksum: "sha256:{{ mptcp_shadowsocks_release_url }}.sha256"
+    mode: '0644'
+  when: not mptcp_shadowsocks_release_installed
+- name: Create Shadowsocks Rust release directory
+  ansible.builtin.file:
+    path: "/usr/local/lib/shadowsocks-rust/{{ mptcp_shadowsocks_release_version }}"
+    state: directory
+    mode: '0755'
+  when: not mptcp_shadowsocks_release_installed
+- name: Decompress Shadowsocks Rust release
+  ansible.builtin.command:
+    argv:
+      - xz
+      - --decompress
+      - --keep
+      - "/var/cache/shadowsocks-{{ mptcp_shadowsocks_release_version }}.tar.xz"
+  args:
+    creates: "/var/cache/shadowsocks-{{ mptcp_shadowsocks_release_version }}.tar"
+  when: not mptcp_shadowsocks_release_installed
+- name: Extract Shadowsocks Rust release
+  ansible.builtin.command:
+    argv:
+      - tar
+      - -xf
+      - "/var/cache/shadowsocks-{{ mptcp_shadowsocks_release_version }}.tar"
+      - -C
+      - "/usr/local/lib/shadowsocks-rust/{{ mptcp_shadowsocks_release_version }}"
+  args:
+    creates: "/usr/local/lib/shadowsocks-rust/{{ mptcp_shadowsocks_release_version }}/{{ 'ssserver' if mptcp_shadowsocks_endpoint == 'server' else 'sslocal' }}"
+  when: not mptcp_shadowsocks_release_installed
+- name: Link Shadowsocks Rust endpoint binary
+  ansible.builtin.file:
+    src: "/usr/local/lib/shadowsocks-rust/{{ mptcp_shadowsocks_release_version }}/{{ 'ssserver' if mptcp_shadowsocks_endpoint == 'server' else 'sslocal' }}"
+    dest: "/usr/local/bin/{{ 'ssserver' if mptcp_shadowsocks_endpoint == 'server' else 'sslocal' }}"
+    state: link
+  when: not mptcp_shadowsocks_release_installed

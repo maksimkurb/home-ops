@@ -1,0 +1,11 @@
+[Unit]
+Description=Shadowsocks Rust server with MPTCP
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/env ssserver -c /etc/shadowsocks-rust/server.json
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -6,20 +6,16 @@ kubernetes:
         k3s-server: {}
     worker:
       hosts: {}
-
 nvidia:
   hosts:
     k3s-server: {}
-
 ubuntu:
   hosts:
     k3s-server: {}
     # vps-1: {}
-
 reverse-proxy:
   hosts:
     vps-3: {}
-
 vpn-server:
   hosts:
     vps-1: {}
@@ -27,11 +23,9 @@ vpn-server:
     vps-4: {}
     # vps-5: {}
     # vps-6: {}
-
 scrutiny-collector:
   hosts:
     pve: {}
-
 iperf3-stats:
   hosts:
     # vps-1:
@@ -44,9 +38,16 @@ iperf3-stats:
     owrt-spb:
       iperf3_server_enabled: true
       iperf3_client_enabled: true
-    #casa-sok:
-    #  iperf3_server_enabled: false
-    #  iperf3_client_enabled: true
+      #casa-sok:
+      #  iperf3_server_enabled: false
+      #  iperf3_client_enabled: true
+# MultiPath TCP:
+mptcp-clients:
+  hosts:
+    owrt-spb: {}
+mptcp-servers:
+  hosts:
+    vps-3: {}
 
 # reverse-proxy:
 #   hosts:

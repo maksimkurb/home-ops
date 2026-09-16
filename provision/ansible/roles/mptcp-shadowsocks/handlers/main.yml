@@ -1,0 +1,10 @@
+---
+- name: Restart Shadowsocks server
+  ansible.builtin.systemd:
+    name: shadowsocks-rust-server
+    state: restarted
+    daemon_reload: true
+  when: ansible_facts['os_family'] == 'Debian'
+- name: Restart Shadowsocks client
+  ansible.builtin.command: /etc/init.d/mptcp-shadowsocks restart
+  changed_when: true

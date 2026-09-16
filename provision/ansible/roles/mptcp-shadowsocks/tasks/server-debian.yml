@@ -1,0 +1,53 @@
+---
+- name: Require Debian server
+  ansible.builtin.assert:
+    that: ansible_facts['os_family'] == 'Debian'
+    fail_msg: mptcp-servers hosts must run Debian.
+- name: Check installed Shadowsocks Rust server version
+  ansible.builtin.command:
+    argv: [ssserver, --version]
+  register: mptcp_shadowsocks_server_version
+  changed_when: false
+  failed_when: false
+- name: Detect matching installed Shadowsocks Rust server
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_server_installed: >-
+      {{ mptcp_shadowsocks_server_version.rc == 0 and (mptcp_shadowsocks_release_version | regex_replace('^v', '')) in mptcp_shadowsocks_server_version.stdout }}
+- name: Install Shadowsocks Rust extraction support on Debian
+  ansible.builtin.apt:
+    name: xz-utils
+    state: present
+    update_cache: true
+  when: not mptcp_shadowsocks_server_installed
+- name: Install official Shadowsocks Rust release on Debian
+  ansible.builtin.include_tasks: install-release.yml
+  when: not mptcp_shadowsocks_server_installed
+- name: Enable MPTCP on Debian
+  ansible.posix.sysctl:
+    name: net.mptcp.enabled
+    value: '1'
+    state: present
+    reload: true
+- name: Create Shadowsocks server configuration directory
+  ansible.builtin.file:
+    path: /etc/shadowsocks-rust
+    state: directory
+    mode: '0755'
+- name: Install Shadowsocks server configuration
+  ansible.builtin.template:
+    src: server.json.j2
+    dest: /etc/shadowsocks-rust/server.json
+    mode: '0600'
+  notify: Restart Shadowsocks server
+- name: Install Shadowsocks server service
+  ansible.builtin.template:
+    src: shadowsocks-rust-server.service.j2
+    dest: /etc/systemd/system/shadowsocks-rust-server.service
+    mode: '0644'
+  notify: Restart Shadowsocks server
+- name: Enable Shadowsocks server
+  ansible.builtin.systemd:
+    name: shadowsocks-rust-server
+    enabled: true
+    state: started
+    daemon_reload: true

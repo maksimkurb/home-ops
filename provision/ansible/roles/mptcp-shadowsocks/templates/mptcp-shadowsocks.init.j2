@@ -1,0 +1,30 @@
+#!/bin/sh /etc/rc.common
+USE_PROCD=1
+START=99
+STOP=01
+
+start_service() {
+  procd_open_instance
+  procd_set_param command /usr/local/bin/sslocal -c /etc/shadowsocks-rust-client.json
+  procd_set_param respawn
+  procd_set_param stdout 1
+  procd_set_param stderr 1
+  procd_close_instance
+{% if mptcp_shadowsocks_client.default_route %}
+  for _ in $(seq 1 10); do
+    ip link show dev {{ mptcp_shadowsocks_client.tun_name }} >/dev/null 2>&1 && {
+      ip route replace default dev {{ mptcp_shadowsocks_client.tun_name }}
+      return
+    }
+    sleep 1
+  done
+  return 1
+{% endif %}
+}
+
+stop_service() {
+  :
+{% if mptcp_shadowsocks_client.default_route %}
+  ip route del default dev {{ mptcp_shadowsocks_client.tun_name }} 2>/dev/null || true
+{% endif %}
+}

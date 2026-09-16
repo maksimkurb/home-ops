@@ -1,0 +1,19 @@
+---
+- name: Install MPTCP Shadowsocks servers
+  hosts: mptcp-servers
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - role: mptcp-shadowsocks
+      vars:
+        mptcp_shadowsocks_endpoint: server
+- name: Install MPTCP Shadowsocks clients
+  hosts: mptcp-clients
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - role: mptcp-shadowsocks
+      vars:
+        mptcp_shadowsocks_endpoint: client

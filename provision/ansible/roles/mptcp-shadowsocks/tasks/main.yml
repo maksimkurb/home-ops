@@ -1,0 +1,46 @@
+---
+- name: Require a valid endpoint
+  ansible.builtin.assert:
+    that:
+      - mptcp_shadowsocks_endpoint in ['client', 'server']
+      - mptcp_shadowsocks_endpoint != 'client' or mptcp_shadowsocks_client.server_address | length > 0
+    fail_msg: Set mptcp_shadowsocks_client.server_address for client hosts.
+- name: Create controller-local key directory
+  ansible.builtin.file:
+    path: "{{ mptcp_shadowsocks_shared.key_path | dirname }}"
+    state: directory
+    mode: '0700'
+  delegate_to: localhost
+  become: false
+  run_once: true
+- name: Generate controller-local Shadowsocks private key
+  ansible.builtin.command:
+    argv: [openssl, rand, -base64, '32']
+  args:
+    creates: "{{ mptcp_shadowsocks_shared.key_path }}"
+  register: mptcp_shadowsocks_key
+  delegate_to: localhost
+  become: false
+  run_once: true
+  no_log: true
+- name: Save generated Shadowsocks private key # noqa no-handler
+  ansible.builtin.copy:
+    content: "{{ mptcp_shadowsocks_key.stdout }}\n"
+    dest: "{{ mptcp_shadowsocks_shared.key_path }}"
+    mode: '0600'
+  delegate_to: localhost
+  become: false
+  run_once: true
+  when: mptcp_shadowsocks_key.changed
+  no_log: true
+  changed_when: false
+- name: Read controller-local Shadowsocks private key
+  ansible.builtin.set_fact:
+    mptcp_shadowsocks_key_value: "{{ lookup('ansible.builtin.file', mptcp_shadowsocks_shared.key_path) }}"
+  no_log: true
+- name: Configure Debian server
+  ansible.builtin.include_tasks: server-debian.yml
+  when: mptcp_shadowsocks_endpoint == 'server'
+- name: Configure OpenWrt client
+  ansible.builtin.include_tasks: client-openwrt.yml
+  when: mptcp_shadowsocks_endpoint == 'client'

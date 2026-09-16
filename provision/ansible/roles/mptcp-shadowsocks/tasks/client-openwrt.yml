@@ -1,0 +1,37 @@
+---
+- name: Install Shadowsocks Rust extraction support and TUN on OpenWrt
+  community.general.apk:
+    name:
+      - ca-bundle
+      - kmod-tun
+      - xz
+    state: present
+    update_cache: true
+- name: Install official Shadowsocks Rust release on OpenWrt
+  ansible.builtin.include_tasks: install-release.yml
+- name: Enable MPTCP on OpenWrt
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/99-mptcp.conf
+    content: "net.mptcp.enabled=1\n"
+    mode: '0644'
+- name: Apply MPTCP setting on OpenWrt
+  ansible.builtin.command: sysctl -w net.mptcp.enabled=1
+  changed_when: false
+- name: Install Shadowsocks client configuration
+  ansible.builtin.template:
+    src: client.json.j2
+    dest: /etc/shadowsocks-rust-client.json
+    mode: '0600'
+  notify: Restart Shadowsocks client
+- name: Install Shadowsocks OpenWrt service
+  ansible.builtin.template:
+    src: mptcp-shadowsocks.init.j2
+    dest: /etc/init.d/mptcp-shadowsocks
+    mode: '0755'
+  notify: Restart Shadowsocks client
+- name: Enable Shadowsocks client
+  ansible.builtin.command: /etc/init.d/mptcp-shadowsocks enable
+  changed_when: false
+- name: Start Shadowsocks client
+  ansible.builtin.command: /etc/init.d/mptcp-shadowsocks start
+  changed_when: false

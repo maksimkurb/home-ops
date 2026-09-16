@@ -1,0 +1,8 @@
+{
+  "server": "{{ mptcp_shadowsocks_server.listen_address }}",
+  "server_port": {{ mptcp_shadowsocks_server.port }},
+  "method": "{{ mptcp_shadowsocks_server.method }}",
+  "password": "{{ mptcp_shadowsocks_key_value }}",
+  "mode": "tcp_and_udp",
+  "mptcp": true
+}

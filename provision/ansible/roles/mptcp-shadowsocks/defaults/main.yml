@@ -1,0 +1,31 @@
+---
+# Generated once on the Ansible controller; this directory is gitignored.
+mptcp_shadowsocks_shared:
+  key_name: default
+  key_path: "{{ playbook_dir }}/../../mptcp-shadowsocks-state/{{ mptcp_shadowsocks_shared.key_name }}.key"
+# Official https://github.com/shadowsocks/shadowsocks-rust release.
+mptcp_shadowsocks_release_version: v1.25.0
+mptcp_shadowsocks_release_targets:
+  Debian:
+    x86_64: x86_64-unknown-linux-gnu
+    aarch64: aarch64-unknown-linux-gnu
+    armv7l: armv7-unknown-linux-gnueabihf
+  OpenWrt:
+    x86_64: x86_64-unknown-linux-musl
+    aarch64: aarch64-unknown-linux-musl
+    armv7l: armv7-unknown-linux-musleabihf
+# Debian server-side settings.
+mptcp_shadowsocks_server:
+  listen_address: 0.0.0.0
+  port: 8388
+  method: 2022-blake3-aes-256-gcm
+# OpenWrt client-side settings. By default, use the first mptcp-servers host's
+# ansible_host; set server_address explicitly when that is not its public address.
+# OpenWrt's UCI multipath=on/master/backup/handover settings select WAN paths.
+mptcp_shadowsocks_client:
+  server_address: >-
+    {{ hostvars[groups['mptcp-servers'][0]].ansible_host | default(groups['mptcp-servers'][0], true) }}
+  tun_name: ss-tun
+  tun_address: 198.18.0.1/30
+  tun_mtu: 1400
+  default_route: false
