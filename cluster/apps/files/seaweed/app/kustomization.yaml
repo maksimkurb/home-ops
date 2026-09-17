@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: files
 resources:
   - helm-release.yaml
+  - network-policy.yaml
   - secret.sops.yaml
