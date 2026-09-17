@@ -1,3 +1,4 @@
+---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -27,6 +28,22 @@ spec:
     kind: GitRepository
     name: flux-cluster
   targetNamespace: downloads
+  dependsOn:
+    - name: traefik-crds
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: authelia-chain-files
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./cluster/apps/networking/traefik/authelia-chain
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-cluster
+  targetNamespace: files
   dependsOn:
     - name: traefik-crds
 ---
