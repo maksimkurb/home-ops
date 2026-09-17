@@ -11,7 +11,7 @@ data:
       connect-src:
         - "'self'"
         - 'blob:'
-        - 'https://auth.${SECRET_PUBLIC_DOMAIN}/'
+        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
         - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
         - 'https://update.opencloud.eu/'
       default-src:
@@ -24,11 +24,13 @@ data:
         - "'self'"
         - 'blob:'
         - 'https://embed.diagrams.net/'
+        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
       img-src:
         - "'self'"
         - 'data:'
         - 'blob:'
         - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
+        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
       manifest-src:
         - "'self'"
       media-src:

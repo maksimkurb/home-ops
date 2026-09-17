@@ -60,12 +60,8 @@ spec:
           - name: public
             sectionName: websecure-public
             namespace: networking
-          - name: private
-            sectionName: websecure-private
-            namespace: networking
         hostnames:
           - echo-server-auth.${SECRET_PUBLIC_DOMAIN}
-          - echo-server-auth.${SECRET_PRIVATE_DOMAIN}
         rules:
           - matches:
               - path:
@@ -84,6 +80,29 @@ spec:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+      auth-home:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - echo-server-auth.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 8080
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: oidc-authenticated
       home:
         enabled: true
         kind: HTTPRoute
