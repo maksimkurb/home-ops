@@ -42,6 +42,7 @@ spec:
               OC_INSECURE: 'false'
               OC_EXCLUDE_RUN_SERVICES: idp
               OC_OIDC_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
+              PROXY_CSP_CONFIG_FILE_LOCATION: /etc/opencloud-csp/csp.yaml
               WEB_OIDC_CLIENT_ID: opencloud
               WEB_OIDC_SCOPE: openid profile email groups offline_access
               PROXY_OIDC_REWRITE_WELLKNOWN: 'true'
@@ -108,6 +109,13 @@ spec:
           gethomepage.dev/icon: opencloud
           gethomepage.dev/name: OpenCloud
     persistence:
+      csp:
+        type: configMap
+        name: opencloud-csp
+        globalMounts:
+          - path: /etc/opencloud-csp/csp.yaml
+            subPath: csp.yaml
+            readOnly: true
       config:
         storageClass: local-path
         accessMode: ReadWriteOnce
