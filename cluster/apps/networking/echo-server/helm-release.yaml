@@ -75,7 +75,7 @@ spec:
                 extensionRef:
                   group: traefik.io
                   kind: Middleware
-                  name: oidc-internal
+                  name: oidc-authenticated
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
