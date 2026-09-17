@@ -6,3 +6,4 @@ resources:
   - configmap.yaml
   - helm-release.yaml
   - proxy-configmap.yaml
+  - secret.sops.yaml

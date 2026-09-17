@@ -56,6 +56,20 @@ spec:
               PROXY_USER_CS3_CLAIM: username
               GRAPH_ASSIGN_DEFAULT_USER_ROLE: 'false'
               GRAPH_USERNAME_MATCH: none
+              STORAGE_USERS_DRIVER: decomposeds3
+              STORAGE_USERS_DECOMPOSEDS3_ENDPOINT: http://seaweed:8333
+              STORAGE_USERS_DECOMPOSEDS3_REGION: default
+              STORAGE_USERS_DECOMPOSEDS3_BUCKET: opencloud
+              STORAGE_USERS_DECOMPOSEDS3_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: opencloud
+                    key: AWS_ACCESS_KEY_ID
+              STORAGE_USERS_DECOMPOSEDS3_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: opencloud
+                    key: AWS_SECRET_ACCESS_KEY
             probes:
               liveness: &probe
                 enabled: true

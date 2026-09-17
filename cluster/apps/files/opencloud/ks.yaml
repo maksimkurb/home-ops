@@ -17,6 +17,8 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-cluster
+  dependsOn:
+    - name: seaweed
   wait: false
   decryption:
     provider: sops
