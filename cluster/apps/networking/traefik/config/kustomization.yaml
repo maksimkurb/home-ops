@@ -10,5 +10,4 @@ resources:
   - ingress-classes.yaml
   - tls-store.yaml
   - middlewares.yaml
-  - canary-routes.yaml
   - dashboard-route.yaml

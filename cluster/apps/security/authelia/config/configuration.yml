@@ -68,11 +68,6 @@ access_control:
         - "qbittorrent.${SECRET_PRIVATE_DOMAIN}"
       policy: one_factor
       subject: "group:media"
-    # ponytail: test endpoints share the internal group; remove them once gateway testing moves elsewhere.
-    - domain:
-        - "echo-server-auth.${SECRET_PUBLIC_DOMAIN}"
-      policy: one_factor
-      subject: "group:internal"
 telemetry:
   metrics:
     enabled: true
@@ -262,6 +257,7 @@ identity_providers:
           - https://alertmanager.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
           - https://capacitor.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
           - https://echo-server-auth.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
+          - https://echo-server-auth.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
           - https://frigate.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
           - https://gatus.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
           - https://hass-config.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback

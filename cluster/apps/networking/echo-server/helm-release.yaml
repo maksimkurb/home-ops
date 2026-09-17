@@ -60,8 +60,12 @@ spec:
           - name: public
             sectionName: websecure-public
             namespace: networking
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
         hostnames:
           - echo-server-auth.${SECRET_PUBLIC_DOMAIN}
+          - echo-server-auth.${SECRET_PRIVATE_DOMAIN}
         rules:
           - matches:
               - path:
