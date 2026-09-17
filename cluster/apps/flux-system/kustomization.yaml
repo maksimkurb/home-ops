@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - dashboard
   - namespace.yaml
+  - oidc.yaml
   - monitoring
   - notifications
   - webhook

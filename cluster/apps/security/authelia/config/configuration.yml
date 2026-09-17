@@ -283,6 +283,7 @@ identity_providers:
           - https://qbittorrent.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
           - https://radarr.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
           - https://scanservjs.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
+          - https://seaweed.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
           - https://scrutiny.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
           - https://snapotter.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
           - https://sonarr.${SECRET_PUBLIC_DOMAIN}/_gateway-oidc/callback
