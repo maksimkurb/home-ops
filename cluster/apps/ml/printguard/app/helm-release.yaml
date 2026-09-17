@@ -109,6 +109,11 @@ spec:
             namespace: networking
         hostnames:
           - printguard.${SECRET_PRIVATE_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: mdi-printer-eye
+          gethomepage.dev/name: PrintGuard (3D printing monitoring)
         rules:
           - matches:
               - path:

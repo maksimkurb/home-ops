@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -118,6 +119,11 @@ spec:
             namespace: networking
         hostnames:
           - mcphub.${SECRET_PRIVATE_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: mdi-hub
+          gethomepage.dev/name: MCPHub
         rules:
           - matches:
               - path:

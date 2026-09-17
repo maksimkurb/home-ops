@@ -1,3 +1,4 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -7,6 +8,10 @@ metadata:
     external-dns.kubernetes.io/enabled: 'true'
     external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Tools
+    gethomepage.dev/icon: mdi-routes
+    gethomepage.dev/name: Envrouter
 spec:
   parentRefs:
     - name: public

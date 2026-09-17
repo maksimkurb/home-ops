@@ -6,6 +6,10 @@ metadata:
   annotations:
     external-dns.kubernetes.io/enabled: 'true'
     external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: traefik
+    gethomepage.dev/name: Traefik
 spec:
   hostnames:
     - traefik.${SECRET_PUBLIC_DOMAIN}

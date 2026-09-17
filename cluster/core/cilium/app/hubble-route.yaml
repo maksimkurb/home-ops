@@ -4,6 +4,11 @@ kind: HTTPRoute
 metadata:
   name: hubble-ui
   namespace: kube-system
+  annotations:
+    gethomepage.dev/enabled: 'true'
+    gethomepage.dev/group: Maintenance
+    gethomepage.dev/icon: cilium
+    gethomepage.dev/name: Hubble UI
 spec:
   parentRefs:
     - name: private
