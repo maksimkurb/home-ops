@@ -4,7 +4,6 @@
     path: "/opt/signal-tls-proxy"
     state: directory
     mode: '0755'
-
 - name: Signal TLS Proxy / Create Dockerfile
   template:
     src: Dockerfile.j2
@@ -12,7 +11,6 @@
     owner: root
     group: root
     mode: '0644'
-
 - name: Signal TLS Proxy / Create docker-compose.yml file
   template:
     src: docker-compose.yml.j2
@@ -20,12 +18,10 @@
     owner: root
     group: root
     mode: '0644'
-
 - name: Signal TLS Proxy / Deploy with docker-compose
   community.docker.docker_compose_v2:
     project_src: "/opt/signal-tls-proxy"
     state: present
-
 - name: Signal TLS Proxy / Restart with docker-compose
   community.docker.docker_compose_v2:
     project_src: "/opt/signal-tls-proxy"

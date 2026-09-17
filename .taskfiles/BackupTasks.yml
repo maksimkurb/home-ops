@@ -1,8 +1,6 @@
 ---
 version: "3"
-
 tasks:
-
   volume:
     desc: Create a job to backup an app (ex. task PVC=plex-config-v1 backup:volume)
     interactive: true

@@ -40,7 +40,6 @@ spec:
     sandboxWorkloads:
       enabled: false
       defaultWorkload: "container"
-
     toolkit:
       enabled: true
       env:
@@ -52,7 +51,6 @@ spec:
           value: nvidia
         - name: CONTAINERD_SET_AS_DEFAULT
           value: "true"
-
     devicePlugin:
       enabled: true
       config:

@@ -1,10 +1,8 @@
 ---
 name: Renovate
-
 permissions:
   contents: read
   packages: read
-
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
@@ -27,13 +25,11 @@ on: # yamllint disable-line rule:truthy
       - ".github/renovate-automerge-all.json5"
       - ".github/renovate/**.json5"
       - ".github/workflows/renovate.yaml"
-
 env:
   LOG_LEVEL: debug
   DRY_RUN: false
   RENOVATE_DRY_RUN: false
   RENOVATE_CONFIG_FILE: .github/renovate.json5
-
 jobs:
   renovate:
     if: github.event_name != 'workflow_dispatch'
@@ -42,19 +38,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
       - name: Generate Token
         uses: tibdex/github-app-token@v2
         id: generate-token
         with:
           app_id: "${{ secrets.BOT_APP_ID }}"
           private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
-
       - name: Renovate
         uses: renovatebot/github-action@v46.3.0
         env:
           RENOVATE_HOST_RULES: >-
             [
+
               {
                 "hostType": "docker",
                 "matchHost": "ghcr.io",
@@ -65,7 +60,6 @@ jobs:
         with:
           configurationFile: "${{ env.RENOVATE_CONFIG_FILE }}"
           token: "x-access-token:${{ steps.generate-token.outputs.token }}"
-
   automerge-all:
     if: github.event_name == 'workflow_dispatch'
     name: Renovate - Automerge all
@@ -75,25 +69,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
       - name: Generate Token
         uses: tibdex/github-app-token@v2
         id: generate-token
         with:
           app_id: "${{ secrets.BOT_APP_ID }}"
           private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
-
       - name: Override default config from dispatch variables
         run: |
           echo "DRY_RUN=${{ github.event.inputs.dryRun || env.DRY_RUN }}" >> "${GITHUB_ENV}"
           echo "RENOVATE_DRY_RUN=${{ github.event.inputs.dryRun || env.RENOVATE_DRY_RUN }}" >> "${GITHUB_ENV}"
           echo "LOG_LEVEL=${{ github.event.inputs.logLevel || env.LOG_LEVEL }}" >> "${GITHUB_ENV}"
-
       - name: Renovate
         uses: renovatebot/github-action@v46.3.0
         env:
           RENOVATE_HOST_RULES: >-
             [
+
               {
                 "hostType": "docker",
                 "matchHost": "ghcr.io",

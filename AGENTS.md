@@ -17,6 +17,7 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - `ks.yaml` normally enables SOPS decryption and injects `cluster-settings` plus `cluster-secrets` with `postBuild.substituteFrom`.
 - App folders usually contain `app/kustomization.yaml`, `app/helm-release.yaml`, and optional PVC, ConfigMap, certificate, dashboard, or non-secret config files.
 - Prefer the existing bjw-s `app-template` HelmRelease pattern before adding new chart structure.
+- When a new namespace uses an `oidc-*` Traefik middleware, add an `authelia-chain-<namespace>` Flux Kustomization to `cluster/apps/networking/traefik/authelia-chains.yaml` so the middleware is replicated into that namespace.
 
 ## Service Configuration
 

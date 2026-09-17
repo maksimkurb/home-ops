@@ -1,5 +1,4 @@
 ---
-
 - hosts:
     - cctv-server
   become: true

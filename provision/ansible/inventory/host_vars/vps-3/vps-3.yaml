@@ -1,5 +1,5 @@
+---
 enable_unattended_upgrades: false
-
 traefik_enabled: true
 vpn_wan_interface: ens6
 vpn_xui_enabled: false

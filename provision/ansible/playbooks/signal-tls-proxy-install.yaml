@@ -1,5 +1,4 @@
 ---
-
 - hosts:
     - signal-tls-proxy
   become: true

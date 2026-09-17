@@ -9,7 +9,6 @@
   register: apt_upgrade
   retries: 5
   until: apt_upgrade is success
-
 - name: Install common packages
   ansible.builtin.apt:
     name:
@@ -32,7 +31,6 @@
   register: apt_install_common
   retries: 5
   until: apt_install_common is success
-
 - name: Install additional packages
   ansible.builtin.apt:
     name: "{{ apt_packages | default([]) }}"
@@ -41,7 +39,6 @@
     cache_valid_time: 3600
     autoclean: true
     autoremove: true
-
 - name: Copy 20auto-upgrades unattended-upgrades config
   ansible.builtin.blockinfile:
     path: /etc/apt/apt.conf.d/20auto-upgrades
@@ -53,7 +50,6 @@
       APT::Periodic::AutocleanInterval "7";
       APT::Periodic::Unattended-Upgrade "1";
   when: enable_unattended_upgrades
-
 - name: Copy 50unattended-upgrades unattended-upgrades config
   ansible.builtin.blockinfile:
     path: /etc/apt/apt.conf.d/50unattended-upgrades
@@ -72,14 +68,12 @@
           "libnvidia-";
       };
   when: enable_unattended_upgrades
-
 - name: Start unattended-upgrades service
   ansible.builtin.systemd:
     name: unattended-upgrades
     enabled: true
     state: started
   when: enable_unattended_upgrades
-
 - name: Restart unattended-upgrades service
   ansible.builtin.service:
     name: unattended-upgrades.service
@@ -87,7 +81,6 @@
     enabled: true
     state: restarted
   when: enable_unattended_upgrades
-
 - name: Stop and disable unattended-upgrades service
   ansible.builtin.systemd:
     name: unattended-upgrades
@@ -95,13 +88,11 @@
     state: stopped
   when: not (enable_unattended_upgrades)
   ignore_errors: true
-
 - name: Remove 20auto-upgrades unattended-upgrades config
   ansible.builtin.file:
     path: /etc/apt/apt.conf.d/20auto-upgrades
     state: absent
   when: not (enable_unattended_upgrades)
-
 - name: Remove 50unattended-upgrades unattended-upgrades config
   ansible.builtin.file:
     path: /etc/apt/apt.conf.d/50unattended-upgrades

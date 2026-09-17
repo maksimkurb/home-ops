@@ -5,7 +5,6 @@
 # ============================================================================
 # TELEGRAM PROXIES
 # ============================================================================
-
 vpn_tgproxy_mtproto_enabled: false
 vpn_tgproxy_mtproto: []
 vpn_warp_enabled: true
@@ -37,7 +36,6 @@ vpn_server:
       ppa_release: noble
       # Client-state names reconciled by the gateway config-update workflow.
       clients: []
-
     # AWG 1.5-compatible listener. Preserve its values for existing clients.
     awg15:
       # Linux interface name and UDP listen port.
@@ -57,7 +55,6 @@ vpn_server:
         H2: "922222222"
         H3: "933333333"
         H4: "944444444"
-
     # AWG 2.x listener. It uses a separate IPv4 range and UDP port.
     awg20:
       # Linux interface name and UDP listen port.
@@ -79,7 +76,6 @@ vpn_server:
         H4: "1300000000-1349999999"
         S3: 0
         S4: 0
-
   # Cloudflare WARP is the optional outbound interface managed by wgcf.
   wgcf:
     # Linux WireGuard interface name used as the WARP egress.
@@ -94,7 +90,6 @@ vpn_server:
     version: "2.2.32"
     # Keep the WARP NAT mapping alive while the gateway has no client traffic.
     persistent_keepalive: 25
-
   # keen-pbr selects WARP or WAN for traffic arriving through AWG.
   keen_pbr:
     # keen-pbr Debian package variant.
@@ -119,7 +114,6 @@ vpn_server:
       # Browser origins permitted to call the API.
       allowed_origins:
         - "http://localhost:5173"
-
 # Argon2id hash required when vpn_server.keen_pbr.api.enabled is true.
 # Define this secret in encrypted inventory; never put it in awg.yaml.
 keen_pbr_api_password_hash: ""

@@ -7,7 +7,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Deploy iperf3 init.d script
   ansible.builtin.template:
     src: iperf3.init.j2
@@ -19,7 +18,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Enable iperf3 service on OpenWRT
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 enable
@@ -27,7 +25,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Start iperf3 service on OpenWRT
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 start

@@ -2,7 +2,6 @@
 # ============================================================================
 # Server Tasks
 # ============================================================================
-
 - name: Include server tasks for Ubuntu/Debian
   ansible.builtin.include_tasks: server-ubuntu.yml
   when:
@@ -11,7 +10,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Include server tasks for OpenWRT
   ansible.builtin.include_tasks: server-openwrt.yml
   when:
@@ -20,11 +18,9 @@
   tags:
     - iperf3
     - iperf3-server
-
 # ============================================================================
 # Client Tasks
 # ============================================================================
-
 - name: Include client tasks for Ubuntu/Debian
   ansible.builtin.include_tasks: client-ubuntu.yml
   when:
@@ -33,7 +29,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Include client tasks for OpenWRT
   ansible.builtin.include_tasks: client-openwrt.yml
   when:

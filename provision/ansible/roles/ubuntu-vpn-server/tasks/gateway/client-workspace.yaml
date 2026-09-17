@@ -5,7 +5,6 @@
   become: false
   register: local_repo_root
   changed_when: false
-
 - name: Create local client-state and output directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -16,7 +15,6 @@
     - "{{ local_repo_root.stdout }}/provision/vpn-server-awg-configs/{{ inventory_hostname }}"
   delegate_to: localhost
   become: false
-
 - name: Install local client-state allocator
   ansible.builtin.template:
     src: awg-client-state.py.j2

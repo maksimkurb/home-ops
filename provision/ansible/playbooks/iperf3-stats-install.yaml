@@ -1,5 +1,4 @@
 ---
-
 - hosts:
     - iperf3-stats
   become: true

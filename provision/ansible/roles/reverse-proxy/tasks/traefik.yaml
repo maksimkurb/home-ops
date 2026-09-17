@@ -4,19 +4,16 @@
     path: "/opt/traefik"
     state: directory
     mode: '0755'
-
 - name: Traefik / Determine port openings with IPv6
   set_fact:
     traefik_ipv6_ports: |
       - "{{ '[' + external_ipv6 + ']:80:80' }}"
       - "{{ '[' + external_ipv6 + ']:443:443' }}"
   when: external_ipv6 is defined
-
 - name: Traefik / Set default port openings
   set_fact:
     traefik_ipv6_ports: ""
   when: external_ipv6 is undefined
-
 - name: Traefik / Create docker-compose.yml file
   template:
     src: traefik-docker-compose.yml.j2
@@ -24,7 +21,6 @@
     owner: root
     group: root
     mode: '0644'
-
 - name: Traefik / Create config file
   template:
     src: traefik-config.yml.j2
@@ -32,17 +28,14 @@
     owner: root
     group: root
     mode: '0644'
-
 - name: Traefik / Deploy with docker-compose
   community.docker.docker_compose_v2:
     project_src: "/opt/traefik"
     state: present
-
 - name: Traefik / Restart with docker-compose
   community.docker.docker_compose_v2:
     project_src: "/opt/traefik"
     state: restarted
-
 - name: Traefik / Show DoH proxy endpoints
   ansible.builtin.debug:
     msg: |

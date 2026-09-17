@@ -1,3 +1,4 @@
+---
 apiVersion: acid.zalan.do/v1
 kind: postgresql
 metadata:
@@ -63,5 +64,5 @@ spec:
         pg-volume: homelab-pgsql-data
     size: 10Gi
   clone:
-    cluster: "homelab-pgsql"  # Inplace restore when having the same cluster name as the source
-    timestamp: "2024-02-27T18:00:00+04:00"  # timezone required (offset relative to UTC, see RFC 3339 section 5.6)
+    cluster: "homelab-pgsql" # Inplace restore when having the same cluster name as the source
+    timestamp: "2024-02-27T18:00:00+04:00" # timezone required (offset relative to UTC, see RFC 3339 section 5.6)

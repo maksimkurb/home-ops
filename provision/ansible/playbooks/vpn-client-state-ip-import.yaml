@@ -3,7 +3,6 @@
   hosts: "{{ target | default('vpn-server') }}"
   gather_facts: false
   any_errors_fatal: true
-
   tasks:
     - name: Import client IP assignments
       ansible.builtin.include_role:

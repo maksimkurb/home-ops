@@ -5,7 +5,6 @@
     value: "524288"
     state: present
     sysctl_file: /etc/sysctl.d/98-kubernetes-fs.conf
-
 - name: Update max_user_instances
   ansible.posix.sysctl:
     name: fs.inotify.max_user_instances

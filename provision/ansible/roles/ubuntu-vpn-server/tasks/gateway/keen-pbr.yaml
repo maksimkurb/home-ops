@@ -3,34 +3,30 @@
   ansible.builtin.set_fact:
     keen_pbr_arch: >-
       {{
+
         {
           'x86_64': 'amd64',
           'aarch64': 'arm64'
         }.get(ansible_facts["architecture"], '')
       }}
-
 - name: Validate keen-pbr architecture
   ansible.builtin.assert:
     that:
       - keen_pbr_arch | length > 0
       - keen_pbr_package in ["keen-pbr", "keen-pbr-headless"]
-
 - name: Resolve keen-pbr APT release
   ansible.builtin.set_fact:
     keen_pbr_apt_release: "{{ 'bookworm' if ansible_facts['distribution'] == 'Ubuntu' else ansible_facts['distribution_release'] }}"
-
 - name: Install keen-pbr repository signing key
   ansible.builtin.get_url:
     url: https://repo.keen-pbr.fyi/keys/debian_public.pem
     dest: /usr/share/keyrings/keen-pbr-archive-keyring.asc
     mode: "0644"
-
 - name: Configure keen-pbr APT repository
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/keen-pbr-archive-keyring.asc] https://repo.keen-pbr.fyi/repository/main/debian/{{ keen_pbr_apt_release }}/{{ keen_pbr_arch }} ./"
     filename: keen-pbr
     state: present
-
 - name: Install keen-pbr package
   ansible.builtin.apt:
     name: "{{ keen_pbr_package }}"
@@ -38,6 +34,5 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
     KEEN_PBR_REPLACE_DNSMASQ_DEFAULTS: "Y"
-
 - name: Apply keen-pbr configuration
   ansible.builtin.import_tasks: gateway/keen-pbr-config.yaml

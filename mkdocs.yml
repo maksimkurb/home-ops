@@ -3,11 +3,9 @@ site_name: Toboshii | Home Cluster
 site_description: My home Kubernetes (k3s) cluster managed by GitOps (Flux2)
 site_author: Toboshii Nakama
 site_url: https://toboshii.github.io/home-cluster/
-
 repo_name: toboshii/home-cluster
 repo_url: https://github.com/toboshii/home-cluster
 edit_uri: "edit/main/docs/"
-
 theme:
   name: material
   icon:
@@ -39,18 +37,14 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-
 docs_dir: ./docs
-
 extra_css:
   - _static/custom.css
-
 # Plugins
 plugins:
   - search
   - minify:
       minify_html: true
-
 # Customization
 extra:
   social:
@@ -60,7 +54,6 @@ extra:
       link: https://discord.gg/sTMX7Vh
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/u/toboshii
-
 # Extensions
 markdown_extensions:
   - admonition
@@ -100,7 +93,6 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-
 # Page tree
 nav:
   - Introduction: index.md

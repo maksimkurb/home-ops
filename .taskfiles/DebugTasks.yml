@@ -1,13 +1,10 @@
 ---
 version: "3"
-
 tasks:
-
   network:
     desc: Create a netshoot container for debugging
     cmds:
       - kubectl run netshoot --rm -i --tty --image ghcr.io/nicolaka/netshoot:latest {{.CLI_ARGS}}
-
   volume:
     desc: |-
       Create a container for debugging a PVC (ex. task PVC=plex-config-v1 debug:volume)

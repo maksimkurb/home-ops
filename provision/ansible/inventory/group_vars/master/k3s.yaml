@@ -5,7 +5,6 @@
 # (bool) Specify if a host (or host group) are part of the control plane
 k3s_control_node: true
 k3s_build_cluster: false
-
 # (dict) k3s settings for all control-plane nodes
 k3s_server:
   node-ip: "{{ node_ip }}"

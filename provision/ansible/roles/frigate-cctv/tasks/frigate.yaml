@@ -4,13 +4,11 @@
     path: "/opt/frigate"
     state: directory
     mode: '0755'
-
 - name: CCTV / Create Frigate media directory
   file:
     path: "/opt/frigate/media"
     state: directory
     mode: '0755'
-
 - name: CCTV / Create Frigate config
   copy:
     dest: /opt/frigate/config.yml
@@ -18,7 +16,6 @@
     owner: root
     group: root
     mode: '0600'
-
 - name: CCTV / Create docker-compose.yml file
   template:
     dest: /opt/frigate/docker-compose.yml
@@ -26,7 +23,6 @@
     owner: root
     group: root
     mode: '0600'
-
 - name: CCTV / Deploy with docker-compose
   community.docker.docker_compose_v2:
     project_src: /opt/frigate

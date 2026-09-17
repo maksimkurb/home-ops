@@ -8,7 +8,6 @@
     state: present
     update_cache: true
   become: true
-
 - name: Create scrutiny directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -20,12 +19,10 @@
     - "{{ scrutiny_collector_install_dir }}"
     - "{{ scrutiny_collector_config_dir }}"
   become: true
-
 - name: Check if scrutiny-collector binary exists
   ansible.builtin.stat:
     path: "{{ scrutiny_collector_install_dir }}/scrutiny-collector-metrics"
   register: scrutiny_binary
-
 - name: Get current scrutiny-collector version
   ansible.builtin.command:
     cmd: "{{ scrutiny_collector_install_dir }}/scrutiny-collector-metrics --version"
@@ -33,7 +30,6 @@
   when: scrutiny_binary.stat.exists
   changed_when: false
   failed_when: false
-
 - name: Download scrutiny-collector binary
   ansible.builtin.get_url:
     url: "https://github.com/AnalogJ/scrutiny/releases/download/{{ scrutiny_collector_version }}/scrutiny-collector-metrics-linux-{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
@@ -44,7 +40,6 @@
     force: true
   become: true
   when: not scrutiny_binary.stat.exists or (current_version.stdout is defined and scrutiny_collector_version not in current_version.stdout)
-
 - name: Deploy scrutiny-collector configuration
   ansible.builtin.template:
     src: collector.yaml.j2
@@ -53,7 +48,6 @@
     group: root
     mode: "0644"
   become: true
-
 - name: Create cron job for scrutiny-collector
   ansible.builtin.cron:
     name: "scrutiny-collector metrics"

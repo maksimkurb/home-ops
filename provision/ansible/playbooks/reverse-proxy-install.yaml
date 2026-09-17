@@ -1,5 +1,4 @@
 ---
-
 - hosts:
     - reverse-proxy
   become: true

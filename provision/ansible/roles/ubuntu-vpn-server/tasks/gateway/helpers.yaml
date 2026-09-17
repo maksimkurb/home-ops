@@ -6,7 +6,6 @@
     owner: root
     group: root
     mode: "0755"
-
 - name: Install peer loader
   ansible.builtin.template:
     src: awg-load-peers.sh.j2

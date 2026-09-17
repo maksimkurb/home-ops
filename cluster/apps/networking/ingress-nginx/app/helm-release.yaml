@@ -47,7 +47,6 @@ spec:
         default: true
       allowSnippetAnnotations: true
       terminationGracePeriodSeconds: 60
-
       # CROWDSEC START
       image:
         PullPolicy: IfNotPresent
@@ -79,12 +78,7 @@ spec:
               value: "/etc/nginx/lua/plugins/crowdsec/templates/ban.html"
             - name: CAPTCHA_TEMPLATE_PATH
               value: "/etc/nginx/lua/plugins/crowdsec/templates/captcha.html"
-          command:
-            [
-              "sh",
-              "-c",
-              "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/",
-            ]
+          command: ["sh", "-c", "sh /docker_start.sh; mkdir -p /lua_plugins/crowdsec/; cp -R /crowdsec/* /lua_plugins/crowdsec/"]
           volumeMounts:
             - name: crowdsec-bouncer-plugin
               mountPath: /lua_plugins
@@ -93,7 +87,6 @@ spec:
           mountPath: /etc/nginx/lua/plugins/crowdsec
           subPath: crowdsec
       # CROWDSEC END
-
 
       config:
         # CROWDSEC START

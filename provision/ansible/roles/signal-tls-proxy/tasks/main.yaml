@@ -1,5 +1,4 @@
 ---
-
 - import_tasks: signal_tls_proxy.yaml
   tags:
     - signal-tls-proxy

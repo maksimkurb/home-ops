@@ -5,7 +5,6 @@
   become: false
   register: client_ip_import_repo_root
   changed_when: false
-
 - name: Install local legacy-IP importer
   ansible.builtin.template:
     src: awg-import-legacy-ips.py.j2
@@ -13,7 +12,6 @@
     mode: "0700"
   delegate_to: localhost
   become: false
-
 - name: Import legacy client addresses from generated configs
   ansible.builtin.command:
     argv:

@@ -16,7 +16,6 @@
         curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
           | gpg --dearmor --yes -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
       changed_when: true
-
     - name: Create nvidia-container-toolkit sources file (DEB822 format)
       ansible.builtin.copy:
         dest: /etc/apt/sources.list.d/libnvidia-container.sources
@@ -27,7 +26,6 @@
           Suites: /
           Signed-By: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
         mode: '0644'
-
     - name: Upgrade all system packages
       ansible.builtin.apt:
         upgrade: full
@@ -38,7 +36,6 @@
       register: apt_upgrade
       retries: 5
       until: apt_upgrade is success
-
     - name: Install nvidia-container-toolkit
       ansible.builtin.apt:
         name:
@@ -55,14 +52,12 @@
       register: apt_install_nvidia_ctr
       retries: 5
       until: apt_install_nvidia_ctr is success
-
     - name: Enable no-cgroups in nvidia-container-runtime config
       ansible.builtin.lineinfile:
         path: /etc/nvidia-container-runtime/config.toml
         regexp: '^#\s*no-cgroups = false'
         line: 'no-cgroups = false'
         backup: yes
-
     - name: Restart k3s-agent service
       ansible.builtin.service:
         name: k3s.service

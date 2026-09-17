@@ -1,23 +1,17 @@
 ---
 - name: Resolve gateway facts
   ansible.builtin.import_tasks: gateway/facts.yaml
-
 - name: Load shared server keypair
   ansible.builtin.import_tasks: gateway/server-state.yaml
-
 - name: Configure inbound AWG interfaces
   ansible.builtin.import_tasks: gateway/inbound.yaml
-
 - name: Configure owned NAT rules
   ansible.builtin.import_tasks: gateway/nat.yaml
-
 - name: Apply keen-pbr configuration
   ansible.builtin.import_tasks: gateway/keen-pbr-config.yaml
   when: vpn_keen_pbr_enabled | bool
-
 - name: Prepare local client reconciliation workspace
   ansible.builtin.import_tasks: gateway/client-workspace.yaml
-
 - name: Install local client-state manifest validator
   ansible.builtin.template:
     src: awg-client-manifest.py.j2
@@ -25,7 +19,6 @@
     mode: "0700"
   delegate_to: localhost
   become: false
-
 - name: Load and validate all client states
   ansible.builtin.command:
     argv:
@@ -48,18 +41,15 @@
   delegate_to: localhost
   become: false
   no_log: true
-
 - name: Require valid client states
   ansible.builtin.assert:
     that:
       - vpn_client_manifest.rc == 0
     fail_msg: "Client-state validation failed: {{ vpn_client_manifest.stderr | default('no diagnostic output') }}"
-
 - name: Use validated client manifest
   ansible.builtin.set_fact:
     vpn_reconciled_clients: "{{ vpn_client_manifest.stdout | from_json }}"
   no_log: true
-
 - name: Export AWG 1.5 peer fragments
   ansible.builtin.copy:
     content: |-
@@ -71,7 +61,6 @@
     mode: "0600"
   loop: "{{ vpn_reconciled_clients }}"
   no_log: true
-
 - name: Export AWG 2.x peer fragments
   ansible.builtin.copy:
     content: |-
@@ -83,7 +72,6 @@
     mode: "0600"
   loop: "{{ vpn_reconciled_clients }}"
   no_log: true
-
 - name: Render AWG 1.5 client profiles
   ansible.builtin.template:
     src: client.conf.j2
@@ -100,7 +88,6 @@
     awg_params: "{{ awg_legacy }}"
     awg_generation: legacy
   no_log: true
-
 - name: Render AWG 2.x client profiles
   ansible.builtin.template:
     src: client.conf.j2
@@ -117,7 +104,6 @@
     awg_params: "{{ awg_new }}"
     awg_generation: new
   no_log: true
-
 - name: Load all reconciled peers once
   ansible.builtin.command:
     argv:

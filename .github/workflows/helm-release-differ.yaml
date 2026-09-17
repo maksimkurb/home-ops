@@ -1,18 +1,15 @@
 ---
 name: Helm Release Differ
-
 on: # yamllint disable-line rule:truthy
   pull_request:
     branches:
       - main
     paths:
       - "cluster/**.yaml"
-
 env:
   # Currently no way to detect automatically
   DEFAULT_BRANCH: main
   BOT_USERNAME: "chii-bot[bot]"
-
 jobs:
   detect-file-changes:
     name: Detect File Changes

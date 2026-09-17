@@ -6,7 +6,6 @@
     owner: root
     group: root
     mode: '0644'
-
 - name: Start systemd-timesyncd service
   ansible.builtin.systemd:
     name: systemd-timesyncd

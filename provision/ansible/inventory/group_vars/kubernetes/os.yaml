@@ -1,7 +1,6 @@
 ---
 # (string) Timezone for the servers
 timezone: "Europe/Saratov"
-
 netplan_enabled: true
 netplan_renderer: networkd
 netplan_configuration:

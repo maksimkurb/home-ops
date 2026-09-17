@@ -1,3 +1,4 @@
+---
 mode: iptables
 update_frequency: 10s
 log_mode: stdout
@@ -32,7 +33,6 @@ iptables_chains:
 #  - FORWARD
 #  - DOCKER-USER
 iptables_add_rule_comments: false
-
 ## nftables
 # nftables:
 #   ipv4:
@@ -56,7 +56,6 @@ iptables_add_rule_comments: false
 # pf:
 #   # an empty string disables the anchor
 #   anchor_name: ""
-
 prometheus:
   enabled: false
   listen_addr: 127.0.0.1

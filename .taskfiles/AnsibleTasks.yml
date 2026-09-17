@@ -1,122 +1,101 @@
 ---
 version: "3"
-
 env:
   ANSIBLE_CONFIG: "{{.PROJECT_DIR}}/ansible.cfg"
-
 vars:
   ANSIBLE_PLAYBOOK_DIR: "{{.ANSIBLE_DIR}}/playbooks"
   ANSIBLE_INVENTORY_DIR: "{{.ANSIBLE_DIR}}/inventory"
-
 tasks:
   deps:
     desc: Upgrade Ansible galaxy deps
     dir: provision/ansible
     cmds:
       - "ansible-galaxy install -r requirements.yaml --force"
-
   list:
     desc: List all the hosts
     dir: provision/ansible
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --list-hosts {{ .CLI_ARGS }}"
-
   playbook:vpn-gateway-install:
     desc: Deploy the dual-interface AWG gateway, WARP, and keen-pbr
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-gateway-install.yaml {{ .CLI_ARGS }}"
-
   playbook:vpn-gateway-config-update:
     desc: Reconcile dual-interface AWG gateway and clients
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-gateway-config-update.yaml {{ .CLI_ARGS }}"
-
   playbook:vpn-client-add:
     desc: Add a dual-profile AWG client
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/vpn-client-add.yaml {{ .CLI_ARGS }}"
-
   playbook:reverse-proxy-install:
     desc: Install reverse proxy
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/reverse-proxy-install.yaml {{ .CLI_ARGS }}"
-
   playbook:signal-tls-proxy-install:
     desc: Configure Signal TLS Proxy
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/signal-tls-proxy-install.yaml {{ .CLI_ARGS }}"
-
   playbook:iperf3-stats-install:
     desc: Configure iperf3 Statistics Collection
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/iperf3-stats-install.yaml {{ .CLI_ARGS }}"
-
   playbook:scrutiny-collector-install:
     desc: Install Scrutiny Collector for disk monitoring
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/scrutiny-collector-install.yaml {{ .CLI_ARGS }}"
-
   playbook:cctv-install:
     desc: Prepare CCTV node
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/cctv-install.yaml {{ .CLI_ARGS }}"
-
   playbook:ubuntu-prepare:
     desc: Prepare all the k8s nodes for running k3s
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/ubuntu-prepare.yaml {{ .CLI_ARGS }}"
-
   playbook:ubuntu-upgrade:
     desc: Upgrade all the k8s nodes operating system
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/ubuntu-upgrade.yaml {{ .CLI_ARGS }}"
-
   playbook:k3s-install:
     desc: Install Kubernetes on the nodes
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/k3s-install.yaml {{ .CLI_ARGS }}"
-
   playbook:nvidia-ctr-install:
     desc: Install Kubernetes on the nodes
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/nvidia-ctr-install.yaml {{ .CLI_ARGS }}"
-
   playbook:k3s-nuke:
     desc: Uninstall Kubernetes on the nodes
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/k3s-nuke.yaml {{ .CLI_ARGS }}"
-
   adhoc:ping:
     desc: Ping all the hosts
     dir: provision/ansible
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --one-line -m 'ping'"
-
   adhoc:uptime:
     desc: Uptime of all the hosts
     dir: provision/ansible
     cmds:
       - ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --one-line -a 'uptime'
-
   adhoc:reboot:
     desc: Reboot all the k8s nodes
     dir: provision/ansible
     cmds:
       - "ansible kubernetes -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml -a '/usr/bin/systemctl reboot' --become"
-
   adhoc:poweroff:
     desc: Shutdown all the k8s nodes
     dir: provision/ansible

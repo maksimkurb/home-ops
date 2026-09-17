@@ -10,7 +10,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      <<: *labels
+      !!merge <<: *labels
   endpoints:
     - port: api
       scheme: http
@@ -32,7 +32,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      <<: *labels
+      !!merge <<: *labels
   endpoints:
     - port: api
       scheme: http

@@ -4,7 +4,6 @@
   become: true
   gather_facts: true
   any_errors_fatal: true
-
   tasks:
     - name: Update VPN gateway configuration
       ansible.builtin.include_role:

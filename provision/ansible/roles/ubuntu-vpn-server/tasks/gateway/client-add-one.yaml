@@ -4,7 +4,6 @@
     that:
       - vpn_client_name_effective is match('^[A-Za-z0-9_.-]+$')
     fail_msg: "Client name may contain only A-Z, a-z, 0-9, _, . and -."
-
 - name: Create/reuse legacy client state locally
   ansible.builtin.command:
     argv:
@@ -43,13 +42,11 @@
   delegate_to: localhost
   become: false
   no_log: true
-
 - name: Require legacy client-state allocation to succeed
   ansible.builtin.assert:
     that:
       - legacy_client_state_cmd.rc == 0
     fail_msg: "Legacy client-state allocation failed: {{ legacy_client_state_cmd.stderr | default('no diagnostic output') }}"
-
 - name: Create/reuse new client state locally
   ansible.builtin.command:
     argv:
@@ -92,18 +89,15 @@
   delegate_to: localhost
   become: false
   no_log: true
-
 - name: Require new client-state allocation to succeed
   ansible.builtin.assert:
     that:
       - new_client_state_cmd.rc == 0
     fail_msg: "New client-state allocation failed: {{ new_client_state_cmd.stderr | default('no diagnostic output') }}"
-
 - name: Collect reconciled client state for deferred rendering
   ansible.builtin.set_fact:
     vpn_reconciled_clients: "{{ (vpn_reconciled_clients | default([])) + [{'name': vpn_client_name_effective, 'legacy': (legacy_client_state_cmd.stdout | from_json), 'new': (new_client_state_cmd.stdout | from_json)}] }}"
   when: vpn_collect_clients | default(false)
-
 - name: Reconcile legacy peer from local client state
   ansible.builtin.copy:
     content: |-
@@ -120,7 +114,6 @@
     mode: "0600"
   no_log: true
   when: not (vpn_collect_clients | default(false))
-
 - name: Reconcile new peer from local client state
   ansible.builtin.copy:
     content: |-
@@ -137,7 +130,6 @@
     mode: "0600"
   no_log: true
   when: not (vpn_collect_clients | default(false))
-
 - name: Load peers from local client state
   ansible.builtin.command:
     argv:
@@ -148,7 +140,6 @@
     - "{{ vpn_new_interface }}"
   changed_when: false
   when: vpn_reload_peers_after_client | default(true)
-
 - name: Write legacy client config locally
   ansible.builtin.template:
     src: client.conf.j2
@@ -165,7 +156,6 @@
     awg_generation: legacy
   no_log: true
   when: not (vpn_collect_clients | default(false))
-
 - name: Write new client config locally
   ansible.builtin.template:
     src: client.conf.j2
@@ -182,7 +172,6 @@
     awg_generation: new
   no_log: true
   when: not (vpn_collect_clients | default(false))
-
 - name: Show generated client files
   ansible.builtin.debug:
     msg:

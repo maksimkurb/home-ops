@@ -3,18 +3,17 @@
   ansible.builtin.set_fact:
     wgcf_arch: >-
       {{
+
         {
           'x86_64': 'amd64',
           'aarch64': 'arm64'
         }.get(ansible_facts["architecture"], '')
       }}
-
 - name: Validate wgcf architecture
   ansible.builtin.assert:
     that:
       - wgcf_arch | length > 0
     fail_msg: "Unsupported wgcf architecture: {{ ansible_facts[\"architecture\"] }}"
-
 - name: Install wgcf
   ansible.builtin.get_url:
     url: "https://github.com/ViRb3/wgcf/releases/download/v{{ wgcf_version }}/wgcf_{{ wgcf_version }}_linux_{{ wgcf_arch }}"
@@ -23,7 +22,6 @@
     group: root
     mode: "0755"
   when: warp_auto_register
-
 - name: Copy supplied WARP config
   ansible.builtin.copy:
     src: "{{ warp_config_source }}"
@@ -34,28 +32,24 @@
   when:
     - not warp_auto_register
     - warp_config_source | length > 0
-
 - name: Require a supplied config when auto-registration is disabled
   ansible.builtin.assert:
     that:
       - warp_config_source | length > 0
     fail_msg: "Set warp_config_source when warp_auto_register=false."
   when: not warp_auto_register
-
 - name: Register WARP account once
   ansible.builtin.command:
     cmd: wgcf register --accept-tos
     chdir: /etc/wireguard/warp-state
     creates: /etc/wireguard/warp-state/wgcf-account.toml
   when: warp_auto_register
-
 - name: Generate WARP WireGuard profile once
   ansible.builtin.command:
     cmd: wgcf generate
     chdir: /etc/wireguard/warp-state
     creates: /etc/wireguard/warp-state/wgcf-profile.conf
   when: warp_auto_register
-
 - name: Install generated WARP profile
   ansible.builtin.copy:
     remote_src: true
@@ -66,25 +60,21 @@
     mode: "0600"
   when: warp_auto_register
   register: warp_profile_copy
-
 - name: Remove DNS mutation from WARP profile
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*DNS\s*='
     state: absent
-
 - name: Remove any existing WARP Table directive
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*Table\s*='
     state: absent
-
 - name: Force WARP not to replace the main routing table
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     insertafter: '^\[Interface\]'
     line: "Table = off"
-
 - name: Configure WARP tunnel MTU
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
@@ -92,28 +82,24 @@
     insertafter: '^\[Interface\]'
     line: "MTU = {{ warp_mtu }}"
   when: warp_mtu is not none and (warp_mtu | string | length > 0)
-
 - name: Preserve automatic WARP MTU when no override is configured
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*MTU\s*='
     state: absent
   when: warp_mtu is none or (warp_mtu | string | length == 0)
-
 - name: Keep the WARP peer NAT mapping alive
   ansible.builtin.lineinfile:
     path: "/etc/amnezia/amneziawg/{{ vpn_warp_interface }}.conf"
     regexp: '^\s*PersistentKeepalive\s*='
     insertafter: '^\[Peer\]'
     line: "PersistentKeepalive = {{ warp_persistent_keepalive }}"
-
 - name: Retire the standard WireGuard WARP unit
   ansible.builtin.systemd_service:
     name: "wg-quick@{{ vpn_warp_interface }}"
     enabled: false
     state: stopped
   failed_when: false
-
 - name: Enable and restart WARP through AmneziaWG
   ansible.builtin.systemd_service:
     name: "awg-quick@{{ vpn_warp_interface }}"

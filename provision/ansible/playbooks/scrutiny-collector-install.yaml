@@ -1,5 +1,4 @@
 ---
-
 - hosts:
     - scrutiny-collector
   become: true

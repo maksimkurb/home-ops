@@ -8,7 +8,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Deploy iperf3 systemd service
   ansible.builtin.template:
     src: iperf3.service.j2
@@ -23,7 +22,6 @@
   tags:
     - iperf3
     - iperf3-server
-
 - name: Enable and start iperf3 service
   ansible.builtin.systemd:
     name: iperf3

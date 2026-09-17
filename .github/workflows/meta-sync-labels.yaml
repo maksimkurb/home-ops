@@ -1,6 +1,5 @@
 ---
 name: Meta - Sync labels
-
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   push:
@@ -8,7 +7,6 @@ on: # yamllint disable-line rule:truthy
       - main
     paths:
       - ".github/labels.yaml"
-
 jobs:
   labels:
     name: Sync Labels

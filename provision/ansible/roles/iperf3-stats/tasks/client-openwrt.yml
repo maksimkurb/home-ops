@@ -11,7 +11,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Install Python iperf3 library and requests on OpenWRT
   ansible.builtin.pip:
     name:
@@ -22,7 +21,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Ensure /usr/local/bin directory exists on OpenWRT
   ansible.builtin.file:
     path: /usr/local/bin
@@ -33,7 +31,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Deploy iperf3 client script on OpenWRT
   ansible.builtin.template:
     src: iperf3_client.py.j2
@@ -44,7 +41,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Remove all iperf3 client cron jobs on OpenWRT
   ansible.builtin.lineinfile:
     path: /etc/crontabs/root
@@ -54,7 +50,6 @@
   tags:
     - iperf3
     - iperf3-client
-
 - name: Create cron jobs for iperf3 client tests on OpenWRT
   ansible.builtin.lineinfile:
     path: /etc/crontabs/root

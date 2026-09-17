@@ -118,15 +118,15 @@ spec:
           zigbee2mqtt:
             app:
               - path: /data
-      # usb:
-      #   enabled: true
-      #   type: hostPath
-      #   hostPath: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
-      #   hostPathType: CharDevice
-      #   advancedMounts:
-      #     zigbee2mqtt:
-      #       app:
-      #         - path: /dev/ttyACM0
+                # usb:
+                #   enabled: true
+                #   type: hostPath
+                #   hostPath: /dev/serial/by-id/usb-Texas_Instruments_CC2538_USB_CDC-if00
+                #   hostPathType: CharDevice
+                #   advancedMounts:
+                #     zigbee2mqtt:
+                #       app:
+                #         - path: /dev/ttyACM0
 
 # defaultPodOptions:
 #   affinity:

@@ -1,6 +1,5 @@
 ---
 name: Build OpenWrt ASU
-
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   push:
@@ -9,11 +8,9 @@ on: # yamllint disable-line rule:truthy
     paths:
       - "containers/openwrt-asu/**"
       - ".github/workflows/build-openwrt-asu.yaml"
-
 permissions:
   contents: read
   packages: write
-
 jobs:
   build:
     runs-on: ubuntu-latest

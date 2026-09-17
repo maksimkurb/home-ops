@@ -97,10 +97,10 @@ spec:
                   matchExpressions:
                     class: {op: In, value: ["0300"]}
                     vendor: {op: In, value: ["10de"]}
-            # - name: coral-tpu
-            #   matchOn:
-            #     - usbId:
-            #         vendor: ["1a6e", "18d1"]
+                    # - name: coral-tpu
+                    #   matchOn:
+                    #     - usbId:
+                    #         vendor: ["1a6e", "18d1"]
     master:
       serviceAccount:
         name: node-feature-discovery

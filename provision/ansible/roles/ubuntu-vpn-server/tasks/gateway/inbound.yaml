@@ -7,12 +7,11 @@
     group: root
     mode: "0600"
   loop:
-    - { interface: "{{ vpn_legacy_interface }}", kind: key, value: "{{ vpn_server_private_key }}" }
-    - { interface: "{{ vpn_new_interface }}", kind: key, value: "{{ vpn_server_private_key }}" }
-    - { interface: "{{ vpn_legacy_interface }}", kind: pub, value: "{{ vpn_server_public_key }}" }
-    - { interface: "{{ vpn_new_interface }}", kind: pub, value: "{{ vpn_server_public_key }}" }
+    - {interface: "{{ vpn_legacy_interface }}", kind: key, value: "{{ vpn_server_private_key }}"}
+    - {interface: "{{ vpn_new_interface }}", kind: key, value: "{{ vpn_server_private_key }}"}
+    - {interface: "{{ vpn_legacy_interface }}", kind: pub, value: "{{ vpn_server_public_key }}"}
+    - {interface: "{{ vpn_new_interface }}", kind: pub, value: "{{ vpn_server_public_key }}"}
   no_log: true
-
 - name: Configure legacy inbound
   ansible.builtin.template:
     src: inbound-awg.conf.j2
@@ -30,7 +29,6 @@
     awg_generation: legacy
   register: legacy_inbound_config
   no_log: true
-
 - name: Configure new inbound
   ansible.builtin.template:
     src: inbound-awg.conf.j2
@@ -48,7 +46,6 @@
     awg_generation: new
   register: new_inbound_config
   no_log: true
-
 - name: Enable and start inbound AWG services
   ansible.builtin.systemd_service:
     name: "awg-quick@{{ item }}"
@@ -58,7 +55,6 @@
     - "{{ vpn_legacy_interface }}"
     - "{{ vpn_new_interface }}"
   when: legacy_inbound_config.changed or new_inbound_config.changed
-
 - name: Ensure inbound AWG services are running
   ansible.builtin.systemd_service:
     name: "awg-quick@{{ item }}"

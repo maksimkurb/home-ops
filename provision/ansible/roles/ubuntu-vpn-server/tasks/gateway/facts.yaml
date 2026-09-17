@@ -6,6 +6,7 @@
     vpn_wan_interface: "{{ vpn_server.amneziawg.common.wan_interface }}"
     vpn_tunnel_mtu: >-
       {{
+
         vpn_server.amneziawg.common.client_mtu
         | default(vpn_server.amneziawg.common.mtu | default(1280))
       }}
@@ -50,17 +51,13 @@
       - I-list1.json
       - I-list2.json
       - I-list3.json
-
 - name: Validate supported gateway platform
   ansible.builtin.assert:
     that:
       - >-
-        (ansible_facts["distribution"] == "Ubuntu" and ansible_facts["distribution_version"] in ["24.04", "26.04"])
-        or (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "13")
+        (ansible_facts["distribution"] == "Ubuntu" and ansible_facts["distribution_version"] in ["24.04", "26.04"]) or (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "13")
     fail_msg: >-
-      Unsupported gateway platform: {{ ansible_facts["distribution"] }} {{ ansible_facts["distribution_version"] }}.
-      Supported platforms are Ubuntu 24.04/26.04 and Debian 13.
-
+      Unsupported gateway platform: {{ ansible_facts["distribution"] }} {{ ansible_facts["distribution_version"] }}. Supported platforms are Ubuntu 24.04/26.04 and Debian 13.
 - name: Validate gateway network configuration
   ansible.builtin.assert:
     that:
@@ -72,17 +69,16 @@
       - vpn_new_server_ip | length > 0
     fail_msg: >-
       Define the gateway network settings
-
 - name: Resolve WAN interface and static gateway facts
   ansible.builtin.set_fact:
     vpn_wan_interface_effective: >-
       {{
+
         vpn_wan_interface
         if (vpn_wan_interface | default('') | length > 0)
         else ansible_facts["default_ipv4"]["interface"]
       }}
     vpn_public_host_effective: "{{ vpn_public_host }}"
-
 - name: Inspect the WAN default route in the main table
   ansible.builtin.command:
     argv:
@@ -98,11 +94,11 @@
       - "{{ vpn_wan_interface_effective }}"
   register: vpn_wan_default_routes
   changed_when: false
-
 - name: Resolve the WAN gateway from the main table
   ansible.builtin.set_fact:
     vpn_wan_gateway_effective: >-
       {{
+
         (
           vpn_wan_default_routes.stdout
           | from_json

@@ -1,8 +1,6 @@
 ---
 version: "3"
-
 tasks:
-
   volume:
     desc: Create a job to restore a kopia snapshot (ex. task PVC=plex-config-v1 restore:volume)
     interactive: true

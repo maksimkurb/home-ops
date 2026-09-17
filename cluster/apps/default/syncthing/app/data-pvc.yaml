@@ -34,7 +34,6 @@ spec:
   resources:
     requests:
       storage: 1Mi
-
 ---
 ###########################
 # Backup source 2 (MinIO) #
@@ -71,7 +70,6 @@ spec:
   resources:
     requests:
       storage: 1Mi
-
 ---
 ####################
 # Syncthing config #
