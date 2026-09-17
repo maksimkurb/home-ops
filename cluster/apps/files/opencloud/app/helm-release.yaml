@@ -1,0 +1,126 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.1.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: docker.io/opencloudeu/opencloud-rolling
+              tag: 8.0.1
+            command: [/bin/sh, -c]
+            args: [opencloud init || true; exec opencloud server]
+            env:
+              OC_URL: https://cloud.${SECRET_PUBLIC_DOMAIN}
+              PROXY_HTTP_ADDR: 0.0.0.0:9200
+              PROXY_TLS: 'false'
+              OC_INSECURE: 'false'
+              OC_EXCLUDE_RUN_SERVICES: idp
+              OC_OIDC_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
+              WEB_OIDC_CLIENT_ID: opencloud
+              WEB_OIDC_SCOPE: openid profile email groups offline_access
+              PROXY_OIDC_REWRITE_WELLKNOWN: 'true'
+              PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD: jwt
+              PROXY_AUTOPROVISION_ACCOUNTS: 'true'
+              PROXY_USER_OIDC_CLAIM: preferred_username
+              PROXY_AUTOPROVISION_CLAIM_USERNAME: preferred_username
+              PROXY_USER_CS3_CLAIM: username
+              GRAPH_ASSIGN_DEFAULT_USER_ROLE: 'true'
+              GRAPH_USERNAME_MATCH: none
+            probes:
+              liveness: &probe
+                enabled: true
+                type: HTTP
+                path: /healthz
+              readiness: *probe
+              startup:
+                !!merge <<: *probe
+                spec:
+                  failureThreshold: 60
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 9200
+    route:
+      main:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - cloud.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 9200
+        annotations:
+          external-dns.kubernetes.io/enabled: 'true'
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Personal Services
+          gethomepage.dev/icon: opencloud
+          gethomepage.dev/name: OpenCloud
+    persistence:
+      config:
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /etc/opencloud
+      data:
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 50Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /var/lib/opencloud

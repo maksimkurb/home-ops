@@ -1,0 +1,5 @@
+---
+interface:
+  display_name: "Add App Template Service"
+  short_description: "Add Flux services using bjw-s app-template"
+  default_prompt: "Add a new service to this home-ops repository using its existing Flux Kustomization and bjw-s app-template patterns."

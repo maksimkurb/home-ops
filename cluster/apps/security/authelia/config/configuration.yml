@@ -245,6 +245,20 @@ identity_providers:
           - policy: 'one_factor'
             subject: 'group:admins'
     clients:
+      - client_id: opencloud
+        client_name: OpenCloud
+        public: true
+        require_pkce: true
+        pkce_challenge_method: S256
+        claims_policy: default
+        authorization_policy: require_group_files
+        pre_configured_consent_duration: 1y
+        scopes: [openid, profile, email, groups, offline_access]
+        redirect_uris:
+          - https://cloud.${SECRET_PUBLIC_DOMAIN}/
+          - https://cloud.${SECRET_PUBLIC_DOMAIN}/oidc-callback.html
+          - https://cloud.${SECRET_PUBLIC_DOMAIN}/web-oidc-callback
+        token_endpoint_auth_method: none
       - client_id: traefik
         client_name: Traefik OIDC middleware
         public: true
