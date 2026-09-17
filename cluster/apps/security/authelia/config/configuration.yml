@@ -189,6 +189,7 @@ identity_providers:
         - token
         - revocation
         - introspection
+        - userinfo
       allowed_origins_from_client_redirect_uris: true
     claims_policies:
       default:
@@ -257,6 +258,7 @@ identity_providers:
         redirect_uris:
           - https://cloud.${SECRET_PUBLIC_DOMAIN}/
           - https://cloud.${SECRET_PUBLIC_DOMAIN}/oidc-callback.html
+          - https://cloud.${SECRET_PUBLIC_DOMAIN}/oidc-silent-redirect.html
           - https://cloud.${SECRET_PUBLIC_DOMAIN}/web-oidc-callback
         token_endpoint_auth_method: none
       - client_id: traefik

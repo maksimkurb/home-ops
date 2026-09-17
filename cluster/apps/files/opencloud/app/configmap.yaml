@@ -11,9 +11,10 @@ data:
       connect-src:
         - "'self'"
         - 'blob:'
-        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
         - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
+        - 'https://auth.${SECRET_PUBLIC_DOMAIN}/'
         - 'https://update.opencloud.eu/'
+        - 'https://tile.openstreetmap.org/'
       default-src:
         - "'none'"
       font-src:
@@ -24,13 +25,14 @@ data:
         - "'self'"
         - 'blob:'
         - 'https://embed.diagrams.net/'
-        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
+        - 'https://docs.opencloud.eu'
+        - 'https://auth.${SECRET_PUBLIC_DOMAIN}/'
       img-src:
         - "'self'"
         - 'data:'
         - 'blob:'
         - 'https://raw.githubusercontent.com/opencloud-eu/awesome-apps/'
-        - 'https://*.${SECRET_PUBLIC_DOMAIN}/'
+        - 'https://tile.openstreetmap.org/'
       manifest-src:
         - "'self'"
       media-src:
@@ -41,6 +43,11 @@ data:
       script-src:
         - "'self'"
         - "'unsafe-inline'"
+        - 'https://auth.${SECRET_PUBLIC_DOMAIN}/'
       style-src:
         - "'self'"
         - "'unsafe-inline'"
+        - 'blob:'
+      worker-src:
+        - "'self'"
+        - 'blob:'
