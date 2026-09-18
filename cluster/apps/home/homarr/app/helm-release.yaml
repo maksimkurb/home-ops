@@ -45,7 +45,6 @@ spec:
               AUTH_OIDC_SCOPE_OVERWRITE: openid profile email groups homarr
               AUTH_OIDC_GROUPS_ATTRIBUTE: homarr_groups
               AUTH_OIDC_FORCE_USERINFO: "true"
-              AUTH_OIDC_ENABLE_DANGEROUS_CREDENTIALS_LINKING: "true"
               AUTH_OIDC_TOKEN_ENDPOINT_AUTH_METHOD: client_secret_basic
               AUTH_OIDC_CLIENT_SECRET:
                 valueFrom:
