@@ -38,7 +38,19 @@ spec:
               TZ: ${TIMEZONE}
               PUID: "777"
               PGID: "777"
-              AUTH_PROVIDERS: credentials
+              AUTH_PROVIDERS: oidc
+              AUTH_OIDC_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
+              AUTH_OIDC_CLIENT_ID: homarr
+              AUTH_OIDC_CLIENT_NAME: Authelia
+              AUTH_OIDC_SCOPE_OVERWRITE: openid profile email groups
+              AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+              AUTH_OIDC_FORCE_USERINFO: "true"
+              AUTH_OIDC_TOKEN_ENDPOINT_AUTH_METHOD: client_secret_basic
+              AUTH_OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}-secret
+                    key: AUTH_OIDC_CLIENT_SECRET
               SECRET_ENCRYPTION_KEY:
                 valueFrom:
                   secretKeyRef:
