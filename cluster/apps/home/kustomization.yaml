@@ -6,6 +6,7 @@ resources:
   - oidc.yaml
   - ./frigate/ks.yaml
   - ./home-assistant/ks.yaml
+  - ./homarr/ks.yaml
   - ./n8n/ks.yaml
   - mosquitto
   - node-red
