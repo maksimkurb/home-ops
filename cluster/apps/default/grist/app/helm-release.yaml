@@ -89,6 +89,8 @@ spec:
               GRIST_MCP_ENABLED: true
               GRIST_ENABLE_OIDC_SERVER: true
               GRIST_OIDC_CIMD_ALLOWED_HOSTS: claude.ai,chatgpt.com,localhost,127.0.0.1
+              GRIST_DOC_WORKER_ID: grist-main
+              APP_DOC_INTERNAL_URL: http://grist-main.default.svc.cluster.local:80
             envFrom:
               - secretRef:
                   name: grist-env
