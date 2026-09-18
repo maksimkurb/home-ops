@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - oidc.yaml
-  - ./opencloud/ks.yaml
-  - ./seaweed/ks.yaml
+  - ./minio/ks.yaml

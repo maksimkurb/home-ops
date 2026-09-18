@@ -4,7 +4,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: minio
-  namespace: default
+  namespace: files
 spec:
   interval: 30m
   chart:
@@ -31,8 +31,8 @@ spec:
         containers:
           main:
             image:
-              repository: quay.io/minio/minio
-              tag: RELEASE.2025-04-08T15-41-24Z
+              repository: docker.io/pgsty/silo
+              tag: RELEASE.2026-09-03T13-18-01Z
             args:
               - server
               - /data

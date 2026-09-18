@@ -101,7 +101,7 @@ spec:
               - /scripts/upload-and-prune.sh
             env:
               SITE_NAME: erp.${SECRET_PUBLIC_DOMAIN}
-              S3_ENDPOINT: http://minio.default.svc.cluster.local:9000
+              S3_ENDPOINT: http://minio.files.svc.cluster.local:9000
               S3_BUCKET: kazip-frappe
               BACKUP_RETENTION_DAYS: "30"
               MC_CONFIG_DIR: /tmp/.mc

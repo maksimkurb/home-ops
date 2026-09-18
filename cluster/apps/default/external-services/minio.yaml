@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: minio.files.svc.cluster.local
+  ports:
+    - name: api
+      port: 9000
+      targetPort: 9000
+    - name: http
+      port: 9001
+      targetPort: 9001
