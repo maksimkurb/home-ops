@@ -168,6 +168,10 @@ authentication_backend:
       mail: 'mail'
       member_of: 'memberOf'
       group_name: 'ou'
+definitions:
+  user_attributes:
+    homarr_groups:
+      expression: 'groups + ("admins" in groups ? ["credentials-admin"] : [])'
 identity_providers:
   oidc:
     hmac_secret: '{{ env "SECRET_HMAC_SECRET" }}'
@@ -194,6 +198,12 @@ identity_providers:
     claims_policies:
       default:
         id_token: ['groups', 'email', 'preferred_username', 'name']
+      homarr:
+        custom_claims:
+          homarr_groups: {}
+    scopes:
+      homarr:
+        claims: ['homarr_groups']
     authorization_policies:
       require_group_internal:
         default_policy: 'deny'
@@ -303,7 +313,7 @@ identity_providers:
         client_name: Homarr
         client_secret: ${SECRET_HOMARR_OAUTH_CLIENT_SECRET}
         public: false
-        claims_policy: default
+        claims_policy: homarr
         authorization_policy: require_group_people
         pre_configured_consent_duration: 1y
         scopes:
@@ -311,6 +321,7 @@ identity_providers:
           - profile
           - email
           - groups
+          - homarr
         redirect_uris:
           - https://homarr.${SECRET_PUBLIC_DOMAIN}/api/auth/callback/oidc
         userinfo_signed_response_alg: 'none'
