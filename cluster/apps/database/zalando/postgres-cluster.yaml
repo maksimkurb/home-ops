@@ -115,15 +115,6 @@ spec:
     lbipam.cilium.io/ips: "${SVC_DATABASE_ADDR}"
   enableConnectionPooler: false
   enableLogicalBackup: true
-  additionalVolumes:
-    - name: custom-launch-sh
-      mountPath: /launch.sh
-      subPath: launch.sh
-      targetContainers:
-        - postgres
-      volumeSource:
-        configMap:
-          name: postgres-files
   # clone:
   #   cluster: "homelab-restore-pgsql"  # Inplace restore when having the same cluster name as the source
   #   uid: "08f22d43-b36d-4930-a888-3e5516a20a03"
