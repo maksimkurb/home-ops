@@ -25,6 +25,11 @@ spec:
   values:
     deployment:
       replicas: 1
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 0
+          maxSurge: 1
     api:
       dashboard: true
     experimental:
