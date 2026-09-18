@@ -34,6 +34,15 @@ spec:
         rollingUpdate:
           maxUnavailable: 0
           maxSurge: 1
+    additionalVolumes:
+      - name: captcha
+        configMap:
+          name: traefik-captcha
+    additionalVolumeMounts:
+      - name: captcha
+        mountPath: /captcha.html
+        subPath: captcha.html
+        readOnly: true
     experimental:
       abortOnPluginFailure: true
       plugins:
