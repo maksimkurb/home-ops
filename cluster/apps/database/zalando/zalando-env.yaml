@@ -5,12 +5,13 @@ metadata:
   name: zalando-env
   namespace: database
 data:
+  USE_WALG: "true"
   USE_WALG_BACKUP: "true"
   USE_WALG_RESTORE: "true"
   ALLOW_NOSSL: "true"
   #  CLONE_USE_WALE_RESTORE: "true"
   BACKUP_SCHEDULE: "30 0 * * * *"
-  BACKUP_NUM_TO_RETAIN: "3"
+  BACKUP_NUM_TO_RETAIN: "14"
   WALG_DISABLE_S3_SSE: "true"
   WALE_DISABLE_S3_SSE: "true"
   WAL_BUCKET_SCOPE_PREFIX: ""
