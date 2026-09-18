@@ -58,6 +58,7 @@ spec:
           gethomepage.dev/weight: '-90'
           gethomepage.dev/icon: /icons/seerr/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: Seerr
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=seerr
           gethomepage.dev/widget.type: jellyseerr
           gethomepage.dev/widget.url: http://seerr.downloads
           gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_JELLYSEERR_API_KEY}

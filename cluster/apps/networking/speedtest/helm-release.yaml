@@ -57,6 +57,7 @@ spec:
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: librespeed
           gethomepage.dev/name: Speedtest
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=speedtest
       cf:
         enabled: true
         kind: HTTPRoute

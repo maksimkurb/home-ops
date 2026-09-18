@@ -98,6 +98,7 @@ spec:
           gethomepage.dev/group: Middleware
           gethomepage.dev/icon: /icons/minio/${HOMEPAGE_ICONS_COLOR}
           gethomepage.dev/name: MinIO
+          gethomepage.dev/pod-selector: app.kubernetes.io/name=minio
       api:
         enabled: true
         kind: HTTPRoute

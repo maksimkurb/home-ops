@@ -71,6 +71,7 @@ metadata:
     gethomepage.dev/group: Maintenance
     gethomepage.dev/icon: mdi-bell-alert-outline
     gethomepage.dev/name: VM Alert Manager
+    gethomepage.dev/pod-selector: app.kubernetes.io/instance=vm-k8s-stack, app.kubernetes.io/name=vmalertmanager
 spec:
   parentRefs:
     - name: private
