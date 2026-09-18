@@ -31,7 +31,7 @@ spec:
       cpu: '2'
       memory: 2000Mi
   postgresql:
-    version: "18"
+    version: "17"
     parameters:
       shared_preload_libraries: 'bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vchord'
       max_connections: '256'
