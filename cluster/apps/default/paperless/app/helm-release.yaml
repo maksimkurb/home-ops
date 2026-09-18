@@ -122,8 +122,14 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/mchestr/gotenberg
-              tag: 8.17.3
+              repository: docker.io/gotenberg/gotenberg
+              tag: "8.37"
+            command:
+              # The gotenberg chromium route is used to convert .eml files. We do not
+              # want to allow external content like tracking pixels or even javascript.
+              - "gotenberg"
+              - "--chromium-disable-javascript=true"
+              - "--chromium-allow-list=file:///tmp/.*"
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
