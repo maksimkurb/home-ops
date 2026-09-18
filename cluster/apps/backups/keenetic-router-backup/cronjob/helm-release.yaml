@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.1.0
+      version: 5.2.1
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -72,7 +72,7 @@ spec:
           main:
             image:
               repository: alpine
-              tag: 3.24.1
+              tag: 3.24.2
               pullPolicy: IfNotPresent
             command:
               - /app/backup-all.sh

@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.1.0
+      version: 5.2.1
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -73,7 +73,7 @@ spec:
           setup-certs:
             image:
               repository: docker.io/rxchi1d/n8n-ffmpeg
-              tag: 2.38.7
+              tag: 2.39.8
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -91,7 +91,7 @@ spec:
           app:
             image:
               repository: docker.io/rxchi1d/n8n-ffmpeg
-              tag: 2.38.7
+              tag: 2.39.8
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
@@ -178,7 +178,7 @@ spec:
           setup-certs:
             image:
               repository: docker.io/rxchi1d/n8n-runners-ffmpeg
-              tag: 2.38.7
+              tag: 2.39.8
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -196,7 +196,7 @@ spec:
           app:
             image:
               repository: docker.io/rxchi1d/n8n-runners-ffmpeg
-              tag: 2.38.7
+              tag: 2.39.8
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
