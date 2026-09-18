@@ -4,3 +4,8 @@ kind: Kustomization
 resources:
   - app
   - config
+
+configMapGenerator:
+  - name: traefik-captcha
+    files:
+      - captcha.html=resources/captcha.html
