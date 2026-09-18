@@ -45,13 +45,13 @@ spec:
               MINIO_PROMETHEUS_JOB_ID: minio
               MINIO_BROWSER_REDIRECT_URL: https://s3-console.${SECRET_PUBLIC_DOMAIN}
               MINIO_SERVER_URL: https://s3.${SECRET_PUBLIC_DOMAIN}
-              MINIO_IDENTITY_OPENID_CONFIG_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
-              MINIO_IDENTITY_OPENID_CLIENT_ID: silo
-              MINIO_IDENTITY_OPENID_CLIENT_SECRET: ${SECRET_SILO_OAUTH_CLIENT_SECRET}
-              MINIO_IDENTITY_OPENID_DISPLAY_NAME: Authelia
-              MINIO_IDENTITY_OPENID_REDIRECT_URI: https://s3-console.${SECRET_PUBLIC_DOMAIN}/oauth_callback
-              MINIO_IDENTITY_OPENID_ROLE_POLICY: consoleAdmin
-              MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,groups
+              # MINIO_IDENTITY_OPENID_CONFIG_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
+              # MINIO_IDENTITY_OPENID_CLIENT_ID: silo
+              # MINIO_IDENTITY_OPENID_CLIENT_SECRET: ${SECRET_SILO_OAUTH_CLIENT_SECRET}
+              # MINIO_IDENTITY_OPENID_DISPLAY_NAME: Authelia
+              # MINIO_IDENTITY_OPENID_REDIRECT_URI: https://s3-console.${SECRET_PUBLIC_DOMAIN}/oauth_callback
+              # MINIO_IDENTITY_OPENID_ROLE_POLICY: consoleAdmin
+              # MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,groups
             envFrom:
               - secretRef:
                   name: minio
