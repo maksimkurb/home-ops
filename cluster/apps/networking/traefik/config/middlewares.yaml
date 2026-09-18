@@ -11,6 +11,9 @@ spec:
       crowdsecLapiScheme: http
       crowdsecLapiHost: crowdsec-service.security.svc.cluster.local:8080
       crowdsecLapiKey: ${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}
+      captchaProvider: hcaptcha
+      captchaSiteKey: ${HCAPTCHA_SITE}
+      captchaSecretKey: ${SECRET_HCAPTCHA_SECRET}
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware

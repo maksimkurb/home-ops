@@ -136,6 +136,7 @@ spec:
         exclusions:
           - crowdsecurity/http-crawl-non_statics
           - crowdsecurity/http-probing
+          - LePresidente/http-generic-401-bf
       parsers:
         s02-enrich:
           authenticated-users.yaml: |
