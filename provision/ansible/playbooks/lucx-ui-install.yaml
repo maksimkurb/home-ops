@@ -1,0 +1,8 @@
+---
+- name: Deploy LucX-UI
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  roles:
+    - role: lucx-ui

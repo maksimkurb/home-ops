@@ -1,0 +1,24 @@
+---
+services:
+  lucx-ui:
+    image: "{{ lucx_ui_image_repository }}:{{ lucx_ui_image_tag }}"
+    container_name: "{{ lucx_ui_container_name }}"
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+{% if lucx_ui_map_tun_device | bool %}
+    devices:
+      - /dev/net/tun:/dev/net/tun
+{% endif %}
+    environment:
+      XRAY_VMESS_AEAD_FORCED: "false"
+      XUI_ENABLE_FAIL2BAN: "{{ lucx_ui_enable_fail2ban | ternary('true', 'false') }}"
+      XUI_PORT: "{{ lucx_ui_panel_port }}"
+      XUI_INIT_WEB_BASE_PATH: "{{ lucx_ui_web_base_path }}"
+      XUI_LOG_LEVEL: "{{ lucx_ui_log_level }}"
+    volumes:
+      - "{{ lucx_ui_root }}/db:/etc/x-ui"
+      - "{{ lucx_ui_root }}/cert:/root/cert"
+      - "{{ lucx_ui_root }}/acme:/root/.acme.sh"
+    restart: unless-stopped

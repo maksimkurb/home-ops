@@ -1,0 +1,71 @@
+---
+- name: Map Docker repository architecture
+  ansible.builtin.set_fact:
+    lucx_ui_docker_arch: >-
+      {{
+        {
+          'x86_64': 'amd64',
+          'aarch64': 'arm64'
+        }.get(ansible_facts.architecture, '')
+      }}
+
+- name: Validate Docker architecture
+  ansible.builtin.assert:
+    that:
+      - lucx_ui_docker_arch | length > 0
+    fail_msg: "Unsupported Docker architecture: {{ ansible_facts.architecture }}"
+
+- name: Install Docker repository prerequisites
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+    state: present
+    update_cache: true
+
+- name: Create APT keyring directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install Docker repository key
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg"
+    dest: /etc/apt/keyrings/docker.asc
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Configure Docker repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types:
+      - deb
+    uris: "https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}"
+    suites:
+      - "{{ ansible_facts.distribution_release }}"
+    components:
+      - stable
+    architectures:
+      - "{{ lucx_ui_docker_arch }}"
+    signed_by: /etc/apt/keyrings/docker.asc
+    state: present
+
+- name: Install Docker Engine and Compose plugin
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+- name: Enable Docker
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    state: started

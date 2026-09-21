@@ -1,0 +1,91 @@
+---
+- name: Get LucX-UI backup timestamp
+  ansible.builtin.command:
+    argv:
+      - date
+      - -u
+      - +%Y%m%dT%H%M%SZ
+  register: lucx_ui_backup_timestamp
+  changed_when: false
+
+- name: Inspect LucX-UI container
+  ansible.builtin.command:
+    argv:
+      - docker
+      - inspect
+      - "{{ lucx_ui_container_name }}"
+  register: lucx_ui_container_inspect
+  changed_when: false
+  failed_when: false
+
+- name: Stop LucX-UI for a consistent backup
+  ansible.builtin.command:
+    argv:
+      - docker
+      - stop
+      - "{{ lucx_ui_container_name }}"
+  when: lucx_ui_container_inspect.rc == 0
+  changed_when: true
+
+- name: Create LucX-UI state archive
+  ansible.builtin.command:
+    argv:
+      - tar
+      - -C
+      - "{{ lucx_ui_root }}"
+      - -czf
+      - "{{ lucx_ui_root }}/backups/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
+      - db
+      - cert
+      - acme
+  changed_when: true
+
+- name: Start LucX-UI after backup
+  ansible.builtin.command:
+    argv:
+      - docker
+      - start
+      - "{{ lucx_ui_container_name }}"
+  when: lucx_ui_container_inspect.rc == 0
+  changed_when: true
+
+- name: Create controller backup directory
+  ansible.builtin.file:
+    path: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}"
+    state: directory
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+  when: lucx_ui_backup_fetch_to_controller | bool
+
+- name: Fetch dated LucX-UI backup to controller
+  ansible.builtin.fetch:
+    src: "{{ lucx_ui_root }}/backups/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
+    dest: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
+    flat: true
+  when: lucx_ui_backup_fetch_to_controller | bool
+
+- name: Update controller latest LucX-UI backup
+  ansible.builtin.copy:
+    src: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
+    dest: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/latest.tar.gz"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+  when: lucx_ui_backup_fetch_to_controller | bool
+
+- name: Find expired LucX-UI backups
+  ansible.builtin.find:
+    paths: "{{ lucx_ui_root }}/backups"
+    patterns: "lucx-ui-*.tar.gz"
+    file_type: file
+    age: "{{ lucx_ui_backup_keep_days }}d"
+  register: lucx_ui_expired_backups
+
+- name: Remove expired LucX-UI backups
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ lucx_ui_expired_backups.files }}"
+  loop_control:
+    label: "{{ item.path }}"
