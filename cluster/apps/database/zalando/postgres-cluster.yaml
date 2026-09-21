@@ -77,6 +77,7 @@ spec:
     default.snapotter: []
     default.frappe: []
     games.openquester: []
+    oxygen.remnawave: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -109,6 +110,7 @@ spec:
     snapotter: default.snapotter
     frappe: default.frappe
     openquester: games.openquester
+    remnawave: oxygen.remnawave
   enableMasterLoadBalancer: true
   masterServiceAnnotations:
     metallb.io/loadBalancerIPs: "${SVC_DATABASE_ADDR}"
