@@ -16,6 +16,21 @@ tasks:
     dir: provision/ansible
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --list-hosts {{ .CLI_ARGS }}"
+  playbook:lucx-ui-install:
+    desc: Deploy LucX-UI in Docker
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/lucx-ui-install.yaml {{ .CLI_ARGS }}"
+  playbook:lucx-ui-backup:
+    desc: Back up LucX-UI state to the Ansible controller
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/lucx-ui-backup.yaml {{ .CLI_ARGS }}"
+  playbook:lucx-ui-restore:
+    desc: Restore LucX-UI state and redeploy it
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/lucx-ui-restore.yaml {{ .CLI_ARGS }}"
   playbook:vpn-gateway-install:
     desc: Deploy the dual-interface AWG gateway, WARP, and keen-pbr
     dir: provision/ansible
@@ -87,7 +102,7 @@ tasks:
     cmds:
       - "ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --one-line -m 'ping'"
   adhoc:uptime:
-    desc: Uptime of all the hosts
+    desc: Uptime all hosts
     dir: provision/ansible
     cmds:
       - ansible all -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml --one-line -a 'uptime'
