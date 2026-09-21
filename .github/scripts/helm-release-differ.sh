@@ -12,7 +12,7 @@ show_help() {
 cat << EOF
 Usage: $(basename "$0") <options>
     -h, --help                      Display help
-    --source-file                   Original helm release
+    --source-file                   Original helm release (may be absent for a new release)
     --target-file                   New helm release
     --remove-common-labels          Remove common labels from manifests
 EOF
@@ -71,8 +71,8 @@ parse_command_line() {
         exit 1
     fi
 
-    if  [[ $(yq eval .kind "${source_file}" 2>/dev/null) != "HelmRelease" ]]; then
-        echo "ERROR: '--source-file' is not a HelmRelease"
+    if [[ -e "${source_file}" ]] && [[ $(yq eval .kind "${source_file}" 2>/dev/null) != "HelmRelease" ]]; then
+        echo "ERROR: '--source-file' is not a HelmRelease" >&2
         show_help
         exit 1
     fi
@@ -83,8 +83,8 @@ parse_command_line() {
         exit 1
     fi
 
-    if  [[ $(yq eval .kind "${target_file}" 2>/dev/null) != "HelmRelease" ]]; then
-        echo "ERROR: '--target-file' is not a HelmRelease"
+    if [[ $(yq eval .kind "${target_file}" 2>/dev/null) != "HelmRelease" ]]; then
+        echo "ERROR: '--target-file' is not a HelmRelease" >&2
         show_help
         exit 1
     fi
@@ -123,13 +123,8 @@ _resources() {
 entry() {
     local comments=
 
-    source_chart_name=$(chart_name "${source_file}")
-    source_chart_version=$(chart_version "${source_file}")
-    source_chart_registry_url=$(chart_registry_url "${source_file}")
-    source_chart_values=$(chart_values "${source_file}")
-    source_resources=$(_resources "${source_chart_name}" "${source_chart_version}" "${source_chart_registry_url}" "${source_chart_values}")
-    echo "${source_resources}" > /tmp/source_resources
-
+    # Always render the target first. For a newly added HelmRelease this still
+    # validates that the chart and values can be rendered successfully.
     target_chart_version=$(chart_version "${target_file}")
     target_chart_name=$(chart_name "${target_file}")
     target_chart_registry_url=$(chart_registry_url "${target_file}")
@@ -137,16 +132,42 @@ entry() {
     target_resources=$(_resources "${target_chart_name}" "${target_chart_version}" "${target_chart_registry_url}" "${target_chart_values}")
     echo "${target_resources}" > /tmp/target_resources
 
-    # Diff the files and always return true
-    diff -u /tmp/source_resources /tmp/target_resources > /tmp/diff || true
-    # Remove the filenames
-    sed -i -e '1,2d' /tmp/diff
-
     # Store the comment in an array
     comments=()
 
     # shellcheck disable=SC2016
     comments+=( "$(printf 'Path: `%s`' "${target_file}")" )
+
+    if [[ ! -e "${source_file}" ]]; then
+        # There is no baseline on the default branch for a newly added release.
+        # Rendering the target above is the validation in this case.
+        # shellcheck disable=SC2016
+        comments+=( "$(printf 'Status: `new HelmRelease`')" )
+        # shellcheck disable=SC2016
+        comments+=( "$(printf 'Chart: `%s`' "${target_chart_name}")" )
+        # shellcheck disable=SC2016
+        comments+=( "$(printf 'Version: `%s`' "${target_chart_version}")" )
+        # shellcheck disable=SC2016
+        comments+=( "$(printf 'Registry URL: `%s`' "${target_chart_registry_url}")" )
+        comments+=( "$(printf '\n\n')" )
+        # shellcheck disable=SC2016
+        comments+=( "$(printf '```\nNo previous HelmRelease exists on the default branch.\nTarget chart rendered successfully.\n```')" )
+        printf "%s\n" "${comments[@]}"
+        return
+    fi
+
+    source_chart_name=$(chart_name "${source_file}")
+    source_chart_version=$(chart_version "${source_file}")
+    source_chart_registry_url=$(chart_registry_url "${source_file}")
+    source_chart_values=$(chart_values "${source_file}")
+    source_resources=$(_resources "${source_chart_name}" "${source_chart_version}" "${source_chart_registry_url}" "${source_chart_values}")
+    echo "${source_resources}" > /tmp/source_resources
+
+    # Diff the files and always return true
+    diff -u /tmp/source_resources /tmp/target_resources > /tmp/diff || true
+    # Remove the filenames
+    sed -i -e '1,2d' /tmp/diff
+
     if [[ "${source_chart_name}" != "${target_chart_name}" ]]; then
         # shellcheck disable=SC2016
         comments+=( "$(printf 'Chart: `%s` -> `%s`' "${source_chart_name}" "${target_chart_name}")" )
@@ -165,7 +186,7 @@ entry() {
         comments+=( "$(printf '```diff\n%s\n```' "$(cat /tmp/diff)")" )
     else
         # shellcheck disable=SC2016
-        comments+=( "$(printf '```\nNo changes in detected in resources\n```')" )
+        comments+=( "$(printf '```\nNo changes detected in resources\n```')" )
     fi
 
     # Join the array with a new line and print it
