@@ -38,7 +38,6 @@
       - db
       - cert
       - acme
-  register: lucx_ui_backup_archive
   changed_when: true
 
 - name: Start LucX-UI after backup
@@ -59,11 +58,20 @@
   become: false
   when: lucx_ui_backup_fetch_to_controller | bool
 
-- name: Fetch latest LucX-UI backup to controller
+- name: Fetch dated LucX-UI backup to controller
   ansible.builtin.fetch:
     src: "{{ lucx_ui_root }}/backups/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
-    dest: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/latest.tar.gz"
+    dest: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
     flat: true
+  when: lucx_ui_backup_fetch_to_controller | bool
+
+- name: Update controller latest LucX-UI backup
+  ansible.builtin.copy:
+    src: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/lucx-ui-{{ lucx_ui_backup_timestamp.stdout }}.tar.gz"
+    dest: "{{ lucx_ui_controller_backup_dir }}/{{ inventory_hostname }}/latest.tar.gz"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
   when: lucx_ui_backup_fetch_to_controller | bool
 
 - name: Find expired LucX-UI backups
