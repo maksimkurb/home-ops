@@ -49,8 +49,6 @@ spec:
                 DB_USER=$(node -p 'encodeURIComponent(process.env.POSTGRES_USER)')
                 DB_PASSWORD=$(node -p 'encodeURIComponent(process.env.POSTGRES_PASSWORD)')
                 export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@homelab-pgsql.database.svc.cluster.local:5432/remnawave"
-                export APP_SECRET=$(node -e "const c=require('crypto'); process.stdout.write(c.createHash('sha512').update(process.env.POSTGRES_PASSWORD + ':remnawave-app').digest('hex'))")
-                export METRICS_PASS=$(node -e "const c=require('crypto'); process.stdout.write(c.createHash('sha512').update(process.env.POSTGRES_PASSWORD + ':remnawave-metrics').digest('hex'))")
                 exec /bin/sh /opt/app/docker-entrypoint.sh pm2-runtime start ecosystem.config.js --env production
             env:
               APP_PORT: '3000'
@@ -63,6 +61,16 @@ spec:
               SUB_PUBLIC_DOMAIN: ${SUBS_RPANEL_PUBLIC_DOMAIN}/api/sub
               IS_TELEGRAM_NOTIFICATIONS_ENABLED: 'false'
               METRICS_USER: admin
+              METRICS_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: remnawave
+                    key: METRICS_PASS
+              APP_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: remnawave
+                    key: APP_SECRET
               WEBHOOK_ENABLED: 'false'
               POSTGRES_USER:
                 valueFrom:
