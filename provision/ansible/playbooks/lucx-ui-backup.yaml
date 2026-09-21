@@ -1,0 +1,11 @@
+---
+- name: Back up LucX-UI state
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  tasks:
+    - name: Load LucX-UI role defaults
+      ansible.builtin.include_role:
+        name: lucx-ui
+        tasks_from: backup
