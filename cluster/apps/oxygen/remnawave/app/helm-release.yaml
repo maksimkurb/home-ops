@@ -56,16 +56,12 @@ spec:
               API_INSTANCES: '1'
               REDIS_HOST: 127.0.0.1
               REDIS_PORT: '6379'
-              FRONT_END_DOMAIN: ${ADMIN_RPANEL_PRIVATE_DOMAIN}
-              PANEL_DOMAIN: ${ADMIN_RPANEL_PRIVATE_DOMAIN}
-              SUB_PUBLIC_DOMAIN: ${SUBS_RPANEL_PUBLIC_DOMAIN}/api/sub
+              FRONT_END_DOMAIN: ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
+              PANEL_DOMAIN: ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
+              SUB_PUBLIC_DOMAIN: ${SECRET_SUBS_RPANEL_PUBLIC_DOMAIN}/api/sub
               IS_TELEGRAM_NOTIFICATIONS_ENABLED: 'false'
-              METRICS_USER: admin
-              METRICS_PASS:
-                valueFrom:
-                  secretKeyRef:
-                    name: remnawave
-                    key: METRICS_PASS
+              METRICS_USER: metrics
+              METRICS_PASS: ${SECRET_REMNAWAVE_METRICS_PASSWORD}
               APP_SECRET:
                 valueFrom:
                   secretKeyRef:
@@ -184,7 +180,7 @@ spec:
             sectionName: websecure-private
             namespace: networking
         hostnames:
-          - ${ADMIN_RPANEL_PRIVATE_DOMAIN}
+          - ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
         rules:
           - matches:
               - path:
