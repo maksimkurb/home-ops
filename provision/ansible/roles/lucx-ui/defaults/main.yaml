@@ -1,0 +1,31 @@
+---
+lucx_ui_root: /opt/lucx-ui
+lucx_ui_container_name: lucx-ui
+
+lucx_ui_image_repository: ghcr.io/alexeylcp/lucx-ui
+lucx_ui_image_tag: latest
+lucx_ui_pull_image: true
+
+# LucX-UI listens on host networking so dynamically-created inbounds/outbounds
+# do not require Docker port mappings.
+lucx_ui_panel_port: 2053
+lucx_ui_web_base_path: /
+lucx_ui_enable_fail2ban: false
+lucx_ui_log_level: info
+lucx_ui_map_tun_device: true
+
+# SQLite state backup/restore.
+# The archive contains db/, cert/, and acme/ from lucx_ui_root.
+lucx_ui_backup_enabled: true
+lucx_ui_backup_before_deploy: true
+lucx_ui_backup_keep_days: 30
+lucx_ui_backup_fetch_to_controller: true
+lucx_ui_controller_backup_dir: "{{ lookup('env', 'HOME') }}/.local/share/home-ops/lucx-ui"
+
+# On a fresh host, restore <controller-dir>/<inventory_hostname>/latest.tar.gz
+# automatically before LucX-UI starts.
+lucx_ui_restore_from_controller: true
+# Optional explicit controller-side archive. When set, it takes precedence.
+lucx_ui_restore_archive: ""
+# Explicit opt-in required to overwrite an existing LucX-UI database.
+lucx_ui_restore_force: false
