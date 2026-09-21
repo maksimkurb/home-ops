@@ -203,7 +203,7 @@ spec:
             sectionName: websecure-public
             namespace: networking
         hostnames:
-          - ${SUBS_RPANEL_PUBLIC_DOMAIN}
+          - ${SECRET_SUBS_RPANEL_PUBLIC_DOMAIN}
         rules:
           - matches:
               - path:
