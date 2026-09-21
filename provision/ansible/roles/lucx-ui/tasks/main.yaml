@@ -1,0 +1,84 @@
+---
+- name: Validate LucX-UI platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.os_family == "Debian"
+    fail_msg: "The lucx-ui role currently supports Debian-family hosts only."
+
+- name: Install Docker
+  ansible.builtin.import_tasks: docker.yaml
+
+- name: Create LucX-UI state directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  loop:
+    - "{{ lucx_ui_root }}"
+    - "{{ lucx_ui_root }}/db"
+    - "{{ lucx_ui_root }}/cert"
+    - "{{ lucx_ui_root }}/acme"
+    - "{{ lucx_ui_root }}/backups"
+
+- name: Inspect existing LucX-UI database
+  ansible.builtin.stat:
+    path: "{{ lucx_ui_root }}/db/x-ui.db"
+  register: lucx_ui_database
+
+- name: Back up existing LucX-UI state
+  ansible.builtin.import_tasks: backup.yaml
+  when:
+    - lucx_ui_backup_enabled | bool
+    - lucx_ui_backup_before_deploy | bool
+    - lucx_ui_database.stat.exists
+
+- name: Restore LucX-UI state
+  ansible.builtin.import_tasks: restore.yaml
+  when:
+    - (not lucx_ui_database.stat.exists) or (lucx_ui_restore_force | bool)
+
+- name: Render LucX-UI Docker Compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ lucx_ui_root }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  register: lucx_ui_compose
+
+- name: Pull LucX-UI image
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - --project-directory
+      - "{{ lucx_ui_root }}"
+      - pull
+      - lucx-ui
+  changed_when: false
+  when: lucx_ui_pull_image | bool
+
+- name: Deploy LucX-UI
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - --project-directory
+      - "{{ lucx_ui_root }}"
+      - up
+      - -d
+      - --remove-orphans
+  register: lucx_ui_compose_up
+  changed_when: >-
+    'Started' in lucx_ui_compose_up.stderr or
+    'Created' in lucx_ui_compose_up.stderr or
+    'Recreated' in lucx_ui_compose_up.stderr or
+    'Recreating' in lucx_ui_compose_up.stderr
+
+- name: Wait for LucX-UI panel port
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ lucx_ui_panel_port }}"
+    timeout: 60
