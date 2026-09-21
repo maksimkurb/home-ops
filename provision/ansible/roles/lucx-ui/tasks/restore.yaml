@@ -1,0 +1,69 @@
+---
+- name: Resolve LucX-UI restore archive
+  ansible.builtin.set_fact:
+    lucx_ui_restore_source: >-
+      {{
+        lucx_ui_restore_archive
+        if (lucx_ui_restore_archive | length > 0)
+        else lucx_ui_controller_backup_dir ~ '/' ~ inventory_hostname ~ '/latest.tar.gz'
+      }}
+
+- name: Inspect controller-side LucX-UI backup
+  ansible.builtin.stat:
+    path: "{{ lucx_ui_restore_source }}"
+  register: lucx_ui_restore_source_stat
+  delegate_to: localhost
+  become: false
+  when:
+    - (lucx_ui_restore_archive | length > 0) or (lucx_ui_restore_from_controller | bool)
+
+- name: Require requested LucX-UI restore archive
+  ansible.builtin.assert:
+    that:
+      - lucx_ui_restore_source_stat.stat.exists
+    fail_msg: "LucX-UI restore archive not found: {{ lucx_ui_restore_source }}"
+  when:
+    - lucx_ui_restore_archive | length > 0
+
+- name: Skip automatic restore when no controller backup exists
+  ansible.builtin.debug:
+    msg: "No controller backup found for {{ inventory_hostname }}; LucX-UI will start with a fresh database."
+  when:
+    - lucx_ui_restore_archive | length == 0
+    - lucx_ui_restore_from_controller | bool
+    - not (lucx_ui_restore_source_stat.stat.exists | default(false))
+
+- name: Stop existing LucX-UI container before forced restore
+  ansible.builtin.command:
+    argv:
+      - docker
+      - stop
+      - "{{ lucx_ui_container_name }}"
+  register: lucx_ui_restore_stop
+  failed_when: false
+  changed_when: lucx_ui_restore_stop.rc == 0
+  when:
+    - lucx_ui_restore_force | bool
+    - lucx_ui_restore_source_stat.stat.exists | default(false)
+
+- name: Copy LucX-UI backup to server
+  ansible.builtin.copy:
+    src: "{{ lucx_ui_restore_source }}"
+    dest: "{{ lucx_ui_root }}/restore.tar.gz"
+    owner: root
+    group: root
+    mode: "0600"
+  when: lucx_ui_restore_source_stat.stat.exists | default(false)
+
+- name: Restore LucX-UI state archive
+  ansible.builtin.unarchive:
+    src: "{{ lucx_ui_root }}/restore.tar.gz"
+    dest: "{{ lucx_ui_root }}"
+    remote_src: true
+  when: lucx_ui_restore_source_stat.stat.exists | default(false)
+
+- name: Remove temporary LucX-UI restore archive
+  ansible.builtin.file:
+    path: "{{ lucx_ui_root }}/restore.tar.gz"
+    state: absent
+  when: lucx_ui_restore_source_stat.stat.exists | default(false)
