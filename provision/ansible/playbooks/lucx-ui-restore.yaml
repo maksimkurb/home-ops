@@ -1,0 +1,24 @@
+---
+- name: Restore LucX-UI state
+  hosts: "{{ target | default('vpn-server') }}"
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+  pre_tasks:
+    - name: Require an explicit restore archive or controller latest backup
+      ansible.builtin.assert:
+        that:
+          - >-
+            (lucx_ui_restore_archive | default('') | length > 0)
+            or
+            (lucx_ui_restore_from_controller | default(true) | bool)
+        fail_msg: >-
+          Set lucx_ui_restore_archive=/path/to/backup.tar.gz or enable
+          lucx_ui_restore_from_controller.
+  tasks:
+    - name: Deploy LucX-UI with forced state restore
+      ansible.builtin.include_role:
+        name: lucx-ui
+      vars:
+        lucx_ui_restore_force: true
+        lucx_ui_backup_before_deploy: false
