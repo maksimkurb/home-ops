@@ -17,4 +17,5 @@ resources:
   - monitoring
   - ml
   - networking
+  - oxygen
   - security

@@ -1,0 +1,218 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.2.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 5
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      nameOverride: ${APP}
+
+    controllers:
+      app:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        containers:
+          app:
+            image:
+              repository: ghcr.io/remnawave/backend
+              tag: 3.4.4
+              pullPolicy: IfNotPresent
+            command:
+              - /bin/sh
+              - -ec
+            args:
+              - |
+                DB_USER=$(node -p 'encodeURIComponent(process.env.POSTGRES_USER)')
+                DB_PASSWORD=$(node -p 'encodeURIComponent(process.env.POSTGRES_PASSWORD)')
+                export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@homelab-pgsql.database.svc.cluster.local:5432/remnawave"
+                exec /bin/sh /opt/app/docker-entrypoint.sh pm2-runtime start ecosystem.config.js --env production
+            env:
+              APP_PORT: '3000'
+              METRICS_PORT: '3001'
+              API_INSTANCES: '1'
+              REDIS_HOST: 127.0.0.1
+              REDIS_PORT: '6379'
+              FRONT_END_DOMAIN: ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
+              PANEL_DOMAIN: ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
+              SUB_PUBLIC_DOMAIN: ${SECRET_SUBS_RPANEL_PUBLIC_DOMAIN}/api/sub
+              IS_TELEGRAM_NOTIFICATIONS_ENABLED: 'false'
+              METRICS_USER: metrics
+              METRICS_PASS: ${SECRET_REMNAWAVE_METRICS_PASSWORD}
+              APP_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: remnawave
+                    key: APP_SECRET
+              WEBHOOK_ENABLED: 'false'
+              POSTGRES_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: oxygen.remnawave.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: oxygen.remnawave.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3001
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3001
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 3001
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+          valkey:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.2
+              pullPolicy: IfNotPresent
+            command:
+              - valkey-server
+            args:
+              - --save
+              - ""
+              - --appendonly
+              - "no"
+              - --maxmemory-policy
+              - noeviction
+              - --loglevel
+              - warning
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - valkey-cli
+                      - ping
+                  periodSeconds: 30
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - valkey-cli
+                      - ping
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  failureThreshold: 6
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
+    service:
+      app:
+        controller: app
+        ports:
+          http:
+            port: 3000
+          metrics:
+            port: 3001
+
+    route:
+      panel:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - ${SECRET_ADMIN_RPANEL_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 3000
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Network
+          gethomepage.dev/icon: mdi-waves
+          gethomepage.dev/name: Remnawave
+
+      subscription:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - ${SUBS_RPANEL_PUBLIC_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /api/sub/
+            backendRefs:
+              - identifier: app
+                port: 3000
+        annotations:
+          external-dns.kubernetes.io/enabled: 'true'
+          external-dns.kubernetes.io/target: ${INGRESS_DIRECT}
+          external-dns.kubernetes.io/cloudflare-proxied: 'false'
