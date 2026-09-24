@@ -10,6 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DEVICE=cuda \
     MODEL_DIR=/opt/models/gigaam \
     HF_HOME=/opt/models/huggingface \
+    HF_HUB_CACHE=/opt/models/huggingface \
     URI=tcp://0.0.0.0:10300 \
     FR_BATCH_SIZE=1 \
     FR_NUM_WORKERS=0 \
@@ -38,7 +39,7 @@ RUN --mount=type=secret,id=HUGGING_FACE_TOKEN,required=true \
     python /tmp/download_models.py \
       --hf-token-file /run/secrets/HUGGING_FACE_TOKEN \
       --gigaam-dir "${MODEL_DIR}" \
-      --hf-home "${HF_HOME}" \
+      --hf-cache "${HF_HUB_CACHE}" \
     && rm -f /tmp/download_models.py \
     && rm -rf /tmp/GigaAM
 
