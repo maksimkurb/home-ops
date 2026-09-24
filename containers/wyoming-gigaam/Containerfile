@@ -2,20 +2,20 @@ FROM pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
 
 ARG GIGAAM_REF=main
 
-ENV DEBIAN_FRONTEND=noninteractive \\
-    PYTHONUNBUFFERED=1 \\
-    PIP_NO_CACHE_DIR=1 \\
-    MODEL=multilingual_ctc \\
-    DEVICE=cuda \\
-    DATA_DIR=/data \\
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    MODEL=multilingual_ctc \
+    DEVICE=cuda \
+    DATA_DIR=/data \
     URI=tcp://0.0.0.0:10300
 
-RUN apt-get update \\
-    && apt-get install -y --no-install-recommends git ca-certificates \\
-    && rm -rf /var/lib/apt/lists/* \\
-    && python -m pip install --upgrade pip setuptools wheel \\
-    && python -m pip install \\
-      "wyoming==1.8.0" \\
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m pip install --upgrade pip setuptools wheel \
+    && python -m pip install \
+      "wyoming==1.8.0" \
       "gigaam @ git+https://github.com/salute-developers/GigaAM.git@${GIGAAM_REF}"
 
 COPY server.py /app/server.py
