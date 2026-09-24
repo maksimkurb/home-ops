@@ -47,6 +47,8 @@ jobs:
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          secrets: |
+            HUGGING_FACE_TOKEN=${{ secrets.HUGGING_FACE_TOKEN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
