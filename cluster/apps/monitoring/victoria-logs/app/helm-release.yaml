@@ -55,6 +55,9 @@ spec:
         udp:
           - name: syslog-udp
             value: :1514
+      extraArgs:
+        memory.allowedBytes: 256MiB
+        maxConcurrentInserts: 2
       resources:
         requests:
           cpu: 100m
