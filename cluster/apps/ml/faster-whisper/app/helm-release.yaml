@@ -60,8 +60,11 @@ spec:
               TZ: "${TIMEZONE}"
               MODEL: multilingual_ctc
               DEVICE: cuda
-              DATA_DIR: /data
+              MODEL_DIR: /opt/models/gigaam
               URI: tcp://0.0.0.0:10300
+              FR_BATCH_SIZE: "1"
+              FR_NUM_WORKERS: "0"
+              LONGFORM_THRESHOLD_SECONDS: "25"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: compute,utility
             probes:
