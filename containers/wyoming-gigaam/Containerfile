@@ -25,6 +25,7 @@ RUN apt-get update \
       git \
     && rm -rf /var/lib/apt/lists/* \
     && python -m venv --system-site-packages "$VIRTUAL_ENV" \
+    && python -c "import torch; print(f\'PyTorch {torch.__version__}, CUDA {torch.version.cuda}\')" \
     && python -m pip install --upgrade pip setuptools wheel
 
 RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
