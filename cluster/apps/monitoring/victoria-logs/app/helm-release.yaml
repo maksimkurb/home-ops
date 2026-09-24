@@ -1,0 +1,91 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: victoria-logs-single
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.13.9
+  url: oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: victoria-logs-collector
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 0.3.7
+  url: oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-collector
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-logs
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: victoria-logs-single
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    server:
+      retentionPeriod: 7d
+      retentionDiskSpaceUsage: 7GiB
+      persistentVolume:
+        storageClassName: local-path
+        size: 10Gi
+      syslog:
+        tcp:
+          - name: syslog-tcp
+            value: :1514
+        udp:
+          - name: syslog-udp
+            value: :1514
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 1Gi
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-logs-collector
+spec:
+  interval: 1h
+  dependsOn:
+    - name: victoria-logs
+  chartRef:
+    kind: OCIRepository
+    name: victoria-logs-collector
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    remoteWrite:
+      - url: http://victoria-logs-victoria-logs-single-server.monitoring.svc.cluster.local:9428
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        memory: 256Mi

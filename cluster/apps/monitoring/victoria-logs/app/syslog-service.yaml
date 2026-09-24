@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: victoria-logs-syslog
+  annotations:
+    lbipam.cilium.io/ips: ${SVC_SYSLOG_ADDR}
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${SVC_SYSLOG_ADDR}
+  loadBalancerSourceRanges:
+    - 192.168.0.0/16
+  externalTrafficPolicy: Local
+  selector:
+    app: server
+    app.kubernetes.io/instance: victoria-logs
+    app.kubernetes.io/name: victoria-logs-single
+  ports:
+    - name: syslog-tcp
+      port: 514
+      targetPort: 1514
+      protocol: TCP
+    - name: syslog-udp
+      port: 514
+      targetPort: 1514
+      protocol: UDP

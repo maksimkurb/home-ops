@@ -9,3 +9,4 @@ resources:
   - ./grafana/ks.yaml
   - ./scrutiny/ks.yaml
   - ./victoria-metrics-k8s-stack/ks.yaml
+  - ./victoria-logs/ks.yaml
