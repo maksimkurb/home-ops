@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM pytorch/pytorch:2.10.0-cuda12.6-cudnn9-runtime
 
 ARG GIGAAM_REF=main
@@ -11,7 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     HF_HOME=/opt/models/huggingface \
     URI=tcp://0.0.0.0:10300 \
     FR_BATCH_SIZE=1 \
-    FR_NUM_WORKERS=0
+    FR_NUM_WORKERS=0 \
+    LONGFORM_THRESHOLD_SECONDS=25
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -30,16 +32,13 @@ RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git
     && cp /tmp/GigaAM/LICENSE /usr/share/licenses/GigaAM/LICENSE
 
 COPY download_models.py /tmp/download_models.py
+COPY THIRD_PARTY_NOTICES.md /usr/share/doc/wyoming-gigaam/THIRD_PARTY_NOTICES.md
 
 RUN --mount=type=secret,id=HUGGING_FACE_TOKEN,required=true \
     python /tmp/download_models.py \
       --hf-token-file /run/secrets/HUGGING_FACE_TOKEN \
       --gigaam-dir "${MODEL_DIR}" \
       --hf-home "${HF_HOME}" \
-    && PYANNOTE_LICENSE="$(find "${HF_HOME}" -type f -path "*/snapshots/*/LICENSE" | head -n 1)" \
-    && test -n "${PYANNOTE_LICENSE}" \
-    && mkdir -p /usr/share/licenses/pyannote-segmentation-3.0 \
-    && cp "${PYANNOTE_LICENSE}" /usr/share/licenses/pyannote-segmentation-3.0/LICENSE \
     && rm -f /tmp/download_models.py \
     && rm -rf /tmp/GigaAM
 
