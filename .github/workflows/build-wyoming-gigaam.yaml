@@ -23,7 +23,7 @@ jobs:
       - name: Generate image version
         id: version
         shell: bash
-        run: echo "version=$(date -u +\'%Y%m%d%H%M%S\')" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(date -u +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
 
       - name: Login to GHCR
         uses: docker/login-action@v4
