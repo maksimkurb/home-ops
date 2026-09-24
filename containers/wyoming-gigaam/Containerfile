@@ -4,6 +4,8 @@ FROM pytorch/pytorch:2.10.0-cuda12.6-cudnn9-runtime
 ARG GIGAAM_REF=main
 
 ENV DEBIAN_FRONTEND=noninteractive \
+    VIRTUAL_ENV=/opt/venv \
+    PATH=/opt/venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     MODEL=multilingual_ctc \
@@ -22,6 +24,8 @@ RUN apt-get update \
       ffmpeg \
       git \
     && rm -rf /var/lib/apt/lists/* \
+    && python -m venv --system-site-packages "$VIRTUAL_ENV" \
+    && python -c "import torch; print(f\'PyTorch {torch.__version__}, CUDA {torch.version.cuda}\')" \
     && python -m pip install --upgrade pip setuptools wheel
 
 RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
