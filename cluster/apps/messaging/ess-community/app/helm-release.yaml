@@ -44,6 +44,9 @@ spec:
         external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
         external-dns.kubernetes.io/cloudflare-proxied: 'false'
     elementWeb:
+      additional:
+        user-config.json: |
+          {"features":{"feature_login_with_qr":true}}
       ingress:
         host: matrix.${SECRET_PUBLIC_DOMAIN}
     elementAdmin:

@@ -1,6 +1,6 @@
 kind: Secret
 ansible_host: ENC[AES256_GCM,data:9L1GUgBma4935OZsuw==,iv:JFOApzcywooy8PMp+rr1/AzSehWJzqULHGEhAjWlJmI=,tag:oVpZbHmESofXTMgESLfmoA==,type:str]
-ansible_user: ENC[AES256_GCM,data:/fGCZcvY8+YNVQ==,iv:A3oFBWtiNp8ZTYPkhEjCMXciRpcOr4vSo6h7YiOnPeU=,tag:PHnjh5YzYHSe90K557UhcA==,type:str]
+ansible_user: ENC[AES256_GCM,data:mqLgTQ==,iv:D27B1uxK6t5MM4cpcV/OP6sKWfkU65KbVV+Tcq7Gxyg=,tag:vwVX7CAlziBXpRZ+aZqSOg==,type:str]
 iperf3_client_hostname: ENC[AES256_GCM,data:pj/GR7msjjIEHjbmW2yVK/lr,iv:d44c5UXlXdcSG3MibRkyJNwsCjBIFRTjLetgrE7fQ8M=,tag:aY5xR4udFU3Ppq3UaFJAIQ==,type:str]
 traefik_base_domain: ENC[AES256_GCM,data:aD35w+CD+IgaxG+vJcUfTMF1,iv:qfh3ULsvvsbdA3eFtbK0JVgnN5AoxN4EAkICanf1xzg=,tag:60yDZ63kDsg4uloCJxVlsQ==,type:str]
 acme_email: ENC[AES256_GCM,data:uf0wzb1KhAIk9evsSY6YCoMDFt4wnCKovBbYDWQKLg==,iv:W2nNZvbEq9dHvpHZ9+4zo0uPEbAFbXPmNp78dgRpqHA=,tag:sbaOWTHmcqKpaeUMb3TA0g==,type:str]
@@ -50,7 +50,7 @@ sops:
             nItkATY2pidSwBmpIBPt64brx+0lPCKFg7phdO1DiRUZ12l8a+BOGg==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-09-15T13:10:33Z"
-    mac: ENC[AES256_GCM,data:gzbJz2k6VCJYSaQ6E/YU+iDrQXdaW51XuJPfHgvCi8JxtOTqgwpSc1shzZzuGJKVCVROX5I1A+NwJYG5LvNASttoj0tzuAmYmCjhUPldRZj+mSG6Pt03WuyGXZz+AK6qUb6xQ9pXqWZ7QLPfGWv+FXNYaRm5+kts6QOa/R8njpg=,iv:CCq/zfQalSnCSjHz+gb6y8cmcSBjB89FQerogjIxb/4=,tag:URsnkK38FDrsXYZ/AfSNbw==,type:str]
+    lastmodified: "2026-09-21T17:56:53Z"
+    mac: ENC[AES256_GCM,data:678zjpsxgDqXEUeeOUlqIlIkzxOE1Ro/Hy8EZiYeOpuB6wUpE6f2lTQtfpMA5wNGY+PbzitCYKHeasRQUXgkZ+YWtEwU/H/8Uo2kyESOMzIDuG03x4rWMIP5SUaplti1FFuWc+9ynbFjzHg/e3Lgi8zHpa12ClorC88vdANwlHk=,iv:mHnrO5YyRjHxTH0XxxUemEjNb/u/Buis9YwziHd7Ffo=,tag:usqb86Zb9TUQzWwWdTJbwQ==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3
