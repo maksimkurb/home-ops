@@ -58,6 +58,8 @@ spec:
       extraArgs:
         memory.allowedBytes: 256MiB
         maxConcurrentInserts: 2
+      vmServiceScrape:
+        enabled: true
       resources:
         requests:
           cpu: 100m

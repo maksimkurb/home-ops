@@ -243,6 +243,18 @@ spec:
           revision: 4
           datasource:
             - {name: DS_PROMETHEUS, value: Prometheus}
+        victorialogs-single-node:
+          # renovate: depName="VictoriaLogs - single-node"
+          gnetId: 22084
+          revision: 11
+          datasource:
+            - {name: DS_PROMETHEUS, value: Prometheus}
+        victorialogs-explorer:
+          # renovate: depName="VictoriaLogs Explorer"
+          gnetId: 22759
+          revision: 9
+          datasource:
+            - {name: DS_VICTORIALOGS, value: VictoriaLogs}
     sidecar:
       dashboards:
         enabled: true
