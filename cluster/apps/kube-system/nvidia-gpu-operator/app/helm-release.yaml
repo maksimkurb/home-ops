@@ -26,6 +26,10 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    operator:
+      resources:
+        requests:
+          cpu: 50m
     # https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html
     platform:
       openshift: false

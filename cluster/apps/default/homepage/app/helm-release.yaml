@@ -34,7 +34,7 @@ spec:
                 value: stdout
             resources:
               requests:
-                cpu: 50m
+                cpu: 25m
                 memory: 64Mi
               limits:
                 memory: 512Mi
@@ -51,7 +51,7 @@ spec:
                 value: svg
             resources:
               requests:
-                cpu: 50m
+                cpu: 25m
                 memory: 64Mi
               limits:
                 memory: 64Mi

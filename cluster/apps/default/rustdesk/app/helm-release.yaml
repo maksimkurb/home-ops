@@ -89,7 +89,7 @@ spec:
               DB_URL: /db/db_v2.sqlite3
             resources:
               requests:
-                cpu: 100m
+                cpu: 25m
                 memory: 100Mi
               limits:
                 memory: 1000Mi
@@ -114,7 +114,7 @@ spec:
               TZ: "${TIMEZONE}"
             resources:
               requests:
-                cpu: 100m
+                cpu: 25m
                 memory: 100Mi
               limits:
                 memory: 1000Mi

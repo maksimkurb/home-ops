@@ -195,6 +195,9 @@ spec:
 
           webhook: ${SECRET_CROWDSEC_WEBHOOK_URL}
     lapi:
+      resources:
+        requests:
+          cpu: 50m
       ingress:
         enabled: false
         ingressClassName: traefik-private
@@ -240,6 +243,9 @@ spec:
           size: 100Mi
     agent:
       isDeployment: true
+      resources:
+        requests:
+          cpu: 50m
       persistentVolume:
         config:
           enabled: true
