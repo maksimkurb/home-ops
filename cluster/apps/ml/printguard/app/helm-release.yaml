@@ -37,7 +37,7 @@ spec:
           main:
             image:
               repository: ghcr.io/oliverbravery/printguard
-              tag: 2.4.1
+              tag: 2.5.0
               pullPolicy: IfNotPresent
             env:
               TZ: ${TIMEZONE}
