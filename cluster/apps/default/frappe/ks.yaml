@@ -47,6 +47,7 @@ spec:
   dependsOn:
     - name: frappe
     - name: minio
+      namespace: files
   interval: 30m
   timeout: 15m
   path: "./cluster/apps/default/frappe/backups"
