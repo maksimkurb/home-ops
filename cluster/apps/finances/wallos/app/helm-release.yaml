@@ -42,6 +42,8 @@ spec:
               OIDC_PROVIDER_NAME: Authelia
               OIDC_AUTO_CREATE_USER: "true"
               OIDC_DISABLE_PASSWORD_LOGIN: "true"
+              OIDC_REDIRECT_URL: https://wallos.${SECRET_PUBLIC_DOMAIN}/index.php
+              OIDC_LOGOUT_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/logout
               OIDC_CLIENT_SECRET:
                 valueFrom:
                   secretKeyRef:
