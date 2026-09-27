@@ -5,10 +5,18 @@ configMapGenerator:
   - name: iperf-n8n-stats-dashboard
     files:
       - iperf-n8n-stats.json
+    options:
+      annotations:
+        grafana_folder: Network
+  - name: victorialogs-syslog-dashboard
+    files:
+      - victorialogs-syslog.json
+    options:
+      annotations:
+        grafana_folder: Logs
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
     kustomize.toolkit.fluxcd.io/substitute: disabled
-    grafana_folder: Network
   labels:
     grafana_dashboard: "true"

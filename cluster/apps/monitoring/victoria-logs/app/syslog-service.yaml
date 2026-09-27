@@ -10,6 +10,7 @@ spec:
   loadBalancerIP: ${SVC_SYSLOG_ADDR}
   loadBalancerSourceRanges:
     - 192.168.0.0/16
+    - 10.9.5.0/24
   externalTrafficPolicy: Local
   selector:
     app: server

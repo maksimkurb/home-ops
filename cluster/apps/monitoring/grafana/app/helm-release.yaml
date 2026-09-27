@@ -116,14 +116,46 @@ spec:
       dashboardproviders.yaml:
         apiVersion: 1
         providers:
-          - name: default
+          - name: kubernetes
             orgId: 1
-            folder: ''
+            folder: Kubernetes
             type: file
             disableDeletion: false
             editable: true
             options:
-              path: /var/lib/grafana/dashboards/default
+              path: /var/lib/grafana/dashboards/kubernetes
+          - name: network
+            orgId: 1
+            folder: Network
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/network
+          - name: monitoring
+            orgId: 1
+            folder: Monitoring
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/monitoring
+          - name: storage
+            orgId: 1
+            folder: Storage
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/storage
+          - name: logs
+            orgId: 1
+            folder: Logs
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/logs
     securityContext:
       runAsNonRoot: true
       runAsUser: 777
@@ -132,41 +164,10 @@ spec:
     initChownData:
       enabled: false
     dashboards:
-      default:
-        # apc-ups:
-        #   # renovate: depName="APC UPS (SNMP)"
-        #   gnetId: 12340
-        #   revision: 1
-        #   datasource: Prometheus
-        # ceph-cluster:
-        #   # renovate: depName="Ceph Cluster"
-        #   gnetId: 2842
-        #   revision: 18
-        #   datasource: Prometheus
-        # ceph-osd:
-        #   # renovate: depName="Ceph - OSD (Single)"
-        #   gnetId: 5336
-        #   revision: 9
-        #   datasource: Prometheus
-        # ceph-pools:
-        #   # renovate: depName="Ceph - Pools"
-        #   gnetId: 5342
-        #   revision: 9
-        #   datasource: Prometheus
+      kubernetes:
         cert-manager:
           # renovate: depName="Cert-manager-Kubernetes"
           gnetId: 20842
-          revision: 3
-          datasource: Prometheus
-        cloudflared:
-          # renovate: depName="Cloudflare Tunnels (cloudflared)"
-          gnetId: 17457
-          revision: 6
-          datasource:
-            - {name: DS_PROMETHEUS, value: Prometheus}
-        external-dns:
-          # renovate: depName="External-dns"
-          gnetId: 15038
           revision: 3
           datasource: Prometheus
         kubernetes-api-server:
@@ -204,6 +205,30 @@ spec:
           gnetId: 11454
           revision: 14
           datasource: Prometheus
+      network:
+        cloudflared:
+          # renovate: depName="Cloudflare Tunnels (cloudflared)"
+          gnetId: 17457
+          revision: 6
+          datasource:
+            - {name: DS_PROMETHEUS, value: Prometheus}
+        external-dns:
+          # renovate: depName="External-dns"
+          gnetId: 15038
+          revision: 3
+          datasource: Prometheus
+        openwrt:
+          # renovate: depName="OpenWRT Dashboard"
+          gnetId: 18153
+          revision: 4
+          datasource:
+            - {name: DS_PROMETHEUS, value: Prometheus}
+      monitoring:
+        # apc-ups:
+        #   # renovate: depName="APC UPS (SNMP)"
+        #   gnetId: 12340
+        #   revision: 1
+        #   datasource: Prometheus
         node-exporter-full:
           # renovate: depName="Node Exporter Full"
           gnetId: 1860
@@ -220,6 +245,28 @@ spec:
           revision: 2
           datasource:
             - {name: DS_PROMETHEUS, value: Prometheus}
+        victorialogs-single-node:
+          # renovate: depName="VictoriaLogs - single-node"
+          gnetId: 22084
+          revision: 11
+          datasource:
+            - {name: DS_PROMETHEUS, value: Prometheus}
+      storage:
+        # ceph-cluster:
+        #   # renovate: depName="Ceph Cluster"
+        #   gnetId: 2842
+        #   revision: 18
+        #   datasource: Prometheus
+        # ceph-osd:
+        #   # renovate: depName="Ceph - OSD (Single)"
+        #   gnetId: 5336
+        #   revision: 9
+        #   datasource: Prometheus
+        # ceph-pools:
+        #   # renovate: depName="Ceph - Pools"
+        #   gnetId: 5342
+        #   revision: 9
+        #   datasource: Prometheus
         zfs:
           # renovate: depName="ZFS"
           gnetId: 7845
@@ -237,18 +284,7 @@ spec:
           revision: 2
           datasource:
             - {name: DS_PROMETHEUS, value: Prometheus}
-        openwrt:
-          # renovate: depName="OpenWRT Dashboard"
-          gnetId: 18153
-          revision: 4
-          datasource:
-            - {name: DS_PROMETHEUS, value: Prometheus}
-        victorialogs-single-node:
-          # renovate: depName="VictoriaLogs - single-node"
-          gnetId: 22084
-          revision: 11
-          datasource:
-            - {name: DS_PROMETHEUS, value: Prometheus}
+      logs:
         victorialogs-explorer:
           # renovate: depName="VictoriaLogs Explorer"
           gnetId: 22759
