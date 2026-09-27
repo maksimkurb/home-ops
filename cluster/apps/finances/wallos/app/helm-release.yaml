@@ -44,6 +44,8 @@ spec:
               OIDC_DISABLE_PASSWORD_LOGIN: "true"
               OIDC_REDIRECT_URL: https://wallos.${SECRET_PUBLIC_DOMAIN}/index.php
               OIDC_LOGOUT_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/logout
+              OIDC_SCOPES: openid email profile
+              OIDC_REQUIRE_EMAIL_VERIFIED: "false"
               OIDC_CLIENT_SECRET:
                 valueFrom:
                   secretKeyRef:
