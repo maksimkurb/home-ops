@@ -6,7 +6,7 @@ metadata:
   name: &appname wallos
   namespace: flux-system
 spec:
-  targetNamespace: home
+  targetNamespace: finances
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
