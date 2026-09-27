@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: authelia-chain-home
+  name: authelia-chain-finances
   namespace: flux-system
 spec:
   interval: 30m
@@ -12,6 +12,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-cluster
-  targetNamespace: home
+  targetNamespace: finances
   dependsOn:
     - name: traefik-crds
