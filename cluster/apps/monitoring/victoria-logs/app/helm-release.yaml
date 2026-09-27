@@ -52,9 +52,11 @@ spec:
         tcp:
           - name: syslog-tcp
             value: :1514
+            useLocalTimestamp: true
         udp:
           - name: syslog-udp
             value: :1514
+            useLocalTimestamp: true
       extraArgs:
         memory.allowedBytes: 256MiB
         maxConcurrentInserts: 2
