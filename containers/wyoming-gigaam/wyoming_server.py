@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import asyncio
+import ctypes
 import logging
 import os
 import tempfile
@@ -16,6 +17,7 @@ from wyoming.info import AsrModel, AsrProgram, Attribution, Describe, Info
 from wyoming.server import AsyncEventHandler, AsyncServer
 
 _LOGGER = logging.getLogger(__name__)
+_malloc_trim = ctypes.CDLL("libc.so.6").malloc_trim
 
 
 class GigaAMEventHandler(AsyncEventHandler):
@@ -96,6 +98,7 @@ class GigaAMEventHandler(AsyncEventHandler):
                         os.unlink(wav_path)
                     except FileNotFoundError:
                         pass
+                _malloc_trim(0)
             return False
 
         if Transcribe.is_type(event.type):
@@ -143,6 +146,7 @@ async def async_main() -> None:
         fp16_encoder=True,
         use_flash=False,
     )
+    _malloc_trim(0)
 
     info = Info(
         asr=[

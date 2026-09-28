@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM pytorch/pytorch:2.14.0-cuda12.6-cudnn9-runtime
 
-ARG GIGAAM_REF=main
+ARG GIGAAM_REF=7447938d791c4f3e643386ee22c33777004293a5
 
 ENV DEBIAN_FRONTEND=noninteractive \
     VIRTUAL_ENV=/opt/venv \
@@ -29,9 +29,12 @@ RUN apt-get update \
     && python -c 'import torch; print("PyTorch", torch.__version__, "CUDA", torch.version.cuda)' \
     && python -m pip install --upgrade pip setuptools wheel
 
+COPY gigaam-loading.patch /tmp/gigaam-loading.patch
+
 RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
     && cd /tmp/GigaAM \
     && git checkout "${GIGAAM_REF}" \
+    && git apply /tmp/gigaam-loading.patch \
     && python -m pip install ".[longform]" \
     && python -m pip install "wyoming==1.8.0" \
     && mkdir -p /usr/share/licenses/GigaAM \
@@ -46,13 +49,13 @@ RUN --mount=type=secret,id=HUGGING_FACE_TOKEN,required=true \
       --gigaam-dir "${MODEL_DIR}" \
       --hf-cache "${HF_HUB_CACHE}" \
     && rm -f /tmp/download_models.py \
-    && rm -rf /tmp/GigaAM
+    && rm -rf /tmp/GigaAM /tmp/gigaam-loading.patch
 
 ENV HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1
 
-COPY server.py /app/server.py
+COPY wyoming_server.py /app/wyoming_server.py
 
 EXPOSE 10300
 
-ENTRYPOINT ["python", "/app/server.py"]
+ENTRYPOINT ["python", "/app/wyoming_server.py"]
