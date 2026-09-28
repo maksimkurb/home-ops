@@ -54,7 +54,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maksimkurb/wyoming-gigaam
-              tag: latest
+              tag: "20260928153634"
               pullPolicy: Always
             env:
               TZ: "${TIMEZONE}"
@@ -65,6 +65,7 @@ spec:
               FR_BATCH_SIZE: "1"
               FR_NUM_WORKERS: "0"
               LONGFORM_THRESHOLD_SECONDS: "25"
+              OMP_NUM_THREADS: "2"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: compute,utility
             probes:
