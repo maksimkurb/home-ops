@@ -93,7 +93,7 @@ spec:
               TZ: ${TIMEZONE}
               DOCKER_ENABLE_SECURITY: 'true'
               SECURITY_ENABLELOGIN: 'true'
-              SECURITY_LOGINMETHOD: all
+              SECURITY_LOGINMETHOD: oauth2
               SECURITY_INITIALLOGIN_USERNAME: admin
               SECURITY_INITIALLOGIN_PASSWORD:
                 valueFrom:
