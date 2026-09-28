@@ -26,15 +26,15 @@ spec:
             port: 10300
             protocol: TCP
     persistence:
-      config:
+      models:
         enabled: true
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
-        size: 5Gi
+        size: 20Gi
         storageClass: local-path
         retain: true
         globalMounts:
-          - path: /data
+          - path: /models
     defaultPodOptions:
       affinity:
         nodeAffinity:
@@ -54,13 +54,14 @@ spec:
           app:
             image:
               repository: ghcr.io/maksimkurb/wyoming-gigaam
-              tag: "20260928153634"
+              tag: "20260928171910"
               pullPolicy: Always
             env:
               TZ: "${TIMEZONE}"
-              MODEL: multilingual_ctc
+              MODEL: gigaam-multilingual-ctc
               DEVICE: cuda
               MODEL_DIR: /opt/models/gigaam
+              MODEL_CACHE_DIR: /models
               URI: tcp://0.0.0.0:10300
               FR_BATCH_SIZE: "1"
               FR_NUM_WORKERS: "0"
