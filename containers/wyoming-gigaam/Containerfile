@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM pytorch/pytorch:2.14.0-cuda12.6-cudnn9-runtime
+FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
 
 ARG GIGAAM_REF=7447938d791c4f3e643386ee22c33777004293a5
 
