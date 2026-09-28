@@ -8,7 +8,8 @@ import tempfile
 import wave
 from functools import partial
 
-import gigaam
+import onnx_asr
+import onnxruntime as ort
 from wyoming.asr import Transcribe, Transcript
 from wyoming.audio import AudioChunk, AudioStop
 from wyoming.error import Error
@@ -21,11 +22,12 @@ _malloc_trim = ctypes.CDLL("libc.so.6").malloc_trim
 
 
 class GigaAMEventHandler(AsyncEventHandler):
-    def __init__(self, info: Info, args, model, model_lock: asyncio.Lock, *handler_args, **kwargs):
+    def __init__(self, info: Info, args, model, longform_model, model_lock: asyncio.Lock, *handler_args, **kwargs):
         super().__init__(*handler_args, **kwargs)
         self.info_event = info.event()
         self.args = args
         self.model = model
+        self.longform_model = longform_model
         self.model_lock = model_lock
         self.audio_buffer: bytearray | None = None
         self.audio_format: tuple[int, int, int] | None = None
@@ -71,22 +73,15 @@ class GigaAMEventHandler(AsyncEventHandler):
                 async with self.model_lock:
                     if duration >= self.args.longform_threshold_seconds:
                         _LOGGER.info(
-                            "Longform transcription: %.2fs, batch_size=%d, workers=%d",
+                            "Longform transcription: %.2fs, batch_size=%d",
                             duration,
                             self.args.fr_batch_size,
-                            self.args.fr_num_workers,
                         )
-                        result = await asyncio.to_thread(
-                            self.model.transcribe_longform,
-                            wav_path,
-                            False,
-                            self.args.fr_batch_size,
-                            self.args.fr_num_workers,
-                        )
+                        segments = await asyncio.to_thread(self.longform_model.recognize, wav_path)
+                        text = " ".join(segment.text for segment in segments)
                     else:
-                        result = await asyncio.to_thread(self.model.transcribe, wav_path)
+                        text = await asyncio.to_thread(self.model.recognize, wav_path)
 
-                text = result.text if hasattr(result, "text") else str(result)
                 _LOGGER.info("Transcription: %s", text)
                 await self.write_event(Transcript(text=text).event())
             except Exception as err:
@@ -114,19 +109,15 @@ class GigaAMEventHandler(AsyncEventHandler):
 
 async def async_main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default=os.getenv("MODEL", "multilingual_ctc"))
-    parser.add_argument("--device", default=os.getenv("DEVICE", "cuda"))
+    parser.add_argument("--model", default=os.getenv("MODEL", "gigaam-multilingual-ctc"))
+    parser.add_argument("--device", choices=("cpu", "cuda"), default=os.getenv("DEVICE", "cuda"))
     parser.add_argument("--model-dir", default=os.getenv("MODEL_DIR", "/opt/models/gigaam"))
+    parser.add_argument("--vad-dir", default=os.getenv("VAD_DIR", "/opt/models/vad"))
     parser.add_argument("--uri", default=os.getenv("URI", "tcp://0.0.0.0:10300"))
     parser.add_argument(
         "--fr-batch-size",
         type=int,
         default=int(os.getenv("FR_BATCH_SIZE", "1")),
-    )
-    parser.add_argument(
-        "--fr-num-workers",
-        type=int,
-        default=int(os.getenv("FR_NUM_WORKERS", "0")),
     )
     parser.add_argument(
         "--longform-threshold-seconds",
@@ -135,17 +126,20 @@ async def async_main() -> None:
     )
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
+    if args.model == "multilingual_ctc":
+        args.model = "gigaam-multilingual-ctc"
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
 
-    _LOGGER.info("Loading GigaAM model=%s device=%s", args.model, args.device)
-    model = gigaam.load_model(
-        model_name=args.model,
-        device=args.device,
-        download_root=args.model_dir,
-        fp16_encoder=True,
-        use_flash=False,
-    )
+    providers = ["CUDAExecutionProvider", "CPUExecutionProvider"] if args.device == "cuda" else ["CPUExecutionProvider"]
+    if args.device == "cuda" and "CUDAExecutionProvider" not in ort.get_available_providers():
+        raise RuntimeError("ONNX Runtime CUDA provider is unavailable")
+    _LOGGER.info("Loading GigaAM ONNX model=%s device=%s", args.model, args.device)
+    model = onnx_asr.load_model(args.model, args.model_dir, providers=providers)
+    if args.device == "cuda" and "CUDAExecutionProvider" not in model.asr._model.get_providers():
+        raise RuntimeError("GigaAM ONNX model did not initialize on CUDA")
+    vad = onnx_asr.load_vad("pyannote", args.vad_dir, providers=["CPUExecutionProvider"])
+    longform_model = model.with_vad(vad, batch_size=args.fr_batch_size)
     _malloc_trim(0)
 
     info = Info(
@@ -167,7 +161,7 @@ async def async_main() -> None:
                             name="SaluteDevelopers",
                             url="https://github.com/salute-developers/GigaAM",
                         ),
-                        installed=args.model == "multilingual_ctc",
+                        installed=args.model == "gigaam-multilingual-ctc",
                         languages=["ru", "en", "kk", "ky", "uz"],
                         version="1",
                     )
@@ -179,13 +173,12 @@ async def async_main() -> None:
     server = AsyncServer.from_uri(args.uri)
     model_lock = asyncio.Lock()
     _LOGGER.info(
-        "Ready on %s (longform >= %.1fs, batch_size=%d, workers=%d)",
+        "Ready on %s (longform >= %.1fs, batch_size=%d)",
         args.uri,
         args.longform_threshold_seconds,
         args.fr_batch_size,
-        args.fr_num_workers,
     )
-    await server.run(partial(GigaAMEventHandler, info, args, model, model_lock))
+    await server.run(partial(GigaAMEventHandler, info, args, model, longform_model, model_lock))
 
 
 def main() -> None:
