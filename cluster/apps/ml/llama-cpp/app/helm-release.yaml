@@ -24,6 +24,24 @@ spec:
           http:
             port: 8080
             protocol: TCP
+    route:
+      app-private:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - llama-cpp.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 8080
     persistence:
       models:
         enabled: true
