@@ -1,13 +1,46 @@
 # syntax=docker/dockerfile:1
-FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+FROM python:3.12-slim-bookworm AS packages
 
 ARG GIGAAM_REF=7447938d791c4f3e643386ee22c33777004293a5
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    VIRTUAL_ENV=/opt/venv \
-    PATH=/opt/venv/bin:$PATH \
-    PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
+    MODEL_DIR=/opt/models/gigaam \
+    HF_HOME=/opt/models/huggingface \
+    HF_HUB_CACHE=/opt/models/huggingface
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      ca-certificates \
+      git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY gigaam-loading.patch /tmp/gigaam-loading.patch
+
+RUN python -m pip install --index-url https://download.pytorch.org/whl/cu126 \
+      "torch==2.10.0+cu126" "torchaudio==2.10.0+cu126" "torchcodec==0.10.0+cu126"
+
+RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
+    && cd /tmp/GigaAM \
+    && git checkout "${GIGAAM_REF}" \
+    && git apply --unidiff-zero /tmp/gigaam-loading.patch \
+    && python -m pip install ".[longform]" "wyoming==1.8.0" \
+    && mkdir -p /usr/share/licenses/GigaAM \
+    && cp /tmp/GigaAM/LICENSE /usr/share/licenses/GigaAM/LICENSE
+
+FROM packages AS build
+
+COPY download_models.py /tmp/download_models.py
+
+RUN --mount=type=secret,id=HUGGING_FACE_TOKEN,required=true \
+    python /tmp/download_models.py \
+      --hf-token-file /run/secrets/HUGGING_FACE_TOKEN \
+      --gigaam-dir "${MODEL_DIR}" \
+      --hf-cache "${HF_HUB_CACHE}"
+
+FROM python:3.12-slim-bookworm
+
+ENV PYTHONUNBUFFERED=1 \
     MODEL=multilingual_ctc \
     DEVICE=cuda \
     MODEL_DIR=/opt/models/gigaam \
@@ -19,37 +52,14 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LONGFORM_THRESHOLD_SECONDS=25
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-      ca-certificates \
-      ffmpeg \
-      git \
-      python3.12-venv \
-    && rm -rf /var/lib/apt/lists/* \
-    && python -m venv --system-site-packages "$VIRTUAL_ENV" \
-    && python -c 'import torch; print("PyTorch", torch.__version__, "CUDA", torch.version.cuda)' \
-    && python -m pip install --upgrade pip setuptools wheel
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY gigaam-loading.patch /tmp/gigaam-loading.patch
-
-RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
-    && cd /tmp/GigaAM \
-    && git checkout "${GIGAAM_REF}" \
-    && git apply --unidiff-zero /tmp/gigaam-loading.patch \
-    && python -m pip install ".[longform]" \
-    && python -m pip install "wyoming==1.8.0" \
-    && mkdir -p /usr/share/licenses/GigaAM \
-    && cp /tmp/GigaAM/LICENSE /usr/share/licenses/GigaAM/LICENSE
-
-COPY download_models.py /tmp/download_models.py
+COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=build /opt/models /opt/models
+COPY --from=build /usr/share/licenses/GigaAM /usr/share/licenses/GigaAM
+COPY --from=build /usr/share/licenses/pyannote-segmentation-3.0 /usr/share/licenses/pyannote-segmentation-3.0
 COPY THIRD_PARTY_NOTICES.md /usr/share/doc/wyoming-gigaam/THIRD_PARTY_NOTICES.md
-
-RUN --mount=type=secret,id=HUGGING_FACE_TOKEN,required=true \
-    python /tmp/download_models.py \
-      --hf-token-file /run/secrets/HUGGING_FACE_TOKEN \
-      --gigaam-dir "${MODEL_DIR}" \
-      --hf-cache "${HF_HUB_CACHE}" \
-    && rm -f /tmp/download_models.py \
-    && rm -rf /tmp/GigaAM /tmp/gigaam-loading.patch
 
 ENV HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1
