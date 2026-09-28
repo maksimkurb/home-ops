@@ -106,6 +106,13 @@ spec:
         sizeLimit: 300Mi
         globalMounts:
           - path: /dev/shm
+      preroll-temp:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: /tmp/cache
       media:
         enabled: true
         existingClaim: frigate-media
