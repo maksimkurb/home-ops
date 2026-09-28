@@ -2,21 +2,10 @@ diff --git a/gigaam/__init__.py b/gigaam/__init__.py
 index d0b7c89..3819bed 100644
 --- a/gigaam/__init__.py
 +++ b/gigaam/__init__.py
-@@ -123,7 +123,8 @@ def _download_tokenizer(model_name: str, download_root: str) -> Optional[str]:
-
- def hash_path(ckpt_path: str) -> str:
-     """Calculate binary file hash for checksum"""
+@@ -126 +126,2 @@ def hash_path(ckpt_path: str) -> str:
 -    return hashlib.md5(open(ckpt_path, "rb").read()).hexdigest()
 +    with open(ckpt_path, "rb") as checkpoint:
 +        return hashlib.file_digest(checkpoint, "md5").hexdigest()
-
-
- def _apply_flash_policy(cfg, use_flash: Optional[bool], device_obj: torch.device):
-@@ -224,7 +225,7 @@ def load_model(
-
-     with warnings.catch_warnings():
-         warnings.simplefilter("ignore", category=(FutureWarning))
+@@ -227 +228 @@ def load_model(
 -        checkpoint = torch.load(model_path, map_location="cpu", weights_only=False)
 +        checkpoint = torch.load(model_path, map_location="cpu", weights_only=False, mmap=True)
-
-     _apply_flash_policy(checkpoint["cfg"], use_flash, device_obj)

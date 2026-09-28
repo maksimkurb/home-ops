@@ -34,7 +34,7 @@ COPY gigaam-loading.patch /tmp/gigaam-loading.patch
 RUN git clone --filter=blob:none https://github.com/salute-developers/GigaAM.git /tmp/GigaAM \
     && cd /tmp/GigaAM \
     && git checkout "${GIGAAM_REF}" \
-    && git apply /tmp/gigaam-loading.patch \
+    && git apply --unidiff-zero /tmp/gigaam-loading.patch \
     && python -m pip install ".[longform]" \
     && python -m pip install "wyoming==1.8.0" \
     && mkdir -p /usr/share/licenses/GigaAM \
