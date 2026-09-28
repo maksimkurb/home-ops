@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - oidc.yaml
   - ./faster-whisper/ks.yaml
+  - ./llama-cpp/ks.yaml
   - ./mcphub/ks.yaml
   - ./mcp-victorialogs/ks.yaml
   - ./mcp-victoriametrics/ks.yaml

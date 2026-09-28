@@ -1,0 +1,121 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  namespace: ml
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.2.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    service:
+      app:
+        controller: app
+        type: ClusterIP
+        ports:
+          http:
+            port: 8080
+            protocol: TCP
+    persistence:
+      models:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /models
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: feature.node.kubernetes.io/custom-nvidia-gpu
+                    operator: In
+                    values:
+                      - "true"
+      runtimeClassName: nvidia
+    controllers:
+      app:
+        initContainers:
+          download-model:
+            image:
+              repository: curlimages/curl
+              tag: 8.12.1
+            command:
+              - /bin/sh
+              - -c
+              - >-
+                if [ ! -s /models/Qwen3.5-2B-Q4_K_M.gguf ]; then curl --fail --location --retry 3 https://huggingface.co/unsloth/Qwen3.5-2B-GGUF/resolve/main/Qwen3.5-2B-Q4_K_M.gguf --output /models/Qwen3.5-2B-Q4_K_M.gguf.tmp && mv /models/Qwen3.5-2B-Q4_K_M.gguf.tmp /models/Qwen3.5-2B-Q4_K_M.gguf; fi
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ggml-org/llama.cpp
+              tag: server-cuda
+              pullPolicy: IfNotPresent
+            env:
+              LLAMA_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: LLAMA_API_KEY
+            command:
+              - /app/llama-server
+            args:
+              - --model
+              - /models/Qwen3.5-2B-Q4_K_M.gguf
+              - --host
+              - 0.0.0.0
+              - --port
+              - "8080"
+              - --alias
+              - qwen3.5-2b
+              - --ctx-size
+              - "8192"
+              - --parallel
+              - "1"
+              - --jinja
+              - --fit
+              - on
+              - --fit-target
+              - "1536"
+              - --cache-type-k
+              - q8_0
+              - --cache-type-v
+              - q8_0
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+                nvidia.com/gpu: "1"
+              limits:
+                cpu: 4000m
+                memory: 6Gi
+                nvidia.com/gpu: "1"

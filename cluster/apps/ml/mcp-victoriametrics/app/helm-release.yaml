@@ -28,6 +28,7 @@ spec:
               VM_INSTANCE_TYPE: single
               MCP_SERVER_MODE: sse
               MCP_LISTEN_ADDR: 0.0.0.0:8080
+              MCP_DISABLED_TOOLS: documentation
             probes:
               liveness:
                 enabled: true
