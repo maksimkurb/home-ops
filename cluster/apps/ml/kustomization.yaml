@@ -6,4 +6,6 @@ resources:
   - oidc.yaml
   - ./faster-whisper/ks.yaml
   - ./mcphub/ks.yaml
+  - ./mcp-victorialogs/ks.yaml
+  - ./mcp-victoriametrics/ks.yaml
   - ./printguard/ks.yaml
