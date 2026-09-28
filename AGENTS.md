@@ -51,12 +51,12 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 
 ## SOPS Rules
 
-AI agents must not decrypt or modify encrypted SOPS files.
+AI agents may create a new plaintext `*.sops.*` file when the path does not exist, so the user can encrypt it. Existing encrypted SOPS files are off limits.
 
 - Never run `sops -d`, `sops edit`, or equivalent decrypt/edit commands.
-- Never modify encrypted files matching `*.sops.yaml`, `*.sops.yml`, `*.sops.json`, `*.sops.toml`, or `*.sops.conf`.
-- Reading encrypted SOPS files is allowed only to inspect visible metadata, resource names, keys, and structure.
-- If a secret change is needed, leave encrypted files untouched and print the exact cleartext YAML, TOML, JSON, or key-value snippet for the user to apply manually.
+- Never read or modify an existing encrypted file matching `*.sops.yaml`, `*.sops.yml`, `*.sops.json`, `*.sops.toml`, or `*.sops.conf`.
+- Before creating a plaintext SOPS-named file, confirm the path does not exist. Write it only once; leave encryption to the user.
+- If a change to an existing encrypted secret is needed, leave it untouched and print the exact cleartext YAML, TOML, JSON, or key-value snippet for the user to apply manually.
 - Never commit decrypted temporary files such as `.decrypted~*` or `*.sops.tmp.*`
 
 ## Validation

@@ -51,12 +51,6 @@ spec:
             backendRefs:
               - identifier: main
                 port: 8080
-            filters:
-              - type: ExtensionRef
-                extensionRef:
-                  group: traefik.io
-                  kind: Middleware
-                  name: oidc-documents
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
@@ -94,13 +88,33 @@ spec:
           main:
             image:
               repository: ghcr.io/stirling-tools/s-pdf
-              tag: 2.14.3@sha256:3b3670fce70b396ec56ba380a3cc7858e0abf83fe13f31c88f7737847763a396
+              tag: 3.0.0@sha256:66b6edb8ee62e307a8b335166e8931a6e65b39c9bf73b5e517fbfe9c613ba221
             env:
               TZ: ${TIMEZONE}
-              DOCKER_ENABLE_SECURITY: 'false'
-              SECURITY_ENABLE_LOGIN: 'true'
+              DOCKER_ENABLE_SECURITY: 'true'
+              SECURITY_ENABLELOGIN: 'true'
+              SECURITY_LOGINMETHOD: all
+              SECURITY_INITIALLOGIN_USERNAME: admin
+              SECURITY_INITIALLOGIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: SECRET_STIRLING_PDF_ADMIN_PASSWORD
+              SECURITY_OAUTH2_ENABLED: 'true'
+              SECURITY_OAUTH2_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
+              SECURITY_OAUTH2_CLIENTID: stirling-pdf
+              SECURITY_OAUTH2_CLIENTSECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: SECRET_STIRLING_PDF_OAUTH_CLIENT_SECRET
+              SECURITY_OAUTH2_PROVIDER: authelia
+              SECURITY_OAUTH2_AUTOCREATEUSER: 'true'
+              SECURITY_OAUTH2_SCOPES: openid,profile,email
+              SECURITY_OAUTH2_USEASUSERNAME: email
+              SYSTEM_BACKENDURL: https://stirling-pdf.${SECRET_PUBLIC_DOMAIN}
               INSTALL_BOOK_AND_ADVANCED_HTML_OPS: 'false'
-              DISABLE_ADDITIONAL_FEATURES: 'true'
+              DISABLE_ADDITIONAL_FEATURES: 'false'
               SYSTEM_ENABLEANALYTICS: 'false'
               SYSTEM_ENABLEPOSTHOG: 'false'
               SYSTEM_ENABLESCARF: 'false'
