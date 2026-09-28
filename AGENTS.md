@@ -25,7 +25,14 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - Static LoadBalancer IPs come from `SVC_*_ADDR` keys in `cluster/config/cluster-settings.yaml`.
 - MetalLB pools live in `cluster/apps/networking/metallb/pools/pools.yaml`.
 - Public HTTP ingress uses `className: nginx`; private HTTP ingress uses `className: nginx-intra`.
-- Use `${SECRET_PUBLIC_DOMAIN}`, `${SECRET_PRIVATE_DOMAIN}`, `${INGRESS_DEFAULT}`, and existing external-dns annotations instead of hardcoding domains or targets.
+- Always put public and private HTTP ingress on separate `HTTPRoute` resources, each with its own parent and domain.
+- Use `${SECRET_PUBLIC_DOMAIN}` and `${SECRET_PRIVATE_DOMAIN}` for service domains.
+- Every public service must use these external-dns annotations:
+  ```yaml
+  external-dns.kubernetes.io/enabled: 'true'
+  external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+  external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
+  ```
 
 ## Storage
 

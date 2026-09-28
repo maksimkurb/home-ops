@@ -129,24 +129,38 @@ spec:
           http:
             port: &port 3000
     route:
-      app:
+      app-private:
         enabled: true
         kind: HTTPRoute
         parentRefs:
           - name: private
             sectionName: websecure-private
             namespace: networking
-          - name: public
-            sectionName: websecure-public
-            namespace: networking
         hostnames:
           - mcphub.${SECRET_PRIVATE_DOMAIN}
-          - mcphub.${SECRET_PUBLIC_DOMAIN}
         annotations:
           gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: mdi-hub
           gethomepage.dev/name: MCPHub
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 3000
+      app-public:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - mcphub.${SECRET_PUBLIC_DOMAIN}
+        annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
