@@ -65,6 +65,8 @@ spec:
       runtimeClassName: nvidia
     controllers:
       app:
+        annotations:
+          reloader.stakater.com/auto: "true"
         initContainers:
           download-model:
             image:
@@ -117,6 +119,7 @@ spec:
               - q8_0
               - --cache-type-v
               - q8_0
+              - --embeddings
             probes:
               readiness:
                 enabled: true
