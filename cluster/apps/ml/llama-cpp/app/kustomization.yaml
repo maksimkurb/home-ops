@@ -4,3 +4,18 @@ kind: Kustomization
 resources:
   - helm-release.yaml
   - secret.sops.yaml
+configMapGenerator:
+  - name: llama-cpp-download-model
+    files:
+      - download-model.sh
+    options:
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
+  - name: llama-cpp-models
+    files:
+      - models.ini
+    options:
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: disabled
+generatorOptions:
+  disableNameSuffixHash: true
