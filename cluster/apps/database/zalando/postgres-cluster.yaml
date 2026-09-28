@@ -76,6 +76,7 @@ spec:
     default.plik: []
     default.snapotter: []
     default.frappe: []
+    ml.mcphub: []
     games.openquester: []
     oxygen.remnawave: []
   databases:
@@ -109,6 +110,7 @@ spec:
     plik: default.plik
     snapotter: default.snapotter
     frappe: default.frappe
+    mcphub: ml.mcphub
     openquester: games.openquester
     remnawave: oxygen.remnawave
   enableMasterLoadBalancer: true

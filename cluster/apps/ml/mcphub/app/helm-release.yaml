@@ -52,9 +52,28 @@ spec:
               TZ: ${TIMEZONE_FAILSAFE}
               NODE_ENV: production
               PORT: '3000'
-              USE_DB: 'false'
+              USE_DB: 'true'
+              DATABASE_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: ml.mcphub.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              DB_URL: postgresql://ml.mcphub:$(DATABASE_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/mcphub
+              BETTER_AUTH_ENABLED: 'true'
+              BETTER_AUTH_URL: https://mcphub.${SECRET_PUBLIC_DOMAIN}
+              BETTER_AUTH_TRUSTED_ORIGINS: https://mcphub.${SECRET_PRIVATE_DOMAIN},https://mcphub.${SECRET_PUBLIC_DOMAIN}
+              BETTER_AUTH_OIDC_ENABLED: 'true'
+              BETTER_AUTH_OIDC_PROVIDER_ID: authelia
+              BETTER_AUTH_OIDC_DISCOVERY_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
+              BETTER_AUTH_OIDC_SCOPES: openid,profile,email,groups
+              OIDC_CLIENT_ID: mcphub
+              OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: OIDC_CLIENT_SECRET
               MCPHUB_SETTING_PATH: /data/mcp_settings.json
-              INSTALL_BASE_URL: https://mcphub.${SECRET_PRIVATE_DOMAIN}
+              INSTALL_BASE_URL: https://mcphub.${SECRET_PUBLIC_DOMAIN}
               ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
@@ -117,13 +136,20 @@ spec:
           - name: private
             sectionName: websecure-private
             namespace: networking
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
         hostnames:
           - mcphub.${SECRET_PRIVATE_DOMAIN}
+          - mcphub.${SECRET_PUBLIC_DOMAIN}
         annotations:
           gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: mdi-hub
           gethomepage.dev/name: MCPHub
+          external-dns.kubernetes.io/enabled: 'true'
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
         rules:
           - matches:
               - path:
