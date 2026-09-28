@@ -9,6 +9,8 @@ stringData:
     FRIGATE_MQTT_PASSWORD: ENC[AES256_GCM,data:jVt1ZoTnDn2G8wEWzg7ub2h0xgofGMLi,iv:bvcBdRFxgzgxgGJwfhfpueP2qqi8ohVv6QNZloOkjp8=,tag:GRxZBOrVp/GeeCZTdXUbJA==,type:str]
     FRIGATE_CAMERA_HALLWAY_HQ_RTSP_URL: ENC[AES256_GCM,data:wYgI0Xi7MUxL/F+otS9VQzugQvUsxQ/W9D8icYGEckVjwYE0WFcZ8rL0N6GqFzaOrf/wL5H4X/bzGACF2mmx+YQcjhxh3aTXvYXYmL9cXK6NiWuxxa4eZpcazZfA,iv:v4bmh4JnTMBXyKvcLhjvHvclj0+dePM7QXEPL7WOuI8=,tag:O3fAJcbL0owp1T11WXfj7A==,type:str]
     FRIGATE_CAMERA_ENTRANCE_HQ_RTSP_URL: ENC[AES256_GCM,data:z3R/bENz3wJKCYyYJjhax7g6lR96XFI06QBFPtihRFtBGKGcXIu7ACAvXWJzvNZ4CH3H8oeluspLOgv2vl8a7IfMosyCToOUYuGY33rxVxF28ZLdcFAnrMRxIG8u,iv:9ol4dQPzpH6G2pDlqBlgkOe1KqNBlTj6JUU9Qab+eL4=,tag:IAD7Y0hdwodbhLDsWVipVg==,type:str]
+    FRIGATE_CAMERA_HALLWAY_LQ_RTSP_URL: ENC[AES256_GCM,data:zt436YVRdEMAl81pXKPHeFF/QbviISNsqYqWAyYQvvEoOXTefD6CdJNzhynNiCTyfV/VCe8MYcrC6XEGlQ06CY4+aqL+kFj0CxerEITHs3qj96ixdZfENRzR7GbY,iv:lPWO6rWdSwMvUayiEm3SAnC0fMCbAtgawPl3/HDTvCQ=,tag:AavIbKNhChjvFzk/6mLBTw==,type:str]
+    FRIGATE_CAMERA_ENTRANCE_LQ_RTSP_URL: ENC[AES256_GCM,data:o59xAQLSgRxOeDRzvD1x7nw64JogQfMarjNPniEfz3sAgXHLpEUb0IyRJt5b82TlCOdia0Wkz+PtdS7vOdgXW1igNAwJZdXLbnFcIu2+zStIzGB+NtdNZYKr239u,iv:alIB66RY2UmeHpgQaDLn+cMk64mTta6kMb90wC8oAtE=,tag:AQRGX2qyzzeAOpuEr16PTw==,type:str]
     FRIGATE_CAMERA_HALLWAY_ONVIF_IP: ENC[AES256_GCM,data:4TnO6WtMUJPFqlqCKyQ=,iv:2PWCL4x4hxZI3A+7RcUFOZ8wv3AO1+NiQ1Auv5PsTOg=,tag:oI10oGXjnkWFLNsMJHJOoQ==,type:str]
     FRIGATE_CAMERA_HALLWAY_ONVIF_PASSWORD: ENC[AES256_GCM,data:3PPDj5NvDyHapjk2G33LT/Z5HRYvtQ==,iv:R/RpTRX2tTrNTJEtwE78dYTKcPTEvdkoHVDRFejO69A=,tag:pvdpufs/kevrp8AnaFrgyw==,type:str]
     FRIGATE_CAMERA_HALLWAY_ONVIF_USERNAME: ENC[AES256_GCM,data:cBzA990z8Q==,iv:WVEy3EVTLJhCUzILQVAuQC5oCKddEj0hcqWmUR9rEPM=,tag:vMNxS/n9+SUQuwdj58mPXA==,type:str]
@@ -25,6 +27,6 @@ sops:
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
     encrypted_regex: ^(data|stringData)$
-    lastmodified: "2026-07-02T19:48:57Z"
-    mac: ENC[AES256_GCM,data:44D9LX2zjbxA6bCKECFrHr0qitl+8IRWHtsDCBAd5dSKPE4O19MQGnmm4tkiDBeXtYmY+g04HGmywA5FRDa5bX6mT6ydoDaVWU7zzTea4UfwHmBzYAW0wfvTSRyA+oRsuAsMbjsWltRzuKbaHCMqnsMpP7NYY/qcaTxeNGxoDys=,iv:m5PT/4uZaVMKeVnF6HaKkg99LXgzVw6Q9iTQMs5S200=,tag:YbppXBzc7zYj9PJsAiOLoA==,type:str]
-    version: 3.13.2
+    lastmodified: "2026-09-28T12:24:42Z"
+    mac: ENC[AES256_GCM,data:LI1MnifZVsGfzvs5iIZXH8epOqAyxfVyc3mycn/T3i52W6AD8L4cvAEkfg/U9Zx4G6heR9DRXQSQJpUayxbYJMyLSrG6IQ2hkkO32+jjJLLG8eNifWGdK9ay0L7/0DjM2ageTsa7tEZF7FYizNDKQ87X3l1XMYpUmDPe1KXYMGI=,iv:hccis5F4c6OuSHDh7Uvg5N1HwLWclom6O+nkq/dV81U=,tag:GQo6cH4wBTuwXdbVKw4ojA==,type:str]
+    version: 3.13.3
