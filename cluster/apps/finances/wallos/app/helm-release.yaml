@@ -33,7 +33,7 @@ spec:
           main:
             image:
               repository: ghcr.io/ellite/wallos
-              tag: 5.8.1
+              tag: 5.8.2
             env:
               TZ: ${TIMEZONE}
               OIDC_ENABLED: "true"
