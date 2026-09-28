@@ -324,7 +324,7 @@ identity_providers:
         redirect_uris:
           - https://mcphub.${SECRET_PUBLIC_DOMAIN}/api/auth/better/oauth2/callback/authelia
         userinfo_signed_response_alg: 'none'
-        token_endpoint_auth_method: client_secret_basic
+        token_endpoint_auth_method: client_secret_post
       - client_id: homarr
         client_name: Homarr
         client_secret: ${SECRET_HOMARR_OAUTH_CLIENT_SECRET}

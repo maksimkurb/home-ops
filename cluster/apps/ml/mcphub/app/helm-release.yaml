@@ -60,6 +60,7 @@ spec:
                     key: password
               DB_URL: postgresql://ml.mcphub:$(DATABASE_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/mcphub
               BETTER_AUTH_ENABLED: 'true'
+              BETTER_AUTH_DISABLE_AUTO_CREATE: 'false'
               BETTER_AUTH_SECRET:
                 valueFrom:
                   secretKeyRef:
