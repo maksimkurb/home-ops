@@ -52,7 +52,7 @@ spec:
                   secretKeyRef:
                     name: ${APP}-secret
                     key: OIDC_CLIENT_SECRET
-              SSRF_ALLOWLIST: auth.${SECRET_PUBLIC_DOMAIN}
+              SSRF_ALLOWLIST: auth.${SECRET_PUBLIC_DOMAIN},unified-push.${SECRET_PUBLIC_DOMAIN}
             resources:
               requests:
                 cpu: 50m

@@ -72,7 +72,7 @@ spec:
         initContainers:
           setup-certs:
             image:
-              repository: docker.io/rxchi1d/n8n-ffmpeg
+              repository: ghcr.io/maksimkurb/n8n-ffmpeg
               tag: 2.40.7
               pullPolicy: IfNotPresent
             securityContext:
@@ -90,7 +90,7 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/rxchi1d/n8n-ffmpeg
+              repository: ghcr.io/maksimkurb/n8n-ffmpeg
               tag: 2.40.7
               pullPolicy: IfNotPresent
             env:
@@ -177,7 +177,7 @@ spec:
         initContainers:
           setup-certs:
             image:
-              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              repository: ghcr.io/maksimkurb/n8n-runners-ffmpeg
               tag: 2.40.7
               pullPolicy: IfNotPresent
             securityContext:
@@ -195,7 +195,7 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/rxchi1d/n8n-runners-ffmpeg
+              repository: ghcr.io/maksimkurb/n8n-runners-ffmpeg
               tag: 2.40.7
               pullPolicy: IfNotPresent
             env:
