@@ -120,12 +120,12 @@ spec:
       - --providers.kubernetesgateway.statusaddress.service.name=traefik-public
       - --providers.kubernetesgateway.statusaddress.service.namespace=networking
       - --entrypoints.web.http.aliasheadersstrategy=reject
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.to=:443
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.http.aliasheadersstrategy=reject
       - --entrypoints.websecure.http.middlewares=networking_crowdsec@kubernetescrd
       - --entrypoints.web-private.http.aliasheadersstrategy=reject
-      - --entrypoints.web-private.http.redirections.entrypoint.to=websecure-private
+      - --entrypoints.web-private.http.redirections.entrypoint.to=:443
       - --entrypoints.web-private.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure-private.http.aliasheadersstrategy=reject
       - --entrypoints.websecure-private.http.middlewares=networking_private-allowlist@kubernetescrd
