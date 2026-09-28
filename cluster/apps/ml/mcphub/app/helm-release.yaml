@@ -68,6 +68,8 @@ spec:
                     key: BETTER_AUTH_SECRET
               BETTER_AUTH_URL: https://mcphub.${SECRET_PUBLIC_DOMAIN}
               BETTER_AUTH_TRUSTED_ORIGINS: https://mcphub.${SECRET_PRIVATE_DOMAIN},https://mcphub.${SECRET_PUBLIC_DOMAIN}
+              BETTER_AUTH_GOOGLE_ENABLED: 'false'
+              BETTER_AUTH_GITHUB_ENABLED: 'false'
               BETTER_AUTH_OIDC_ENABLED: 'true'
               BETTER_AUTH_OIDC_PROVIDER_ID: authelia
               BETTER_AUTH_OIDC_DISCOVERY_URL: https://auth.${SECRET_PUBLIC_DOMAIN}/.well-known/openid-configuration
