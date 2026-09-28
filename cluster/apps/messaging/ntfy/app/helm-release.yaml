@@ -87,14 +87,17 @@ spec:
             sectionName: websecure-public
             namespace: networking
         hostnames:
-          - ${APP}.${SECRET_PUBLIC_DOMAIN}
+          - unified-push.${SECRET_PUBLIC_DOMAIN}
+          - ntfy.${SECRET_PUBLIC_DOMAIN}
         rules:
           - matches:
               - path:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - identifier: main
+              - group: traefik.io
+                kind: TraefikService
+                name: ntfy-backend
                 port: 80
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
@@ -103,7 +106,7 @@ spec:
           gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Messaging
           gethomepage.dev/icon: /icons/ntfy/${HOMEPAGE_ICONS_COLOR}
-          gethomepage.dev/name: UnifiedPush
+          gethomepage.dev/name: ntfy
     persistence:
       cache:
         enabled: true

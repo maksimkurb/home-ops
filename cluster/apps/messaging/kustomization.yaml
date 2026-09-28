@@ -7,4 +7,4 @@ resources:
   - ./coturn/ks.yaml
   - ./mumble/ks.yaml
   - ./teamspeak/ks.yaml
-  - ./unified-push/ks.yaml
+  - ./ntfy/ks.yaml

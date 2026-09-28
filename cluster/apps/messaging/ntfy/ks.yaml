@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname unified-push
+  name: &appname ntfy
   namespace: flux-system
 spec:
   targetNamespace: messaging
@@ -12,7 +12,7 @@ spec:
       app.kubernetes.io/name: *appname
   interval: 30m
   timeout: 5m
-  path: "./cluster/apps/messaging/unified-push/app"
+  path: "./cluster/apps/messaging/ntfy/app"
   prune: true
   sourceRef:
     kind: GitRepository
