@@ -40,7 +40,7 @@ spec:
               - serve
             env:
               TZ: ${TIMEZONE}
-              NTFY_BASE_URL: https://${APP}.${SECRET_PUBLIC_DOMAIN}
+              NTFY_BASE_URL: https://unified-push.${SECRET_PUBLIC_DOMAIN}
               NTFY_LISTEN_HTTP: :80
               NTFY_BEHIND_PROXY: 'true'
               NTFY_CACHE_FILE: /var/cache/ntfy/cache.db
@@ -88,7 +88,6 @@ spec:
             namespace: networking
         hostnames:
           - unified-push.${SECRET_PUBLIC_DOMAIN}
-          - ntfy.${SECRET_PUBLIC_DOMAIN}
         rules:
           - matches:
               - path:
