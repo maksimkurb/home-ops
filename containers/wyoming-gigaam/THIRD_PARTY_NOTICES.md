@@ -1,6 +1,6 @@
 # Third-party notices
 
-This image redistributes model artifacts used at runtime.
+This image redistributes the ONNX VAD and downloads the selected ASR model at runtime.
 
 ## GigaAM
 
@@ -8,7 +8,7 @@ This image redistributes model artifacts used at runtime.
 - License: MIT
 - ONNX export: https://huggingface.co/istupakov/gigaam-multilingual-ctc-onnx
 - The upstream license text is included at `/usr/share/licenses/GigaAM/LICENSE`.
-- The ONNX model card is included at `/opt/models/gigaam/README.md`.
+- The downloaded ONNX model card is retained under `MODEL_CACHE_DIR`.
 
 ## pyannote segmentation 3.0
 

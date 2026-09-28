@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
     MODEL=gigaam-multilingual-ctc \
     DEVICE=cuda \
-    MODEL_DIR=/opt/models/gigaam \
+    MODEL_CACHE_DIR=/models \
     VAD_DIR=/opt/models/vad \
     URI=tcp://0.0.0.0:10300 \
     FR_BATCH_SIZE=1 \
@@ -27,8 +27,6 @@ COPY GIGAAM_LICENSE /usr/share/licenses/GigaAM/LICENSE
 COPY THIRD_PARTY_NOTICES.md /usr/share/doc/wyoming-gigaam/THIRD_PARTY_NOTICES.md
 
 RUN python /tmp/download_models.py && rm /tmp/download_models.py
-
-ENV HF_HUB_OFFLINE=1
 
 COPY wyoming_server.py /app/wyoming_server.py
 

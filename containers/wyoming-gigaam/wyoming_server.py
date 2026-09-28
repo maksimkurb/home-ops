@@ -2,14 +2,18 @@
 import argparse
 import asyncio
 import ctypes
+import hashlib
 import logging
 import os
 import tempfile
 import wave
 from functools import partial
+from pathlib import Path
 
 import onnx_asr
 import onnxruntime as ort
+from huggingface_hub import model_info, snapshot_download
+from onnx_asr.loader import create_asr_resolver
 from wyoming.asr import Transcribe, Transcript
 from wyoming.audio import AudioChunk, AudioStop
 from wyoming.error import Error
@@ -19,6 +23,30 @@ from wyoming.server import AsyncEventHandler, AsyncServer
 
 _LOGGER = logging.getLogger(__name__)
 _malloc_trim = ctypes.CDLL("libc.so.6").malloc_trim
+
+
+def load_cached_model(name: str, cache_root: str, cache_key: str, revision: str | None, providers: list[str]):
+    root = Path(cache_root)
+    root.mkdir(parents=True, exist_ok=True)
+    path = root / hashlib.sha256(f"{name}\0{cache_key}\0{revision or ''}".encode()).hexdigest()
+    if path.is_dir():
+        return onnx_asr.load_model(name, path, providers=providers)
+
+    resolver = create_asr_resolver(name)
+    if not resolver.repo_id:
+        raise ValueError("MODEL must be an onnx-asr model alias or Hugging Face repository")
+    files = list(resolver.model_type._get_model_files().values())
+    patterns = ["README.md", "config.json", "config.yaml", *files]
+    patterns += [file.removeprefix("**/") for file in files if file.startswith("**/")]
+    patterns += [str(Path(file).with_suffix(".onnx?data")) for file in files if Path(file).suffix == ".onnx"]
+    commit = model_info(resolver.repo_id, revision=revision).sha
+    _LOGGER.info("Downloading %s revision=%s into %s", resolver.repo_id, commit, path)
+    with tempfile.TemporaryDirectory(prefix=".download-", dir=root) as temporary:
+        staging = Path(temporary) / "model"
+        snapshot_download(resolver.repo_id, revision=commit, local_dir=staging, allow_patterns=patterns)
+        model = onnx_asr.load_model(name, staging, providers=providers)
+        staging.rename(path)
+        return model
 
 
 class GigaAMEventHandler(AsyncEventHandler):
@@ -111,7 +139,9 @@ async def async_main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=os.getenv("MODEL", "gigaam-multilingual-ctc"))
     parser.add_argument("--device", choices=("cpu", "cuda"), default=os.getenv("DEVICE", "cuda"))
-    parser.add_argument("--model-dir", default=os.getenv("MODEL_DIR", "/opt/models/gigaam"))
+    parser.add_argument("--model-cache-dir", default=os.getenv("MODEL_CACHE_DIR", "/models"))
+    parser.add_argument("--model-cache-key", default=os.getenv("MODEL_CACHE_KEY", "default"))
+    parser.add_argument("--model-revision", default=os.getenv("MODEL_REVISION"))
     parser.add_argument("--vad-dir", default=os.getenv("VAD_DIR", "/opt/models/vad"))
     parser.add_argument("--uri", default=os.getenv("URI", "tcp://0.0.0.0:10300"))
     parser.add_argument(
@@ -134,35 +164,34 @@ async def async_main() -> None:
     providers = ["CUDAExecutionProvider", "CPUExecutionProvider"] if args.device == "cuda" else ["CPUExecutionProvider"]
     if args.device == "cuda" and "CUDAExecutionProvider" not in ort.get_available_providers():
         raise RuntimeError("ONNX Runtime CUDA provider is unavailable")
-    _LOGGER.info("Loading GigaAM ONNX model=%s device=%s", args.model, args.device)
-    model = onnx_asr.load_model(args.model, args.model_dir, providers=providers)
+    _LOGGER.info("Loading ONNX ASR model=%s device=%s", args.model, args.device)
+    model = load_cached_model(args.model, args.model_cache_dir, args.model_cache_key, args.model_revision, providers)
     if args.device == "cuda" and "CUDAExecutionProvider" not in model.asr._model.get_providers():
-        raise RuntimeError("GigaAM ONNX model did not initialize on CUDA")
+        raise RuntimeError("ONNX ASR model did not initialize on CUDA")
     vad = onnx_asr.load_vad("pyannote", args.vad_dir, providers=["CPUExecutionProvider"])
     longform_model = model.with_vad(vad, batch_size=args.fr_batch_size)
     _malloc_trim(0)
 
+    is_multilingual_ctc = args.model == "gigaam-multilingual-ctc"
+    attribution = Attribution(
+        name="SaluteDevelopers" if is_multilingual_ctc else "onnx-asr",
+        url="https://github.com/salute-developers/GigaAM" if is_multilingual_ctc else "https://github.com/istupakov/onnx-asr",
+    )
     info = Info(
         asr=[
             AsrProgram(
-                name="GigaAM",
-                description="GigaAM Wyoming ASR server",
-                attribution=Attribution(
-                    name="SaluteDevelopers",
-                    url="https://github.com/salute-developers/GigaAM",
-                ),
+                name="GigaAM" if is_multilingual_ctc else "ONNX ASR",
+                description="Wyoming ONNX ASR server",
+                attribution=attribution,
                 installed=True,
                 version="1",
                 models=[
                     AsrModel(
-                        name="GigaAM Multilingual CTC 220M",
-                        description="GigaAM multilingual 220M CTC model",
-                        attribution=Attribution(
-                            name="SaluteDevelopers",
-                            url="https://github.com/salute-developers/GigaAM",
-                        ),
-                        installed=args.model == "gigaam-multilingual-ctc",
-                        languages=["ru", "en", "kk", "ky", "uz"],
+                        name="GigaAM Multilingual CTC 220M" if is_multilingual_ctc else args.model,
+                        description="GigaAM multilingual 220M CTC model" if is_multilingual_ctc else args.model,
+                        attribution=attribution,
+                        installed=True,
+                        languages=["ru", "en", "kk", "ky", "uz"] if is_multilingual_ctc else [],
                         version="1",
                     )
                 ],
