@@ -81,7 +81,10 @@ spec:
         type: emptyDir
       tessdata:
         enabled: true
-        type: emptyDir
+        type: persistentVolumeClaim
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 10Gi
         globalMounts:
           - path: /usr/share/tessdata
     defaultPodOptions:
