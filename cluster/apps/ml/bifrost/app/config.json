@@ -87,6 +87,7 @@
       {
         "id": "auto-pc-first",
         "name": "Auto: PC then cluster",
+        "priority": 0,
         "cel_expression": "request.model == 'auto'",
         "targets": [
           {
@@ -105,6 +106,7 @@
       {
         "id": "cluster-only",
         "name": "Cluster only",
+        "priority": 1,
         "cel_expression": "request.model == 'cluster'",
         "targets": [
           {
@@ -117,6 +119,7 @@
       {
         "id": "pc-only",
         "name": "PC only",
+        "priority": 2,
         "cel_expression": "request.model == 'pc'",
         "targets": [
           {
@@ -129,6 +132,7 @@
       {
         "id": "cluster-embedding",
         "name": "Cluster embedding",
+        "priority": 3,
         "cel_expression": "request.model == 'embedding'",
         "targets": [
           {
