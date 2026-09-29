@@ -73,6 +73,14 @@ spec:
               limits:
                 memory: 1Gi
     persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Mi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /app/data
       config:
         type: configMap
         name: bifrost-config
