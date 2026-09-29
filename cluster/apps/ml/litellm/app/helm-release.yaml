@@ -38,6 +38,28 @@ spec:
                   secretKeyRef:
                     name: ${APP}
                     key: LITELLM_MASTER_KEY
+              DATABASE_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: ml.litellm.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              DATABASE_URL: postgresql://ml.litellm:$(DATABASE_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/litellm
+              GENERIC_CLIENT_ID: litellm
+              GENERIC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: OAUTH_CLIENT_SECRET
+              GENERIC_AUTHORIZATION_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/authorization
+              GENERIC_TOKEN_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/token
+              GENERIC_USERINFO_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/userinfo
+              GENERIC_SCOPE: openid profile email groups
+              GENERIC_USER_ID_ATTRIBUTE: sub
+              GENERIC_INCLUDE_TOKEN_CLAIMS: 'true'
+              GENERIC_ROLE_MAPPINGS_GROUP_CLAIM: groups
+              GENERIC_ROLE_MAPPINGS_ROLES: '{"proxy_admin": ["admins"]}'
+              GENERIC_ROLE_MAPPINGS_DEFAULT_ROLE: internal_user
+              PROXY_BASE_URL: https://litellm.${SECRET_PRIVATE_DOMAIN}
               LLAMA_PC_API_KEY:
                 valueFrom:
                   secretKeyRef:
