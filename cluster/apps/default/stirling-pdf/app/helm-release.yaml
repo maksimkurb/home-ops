@@ -65,6 +65,14 @@ spec:
         existingClaim: ${APP}-config
         globalMounts:
           - path: /configs
+      storage:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: local-path
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        globalMounts:
+          - path: /storage
       logs:
         enabled: true
         type: emptyDir
@@ -112,6 +120,9 @@ spec:
               SECURITY_OAUTH2_AUTOCREATEUSER: 'true'
               SECURITY_OAUTH2_SCOPES: openid,profile,email
               SECURITY_OAUTH2_USEASUSERNAME: email
+              STORAGE_ENABLED: 'true'
+              STORAGE_PROVIDER: local
+              STORAGE_LOCAL_BASEPATH: /storage
               SYSTEM_BACKENDURL: https://stirling-pdf.${SECRET_PUBLIC_DOMAIN}
               INSTALL_BOOK_AND_ADVANCED_HTML_OPS: 'false'
               DISABLE_ADDITIONAL_FEATURES: 'false'
