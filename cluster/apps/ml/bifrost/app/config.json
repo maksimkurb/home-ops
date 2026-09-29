@@ -1,0 +1,138 @@
+{
+  "$schema": "https://www.getbifrost.ai/schema",
+  "client": {
+    "enable_logging": false,
+    "enforce_auth_on_inference": true
+  },
+  "config_store": {
+    "enabled": false
+  },
+  "providers": {
+    "llama-pc": {
+      "keys": [
+        {
+          "name": "llama-pc",
+          "value": "env.LLAMA_PC_API_KEY",
+          "models": ["${LLAMA_PC_CHAT_MODEL}"],
+          "weight": 1.0
+        }
+      ],
+      "network_config": {
+        "base_url": "http://${SECRET_MAX_PC_IP}:9931/v1",
+        "default_request_timeout_in_seconds": 600
+      },
+      "custom_provider_config": {
+        "base_provider_type": "openai",
+        "allowed_requests": {
+          "chat_completion": true,
+          "chat_completion_stream": true
+        }
+      }
+    },
+    "llama-cluster": {
+      "keys": [
+        {
+          "name": "llama-cluster",
+          "value": "env.LLAMA_CLUSTER_API_KEY",
+          "models": ["qwen3.5-2b", "qwen3-embedding-0.6b"],
+          "weight": 1.0
+        }
+      ],
+      "network_config": {
+        "base_url": "http://llama-cpp.ml.svc.cluster.local/v1",
+        "default_request_timeout_in_seconds": 600
+      },
+      "custom_provider_config": {
+        "base_provider_type": "openai",
+        "allowed_requests": {
+          "chat_completion": true,
+          "chat_completion_stream": true,
+          "embedding": true
+        }
+      }
+    }
+  },
+  "governance": {
+    "auth_config": {
+      "is_enabled": true,
+      "admin_username": "env.BIFROST_ADMIN_USERNAME",
+      "admin_password": "env.BIFROST_ADMIN_PASSWORD"
+    },
+    "virtual_keys": [
+      {
+        "id": "ml-clients",
+        "name": "ML clients",
+        "value": "env.BIFROST_API_KEY",
+        "is_active": true,
+        "provider_configs": [
+          {
+            "provider": "llama-pc",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          },
+          {
+            "provider": "llama-cluster",
+            "allowed_models": ["*"],
+            "key_ids": ["*"]
+          }
+        ]
+      }
+    ],
+    "routing_rules": [
+      {
+        "id": "auto-pc-first",
+        "name": "Auto: PC then cluster",
+        "cel_expression": "request.model == 'auto'",
+        "targets": [
+          {
+            "provider": "llama-pc",
+            "model": "${LLAMA_PC_CHAT_MODEL}",
+            "weight": 1.0
+          }
+        ],
+        "fallbacks": [
+          {
+            "provider": "llama-cluster",
+            "model": "qwen3.5-2b"
+          }
+        ]
+      },
+      {
+        "id": "cluster-only",
+        "name": "Cluster only",
+        "cel_expression": "request.model == 'cluster'",
+        "targets": [
+          {
+            "provider": "llama-cluster",
+            "model": "qwen3.5-2b",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "pc-only",
+        "name": "PC only",
+        "cel_expression": "request.model == 'pc'",
+        "targets": [
+          {
+            "provider": "llama-pc",
+            "model": "${LLAMA_PC_CHAT_MODEL}",
+            "weight": 1.0
+          }
+        ]
+      },
+      {
+        "id": "cluster-embedding",
+        "name": "Cluster embedding",
+        "cel_expression": "request.model == 'embedding'",
+        "targets": [
+          {
+            "provider": "llama-cluster",
+            "model": "qwen3-embedding-0.6b",
+            "weight": 1.0
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,7 +6,7 @@ resources:
   - oidc.yaml
   - ./faster-whisper/ks.yaml
   - ./llama-cpp/ks.yaml
-  - ./litellm/ks.yaml
+  - ./bifrost/ks.yaml
   - ./mcphub/ks.yaml
   - ./mcp-victorialogs/ks.yaml
   - ./mcp-victoriametrics/ks.yaml

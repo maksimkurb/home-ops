@@ -23,61 +23,38 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/berriai/litellm
-              tag: v1.100.1
-            args:
-              - --config
-              - /config/config.yaml
-              - --host
-              - 0.0.0.0
-              - --port
-              - '4000'
+              repository: maximhq/bifrost
+              tag: v2.2.3
             env:
-              LITELLM_MASTER_KEY:
+              BIFROST_ADMIN_USERNAME: admin
+              BIFROST_ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: ${APP}
-                    key: LITELLM_MASTER_KEY
-              DATABASE_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: ml.litellm.homelab-pgsql.credentials.postgresql.acid.zalan.do
-                    key: password
-              DATABASE_URL: postgresql://ml.litellm:$(DATABASE_PASSWORD)@homelab-pgsql.database.svc.cluster.local:5432/litellm
-              GENERIC_CLIENT_ID: litellm
-              GENERIC_CLIENT_SECRET:
-                valueFrom:
-                  secretKeyRef:
-                    name: ${APP}
-                    key: OAUTH_CLIENT_SECRET
-              GENERIC_AUTHORIZATION_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/authorization
-              GENERIC_TOKEN_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/token
-              GENERIC_USERINFO_ENDPOINT: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/userinfo
-              GENERIC_SCOPE: openid profile email groups
-              GENERIC_USER_ID_ATTRIBUTE: sub
-              GENERIC_INCLUDE_TOKEN_CLAIMS: 'true'
-              GENERIC_ROLE_MAPPINGS_GROUP_CLAIM: groups
-              GENERIC_ROLE_MAPPINGS_ROLES: '{"proxy_admin": ["admins"]}'
-              GENERIC_ROLE_MAPPINGS_DEFAULT_ROLE: internal_user
-              PROXY_BASE_URL: https://litellm.${SECRET_PRIVATE_DOMAIN}
+                    name: bifrost
+                    key: BIFROST_ADMIN_PASSWORD
               LLAMA_PC_API_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: ${APP}
+                    name: bifrost
                     key: LLAMA_PC_API_KEY
               LLAMA_CLUSTER_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: llama-cpp
                     key: LLAMA_API_KEY
+              BIFROST_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: bifrost
+                    key: BIFROST_API_KEY
             probes:
               readiness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /health/readiness
-                    port: 4000
+                    path: /health
+                    port: 8080
                   periodSeconds: 10
                   timeoutSeconds: 3
               liveness:
@@ -85,8 +62,8 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /health/liveliness
-                    port: 4000
+                    path: /health
+                    port: 8080
                   periodSeconds: 30
                   timeoutSeconds: 3
             resources:
@@ -98,13 +75,10 @@ spec:
     persistence:
       config:
         type: configMap
-        name: ${APP}-config
+        name: bifrost-config
         globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
-            readOnly: true
-          - path: /app/custom_callbacks.py
-            subPath: custom_callbacks.py
+          - path: /app/data/config.json
+            subPath: config.json
             readOnly: true
     service:
       app:
@@ -112,7 +86,7 @@ spec:
         ports:
           http:
             port: 80
-            targetPort: 4000
+            targetPort: 8080
     route:
       app-private:
         enabled: true
@@ -122,7 +96,7 @@ spec:
             sectionName: websecure-private
             namespace: networking
         hostnames:
-          - litellm.${SECRET_PRIVATE_DOMAIN}
+          - bifrost.${SECRET_PRIVATE_DOMAIN}
         rules:
           - matches:
               - path:
