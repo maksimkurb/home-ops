@@ -82,8 +82,8 @@ spec:
     persistence:
       config:
         enabled: true
-        type: configMap
-        name: ${APP}
+        type: secret
+        name: ${APP}-repository
         globalMounts:
           - path: /config/repository.config
             subPath: repository.config
