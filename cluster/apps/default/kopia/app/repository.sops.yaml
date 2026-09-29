@@ -1,0 +1,22 @@
+# yamllint disable
+apiVersion: v1
+kind: Secret
+metadata:
+    name: kopia
+stringData:
+    repository.config: ENC[AES256_GCM,data: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,iv:1S/6stugQt3hHeHFCSdmxvTpaKtvbyQ5ow4CWkDInqM=,tag:1KFaLYS12umPjSoR+D2kJA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqZ0J5VjR1MllXNExtUnJx
+            N2xGekxwR1g4MmxoUStMZzZuZ0tOYUNySUhJCitkQ0xBZkRXcm5pVEY4bUZWN2Zo
+            ZUM2bzljc2p3RzV0SCtSNUFPRVl3TW8KLS0tIFhRNS84N3dWMFcwWnI2ejlpYlpi
+            Y1JrM3dzOUZBdm5UNUg2ZURrQ3UzOVUKC4OQu8vdHbSOkisYPcN9lZYPs1TO3w7Y
+            UysTCx/kfItjbE4gOJVJQ8oG82WBtR4/VxSNdNvS9qDKwiIzHxaJHg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-09-29T07:36:48Z"
+    mac: ENC[AES256_GCM,data:8k7dqVKeXV5+rJrEVOgoBBIXeNqKoekas9m4HIiYsBkSJnq2CyQhgml/Ujqzfr/E4dhe1BkL6Jdy3oZcTZ+r+TcCQ2hAO2eiLxaH9ZI3P+NeSVRkAMN3zwA9U12dRS3U8t7BuhBENNGLamD6ljpb6aX/s4dIyP0hOv7v2zd+K00=,iv:Uh1bIv5FJkshqxL8lE9qQwhIn94qvQemt5QZadAF2vw=,tag:7EEW/lmAHO0dyXQAGKrbTQ==,type:str]
+    version: 3.13.3

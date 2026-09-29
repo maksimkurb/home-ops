@@ -4,10 +4,5 @@ kind: Kustomization
 resources:
   - pv.yaml
   - helm-release.yaml
+  - repository.sops.yaml
 namespace: default
-configMapGenerator:
-  - name: kopia
-    files:
-      - repository.config
-generatorOptions:
-  disableNameSuffixHash: true
