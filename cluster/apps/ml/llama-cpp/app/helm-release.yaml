@@ -22,7 +22,8 @@ spec:
         type: ClusterIP
         ports:
           http:
-            port: 9931
+            port: 80
+            targetPort: 9931
             protocol: TCP
     route:
       app-private:
@@ -41,7 +42,7 @@ spec:
                   value: /
             backendRefs:
               - identifier: app
-                port: 9931
+                port: 80
     persistence:
       download-script:
         enabled: true
