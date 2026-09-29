@@ -52,9 +52,6 @@ spec:
               - identifier: main
                 port: 3000
         annotations:
-          external-dns.kubernetes.io/enabled: 'true'
-          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
-          external-dns.kubernetes.io/cloudflare-proxied: 'false'
           gethomepage.dev/enabled: 'true'
           gethomepage.dev/group: Maintenance
           gethomepage.dev/icon: crowdsec
