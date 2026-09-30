@@ -23,6 +23,7 @@
       ],
       "network_config": {
         "base_url": "http://${SECRET_MAX_PC_IP}:9931",
+        "allow_private_network": true,
         "default_request_timeout_in_seconds": 600
       },
       "custom_provider_config": {
@@ -50,6 +51,7 @@
       ],
       "network_config": {
         "base_url": "http://llama-cpp.ml.svc.cluster.local",
+        "allow_private_network": true,
         "default_request_timeout_in_seconds": 600
       },
       "custom_provider_config": {
