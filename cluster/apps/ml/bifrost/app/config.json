@@ -28,8 +28,14 @@
       "custom_provider_config": {
         "base_provider_type": "openai",
         "allowed_requests": {
+          "list_models": true,
+          "text_completion": true,
+          "text_completion_stream": true,
           "chat_completion": true,
-          "chat_completion_stream": true
+          "chat_completion_stream": true,
+          "responses": true,
+          "responses_stream": true,
+          "count_tokens": true
         }
       }
     },
@@ -49,8 +55,14 @@
       "custom_provider_config": {
         "base_provider_type": "openai",
         "allowed_requests": {
+          "list_models": true,
+          "text_completion": true,
+          "text_completion_stream": true,
           "chat_completion": true,
           "chat_completion_stream": true,
+          "responses": true,
+          "responses_stream": true,
+          "count_tokens": true,
           "embedding": true
         }
       }
