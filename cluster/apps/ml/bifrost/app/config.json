@@ -99,7 +99,7 @@
         "id": "auto-pc-first",
         "name": "Auto: PC then cluster",
         "priority": 0,
-        "cel_expression": "request.model == 'auto'",
+        "cel_expression": "model == 'auto'",
         "targets": [
           {
             "provider": "llama-pc",
@@ -118,7 +118,7 @@
         "id": "cluster-only",
         "name": "Cluster only",
         "priority": 1,
-        "cel_expression": "request.model == 'cluster'",
+        "cel_expression": "model == 'cluster'",
         "targets": [
           {
             "provider": "llama-cluster",
@@ -131,7 +131,7 @@
         "id": "pc-only",
         "name": "PC only",
         "priority": 2,
-        "cel_expression": "request.model == 'pc'",
+        "cel_expression": "model == 'pc'",
         "targets": [
           {
             "provider": "llama-pc",
@@ -144,7 +144,7 @@
         "id": "cluster-embedding",
         "name": "Cluster embedding",
         "priority": 3,
-        "cel_expression": "request.model == 'embedding'",
+        "cel_expression": "model == 'embedding'",
         "targets": [
           {
             "provider": "llama-cluster",
