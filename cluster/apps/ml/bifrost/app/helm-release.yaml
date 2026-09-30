@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: maximhq/bifrost
-              tag: v2.2.3
+              tag: v2.2.4
             env:
               BIFROST_ADMIN_USERNAME: admin
               BIFROST_ADMIN_PASSWORD:
