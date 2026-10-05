@@ -10,6 +10,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
+  # Paperless mounts the scanservjs-docs PVC created by scanservjs for ingestion.
+  dependsOn:
+    - name: scanservjs
   interval: 30m
   timeout: 5m
   path: "./cluster/apps/default/paperless/app"

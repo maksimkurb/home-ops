@@ -113,6 +113,8 @@ spec:
         globalMounts:
           - path: /etc/sane.d/net.conf
             subPath: net.conf
+          - path: /etc/scanservjs/config.local.js
+            subPath: config.local.js
       tmp:
         enabled: true
         type: emptyDir

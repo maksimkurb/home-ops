@@ -48,8 +48,8 @@ spec:
               PAPERLESS_CONSUMPTION_DIR: /data/docs/incoming
               PAPERLESS_EXPORT_DIR: /data/docs/export
               # Configure folder importer
-              PAPERLESS_CONSUMER_POLLING: '60'
-              PAPERLESS_CONSUMER_INOTIFY_DELAY: '60'
+              PAPERLESS_CONSUMER_POLLING_INTERVAL: '60'
+              PAPERLESS_CONSUMER_STABILITY_DELAY: '60'
               PAPERLESS_CONSUMER_RECURSIVE: 'true'
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: 'true'
               # Configure Barcode Recognition
@@ -242,6 +242,13 @@ spec:
           paperless:
             app:
               - path: /data/docs
+      scanservjs-incoming:
+        existingClaim: scanservjs-docs
+        advancedMounts:
+          paperless:
+            app:
+              - path: /data/docs/incoming/inbox
+                subPath: output
       gotenberg-temp:
         type: emptyDir
         enabled: true

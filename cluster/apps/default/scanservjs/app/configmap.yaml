@@ -7,3 +7,15 @@ metadata:
 data:
   net.conf: |
     192.168.55.1
+  config.local.js: |
+    module.exports = {
+      afterConfig(config) {
+        // Keep multipage scans importable by Paperless instead of producing ZIPs.
+        config.pipelines = config.pipelines.filter(pipeline => pipeline.extension === 'pdf');
+      },
+      afterDevices(devices) {
+        for (const device of devices) {
+          device.settings.pipeline.default = 'PDF (JPG | @:pipeline.high-quality)';
+        }
+      }
+    };
