@@ -25,6 +25,10 @@ spec:
             port: 80
             targetPort: 9931
             protocol: TCP
+          embedding:
+            port: 9932
+            targetPort: 9932
+            protocol: TCP
     route:
       app-private:
         enabled: true
@@ -52,14 +56,6 @@ spec:
         globalMounts:
           - path: /scripts/download-model.sh
             subPath: download-model.sh
-            readOnly: true
-      models-preset:
-        enabled: true
-        type: configMap
-        name: ${APP}-models
-        globalMounts:
-          - path: /config/models.ini
-            subPath: models.ini
             readOnly: true
       models:
         enabled: true
@@ -98,6 +94,35 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
+          install-dartai:
+            image:
+              repository: alpine
+              tag: "3.22"
+            command:
+              - /bin/sh
+              - -ec
+            args:
+              - |
+                version=0.2.0
+                runtime=/models/dartai-${version}
+                if [ ! -x "${runtime}/llama-server" ]; then
+                  wget -O /tmp/dartai.tgz "https://github.com/ftoleedo/dartai/releases/download/v${version}/dartai-linux-x64-cuda12-${version}.tar.gz"
+                  echo "d868c105f50bc0d7abc5eecd96d9d8c38905cb64a400e02a8ebea48a4d7852c4  /tmp/dartai.tgz" | sha256sum -c -
+                  mkdir -p "${runtime}"
+                  tar -xzf /tmp/dartai.tgz -C "${runtime}" --strip-components=1
+                fi
+                if [ ! -s /models/Ternary-Bonsai-1.7B-Q2_0.gguf ]; then
+                  wget -O /models/Ternary-Bonsai-1.7B-Q2_0.gguf.tmp "https://huggingface.co/prism-ml/Ternary-Bonsai-1.7B-gguf/resolve/main/Ternary-Bonsai-1.7B-Q2_0.gguf"
+                  echo "d97d94eb564590c9f0300e54d3f87bbbb25a78693d0ade9f6e177973dcb8228a  /models/Ternary-Bonsai-1.7B-Q2_0.gguf.tmp" | sha256sum -c -
+                  mv /models/Ternary-Bonsai-1.7B-Q2_0.gguf.tmp /models/Ternary-Bonsai-1.7B-Q2_0.gguf
+                fi
+                mkdir -p /models/dartai-home
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
         containers:
           app:
             image:
@@ -105,24 +130,19 @@ spec:
               tag: server-cuda
               pullPolicy: IfNotPresent
             env:
+              HOME: /models/dartai-home
               LLAMA_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: ${APP}
                     key: LLAMA_API_KEY
             command:
-              - /app/llama-server
+              - /bin/sh
+              - -ec
             args:
-              - --host
-              - 0.0.0.0
-              - --port
-              - "9931"
-              - --models-preset
-              - /config/models.ini
-              - --models-max
-              - "2"
-              - --sleep-idle-seconds
-              - "300"
+              - |
+                export LD_LIBRARY_PATH="/models/dartai-0.2.0:${LD_LIBRARY_PATH:-}"
+                exec /models/dartai-0.2.0/llama-server -m /models/Ternary-Bonsai-1.7B-Q2_0.gguf -ngl 99 -c 8192 --host 0.0.0.0 --port 9931 --alias ternary-bonsai-1.7b --jinja --api-key "${LLAMA_API_KEY}"
             probes:
               readiness:
                 enabled: true
@@ -137,9 +157,46 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 1Gi
+                memory: 512Mi
                 nvidia.com/gpu: "1"
               limits:
                 cpu: 4000m
-                memory: 6Gi
+                memory: 4Gi
                 nvidia.com/gpu: "1"
+          embedding:
+            image:
+              repository: ghcr.io/ggml-org/llama.cpp
+              tag: server-cuda
+              pullPolicy: IfNotPresent
+            env:
+              HOME: /models/dartai-home
+              LLAMA_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: LLAMA_API_KEY
+            command:
+              - /bin/sh
+              - -ec
+            args:
+              - |
+                export LD_LIBRARY_PATH="/models/dartai-0.2.0:${LD_LIBRARY_PATH:-}"
+                exec /models/dartai-0.2.0/llama-server -m /models/Qwen3-Embedding-0.6B-Q8_0.gguf -ngl 0 -c 4096 --host 0.0.0.0 --port 9932 --alias qwen3-embedding-0.6b --embeddings --pooling last --api-key "${LLAMA_API_KEY}"
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 9932
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                cpu: 4000m
+                memory: 2Gi
