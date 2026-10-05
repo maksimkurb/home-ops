@@ -11,11 +11,5 @@ configMapGenerator:
     options:
       annotations:
         kustomize.toolkit.fluxcd.io/substitute: disabled
-  - name: llama-cpp-models
-    files:
-      - models.ini
-    options:
-      annotations:
-        kustomize.toolkit.fluxcd.io/substitute: disabled
 generatorOptions:
   disableNameSuffixHash: true
