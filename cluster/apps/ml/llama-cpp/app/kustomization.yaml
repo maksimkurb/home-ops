@@ -14,14 +14,5 @@ configMapGenerator:
   - name: llama-cpp-models
     files:
       - models.ini
-  - name: llama-cpp-install-dartai
-    files:
-      - install-dartai.sh
-    options:
-      annotations:
-        kustomize.toolkit.fluxcd.io/substitute: disabled
-    options:
-      annotations:
-        kustomize.toolkit.fluxcd.io/substitute: disabled
 generatorOptions:
   disableNameSuffixHash: true
