@@ -120,7 +120,7 @@ spec:
                   echo "d97d94eb564590c9f0300e54d3f87bbbb25a78693d0ade9f6e177973dcb8228a  /models/Ternary-Bonsai-1.7B-Q2_0.gguf.tmp" | sha256sum -c -
                   mv /models/Ternary-Bonsai-1.7B-Q2_0.gguf.tmp /models/Ternary-Bonsai-1.7B-Q2_0.gguf
                 fi
-                mkdir -p /models/dartai-home
+                # The old chat GGUF is no longer referenced; free PVC space for the DartAI runtime.\n                rm -f /models/Qwen3.5-2B-Q4_K_M.gguf\n                mkdir -p /models/dartai-home
             resources:
               requests:
                 cpu: 50m
