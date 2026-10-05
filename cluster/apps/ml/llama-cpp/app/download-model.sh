@@ -4,7 +4,7 @@ set -eu
 DARTAI_VERSION="0.2.0"
 DARTAI_DIR="/models/dartai-$DARTAI_VERSION"
 DARTAI_ARCHIVE="/tmp/dartai-linux-x64-cuda12-$DARTAI_VERSION.tar.gz"
-BONSAI_MODEL="/models/Ternary-Bonsai-1.7B-Q2_0.gguf"
+BONSAI_MODEL="/models/Ternary-Bonsai-1.7B-Q2_0_g64.gguf"
 EMBEDDING_MODEL="/models/Qwen3-Embedding-0.6B-Q8_0.gguf"
 
 download_if_missing() {
@@ -32,13 +32,17 @@ if [ ! -x "$DARTAI_DIR/llama-server" ]; then
 fi
 
 if [ ! -s "$BONSAI_MODEL" ]; then
-  echo "Downloading Ternary Bonsai 1.7B"
-  wget -O "$BONSAI_MODEL.tmp"     "https://huggingface.co/prism-ml/Ternary-Bonsai-1.7B-gguf/resolve/main/Ternary-Bonsai-1.7B-Q2_0.gguf"
+  echo "Downloading Ternary Bonsai 1.7B (official group-64 Q2_0)"
+  wget -O "$BONSAI_MODEL.tmp"     "https://huggingface.co/prism-ml/Ternary-Bonsai-1.7B-gguf/resolve/main/Ternary-Bonsai-1.7B-Q2_0_g64.gguf"
 
-  echo "d97d94eb564590c9f0300e54d3f87bbbb25a78693d0ade9f6e177973dcb8228a  $BONSAI_MODEL.tmp"     | sha256sum -c -
+  echo "6d0ecb3d9055969b5cde332b6fdb60e67ed3599e9f73e56b977731e1467e5c91  $BONSAI_MODEL.tmp"     | sha256sum -c -
 
   mv "$BONSAI_MODEL.tmp" "$BONSAI_MODEL"
 fi
+
+# Remove the deprecated legacy g128 file. New llama.cpp-derived runtimes
+# interpret its ggml type id as the official group-64 Q2_0 layout.
+rm -f /models/Ternary-Bonsai-1.7B-Q2_0.gguf
 
 download_if_missing "$EMBEDDING_MODEL"   "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf"
 
