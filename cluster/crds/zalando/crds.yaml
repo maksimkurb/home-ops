@@ -8,7 +8,7 @@ spec:
   interval: 30m
   url: https://github.com/zalando/postgres-operator.git
   ref:
-    tag: v2.0.2
+    tag: v2.0.3
   ignore: |
     # exclude all
     /*
