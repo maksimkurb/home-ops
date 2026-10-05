@@ -46,7 +46,7 @@
         {
           "name": "llama-cluster",
           "value": "env.LLAMA_CLUSTER_API_KEY",
-          "models": ["qwen3.5-2b", "qwen3-embedding-0.6b"],
+          "models": ["ternary-bonsai-1.7b", "qwen3-embedding-0.6b"],
           "weight": 1.0
         }
       ],
@@ -113,7 +113,7 @@
         "fallbacks": [
           {
             "provider": "llama-cluster",
-            "model": "qwen3.5-2b"
+            "model": "ternary-bonsai-1.7b"
           }
         ]
       },
@@ -125,7 +125,7 @@
         "targets": [
           {
             "provider": "llama-cluster",
-            "model": "qwen3.5-2b",
+            "model": "ternary-bonsai-1.7b",
             "weight": 1.0
           }
         ]
