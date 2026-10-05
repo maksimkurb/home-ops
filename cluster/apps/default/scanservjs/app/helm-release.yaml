@@ -23,9 +23,8 @@ spec:
         containers:
           app:
             image:
-              repository: sbs20/scanservjs
-              tag: release-v3.0.3
-            command: [node, /usr/lib/scanservjs/server/server.js]
+              repository: ghcr.io/maksimkurb/scanservjs
+              tag: 3.3.1
             env:
               TZ: ${TIMEZONE}
               LANG: C
