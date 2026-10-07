@@ -1,0 +1,6 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - keen-pbr-metrics-secret.sops.yaml
+  - keen-pbr-scrapeconfig.yaml
