@@ -10,3 +10,4 @@ resources:
   - alertmanager-secret.sops.yaml
   - grafana-secret.sops.yaml
   - pve-node-exporter.yaml
+  - keen-pbr-metrics-secret.yaml
