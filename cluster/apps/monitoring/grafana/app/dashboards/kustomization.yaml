@@ -8,6 +8,12 @@ configMapGenerator:
     options:
       annotations:
         grafana_folder: Network
+  - name: keen-pbr-dashboard
+    files:
+      - keen-pbr.json
+    options:
+      annotations:
+        grafana_folder: Network
   - name: victorialogs-syslog-dashboard
     files:
       - victorialogs-syslog.json
