@@ -114,7 +114,7 @@ spec:
             secret:
               secretName: keen-pbr-metrics-auth
               items:
-                - key: password
+                - key: password_55_1
                   path: router-55-1-keen-pbr-password
         volumeMounts:
           - name: keen-pbr-metrics-auth
