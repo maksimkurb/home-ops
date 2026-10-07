@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/scrapeconfig_v1alpha1.json
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: keen-pbr
+  namespace: monitoring
+spec:
+  jobName: keen-pbr
+  metricsPath: /metrics
+  scrapeInterval: 60s
+  staticConfigs:
+    - targets:
+        - 192.168.55.1:12121
+  basicAuth:
+    username:
+      name: keen-pbr-metrics-username
+      key: username
+    password:
+      name: keen-pbr-metrics-auth
+      key: password_55_1
