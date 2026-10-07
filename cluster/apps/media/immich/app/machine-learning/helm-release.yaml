@@ -101,6 +101,7 @@ spec:
               TZ: "${TIMEZONE}"
               NVIDIA_VISIBLE_DEVICES: all
               NVIDIA_DRIVER_CAPABILITIES: all
+              MACHINE_LEARNING_MODEL_REVISION: v2
             resources:
               requests:
                 cpu: 1m
