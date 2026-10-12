@@ -62,7 +62,7 @@ spec:
             args:
               - |-
                 set -euo pipefail
-                pg_dump_path=/usr/lib/postgresql/17/bin/pg_dump
+                pg_dump_path="/usr/lib/postgresql/$PG_MAJOR/bin/pg_dump"
                 libpq_path="$(ldd "$pg_dump_path" | awk '/libpq\.so\.5/ { print $3; exit }')"
                 test -n "$libpq_path"
                 install -d /tools/lib

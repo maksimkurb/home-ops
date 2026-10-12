@@ -46,7 +46,8 @@ spec:
     serviceMonitor:
       main:
         enabled: true
-        serviceName: main
+        service:
+          identifier: main
         endpoints:
           - port: http
             scheme: http

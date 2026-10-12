@@ -27,8 +27,8 @@ metadata:
   name: &app minio-bucket
   namespace: files
   labels: &labels
-    app.kubernetes.io/instance: *app
-    app.kubernetes.io/name: *app
+    app.kubernetes.io/instance: minio
+    app.kubernetes.io/name: minio
 spec:
   selector:
     matchLabels:
