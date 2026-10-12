@@ -35,6 +35,17 @@ spec:
           ldap:
             enabled: true
             port: 3893
+    serviceMonitor:
+      main:
+        enabled: true
+        service:
+          identifier: main
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
     persistence:
       config:
         enabled: true

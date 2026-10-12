@@ -27,3 +27,6 @@ spec:
       - --delete-evicted-pods-after=0
       - --delete-orphaned-pods-after=0
       - --legacy-mode=false
+    serviceMonitor:
+      enabled: true
+      scrapeInterval: 1m

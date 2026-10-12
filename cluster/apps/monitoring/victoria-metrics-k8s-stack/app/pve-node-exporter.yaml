@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: node-exporter-external-pve
   namespace: monitoring
+  labels:
+    app.kubernetes.io/name: node-exporter-external-pve
 spec:
   ports:
     - name: metrics
@@ -22,3 +24,20 @@ subsets:
     ports:
       - port: 9100
         name: metrics
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: node-exporter-external-pve
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter-external-pve
+  endpoints:
+    - port: metrics
+      path: /metrics
+      relabelConfigs:
+        # Use the stack's node-exporter job so its node rules and dashboards include PVE.
+        - target_label: job
+          replacement: node-exporter

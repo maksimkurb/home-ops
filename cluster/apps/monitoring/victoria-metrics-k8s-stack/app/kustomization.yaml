@@ -5,8 +5,6 @@ resources:
   - routes.yaml
   # - alertmanagerconfig.yaml
   - helm-release.yaml
-  - podscrape.yaml
-  - servicescrape.yaml
   - alertmanager-secret.sops.yaml
   - grafana-secret.sops.yaml
   - pve-node-exporter.yaml

@@ -39,6 +39,17 @@ spec:
           metrics:
             enabled: true
             port: 8080
+    serviceMonitor:
+      main:
+        enabled: true
+        service:
+          identifier: main
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
     route:
       main:
         enabled: true

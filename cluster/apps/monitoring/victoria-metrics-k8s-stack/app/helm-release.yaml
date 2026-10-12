@@ -46,11 +46,6 @@ spec:
         # count:up0 is empty when all targets are healthy.
         kube-prometheus-general.rules:
           enabled: false
-      rules:
-        ScrapePoolHasNoTargets:
-          spec:
-            # Catch-all discovery pools can legitimately have no matching objects.
-            expr: sum(vm_promscrape_scrape_pool_targets{scrape_job!~"podScrape/monitoring/pod-scrape-all/.*|serviceScrape/monitoring/scrape-all-services/.*"}) without(status,instance,pod) == 0
     kubeControllerManager:
       enabled: true
       endpoints:
@@ -223,14 +218,8 @@ spec:
       fullnameOverride: node-exporter
       prometheus:
         monitor:
-          enabled: true
-          relabelings:
-            - action: replace
-              regex: (.*)
-              replacement: $1
-              sourceLabels:
-                - __meta_kubernetes_pod_node_name
-              targetLabel: kubernetes_node
+          # The stack's own vmScrape already scrapes node-exporter as job="node-exporter".
+          enabled: false
     kubelet:
       vmScrape:
         spec:
