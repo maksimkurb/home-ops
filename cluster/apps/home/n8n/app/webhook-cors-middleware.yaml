@@ -43,17 +43,10 @@ metadata:
 spec:
   headers:
     accessControlAllowCredentials: false
+    # "*" covers any custom header (credentials are off); Authorization is never covered by "*"
     accessControlAllowHeaders:
-      - DNT
-      - User-Agent
-      - X-Requested-With
-      - If-Modified-Since
-      - Cache-Control
-      - Content-Type
-      - Range
+      - "*"
       - Authorization
-      - anonymousid
-      - X-Auth-Token
     accessControlAllowMethods:
       - GET
       - POST
@@ -66,5 +59,6 @@ spec:
     accessControlAllowOriginListRegex:
       - "^https://[^.]+\\.${SECRET_PUBLIC_DOMAIN}$"
     accessControlExposeHeaders:
-      - Content-Length
-      - Content-Range
+      - "*"
+    accessControlMaxAge: 86400
+    addVaryHeader: true
