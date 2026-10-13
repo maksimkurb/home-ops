@@ -33,3 +33,37 @@ spec:
     accessControlExposeHeaders:
       - Content-Length
       - Content-Range
+---
+# Forms may be embedded in sandboxed iframes (Origin: null), so allow "null" without credentials
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: n8n-form-cors
+  namespace: home
+spec:
+  headers:
+    accessControlAllowCredentials: false
+    accessControlAllowHeaders:
+      - DNT
+      - User-Agent
+      - X-Requested-With
+      - If-Modified-Since
+      - Cache-Control
+      - Content-Type
+      - Range
+      - Authorization
+      - anonymousid
+    accessControlAllowMethods:
+      - GET
+      - POST
+      - OPTIONS
+    accessControlAllowOriginList:
+      - "null"
+      - https://n8n-webhook.${SECRET_PUBLIC_DOMAIN}
+      - https://grist.${SECRET_PUBLIC_DOMAIN}
+      - https://n8n.${SECRET_PRIVATE_DOMAIN}
+    accessControlAllowOriginListRegex:
+      - "^https://[^.]+\\.${SECRET_PUBLIC_DOMAIN}$"
+    accessControlExposeHeaders:
+      - Content-Length
+      - Content-Range

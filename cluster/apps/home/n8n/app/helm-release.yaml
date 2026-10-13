@@ -294,15 +294,6 @@ spec:
                   value: /webhook-test
               - path:
                   type: PathPrefix
-                  value: /form
-              - path:
-                  type: PathPrefix
-                  value: /form-waiting
-              - path:
-                  type: PathPrefix
-                  value: /form-test
-              - path:
-                  type: PathPrefix
                   value: /rest/oauth2-credential
             backendRefs:
               - identifier: app
@@ -313,6 +304,25 @@ spec:
                   group: traefik.io
                   kind: Middleware
                   name: n8n-webhook-cors
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /form
+              - path:
+                  type: PathPrefix
+                  value: /form-waiting
+              - path:
+                  type: PathPrefix
+                  value: /form-test
+            backendRefs:
+              - identifier: app
+                port: 8080
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: n8n-form-cors
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
