@@ -53,6 +53,7 @@ spec:
       - Range
       - Authorization
       - anonymousid
+      - X-Auth-Token
     accessControlAllowMethods:
       - GET
       - POST
