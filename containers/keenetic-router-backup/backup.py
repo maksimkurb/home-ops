@@ -26,7 +26,8 @@ Routers and destinations are described in a TOML file (CONFIG_FILE, default /con
 
 Each backup is stored as <host>.txt in every destination. Without
 [[destinations]] a single folder destination at OUTPUT_DIR (default /data) is
-used. A failed backup never overwrites or removes the previous successful one.
+used. A failed backup never overwrites or removes the previous successful one,
+and an unchanged config is not rewritten, so its modification date is kept.
 """
 import os
 import re
@@ -60,12 +61,18 @@ class FolderDestination:
 
     def store(self, name, content):
         target = self.path / name
+        try:
+            if target.read_text() == content:
+                return False
+        except FileNotFoundError:
+            pass
         temp_file = target.with_name(target.name + ".tmp")
         try:
             temp_file.write_text(content)
             temp_file.replace(target)
         finally:
             temp_file.unlink(missing_ok=True)
+        return True
 
     def list(self):
         for path in sorted(self.path.glob("*.txt")):
@@ -95,12 +102,21 @@ class S3Destination:
         return f"s3://{self.bucket}/{self.prefix}"
 
     def store(self, name, content):
+        key = self.prefix + name
+        body = content.encode()
+        try:
+            existing = self.client.get_object(Bucket=self.bucket, Key=key)["Body"].read()
+        except self.client.exceptions.NoSuchKey:
+            existing = None
+        if existing == body:
+            return False
         self.client.put_object(
             Bucket=self.bucket,
-            Key=self.prefix + name,
-            Body=content.encode(),
+            Key=key,
+            Body=body,
             ContentType="text/plain; charset=utf-8",
         )
+        return True
 
     def list(self):
         response = self.client.list_objects_v2(Bucket=self.bucket, Prefix=self.prefix)
@@ -196,8 +212,10 @@ def backup_router(index, router, destinations):
     stored = 0
     for destination in destinations:
         try:
-            destination.store(name, config)
-            print(f"  ✓ Saved {name} to {destination}")
+            if destination.store(name, config):
+                print(f"  ✓ Saved {name} to {destination}")
+            else:
+                print(f"  ✓ {name} in {destination} is unchanged, keeping existing file")
             stored += 1
         except Exception as error:
             print(f"  ✗ Failed to save {name} to {destination}: {error}")
