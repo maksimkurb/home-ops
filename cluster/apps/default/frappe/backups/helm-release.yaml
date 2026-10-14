@@ -95,8 +95,8 @@ spec:
         containers:
           upload-and-prune:
             image:
-              repository: quay.io/minio/mc
-              tag: RELEASE.2025-08-13T08-35-41Z
+              repository: docker.io/pgsty/mc
+              tag: RELEASE.2026-09-16T00-00-00Z
             command:
               - /bin/sh
               - /scripts/upload-and-prune.sh
