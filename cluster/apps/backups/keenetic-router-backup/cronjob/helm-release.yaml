@@ -69,7 +69,7 @@ spec:
           main:
             image:
               repository: ghcr.io/maksimkurb/keenetic-router-backup
-              tag: "20261014080053"
+              tag: "20261014092330"
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE}"
