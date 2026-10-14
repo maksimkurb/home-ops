@@ -31,15 +31,12 @@ spec:
     persistence:
       config:
         enabled: true
-        type: configMap
+        type: secret
         name: ${APP}
-        defaultMode: 0555
+        defaultMode: 0440
         globalMounts:
-          - path: /app/backup-all.sh
-            subPath: backup-all.sh
-            readOnly: true
-          - path: /app/backup-keenetic-router.sh
-            subPath: backup-keenetic-router.sh
+          - path: /config/routers.toml
+            subPath: routers.toml
             readOnly: true
       backups:
         enabled: true
@@ -71,13 +68,9 @@ spec:
         containers:
           main:
             image:
-              repository: alpine
-              tag: 3.24.2
+              repository: ghcr.io/maksimkurb/keenetic-router-backup
+              tag: "20261014080053"
               pullPolicy: IfNotPresent
-            command:
-              - /app/backup-all.sh
             env:
               TZ: "${TIMEZONE}"
-            envFrom:
-              - secretRef:
-                  name: ${APP}
+              PYTHONUNBUFFERED: "1"
