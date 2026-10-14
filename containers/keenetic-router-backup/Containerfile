@@ -1,0 +1,10 @@
+FROM docker.io/library/python:3.14-alpine3.24
+
+RUN apk add --no-cache openssh-client sshpass
+
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --root-user-action=ignore -r /app/requirements.txt
+
+COPY --chmod=0555 backup.py /app/backup.py
+
+ENTRYPOINT ["python3", "/app/backup.py"]
