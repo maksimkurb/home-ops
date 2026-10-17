@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.2.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -73,7 +73,7 @@ spec:
           setup-certs:
             image:
               repository: ghcr.io/maksimkurb/n8n-ffmpeg
-              tag: 2.42.6
+              tag: 2.43.7
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -91,7 +91,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maksimkurb/n8n-ffmpeg
-              tag: 2.42.6
+              tag: 2.43.7
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
@@ -178,7 +178,7 @@ spec:
           setup-certs:
             image:
               repository: ghcr.io/maksimkurb/n8n-runners-ffmpeg
-              tag: 2.42.6
+              tag: 2.43.7
               pullPolicy: IfNotPresent
             securityContext:
               runAsUser: 0
@@ -196,7 +196,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maksimkurb/n8n-runners-ffmpeg
-              tag: 2.42.6
+              tag: 2.43.7
               pullPolicy: IfNotPresent
             env:
               TZ: "${TIMEZONE_FAILSAFE}"
