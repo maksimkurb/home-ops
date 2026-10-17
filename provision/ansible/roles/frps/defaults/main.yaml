@@ -1,0 +1,34 @@
+---
+# frp release to install (keep in sync with the frpc role)
+frp_version: "0.71.1"
+
+frps_bind_addr: "0.0.0.0"
+frps_bind_port: 7000
+# Shared secret, must match frpc. Store it in a sops file (frp_token)
+frps_token: "{{ frp_token }}"
+# Reject plain-text control connections
+frps_tls_force: true
+# Ports frpc is allowed to expose, e.g.:
+#   - { start: 20000, end: 20100 }
+#   - { single: 8443 }
+frps_allow_ports: []
+# Optional HTTP/HTTPS vhost ports (0 = disabled)
+frps_vhost_http_port: 0
+frps_vhost_https_port: 0
+# Optional dashboard (empty port = disabled)
+frps_dashboard_port: ""
+frps_dashboard_addr: "127.0.0.1"
+frps_dashboard_user: admin
+frps_dashboard_password: ""
+frps_log_level: info
+frps_log_max_days: 7
+
+# Open the needed ports in ufw (only when ufw is already active)
+frps_manage_ufw: false
+# Extra ufw rules, e.g. ["20000:20100/tcp", "8443/tcp"]
+frps_ufw_extra_rules: []
+
+frps_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+frps_arch: "{{ frps_arch_map[ansible_facts['architecture']] }}"

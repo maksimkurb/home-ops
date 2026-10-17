@@ -1,0 +1,37 @@
+# Managed by Ansible
+bindAddr = "{{ frps_bind_addr }}"
+bindPort = {{ frps_bind_port }}
+
+auth.method = "token"
+auth.token = "{{ frps_token }}"
+transport.tls.force = {{ frps_tls_force | lower }}
+
+log.to = "console"
+log.level = "{{ frps_log_level }}"
+log.maxDays = {{ frps_log_max_days }}
+{% if frps_vhost_http_port | int > 0 %}
+
+vhostHTTPPort = {{ frps_vhost_http_port }}
+{% endif %}
+{% if frps_vhost_https_port | int > 0 %}
+vhostHTTPSPort = {{ frps_vhost_https_port }}
+{% endif %}
+{% if frps_dashboard_port | string | length > 0 %}
+
+webServer.addr = "{{ frps_dashboard_addr }}"
+webServer.port = {{ frps_dashboard_port }}
+webServer.user = "{{ frps_dashboard_user }}"
+webServer.password = "{{ frps_dashboard_password }}"
+{% endif %}
+{% if frps_allow_ports | length > 0 %}
+
+allowPorts = [
+{% for p in frps_allow_ports %}
+{% if p.single is defined %}
+  { single = {{ p.single }} },
+{% else %}
+  { start = {{ p.start }}, end = {{ p.end }} },
+{% endif %}
+{% endfor %}
+]
+{% endif %}

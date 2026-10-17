@@ -1,0 +1,101 @@
+---
+- name: Create frp system group
+  ansible.builtin.group:
+    name: frp
+    system: true
+  tags: [frps]
+- name: Create frp system user
+  ansible.builtin.user:
+    name: frp
+    group: frp
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+  tags: [frps]
+- name: Create frp directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: root
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - {path: /opt/frp, group: root, mode: "0755"}
+    - {path: "/opt/frp/{{ frp_version }}", group: root, mode: "0755"}
+    - {path: /etc/frp, group: frp, mode: "0750"}
+  tags: [frps]
+- name: Download frp release
+  ansible.builtin.get_url:
+    url: "https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
+    dest: "/opt/frp/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
+    checksum: "sha256:https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_sha256_checksums.txt"
+    mode: "0644"
+  tags: [frps]
+- name: Unpack frp release
+  ansible.builtin.unarchive:
+    src: "/opt/frp/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
+    dest: "/opt/frp/{{ frp_version }}"
+    remote_src: true
+    extra_opts: ["--strip-components=1"]
+    creates: "/opt/frp/{{ frp_version }}/frps"
+  tags: [frps]
+- name: Link frps binary
+  ansible.builtin.file:
+    src: "/opt/frp/{{ frp_version }}/frps"
+    dest: /usr/local/bin/frps
+    state: link
+    force: true
+  notify: Restart frps
+  tags: [frps]
+- name: Deploy frps config
+  ansible.builtin.template:
+    src: frps.toml.j2
+    dest: /etc/frp/frps.toml
+    owner: root
+    group: frp
+    mode: "0640"
+  notify: Restart frps
+  no_log: true
+  tags: [frps]
+- name: Deploy frps systemd unit
+  ansible.builtin.template:
+    src: frps.service.j2
+    dest: /etc/systemd/system/frps.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart frps
+  tags: [frps]
+- name: Flush handlers before starting the service
+  ansible.builtin.meta: flush_handlers
+  tags: [frps]
+- name: Enable and start frps
+  ansible.builtin.systemd:
+    name: frps
+    enabled: true
+    state: started
+    daemon_reload: true
+  tags: [frps]
+- name: Check ufw state
+  ansible.builtin.command: ufw status
+  register: frps_ufw_status
+  changed_when: false
+  failed_when: false
+  when: frps_manage_ufw
+  tags: [frps]
+- name: Allow frps ports in ufw
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.split('/')[0] }}"
+    proto: "{{ item.split('/')[1] }}"
+  loop: >-
+    {{ ['%s/tcp' % frps_bind_port]
+       + (['%s/tcp' % frps_vhost_http_port] if frps_vhost_http_port | int > 0 else [])
+       + (['%s/tcp' % frps_vhost_https_port] if frps_vhost_https_port | int > 0 else [])
+       + frps_ufw_extra_rules }}
+  when:
+    - frps_manage_ufw
+    - "'Status: active' in frps_ufw_status.stdout"
+  tags: [frps]

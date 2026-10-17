@@ -1,0 +1,17 @@
+---
+# One frpc process per frps server
+frpc_instances: []
+#  - name: vps-3
+#    server_addr: <IP or domain of the VPS>
+frpc_proxies:
+  - name: owrt-spb-ssh
+    type: tcp
+    local_ip: 192.168.55.1 # router LAN address (dropbear listens on lan only)
+    local_port: 22
+    remote_port: 20022
+  # LuCI over HTTPS (uhttpd, self-signed cert): TLS stays end-to-end
+  - name: owrt-spb-luci
+    type: tcp
+    local_ip: 192.168.55.1
+    local_port: 443
+    remote_port: 20443

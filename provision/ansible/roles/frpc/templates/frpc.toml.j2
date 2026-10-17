@@ -1,0 +1,39 @@
+# Managed by Ansible
+serverAddr = "{{ item.server_addr }}"
+serverPort = {{ item.server_port | default(frpc_default_server_port) }}
+loginFailExit = false
+
+auth.method = "token"
+auth.token = "{{ item.token | default(frpc_token) }}"
+transport.tls.enable = {{ frpc_tls_enable | lower }}
+transport.poolCount = {{ frpc_pool_count }}
+
+log.to = "console"
+log.level = "info"
+{% for p in frpc_proxies %}
+
+[[proxies]]
+name = "{{ p.name }}"
+type = "{{ p.type }}"
+localIP = "{{ p.local_ip | default('127.0.0.1') }}"
+localPort = {{ p.local_port }}
+{% if p.remote_port is defined %}
+remotePort = {{ p.remote_port }}
+{% endif %}
+{% if p.custom_domains is defined %}
+customDomains = {{ p.custom_domains | to_json }}
+{% endif %}
+{% if p.group is defined %}
+loadBalancer.group = "{{ p.group }}"
+loadBalancer.groupKey = "{{ p.group_key | default(p.group) }}"
+{% endif %}
+{% if p.health_check is defined %}
+healthCheck.type = "{{ p.health_check }}"
+{% if p.health_check == 'http' %}
+healthCheck.path = "{{ p.health_check_path | default('/') }}"
+{% endif %}
+healthCheck.timeoutSeconds = 3
+healthCheck.maxFailed = 3
+healthCheck.intervalSeconds = 10
+{% endif %}
+{% endfor %}

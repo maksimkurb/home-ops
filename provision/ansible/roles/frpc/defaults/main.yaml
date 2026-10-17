@@ -1,0 +1,41 @@
+---
+# frp release to install (keep in sync with the frps role)
+frp_version: "0.71.1"
+
+# One frpc process is started per entry, so several frps servers can be
+# used at once (frpc itself supports only a single serverAddr):
+#   - name: de              # used for /etc/frp/<name>.toml and /etc/init.d/frpc-<name>
+#     server_addr: 203.0.113.10
+#     server_port: 7000     # optional, default frpc_default_server_port
+#     token: "{{ frp_token }}"  # optional, default frp_token
+frpc_instances: []
+frpc_default_server_port: 7000
+frpc_token: "{{ frp_token }}"
+frpc_pool_count: 2
+frpc_tls_enable: true
+
+# Proxies exposed through every instance:
+#   - name: ssh
+#     type: tcp
+#     local_ip: 127.0.0.1   # optional, default 127.0.0.1
+#     local_port: 22
+#     remote_port: 20022
+#   - name: web
+#     type: http
+#     local_port: 80
+#     custom_domains: [home.example.com]
+#   optional on any proxy: group (load-balancing group), group_key,
+#   health_check: tcp|http, health_check_path (http)
+frpc_proxies: []
+
+# Linux arch of the router in frp release naming. ansible_architecture
+# can't tell mips from mipsle, so set frpc_arch in host_vars for mips.
+frpc_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+  armv7l: arm
+  armv6l: arm
+  mips: mipsle
+  mips64: mips64
+frpc_arch: "{{ frpc_arch_map[ansible_facts['architecture']] }}"
+frpc_download_dir: /tmp/.ansible/frp

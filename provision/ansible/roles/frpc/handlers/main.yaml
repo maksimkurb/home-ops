@@ -1,0 +1,6 @@
+---
+- name: Restart frpc
+  ansible.builtin.command:
+    cmd: "/etc/init.d/frpc-{{ item.name }} restart"
+  loop: "{{ frpc_instances }}"
+  changed_when: true

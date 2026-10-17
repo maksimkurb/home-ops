@@ -1,0 +1,3 @@
+---
+# Shared secret lives in frp.sops.yaml (frp_token)
+frp_version: "0.71.1"

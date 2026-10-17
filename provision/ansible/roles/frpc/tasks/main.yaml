@@ -1,0 +1,89 @@
+---
+- name: Create download directory on the controller
+  ansible.builtin.file:
+    path: "{{ frpc_download_dir }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  become: false
+  tags: [frpc]
+- name: Download frp release on the controller
+  ansible.builtin.get_url:
+    url: "https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_{{ frp_version }}_linux_{{ frpc_arch }}.tar.gz"
+    dest: "{{ frpc_download_dir }}/frp_{{ frp_version }}_linux_{{ frpc_arch }}.tar.gz"
+    checksum: "sha256:https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_sha256_checksums.txt"
+    mode: "0644"
+  delegate_to: localhost
+  become: false
+  tags: [frpc]
+- name: Unpack frp release on the controller
+  ansible.builtin.unarchive:
+    src: "{{ frpc_download_dir }}/frp_{{ frp_version }}_linux_{{ frpc_arch }}.tar.gz"
+    dest: "{{ frpc_download_dir }}"
+    creates: "{{ frpc_download_dir }}/frp_{{ frp_version }}_linux_{{ frpc_arch }}/frpc"
+  delegate_to: localhost
+  become: false
+  tags: [frpc]
+- name: Install frpc binary
+  ansible.builtin.copy:
+    src: "{{ frpc_download_dir }}/frp_{{ frp_version }}_linux_{{ frpc_arch }}/frpc"
+    dest: /usr/bin/frpc
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Restart frpc
+  tags: [frpc]
+- name: Create /etc/frp
+  ansible.builtin.file:
+    path: /etc/frp
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  tags: [frpc]
+- name: Deploy frpc configs
+  ansible.builtin.template:
+    src: frpc.toml.j2
+    dest: "/etc/frp/{{ item.name }}.toml"
+    owner: root
+    group: root
+    mode: "0600"
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Restart frpc
+  no_log: true
+  tags: [frpc]
+- name: Deploy frpc init scripts
+  ansible.builtin.template:
+    src: frpc.init.j2
+    dest: "/etc/init.d/frpc-{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0755"
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Restart frpc
+  tags: [frpc]
+- name: Enable frpc services
+  ansible.builtin.command:
+    cmd: "/etc/init.d/frpc-{{ item.name }} enable"
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  changed_when: false
+  tags: [frpc]
+- name: Flush handlers before starting the services
+  ansible.builtin.meta: flush_handlers
+  tags: [frpc]
+- name: Start frpc services
+  ansible.builtin.command:
+    cmd: "/etc/init.d/frpc-{{ item.name }} start"
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: frpc_start
+  changed_when: false
+  failed_when: frpc_start.rc != 0 and "already running" not in frpc_start.stderr
+  tags: [frpc]

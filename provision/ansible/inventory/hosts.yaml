@@ -46,6 +46,16 @@ mptcp-servers:
   hosts:
     vps-3: {}
 
+# frp: reverse tunnels (OpenWrt frpc -> VPS frps)
+frp:
+  children:
+    frps:
+      hosts:
+        vps-1: {}
+    frpc:
+      hosts:
+        owrt-spb: {}
+
 # reverse-proxy:
 #   hosts:
 #     vps-1: {}
