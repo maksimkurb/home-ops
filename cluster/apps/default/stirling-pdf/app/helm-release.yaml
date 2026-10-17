@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.2.1
+      version: 5.3.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
@@ -99,7 +99,7 @@ spec:
           main:
             image:
               repository: ghcr.io/stirling-tools/s-pdf
-              tag: 3.1.0@sha256:b5b9e400c086e5334a4947a0d7cd589808f743f29267d7f41c18200cf4bc48b4
+              tag: 3.2.0@sha256:10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207
             env:
               TZ: ${TIMEZONE}
               DOCKER_ENABLE_SECURITY: 'true'

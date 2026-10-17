@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.2.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -34,7 +34,7 @@ spec:
           main:
             image:
               repository: docker.io/binwiederhier/ntfy
-              tag: v2.29.0
+              tag: v2.31.1
               pullPolicy: IfNotPresent
             args:
               - serve
