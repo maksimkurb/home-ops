@@ -6,20 +6,6 @@ iperf3_client_hostname: ENC[AES256_GCM,data:wcqcXFqCpGMeeBzjKEdhBTVd,iv:6QbRWg/2
 traefik_base_domain: ENC[AES256_GCM,data:oy7SUiLjmkAFvHo=,iv:9ydj7dIPj8K+y8ULIYeyIndTQhliIjkMlmpctBd4Rvg=,tag:TGCznpgx5TgBN0s7oumWeQ==,type:str]
 dnsproxy_alternative_hostnames:
     - ENC[AES256_GCM,data:TayMJu2OEq5RJvw4OxRVsQ==,iv:15E12SYL9dsYUgNPUpaQpYF5tDRUUVfAjOmqsNwiEB4=,tag:mu4Vk2Lb4GUaf0JNnkJl/A==,type:str]
-vpn_awg_clients:
-    - ENC[AES256_GCM,data:HpPZx45/wQRM8y/bBg==,iv:oTGhBHnKbmn9oT0a1B0dfanSPSp+bmeiMPE7ykmTl8g=,tag:RzJfWSO3IMnxqTUoQ7vt4g==,type:str]
-    - ENC[AES256_GCM,data:abWkcEbJDOlR,iv:TRu3OuvJ5/ctEdykj1bpte9BH2Z6PyA7q7Bqfg9LKTo=,tag:yIlBflO0VOwatoFG7x4emA==,type:str]
-    - ENC[AES256_GCM,data:3Lu8DXodyNBoTIfg,iv:nTL3lOn1FESa7crDCNJLdFIzrFRCLhht3qKlm36/g6U=,tag:+WePAW59AtUe4e3BJK3jCQ==,type:str]
-vpn_awg_public_host: ENC[AES256_GCM,data:jRAu5cDLpyAYQiw/S5FWIEJP,iv:fsOz32w6q0xuwGXrNzUF9v4dQdXs8zHTxG30ktJBXyk=,tag:XK7+s+wwHrVpCrX2+HLE1w==,type:str]
-vpn_awg_subnet: ENC[AES256_GCM,data:JU4V2Ktih5rJZFMR,iv:W1cnnEjn+H3YAyFzlD50CZSkAt6tUjLTW3VeiSRcqoY=,tag:3pw8EvRINymnkacX/YjFkQ==,type:str]
-vpn_awg15_subnet: ENC[AES256_GCM,data:hwU8uOEp7OO15ZA1,iv:hvdG7ZAlxVAnioAwqAOfXBFpZqXg6d8YwgK2SPzrB1Y=,tag:3sxK5+FVTOFccd7dXfJLRA==,type:str]
-vpn_awg15_server_ip: ENC[AES256_GCM,data:Lf6fKOzjvE4k,iv:iqvuP17S77kKiJKeklNkDPN1OgC04LIHhmNMqqG293Y=,tag:pVTbe7KJ8LbQ8+mi0dxuqw==,type:str]
-vpn_awg20_subnet: ENC[AES256_GCM,data:qQ6lO96MG1H31WcD,iv:UCfKYqmpgpUI8IlSwyS3dVKOpcvfA9DQz923789AQAU=,tag:aPso1FLdRUnlTlcB6SD5zw==,type:str]
-vpn_awg20_server_ip: ENC[AES256_GCM,data:jNG2GDKfKocl,iv:GOEx/ETHQ9VI9tVc/ISSk+LjdfI/vpSWAuHZmslC8Tc=,tag:uLROPy/8GyWluVhWQzs0Lw==,type:str]
-vpn_awg15_subnet_v6: ENC[AES256_GCM,data:7vUAs+yD6IxujumIW4dVw4z2R7Q0zxEDgB12FucV+nB7WU3+eQi8,iv:VEdwBG3tjYXUdNxkSunBQn36dGZXvIfi+i3He1eU8oU=,tag:qjl/srcs+R+EDzlVwWZqkg==,type:str]
-vpn_awg15_server_ip_v6: ENC[AES256_GCM,data:d9ei275kcvw9Vt6BJwLcgRtHKxw46SkjClR4eAUslmC8G7w=,iv:6JIhe1JxK61wukvO+EiJjIT7TN8WT4DRUb9sQYW8dhY=,tag:TaTbzVBH05DgwNEsYu4W1A==,type:str]
-vpn_awg20_subnet_v6: ENC[AES256_GCM,data:T/t9wgtwWUpECcCBSRCMg6VuNDvWqU2nWLpcOIPqCBtxkUeNc9Cr,iv:beNtYXiRkJ30J/SciAd3LB7ZR2EVDHQr0CuNu/4F060=,tag:fZAKGPAfFtrzPwT5HyRrqg==,type:str]
-vpn_awg20_server_ip_v6: ENC[AES256_GCM,data:TY4bZpoU/K4tMoiPDp2/VuzXAlodBwAgrGVSE2mZ3tsD7yk=,iv:FtqTRYApTeS9C9TXtbjzXInzVc4IDKH4Lh4zz2uJz9w=,tag:nAmq8fZSTgvXl2/eBkXF2w==,type:str]
 sops:
     age:
         - enc: |
@@ -31,7 +17,7 @@ sops:
             nItkATY2pidSwBmpIBPt64brx+0lPCKFg7phdO1DiRUZ12l8a+BOGg==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-09-03T11:11:53Z"
-    mac: ENC[AES256_GCM,data:BiN0VWa59QPKWJJlaB4WEg1ybTEoDY1B0diN0qrtMBFlsIsOHXiJfBnrPRIQ2ZfiL1P4hLCqiHXotTyK7QYAyHsk6bRSOoE4/Q6teQ3+/laeZ1va61O9Ynh6TPddTCeOapsAXh69Qaf4pu6tzqa7xkjnSVx7wcU4J2CKobxd2u4=,iv:CW9kXMO3d7BBA6f8DsdoLi4iKY8HiXaV6mTXCe6cS1U=,tag:sle8XkK4XsmVNEhllY/yDg==,type:str]
+    lastmodified: "2026-10-18T09:35:25Z"
+    mac: ENC[AES256_GCM,data:rjkX4O+tHcg1MKw+pHsiiyli9fMGT7RJid5FkFXDjQBbFxqls6oAApAuuLWvgV6+ktN7940DcXhkvFhIBf/DuRWJYe33fOKj4m4b5lHRRd5WxrD1nkCeOdI4C+ttfghPyFhVHv/+U9MSlOldmmmzmgzWwIel1R0bsL0mRzBbVxc=,iv:Fj96PFu+078RBgHteFz4/KLksYOf7wN9MDL3npVc4f0=,tag:+JIwqsrzUfQbcuSwJxvCGA==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

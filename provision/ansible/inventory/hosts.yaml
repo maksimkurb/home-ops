@@ -38,14 +38,6 @@ iperf3-stats:
       #casa-sok:
       #  iperf3_server_enabled: false
       #  iperf3_client_enabled: true
-# MultiPath TCP:
-mptcp-clients:
-  hosts:
-    owrt-spb: {}
-mptcp-servers:
-  hosts:
-    vps-3: {}
-
 # frp: reverse tunnels (OpenWrt frpc -> VPS frps)
 frp:
   children:
@@ -58,9 +50,5 @@ frp:
         owrt-tkh2: {}
 
 # reverse-proxy:
-#   hosts:
-#     vps-1: {}
-
-# signal-tls-proxy:
 #   hosts:
 #     vps-1: {}
