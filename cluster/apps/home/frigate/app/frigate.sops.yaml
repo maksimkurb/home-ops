@@ -14,7 +14,7 @@ stringData:
     FRIGATE_CAMERA_HALLWAY_ONVIF_IP: ENC[AES256_GCM,data:4TnO6WtMUJPFqlqCKyQ=,iv:2PWCL4x4hxZI3A+7RcUFOZ8wv3AO1+NiQ1Auv5PsTOg=,tag:oI10oGXjnkWFLNsMJHJOoQ==,type:str]
     FRIGATE_CAMERA_HALLWAY_ONVIF_PASSWORD: ENC[AES256_GCM,data:3PPDj5NvDyHapjk2G33LT/Z5HRYvtQ==,iv:R/RpTRX2tTrNTJEtwE78dYTKcPTEvdkoHVDRFejO69A=,tag:pvdpufs/kevrp8AnaFrgyw==,type:str]
     FRIGATE_CAMERA_HALLWAY_ONVIF_USERNAME: ENC[AES256_GCM,data:cBzA990z8Q==,iv:WVEy3EVTLJhCUzILQVAuQC5oCKddEj0hcqWmUR9rEPM=,tag:vMNxS/n9+SUQuwdj58mPXA==,type:str]
-    FRIGATE_CAMERA_KHOROSHKINA_HOUSE_CCTV1_RTSP_URL: ENC[AES256_GCM,data:00LGF462hjW82nB+8K0o5IGFGEXAsq/ewl0kf+6FTVWfce93oIxGTEGYFQ==,iv:ZU5oML1P2Fs9TwMbBlP/iwLPrrlV1PBADPF9yA9L+5w=,tag:3njt3DJ07Xl5VFQBQY1COQ==,type:str]
+    FRIGATE_CAMERA_KHOROSHKINA_HOUSE_CCTV1_RTSP_URL: ENC[AES256_GCM,data:NImgF+sfGLIKa5NuTbVz4rz7cp1OhJeMaeD0BQoZe1uoJakaJUoo,iv:XgM7pD2BI6BPMWJNxujvrbX3qFqYN/BISwOxJeS5n6k=,tag:8yg2YOYjRa8OdVuqJe135A==,type:str]
 sops:
     age:
         - enc: |
@@ -27,6 +27,6 @@ sops:
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
     encrypted_regex: ^(data|stringData)$
-    lastmodified: "2026-09-28T12:24:42Z"
-    mac: ENC[AES256_GCM,data:LI1MnifZVsGfzvs5iIZXH8epOqAyxfVyc3mycn/T3i52W6AD8L4cvAEkfg/U9Zx4G6heR9DRXQSQJpUayxbYJMyLSrG6IQ2hkkO32+jjJLLG8eNifWGdK9ay0L7/0DjM2ageTsa7tEZF7FYizNDKQ87X3l1XMYpUmDPe1KXYMGI=,iv:hccis5F4c6OuSHDh7Uvg5N1HwLWclom6O+nkq/dV81U=,tag:GQo6cH4wBTuwXdbVKw4ojA==,type:str]
+    lastmodified: "2026-10-18T08:14:11Z"
+    mac: ENC[AES256_GCM,data:LdHOgWn7RXBko0eyCJU2LBVMUZSRNIw0h+usPcgeY9Pigx/NxFBjtTsQxLT+s356VElXkPJPzsBcy8xE93ZYii6nbuVs9YUXSiPsI442/CxepTbCSa51yXPajeRpyazyIMtgPY0StYCFun8gxJQAgZPl/S5fNS0FJRFDrJlgWHU=,iv:EW+wz+o/Xj7AOjuk0nV9tqV0HSi++47RzcL0XLB/An4=,tag:PxpVJRSJbzKPO8/R5Z9PCQ==,type:str]
     version: 3.13.3

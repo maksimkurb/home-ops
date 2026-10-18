@@ -55,6 +55,7 @@ frp:
     frpc:
       hosts:
         owrt-spb: {}
+        owrt-tkh2: {}
 
 # reverse-proxy:
 #   hosts:

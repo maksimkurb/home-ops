@@ -2,7 +2,21 @@
 - hosts:
     - frpc
   become: true
-  gather_facts: true
+  gather_facts: false
   any_errors_fatal: true
+  vars:
+    # python3-light lacks modules Ansible needs (idna, decimal, ...), so use the full python3 set.
+    # It needs a few tens of MB of flash, check "df -h /overlay" on small routers
+    frpc_python_packages:
+      - python3
+  pre_tasks:
+    - name: Install Python for Ansible on OpenWrt
+      ansible.builtin.raw: |
+        for p in {{ frpc_python_packages | join(' ') }}; do
+          apk info -e "$p" >/dev/null 2>&1 || apk add "$p" || exit 1
+        done
+      changed_when: false
+    - name: Gather facts
+      ansible.builtin.setup:
   roles:
     - frpc

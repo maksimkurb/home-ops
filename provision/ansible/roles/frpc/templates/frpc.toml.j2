@@ -1,4 +1,6 @@
 # Managed by Ansible
+# frps prefixes proxy names with "user", so routers can reuse names
+user = "{{ inventory_hostname }}"
 serverAddr = "{{ item.server_addr }}"
 serverPort = {{ item.server_port | default(frpc_default_server_port) }}
 loginFailExit = false
