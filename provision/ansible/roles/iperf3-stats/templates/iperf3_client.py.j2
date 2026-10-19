@@ -361,19 +361,62 @@ def run_test_and_send(
         return False
 
 
+def run_icmp_only(
+    target_host: str,
+    count: int,
+    local_hostname: str,
+    bind_interface: Optional[str] = None
+) -> bool:
+    """
+    Ping-only mode: measure latency/loss and send it to the webhook using the
+    same payload shape as an iperf3 run, with empty iperf3 data (n8n-compatible).
+    """
+    print(f"\nRunning ICMP-only test ({count} probes)...")
+    idempotency_key = generate_idempotency_key()
+
+    stats = finish_ping(start_ping(target_host, count, bind_interface), count * 2 + 5)
+    if stats is None:
+        print("✗ ICMP test failed (ping unavailable or no output)")
+        return False
+    print(f"  Result: {stats}")
+
+    payload = {
+        "intervals": [],
+        "end": {},
+        "test_type": "icmp",
+        "source_hostname": local_hostname,
+        "target_hostname": target_host,
+        "iperf_run_on_hostname": local_hostname,
+        "timestamp": datetime.now().isoformat(),
+        "latency_idle": stats
+    }
+    if bind_interface:
+        payload["bind_interface"] = bind_interface
+
+    if send_webhook(payload, idempotency_key):
+        print("✓ ICMP test completed and results sent")
+        return True
+    print("✗ ICMP test completed but webhook delivery failed")
+    return False
+
+
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
         description='iperf3 Network Testing Client with n8n Webhook Integration'
     )
     parser.add_argument('--host', required=True, help='Target iperf3 server hostname or IP')
-    parser.add_argument('--port', type=int, required=True, help='Target iperf3 server port')
-    parser.add_argument('--threads', type=int, required=True, help='Number of parallel streams')
-    parser.add_argument('--duration', type=int, required=True, help='Test duration in seconds')
+    parser.add_argument('--port', type=int, help='Target iperf3 server port')
+    parser.add_argument('--threads', type=int, help='Number of parallel streams')
+    parser.add_argument('--duration', type=int, help='Test duration in seconds')
     parser.add_argument('--bind-interface', help='Network interface to bind to (optional)')
     parser.add_argument('--client-hostname', help='Override client hostname (optional)')
+    parser.add_argument('--icmp-only', action='store_true', help='Only ping the host (no iperf3); send latency stats to the webhook')
+    parser.add_argument('--count', type=int, default=10, help='Number of ICMP probes in --icmp-only mode (default: 10)')
 
     args = parser.parse_args()
+    if not args.icmp_only and None in (args.port, args.threads, args.duration):
+        parser.error('--port, --threads and --duration are required unless --icmp-only is set')
 
     # Get local hostname
     if args.client_hostname:
@@ -388,9 +431,12 @@ def main():
     print("iperf3 Network Test")
     print("=" * 60)
     print(f"Local hostname: {local_hostname}")
-    print(f"Target server: {args.host}:{args.port}")
-    print(f"Threads: {args.threads}")
-    print(f"Duration: {args.duration}s")
+    if args.icmp_only:
+        print(f"Target host (ICMP only): {args.host}")
+    else:
+        print(f"Target server: {args.host}:{args.port}")
+        print(f"Threads: {args.threads}")
+        print(f"Duration: {args.duration}s")
     if args.bind_interface:
         print(f"Bind interface: {args.bind_interface}")
     print(f"Webhook URL: {WEBHOOK_URL if WEBHOOK_URL else 'Not configured'}")
@@ -403,6 +449,9 @@ def main():
         print("Tests aborted due to kill-switch activation")
         print("=" * 60)
         sys.exit(0)
+
+    if args.icmp_only:
+        sys.exit(0 if run_icmp_only(args.host, args.count, local_hostname, args.bind_interface) else 1)
 
     # Measure idle latency before the load starts (3 probes, ~2s)
     latency_idle = finish_ping(start_ping(args.host, 3, args.bind_interface), 8)

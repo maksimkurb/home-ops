@@ -188,7 +188,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.created_at",
+          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND jsonb_array_length(l.second_measurements->'data') > 0\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.created_at",
           "refId": "A",
           "sql": {
             "columns": [
@@ -597,7 +597,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.bind_interface,\r\n  (l.latency_idle->>'avg_ms')::numeric AS idle_ms,\r\n  (l.latency_loaded->>'avg_ms')::numeric AS loaded_ms,\r\n  l.retransmits,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
+          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.bind_interface,\r\n  (l.latency_idle->>'avg_ms')::numeric AS idle_ms,\r\n  (l.latency_loaded->>'avg_ms')::numeric AS loaded_ms,\r\n  l.retransmits,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND jsonb_array_length(l.second_measurements->'data') > 0\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
           "refId": "A",
           "sql": {
             "columns": [

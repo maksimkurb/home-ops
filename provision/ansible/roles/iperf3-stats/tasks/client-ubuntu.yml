@@ -67,7 +67,7 @@
     day: "{{ item.cron.split()[2] }}"
     month: "{{ item.cron.split()[3] }}"
     weekday: "{{ item.cron.split()[4] }}"
-    job: "/usr/local/bin/iperf3_client.py --host {{ item.host }} --port {{ item.port }} --threads {{ item.threads }} --duration {{ item.duration_sec }}{{ ' --bind-interface ' + item.bind_interface if item.bind_interface is defined else '' }}{{ ' --client-hostname ' + (item.client_hostname | default(iperf3_client_hostname)) if (item.client_hostname | default(iperf3_client_hostname)) else '' }}"
+    job: "/usr/local/bin/iperf3_client.py --host {{ item.host }}{{ ' --icmp-only --count ' + (item.count | default(10) | string) if item.icmp_only | default(false) else ' --port ' + item.port | string + ' --threads ' + item.threads | string + ' --duration ' + item.duration_sec | string }}{{ ' --bind-interface ' + item.bind_interface if item.bind_interface is defined else '' }}{{ ' --client-hostname ' + (item.client_hostname | default(iperf3_client_hostname)) if (item.client_hostname | default(iperf3_client_hostname)) else '' }}"
     user: root
     state: present
   loop: "{{ iperf3_client_runs }}"

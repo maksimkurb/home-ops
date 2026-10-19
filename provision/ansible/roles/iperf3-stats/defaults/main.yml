@@ -26,6 +26,8 @@ iperf3_client_hostname: ""
 #   - threads: Number of parallel streams
 #   - duration_sec: Test duration in seconds
 #   - bind_interface: (optional) Network interface to bind to
+#   - icmp_only: (optional, default false) Only ping the host (no iperf3); port/threads/duration_sec are not needed
+#   - count: (optional) Number of ICMP probes when icmp_only is set (default 10)
 #   - client_hostname: (optional) Per-run override of iperf3_client_hostname, e.g. to tell
 #     apart tests over different WAN interfaces of the same host
 #
