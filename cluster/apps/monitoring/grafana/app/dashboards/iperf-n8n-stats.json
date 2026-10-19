@@ -597,7 +597,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
+          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.bind_interface,\r\n  (l.latency_idle->>'avg_ms')::numeric AS idle_ms,\r\n  (l.latency_loaded->>'avg_ms')::numeric AS loaded_ms,\r\n  l.retransmits,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
           "refId": "A",
           "sql": {
             "columns": [
@@ -637,7 +637,11 @@
               "second_measurements": "",
               "source_host": "Source",
               "target_host": "Target",
-              "test_type": "type"
+              "test_type": "type",
+              "bind_interface": "Interface",
+              "idle_ms": "Idle ms",
+              "loaded_ms": "Loaded ms",
+              "retransmits": "Retrans."
             }
           }
         }
@@ -797,6 +801,414 @@
       ],
       "title": "Per-Second Speed - Test ID: ${test_id}",
       "type": "trend"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  l.created_at AS time,\n  (l.latency_loaded->>'avg_ms')::numeric AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.latency_loaded->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
+          "refId": "A"
+        }
+      ],
+      "title": "Latency under load (avg)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, value, metric FROM (\n  SELECT l.created_at AS time, (l.latency_idle->>'avg_ms')::numeric AS value,\n         COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' idle' AS metric\n  FROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\n  WHERE $__timeFilter(l.created_at)\n    AND l.source_host_id = l.run_on_host_id\n    AND l.latency_idle->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\n  UNION ALL\n  SELECT l.created_at AS time, (l.latency_loaded->>'avg_ms')::numeric AS value,\n         COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' loaded (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\n  FROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\n  WHERE $__timeFilter(l.created_at)\n    AND l.latency_loaded->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\n) t\nORDER BY time",
+          "refId": "A"
+        }
+      ],
+      "title": "Idle vs loaded latency (avg)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  l.created_at AS time,\n  (l.latency_loaded->>'loss_pct')::numeric AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.latency_loaded->>'loss_pct' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
+          "refId": "A"
+        }
+      ],
+      "title": "Packet loss under load",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": 3600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  l.created_at AS time,\n  l.retransmits AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.retransmits IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
+          "refId": "A"
+        }
+      ],
+      "title": "TCP retransmits",
+      "type": "timeseries"
     }
   ],
   "preload": false,
