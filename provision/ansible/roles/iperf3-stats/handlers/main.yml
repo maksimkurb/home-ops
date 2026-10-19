@@ -3,18 +3,18 @@
   ansible.builtin.systemd:
     daemon_reload: true
   become: true
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 - name: Restart iperf3
   ansible.builtin.systemd:
     name: iperf3
     state: restarted
   become: true
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 - name: Restart iperf3
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 restart
-  when: ansible_distribution == "OpenWrt" or ansible_pkg_mgr == "opkg"
+  when: ansible_facts['distribution'] == "OpenWrt" or ansible_facts['pkg_mgr'] == "apk"
 - name: Restart cron
   ansible.builtin.command:
     cmd: /etc/init.d/cron restart
-  when: ansible_distribution == "OpenWrt" or ansible_pkg_mgr == "opkg"
+  when: ansible_facts['distribution'] == "OpenWrt" or ansible_facts['pkg_mgr'] == "apk"

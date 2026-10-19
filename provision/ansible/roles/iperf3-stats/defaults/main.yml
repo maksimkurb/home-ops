@@ -26,6 +26,8 @@ iperf3_client_hostname: ""
 #   - threads: Number of parallel streams
 #   - duration_sec: Test duration in seconds
 #   - bind_interface: (optional) Network interface to bind to
+#   - client_hostname: (optional) Per-run override of iperf3_client_hostname, e.g. to tell
+#     apart tests over different WAN interfaces of the same host
 #
 # Example:
 # iperf3_client_runs:

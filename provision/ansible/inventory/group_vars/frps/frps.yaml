@@ -1,7 +1,0 @@
----
-frps_allow_ports:
-  - {start: 20000, end: 20999}
-frps_manage_ufw: true
-frps_ufw_extra_rules:
-  - "20022/tcp"
-  - "20443/tcp"

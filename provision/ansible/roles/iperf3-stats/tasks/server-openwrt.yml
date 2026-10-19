@@ -1,6 +1,6 @@
 ---
 - name: Install iperf3 on OpenWRT
-  community.general.opkg:
+  community.general.apk:
     name: iperf3
     state: present
     update_cache: true

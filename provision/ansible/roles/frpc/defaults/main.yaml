@@ -28,7 +28,7 @@ frpc_tls_enable: true
 #   health_check: tcp|http, health_check_path (http)
 frpc_proxies: []
 
-# Linux arch of the router in frp release naming. ansible_architecture
+# Linux arch of the router in frp release naming. ansible_facts['architecture']
 # can't tell mips from mipsle, so set frpc_arch in host_vars for mips.
 frpc_arch_map:
   x86_64: amd64

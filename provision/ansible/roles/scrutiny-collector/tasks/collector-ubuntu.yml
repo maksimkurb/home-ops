@@ -32,7 +32,7 @@
   failed_when: false
 - name: Download scrutiny-collector binary
   ansible.builtin.get_url:
-    url: "https://github.com/AnalogJ/scrutiny/releases/download/{{ scrutiny_collector_version }}/scrutiny-collector-metrics-linux-{{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    url: "https://github.com/AnalogJ/scrutiny/releases/download/{{ scrutiny_collector_version }}/scrutiny-collector-metrics-linux-{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
     dest: "{{ scrutiny_collector_install_dir }}/scrutiny-collector-metrics"
     owner: root
     group: root

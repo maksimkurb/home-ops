@@ -27,13 +27,16 @@ iperf3-stats:
   hosts:
     # vps-1:
     #   iperf3_server_enabled: true
-    vps-3:
+    vps-a:
       iperf3_server_enabled: true
-    k3s-server:
+    vps-b:
+      iperf3_server_enabled: true
+    vps-c:
+      iperf3_server_enabled: true
+    owrt-h1:
       iperf3_server_enabled: true
       iperf3_client_enabled: true
-    owrt-spb:
-      iperf3_server_enabled: true
+    owrt-h3:
       iperf3_client_enabled: true
       #casa-sok:
       #  iperf3_server_enabled: false
@@ -46,7 +49,8 @@ frp:
         vps-1: {}
     frpc:
       hosts:
-        owrt-spb: {}
+        owrt-h1: {}
+        owrt-h3: {}
         owrt-tkh2: {}
 
 # reverse-proxy:

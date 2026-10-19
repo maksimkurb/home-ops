@@ -32,3 +32,23 @@
   tags:
     - iperf3
     - iperf3-server
+- name: Check if UFW is installed
+  ansible.builtin.command: which ufw
+  register: iperf3_ufw_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  tags:
+    - iperf3
+    - iperf3-server
+- name: Allow iperf3 server port in UFW
+  community.general.ufw:
+    rule: allow
+    port: "{{ iperf3_server_port | string }}"
+    proto: any
+    comment: iperf3
+  become: true
+  when: iperf3_ufw_check.rc == 0
+  tags:
+    - iperf3
+    - iperf3-server

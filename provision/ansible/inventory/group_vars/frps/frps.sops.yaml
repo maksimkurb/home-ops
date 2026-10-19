@@ -1,0 +1,27 @@
+kind: Secret
+frps_allow_ports:
+  - start: ENC[AES256_GCM,data:RBH8pys=,iv:bxq5R9E00Wd9fQj3P5tC0+QGeUChOOS5zjxnDNLoqg8=,tag:0WoQ34J4TwoZVbCI965I0w==,type:int]
+    end: ENC[AES256_GCM,data:wGbfa+s=,iv:skgPDLsiYPRMz61ltRi+qONcJeLM/5llmOB43Gk+F3c=,tag:76lg7CUUKS5gh11Eo+KVKw==,type:int]
+frps_manage_ufw: ENC[AES256_GCM,data:OOunWA==,iv:PpYwlS4pqHa8aUSXuv+NbtMguNRCx9HLKyaO2mOVfac=,tag:z8hGLN3gFyxX27tNkJ5q7A==,type:bool]
+frps_ufw_extra_rules:
+  - ENC[AES256_GCM,data:nOnR2fLUBbq1Ak7d97UTXV5uVeh6yt4atg==,iv:oUgSowQ67PBK1YdAnYX64omGU0PUq7tyANTJt+LQK/0=,tag:HyoQVCyXpPWC+l4Mh3H/+g==,type:comment]
+  - ENC[AES256_GCM,data:ACk1rLirgSN0,iv:tYrAv+I8GDgLOxcKOnZJsKBKITJNtxY7V7mxEOH+lHY=,tag:U8uNIWGAYWXBru3gXQMgDQ==,type:str]
+  - ENC[AES256_GCM,data:TwMCXbCed4VFEUythmahh1WcGue0H+lX,iv:hgjEmXYUqZRH2AAM0LSIMCdZVltQ7XYRMA8CbOqZD0U=,tag:NLZINIZbQVCnjp6bXeDR6w==,type:comment]
+  - ENC[AES256_GCM,data:G2aYoCYG2pp9,iv:tR7ZjI1HmdBtkWX25GbHhfWca7od69R0+uA/EpRoyXM=,tag:JgQE/UGY9r3w4gFoV9QE5g==,type:str]
+  - ENC[AES256_GCM,data:4fa73o0OdEg9ZRABhkG3S2arSbqf5e7suP2ZfgpBTHc=,iv:A7WvP+M48rD3En8dpWIoCozjPOmXJ9nRANshGtuNVc8=,tag:APbAFjDRpm4anP7UD+FfCA==,type:comment]
+  - ENC[AES256_GCM,data:smXQn9I6pU6c,iv:zAwb7iZBZ+5BOVDbEfxuMKAjoCFhM/cccvoKVrxZeyI=,tag:AU4L0Abb71mZgY/epQdH0A==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpelFXVE5pTmJTS2NFNmxJ
+        ZnNUV2hyeEJ0RHNEQnZWWW4zRFRSMG0wanowCithOWk1aWZPdGJNWmIwU3hwNks3
+        blFmU2hiZkhJdUc0bWpIczltejNQQ2cKLS0tIGZKRFF1VThYR2ppRWtveUthSVJM
+        ZW1lL0NuQ0Q5bEV2TmNWaS9YTFo1VHMK7qG3TRc1aDJz+tDRpHZKQ40D9/Da/Dxh
+        ytUCx+9wOTbb7euPqS61nDUh83NzIhFszp2u4TvvUx5Cv07RFot4Gg==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+  lastmodified: "2026-10-18T09:43:49Z"
+  mac: ENC[AES256_GCM,data:z0PXtNXPuIR2mC2hbQozRBwkv3lHQG7S63hNdWD6d/MJuT0Bz8FoQiTYtOUjA0LFuSHN0a4T3T2KEkJE7rVAGUYHWc/axQIfTiKcf0GiFRYFgIVEZWdyKO+8qjyN+qTBVwZAxN3ud8El2wyijpnEBKZvlZSaR7yknTe1D8W8RXU=,iv:W6xkDplS1VURsMUKzyJk+k28HOyOGU0OzU4kkro2rKg=,tag:goD7/fT6b/xAcI499mX2YQ==,type:str]
+  unencrypted_regex: ^(kind)$
+  version: 3.13.3

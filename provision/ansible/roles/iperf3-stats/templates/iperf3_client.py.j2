@@ -1,4 +1,4 @@
-{% if ansible_os_family == "Debian" %}#!/opt/iperf3-client-venv/bin/python3{% else %}#!/usr/bin/env python3{% endif %}
+{% if ansible_facts['os_family'] == "Debian" %}#!/opt/iperf3-client-venv/bin/python3{% else %}#!/usr/bin/env python3{% endif %}
 
 """
 iperf3 Network Testing Client
@@ -7,7 +7,10 @@ Runs bandwidth tests and sends results to n8n webhook
 
 import argparse
 import json
+import re
+import shutil
 import socket
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -37,6 +40,44 @@ WEBHOOK_TIMEOUT = {{ iperf3_client_webhook_connect_timeout_sec }}
 def generate_idempotency_key() -> str:
     """Generate a unique idempotency key with microsecond precision"""
     return datetime.now().strftime('%Y%m%d%H%M%S%f')
+
+
+def start_ping(host: str, count: int, bind_interface: Optional[str] = None) -> Optional[subprocess.Popen]:
+    """Start ping in background (1 probe/sec, negligible load). Returns None if unavailable."""
+    if not shutil.which("ping"):
+        return None
+    cmd = ["ping", "-c", str(count), "-W", "2"]
+    if bind_interface:
+        cmd += ["-I", bind_interface]
+    cmd.append(host)
+    try:
+        return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    except Exception as e:
+        print(f"  ⚠ Could not start ping: {e}")
+        return None
+
+
+def finish_ping(proc: Optional[subprocess.Popen], timeout: int) -> Optional[Dict[str, Any]]:
+    """Wait for ping and parse min/avg/max (ms) and packet loss. Never raises."""
+    if proc is None:
+        return None
+    try:
+        try:
+            out, _ = proc.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            proc.terminate()
+            out, _ = proc.communicate()
+        loss = re.search(r"([0-9.]+)% packet loss", out)
+        rtt = re.search(r"min/avg/max(?:/[a-z]+)? = ([0-9.]+)/([0-9.]+)/([0-9.]+)", out)
+        if not loss:
+            return None
+        result = {"loss_pct": float(loss.group(1))}
+        if rtt:
+            result.update(min_ms=float(rtt.group(1)), avg_ms=float(rtt.group(2)), max_ms=float(rtt.group(3)))
+        return result
+    except Exception as e:
+        print(f"  ⚠ Ping failed: {e}")
+        return None
 
 
 def run_iperf3_test(
@@ -231,7 +272,8 @@ def run_test_and_send(
     duration: int,
     reverse: bool,
     bind_interface: Optional[str] = None,
-    client_hostname: Optional[str] = None
+    client_hostname: Optional[str] = None,
+    latency_idle: Optional[Dict[str, Any]] = None
 ) -> bool:
     """
     Run a single test and send results to webhook
@@ -244,6 +286,7 @@ def run_test_and_send(
         reverse: If True, run in reverse mode (server sends data to client)
         bind_interface: Optional network interface to bind to
         client_hostname: Optional override for client hostname
+        latency_idle: Optional ping stats measured before the tests
 
     Returns:
         True if both test and webhook were successful, False otherwise
@@ -264,7 +307,9 @@ def run_test_and_send(
     idempotency_key = generate_idempotency_key()
 
     # Run iperf3 test
+    ping_proc = start_ping(target_host, duration, bind_interface)
     result = run_iperf3_test(target_host, port, threads, duration, reverse, bind_interface)
+    latency_loaded = finish_ping(ping_proc, 5)
 
     if result is None:
         print(f"✗ {test_direction} test failed")
@@ -295,6 +340,11 @@ def run_test_and_send(
         "iperf_run_on_hostname": local_hostname,
         "timestamp": datetime.now().isoformat()
     }
+
+    if latency_idle:
+        payload["latency_idle"] = latency_idle
+    if latency_loaded:
+        payload["latency_loaded"] = latency_loaded
 
     # Add bind_interface to payload if specified
     if bind_interface:
@@ -354,6 +404,11 @@ def main():
         print("=" * 60)
         sys.exit(0)
 
+    # Measure idle latency before the load starts (3 probes, ~2s)
+    latency_idle = finish_ping(start_ping(args.host, 3, args.bind_interface), 8)
+    if latency_idle:
+        print(f"Idle latency: {latency_idle}")
+
     # Run reverse test (server sends to client - download)
     reverse_success = run_test_and_send(
         args.host,
@@ -362,7 +417,8 @@ def main():
         args.duration,
         reverse=True,
         bind_interface=args.bind_interface,
-        client_hostname=args.client_hostname
+        client_hostname=args.client_hostname,
+        latency_idle=latency_idle
     )
 
     # Run normal test (client sends to server - upload)
@@ -373,7 +429,8 @@ def main():
         args.duration,
         reverse=False,
         bind_interface=args.bind_interface,
-        client_hostname=args.client_hostname
+        client_hostname=args.client_hostname,
+        latency_idle=latency_idle
     )
 
     print("\n" + "=" * 60)

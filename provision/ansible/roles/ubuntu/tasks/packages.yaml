@@ -21,8 +21,8 @@
       - qemu-guest-agent
       - htop
       - vim
-      - linux-image-generic-hwe-{{ ansible_distribution_version }}
-      - linux-headers-generic-hwe-{{ ansible_distribution_version }}
+      - linux-image-generic-hwe-{{ ansible_facts['distribution_version'] }}
+      - linux-headers-generic-hwe-{{ ansible_facts['distribution_version'] }}
     install_recommends: false
     update_cache: true
     cache_valid_time: 3600

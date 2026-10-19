@@ -24,7 +24,7 @@ This Ansible role provides comprehensive iPerf3 network testing capabilities for
 ## Requirements
 
 - Ansible 2.9 or higher
-- For OpenWRT: `community.general` collection (for `opkg` module)
+- For OpenWRT: `community.general` collection (for `apk` module)
 - For client mode: Python 3, pip, and internet access for Python packages
 
 ## Role Variables
@@ -62,6 +62,7 @@ iperf3_client_runs:
     threads: 4                      # Number of parallel streams
     duration_sec: 30                # Test duration in seconds
     bind_interface: "eth1"          # (Optional) Network interface to bind to
+    client_hostname: "h-3-wan1"     # (Optional) Per-run override of iperf3_client_hostname
 
 # n8n webhook URL for sending test results
 iperf3_client_webhook_url: "https://n8n.example.com/webhook/your-webhook-id"
@@ -157,7 +158,7 @@ None
 1. Enable the client in your playbook with `iperf3_client_enabled: true`
 2. Configure your n8n webhook URL
 3. Define test runs with schedule, target hosts, and parameters
-4. Optionally set `iperf3_client_hostname` when the reported hostname should differ from the system hostname
+4. Optionally set `iperf3_client_hostname` when the reported hostname should differ from the system hostname; a run can override it with its own `client_hostname` (e.g. one per WAN interface)
 5. Run your playbook
 6. Each configured test will run automatically via cron
 

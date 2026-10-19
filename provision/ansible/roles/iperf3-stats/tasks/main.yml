@@ -6,7 +6,7 @@
   ansible.builtin.include_tasks: server-ubuntu.yml
   when:
     - iperf3_server_enabled | default(false)
-    - ansible_os_family == "Debian"
+    - ansible_facts['os_family'] == "Debian"
   tags:
     - iperf3
     - iperf3-server
@@ -14,7 +14,7 @@
   ansible.builtin.include_tasks: server-openwrt.yml
   when:
     - iperf3_server_enabled | default(false)
-    - ansible_distribution == "OpenWrt" or (ansible_system == "Linux" and ansible_pkg_mgr == "opkg")
+    - ansible_facts['distribution'] == "OpenWrt" or (ansible_facts['system'] == "Linux" and ansible_facts['pkg_mgr'] == "apk")
   tags:
     - iperf3
     - iperf3-server
@@ -25,7 +25,7 @@
   ansible.builtin.include_tasks: client-ubuntu.yml
   when:
     - iperf3_client_enabled | default(false)
-    - ansible_os_family == "Debian"
+    - ansible_facts['os_family'] == "Debian"
   tags:
     - iperf3
     - iperf3-client
@@ -33,7 +33,7 @@
   ansible.builtin.include_tasks: client-openwrt.yml
   when:
     - iperf3_client_enabled | default(false)
-    - ansible_distribution == "OpenWrt" or (ansible_system == "Linux" and ansible_pkg_mgr == "opkg")
+    - ansible_facts['distribution'] == "OpenWrt" or (ansible_facts['system'] == "Linux" and ansible_facts['pkg_mgr'] == "apk")
   tags:
     - iperf3
     - iperf3-client
