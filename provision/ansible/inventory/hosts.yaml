@@ -12,7 +12,6 @@ nvidia:
 ubuntu:
   hosts:
     k3s-server: {}
-    # vps-1: {}
 reverse-proxy:
   hosts:
     vps-3: {}
@@ -25,8 +24,8 @@ scrutiny-collector:
     pve: {}
 iperf3-stats:
   hosts:
-    # vps-1:
-    #   iperf3_server_enabled: true
+    # casa-sok:
+    #   iperf3_client_enabled: true
     vps-a:
       iperf3_server_enabled: true
     vps-b:
@@ -46,7 +45,7 @@ frp:
   children:
     frps:
       hosts:
-        vps-1: {}
+        vps-c: {}
     frpc:
       hosts:
         owrt-h1: {}
