@@ -112,6 +112,26 @@ spec:
             agents_autodelete:
               login_password: 15m
       profiles.yaml: |
+        name: vpatch_exploit_ban
+        filters:
+          - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() == "custom/appsec-vpatch-exploit-ban"
+        decisions:
+          - type: ban
+            duration: 168h
+        notifications:
+          - slack_default
+        on_success: break
+        ---
+        name: appsec_ban
+        filters:
+          - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() startsWith "crowdsecurity/appsec-"
+        decisions:
+          - type: ban
+            duration: 24h
+        notifications:
+          - slack_default
+        on_success: break
+        ---
         name: captcha_remediation
         filters:
           - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() contains "http" && Alert.GetScenario() not contains "cve"
@@ -265,21 +285,49 @@ spec:
         serviceMonitor:
           enabled: true
     appsec:
-      enabled: false
-      # acquisitions:
-      #   - source: appsec
-      #     listen_addr: "0.0.0.0:7422"
-      #     path: /
-      #     appsec_config: crowdsecurity/crs-vpatch
-      #     labels:
-      #       type: appsec
-      # configs:
-      #   mycustom-appsec-config.yaml: |
-      #     name: crowdsecurity/crs-vpatch
-      #     default_remediation: ban
-      #     inband_rules:
-      #       - crowdsecurity/base-config
-      #       - crowdsecurity/vpatch-*
-      # env:
-      #   - name: COLLECTIONS
-      #     value: "crowdsecurity/appsec-wordpress crowdsecurity/appsec-crs"
+      enabled: true
+      acquisitions:
+        - source: appsec
+          listen_addr: "0.0.0.0:7422"
+          path: /
+          appsec_config: custom/vpatch-appsec
+          labels:
+            type: appsec
+      env:
+        - name: COLLECTIONS
+          value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+      configs:
+        vpatch-appsec.yaml: |
+          name: custom/vpatch-appsec
+          default_remediation: ban
+          inband_rules:
+            - crowdsecurity/base-config
+            - crowdsecurity/vpatch-*
+            - crowdsecurity/generic-*
+      scenarios:
+        vpatch-exploit-ban.yaml: |
+          type: trigger
+          format: 3.0
+          name: custom/appsec-vpatch-exploit-ban
+          description: "Ban on first hit of a known-exploit virtual patch (incl. PHP2Shell CVE-2026-109618/109619)"
+          filter: evt.Meta.log_type == 'appsec-block' && evt.Meta.rule_name startsWith 'crowdsecurity/vpatch-'
+          blackhole: 1m
+          groupby: evt.Meta.source_ip
+          labels:
+            confidence: 9
+            spoofable: 0
+            behavior: "http:exploit"
+            label: "Known exploit attempt"
+            service: http
+            classification:
+              - attack.T1190
+            remediation: true
+      postoverflows:
+        s01-whitelist:
+          whitelisted-ips.yaml: |
+            name: custom/appsec-whitelisted-ips
+            description: "Do not ban explicitly trusted source IPs on appsec alerts"
+            whitelist:
+              reason: "trusted source IP"
+              expression:
+                - 'evt.Overflow.Alert.Source.IP in [${SECRET_CROWDSEC_WHITELISTED_IPS}]'
