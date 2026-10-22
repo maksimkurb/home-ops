@@ -28,7 +28,6 @@ spec:
     remediation:
       retries: 5
   values:
-    fullnameOverride: *app
     crds:
       enabled: true
     app:
