@@ -117,7 +117,7 @@ spec:
       exclude: *exclude
       preconditions:
         all:
-          - key: "{{ request.object.spec.initContainers[] | length(@) || `0` }}"
+          - key: "{{ length(request.object.spec.initContainers || `[]`) }}"
             operator: GreaterThan
             value: 0
       mutate:
@@ -168,7 +168,7 @@ spec:
       exclude: *exclude
       preconditions:
         all:
-          - key: "{{ request.object.spec.initContainers[] | length(@) || `0` }}"
+          - key: "{{ length(request.object.spec.initContainers || `[]`) }}"
             operator: GreaterThan
             value: 0
       mutate:
