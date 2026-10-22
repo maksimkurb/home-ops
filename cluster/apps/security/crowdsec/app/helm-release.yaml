@@ -288,6 +288,10 @@ spec:
       env:
         - name: COLLECTIONS
           value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+        # The image's baked hub index predates these; installing them explicitly makes the
+        # entrypoint run a hub update and retry (the appsec pod has no hub volume to upgrade).
+        - name: APPSEC_RULES
+          value: "crowdsecurity/vpatch-CVE-2026-109618 crowdsecurity/vpatch-CVE-2026-109619"
       configs:
         vpatch-appsec.yaml: |
           name: custom/vpatch-appsec
@@ -296,6 +300,8 @@ spec:
             - crowdsecurity/base-config
             - crowdsecurity/vpatch-*
             - crowdsecurity/generic-*
+            # GET /crowdsec-test-NtktlJHV4TfBSK3wvlhiOBnl -> 403, used by Gatus to verify the bouncer
+            - crowdsecurity/appsec-generic-test
       scenarios:
         vpatch-exploit-ban.yaml: |
           type: trigger

@@ -11,6 +11,8 @@ spec:
       crowdsecLapiScheme: http
       crowdsecLapiHost: crowdsec-service.security.svc.cluster.local:8080
       crowdsecLapiKey: ${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}
+      # Fail open: never block all traffic when LAPI is unreachable (Gatus monitors the bouncer)
+      updateMaxFailure: -1
       crowdsecAppsecEnabled: true
       crowdsecAppsecHost: crowdsec-appsec-service.security.svc.cluster.local:7422
       crowdsecAppsecPath: /
