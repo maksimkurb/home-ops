@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - cilium/ks.yaml
   - coredns-custom.yaml
+  - cloudflare-proxied-networks
   - cluster-issuers
   - local-path-provisioner
   # - rook-ceph

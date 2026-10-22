@@ -6,7 +6,7 @@ on: # yamllint disable-line rule:truthy
     - cron: "0 0 * * *"
 env:
   CLOUDFLARE_PROXIED_NETWORKS_FILE: >-
-    cluster/apps/networking/ingress-nginx/app/cloudflare-proxied-networks.txt
+    cluster/core/cloudflare-proxied-networks/cloudflare-proxied-networks.yaml
 jobs:
   cloudflare-proxied-networks-update:
     name: Cloudflare Proxied Networks
