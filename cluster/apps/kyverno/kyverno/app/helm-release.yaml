@@ -16,6 +16,8 @@ spec:
         kind: HelmRepository
         name: kyverno-charts
         namespace: flux-system
+  # Foreign registries are pulled through a ~2 Mbit/s tunnel; give image pulls time
+  timeout: 15m
   install:
     createNamespace: true
     remediation:
@@ -27,6 +29,9 @@ spec:
     fullnameOverride: *app
     crds:
       install: true
+      # Post-upgrade migration hook is not needed on a fresh install and failed (its SA was cleaned up)
+      migration:
+        enabled: false
     config:
       # Never run webhooks for these namespaces (kyverno ns is excluded by default as well)
       excludeKyvernoNamespace: true
