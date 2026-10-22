@@ -1,0 +1,27 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &appname kyverno-policies
+  namespace: flux-system
+spec:
+  targetNamespace: kyverno
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *appname
+  interval: 30m
+  timeout: 5m
+  path: "./cluster/apps/kyverno/policies/app"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-cluster
+  wait: false
+  dependsOn:
+    # kyverno CRDs (ClusterPolicy)
+    - name: kyverno
+      namespace: flux-system
+    # ConfigMap trusted-ca-bundle is produced by the trust-manager Bundle
+    - name: trust-manager-bundle
+      namespace: flux-system

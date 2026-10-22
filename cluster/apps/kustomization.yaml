@@ -12,6 +12,7 @@ resources:
   - games
   - finances
   - home
+  - kyverno
   - kube-system
   - media
   - messaging

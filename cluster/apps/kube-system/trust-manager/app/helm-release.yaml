@@ -1,0 +1,48 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app trust-manager
+  namespace: kube-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.jetstack.io/
+      chart: trust-manager
+      version: v0.25.0
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack-charts
+        namespace: flux-system
+  # cert-manager lives in kube-system (see ../../cert-manager)
+  dependsOn:
+    - name: cert-manager
+      namespace: kube-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    fullnameOverride: *app
+    crds:
+      enabled: true
+    app:
+      trust:
+        # Namespace holding Bundle sources (the cleaned CA ConfigMap).
+        # cert-manager runs in kube-system in this cluster.
+        namespace: kube-system
+    # We only use our own cleaned sources, never the bundled Debian package
+    # (which would still contain the distrusted emSign roots).
+    defaultPackage:
+      enabled: false
+    resources:
+      requests:
+        cpu: 10m
+        memory: 48Mi
+      limits:
+        memory: 128Mi

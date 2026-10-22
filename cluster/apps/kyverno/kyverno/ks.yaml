@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &appname kyverno
+  namespace: flux-system
+spec:
+  targetNamespace: kyverno
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *appname
+  interval: 30m
+  timeout: 10m
+  path: "./cluster/apps/kyverno/kyverno/app"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-cluster
+  # Wait so Kyverno CRDs (ClusterPolicy) exist before the policies Kustomization
+  wait: true
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: kyverno
+      namespace: kyverno

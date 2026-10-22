@@ -12,3 +12,4 @@ resources:
   # Will be replaced with GPU operator: https://github.com/NVIDIA/nvidia-docker/issues/1730
   - ./nvidia-gpu-operator/ks.yaml
   - reloader
+  - ./trust-manager/ks.yaml

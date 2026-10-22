@@ -1,0 +1,201 @@
+---
+# Injects the cleaned CA bundle (ConfigMap "trusted-ca-bundle", managed by trust-manager)
+# into every container/initContainer of new Pods, so images need not be rebuilt.
+#
+# ROLLOUT STAGES (see match.namespaceSelector below):
+#   Stage 1 (current): opt-in per namespace:  kubectl label ns <ns> trusted-ca-bundle/enabled=true
+#   Stage 2: delete the "trusted-ca-bundle/enabled" matchExpression -> all namespaces.
+# OPT-OUT: label namespace OR pod (template) with  trusted-ca-bundle/skip: "true".
+#
+# Known limitations / pitfalls:
+#  * Applies at Pod CREATE only: existing pods must be restarted.
+#  * subPath mount over a path that is a DIRECTORY in the image fails (CreateContainerError);
+#    use the skip label for such workloads. Missing parent dirs/files are created by the runtime;
+#    symlinks (Alpine /etc/ssl/cert.pem) are resolved inside the rootfs.
+#  * ConfigMap volume is optional, but a subPath of a missing key makes kubelet create a
+#    directory there -> container start fails until the pod is recreated. Keep the Bundle healthy
+#    before enabling (trust-manager creates the CM in each namespace, new namespaces may race).
+#  * Containers that already mount any of the target paths (or /etc/ssl, /etc/pki, /etc/trust-bundle)
+#    are skipped entirely. Env vars already set are never overridden.
+#  * Static stores (Rust webpki-roots, Bun, Electron, Go x509roots/fallback, JVM with explicit
+#    truststore flags) are NOT affected. See hack/verify-trusted-ca-bundle.sh.
+#  * Java: JAVA_TOOL_OPTIONS makes JVMs print "Picked up JAVA_TOOL_OPTIONS" on stderr.
+#  * Pods with the same-named volume "trusted-ca-bundle" skip volume injection only.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: inject-trusted-ca-bundle
+  annotations:
+    pod-policies.kyverno.io/autogen-controllers: none
+    policies.kyverno.io/title: Inject trusted CA bundle
+    policies.kyverno.io/category: Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Mounts the trust-manager cleaned CA bundle over the usual system CA bundle paths and sets
+      SSL_CERT_FILE/SSL_CERT_DIR and friends, without rebuilding images.
+spec:
+  background: false
+  failurePolicy: Ignore
+  webhookTimeoutSeconds: 10
+  rules:
+    - name: add-volume
+      match: &match
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchExpressions:
+                  # STAGE 1 opt-in. Remove this expression for all-namespaces (stage 2).
+                  - key: trusted-ca-bundle/enabled
+                    operator: In
+                    values: ["true"]
+                  - key: trusted-ca-bundle/skip
+                    operator: NotIn
+                    values: ["true"]
+      exclude: &exclude
+        any:
+          - resources:
+              namespaces: [kube-system, flux-system, cilium-secrets, kyverno]
+          - resources:
+              selector:
+                matchLabels:
+                  trusted-ca-bundle/skip: "true"
+      preconditions:
+        all:
+          - key: "{{ contains(request.object.spec.volumes[].name || `[]`, 'trusted-ca-bundle') }}"
+            operator: Equals
+            value: false
+      mutate:
+        patchStrategicMerge:
+          spec:
+            volumes:
+              - name: trusted-ca-bundle
+                configMap:
+                  name: trusted-ca-bundle
+                  optional: true
+
+    - name: mount-containers
+      match: *match
+      exclude: *exclude
+      mutate:
+        foreach:
+          - list: request.object.spec.containers
+            preconditions: &mountpre
+              all:
+                - key: "{{ length((element.volumeMounts || `[]`)[?mountPath=='/etc/ssl/certs/ca-certificates.crt' || mountPath=='/etc/ssl/cert.pem' || mountPath=='/etc/pki/tls/certs/ca-bundle.crt' || mountPath=='/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem' || mountPath=='/etc/trust-bundle' || mountPath=='/etc/ssl/certs' || mountPath=='/etc/ssl' || mountPath=='/etc/pki' || mountPath=='/etc/pki/tls' || mountPath=='/etc/pki/tls/certs' || mountPath=='/etc/pki/ca-trust' || mountPath=='/etc/pki/ca-trust/extracted' || mountPath=='/etc/pki/ca-trust/extracted/pem']) }}"
+                  operator: Equals
+                  value: 0
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - name: "{{ element.name }}"
+                    volumeMounts: &mounts
+                      - name: trusted-ca-bundle
+                        mountPath: /etc/ssl/certs/ca-certificates.crt
+                        subPath: ca-certificates.crt
+                        readOnly: true
+                      - name: trusted-ca-bundle
+                        mountPath: /etc/ssl/cert.pem
+                        subPath: ca-certificates.crt
+                        readOnly: true
+                      - name: trusted-ca-bundle
+                        mountPath: /etc/pki/tls/certs/ca-bundle.crt
+                        subPath: ca-certificates.crt
+                        readOnly: true
+                      - name: trusted-ca-bundle
+                        mountPath: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+                        subPath: ca-certificates.crt
+                        readOnly: true
+                      - name: trusted-ca-bundle
+                        mountPath: /etc/trust-bundle
+                        readOnly: true
+
+    - name: mount-init-containers
+      match: *match
+      exclude: *exclude
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.initContainers[] | length(@) || `0` }}"
+            operator: GreaterThan
+            value: 0
+      mutate:
+        foreach:
+          - list: request.object.spec.initContainers
+            preconditions: *mountpre
+            patchStrategicMerge:
+              spec:
+                initContainers:
+                  - name: "{{ element.name }}"
+                    volumeMounts: *mounts
+
+    # Env vars: each is added only when the container does not define it already.
+    - name: env-containers
+      match: *match
+      exclude: *exclude
+      mutate:
+        foreach:
+          - list: request.object.spec.containers
+            foreach: &envloop
+              - list: >-
+                  `[{"name":"SSL_CERT_FILE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"SSL_CERT_DIR","value":"/etc/trust-bundle"},
+                  {"name":"REQUESTS_CA_BUNDLE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"CURL_CA_BUNDLE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"PIP_CERT","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"NODE_OPTIONS","value":"--use-openssl-ca"},
+                  {"name":"JAVA_TOOL_OPTIONS","value":"-Djavax.net.ssl.trustStore=/etc/trust-bundle/bundle.jks -Djavax.net.ssl.trustStorePassword=changeit"}]`
+                preconditions:
+                  all:
+                    # only when the bundle was actually mounted into this container
+                    - key: "{{ length((element0.volumeMounts || `[]`)[?name=='trusted-ca-bundle' && mountPath=='/etc/trust-bundle']) }}"
+                      operator: GreaterThan
+                      value: 0
+                    - key: "{{ contains(element0.env[].name || `[]`, element.name) }}"
+                      operator: Equals
+                      value: false
+                patchStrategicMerge:
+                  spec:
+                    containers:
+                      - name: "{{ element0.name }}"
+                        env:
+                          - name: "{{ element.name }}"
+                            value: "{{ element.value }}"
+
+    - name: env-init-containers
+      match: *match
+      exclude: *exclude
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.initContainers[] | length(@) || `0` }}"
+            operator: GreaterThan
+            value: 0
+      mutate:
+        foreach:
+          - list: request.object.spec.initContainers
+            foreach:
+              - list: >-
+                  `[{"name":"SSL_CERT_FILE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"SSL_CERT_DIR","value":"/etc/trust-bundle"},
+                  {"name":"REQUESTS_CA_BUNDLE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"CURL_CA_BUNDLE","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"PIP_CERT","value":"/etc/trust-bundle/ca-certificates.crt"},
+                  {"name":"NODE_OPTIONS","value":"--use-openssl-ca"},
+                  {"name":"JAVA_TOOL_OPTIONS","value":"-Djavax.net.ssl.trustStore=/etc/trust-bundle/bundle.jks -Djavax.net.ssl.trustStorePassword=changeit"}]`
+                preconditions:
+                  all:
+                    # only when the bundle was actually mounted into this container
+                    - key: "{{ length((element0.volumeMounts || `[]`)[?name=='trusted-ca-bundle' && mountPath=='/etc/trust-bundle']) }}"
+                      operator: GreaterThan
+                      value: 0
+                    - key: "{{ contains(element0.env[].name || `[]`, element.name) }}"
+                      operator: Equals
+                      value: false
+                patchStrategicMerge:
+                  spec:
+                    initContainers:
+                      - name: "{{ element0.name }}"
+                        env:
+                          - name: "{{ element.name }}"
+                            value: "{{ element.value }}"

@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kyverno
+  namespace: kyverno
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://kyverno.github.io/kyverno/
+      chart: kyverno
+      version: 3.9.2
+      sourceRef:
+        kind: HelmRepository
+        name: kyverno-charts
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    fullnameOverride: *app
+    crds:
+      install: true
+    config:
+      # Never run webhooks for these namespaces (kyverno ns is excluded by default as well)
+      excludeKyvernoNamespace: true
+      webhooks:
+        namespaceSelector:
+          matchExpressions:
+            - key: kubernetes.io/metadata.name
+              operator: NotIn
+              values:
+                - kube-system
+                - flux-system
+                - cilium-secrets
+                - kyverno
+    features:
+      # Force every webhook to failurePolicy=Ignore: a Kyverno outage must never block pod creation
+      forceFailurePolicyIgnore:
+        enabled: true
+      policyReports:
+        enabled: false
+      admissionReports:
+        enabled: false
+    admissionController:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 384Mi
+    # Only admission mutation is used; skip the other controllers
+    backgroundController:
+      enabled: false
+    cleanupController:
+      enabled: false
+    reportsController:
+      enabled: false

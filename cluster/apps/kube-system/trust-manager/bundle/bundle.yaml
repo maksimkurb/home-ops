@@ -1,0 +1,27 @@
+---
+# Distributes a cleaned CA bundle (no eMudhra/emSign, no AAA Certificate Services)
+# as ConfigMap "trusted-ca-bundle" into every namespace.
+# Keys: ca-certificates.crt (PEM), bundle.jks (JKS, password "changeit").
+# Consumed by Kyverno policy inject-trusted-ca-bundle (cluster/apps/kyverno).
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: trusted-ca-bundle
+spec:
+  sources:
+    # useDefaultCAs deliberately omitted (false): ONLY our cleaned list is trusted.
+    - configMap:
+        name: trusted-ca-source
+        key: ca-certificates.crt
+  target:
+    configMap:
+      key: ca-certificates.crt
+    additionalFormats:
+      jks:
+        key: bundle.jks
+        password: changeit
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: [kyverno]
