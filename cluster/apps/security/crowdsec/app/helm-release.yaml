@@ -132,6 +132,14 @@ spec:
           - slack_default
         on_success: break
         ---
+        name: geo_browser_captcha
+        filters:
+          - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() == "custom/geo-browser-captcha"
+        decisions:
+          - type: captcha
+            duration: 8h
+        on_success: break
+        ---
         name: captcha_remediation
         filters:
           - Alert.Remediation == true && Alert.GetScope() == "Ip" && Alert.GetScenario() contains "http" && Alert.GetScenario() not contains "cve"
@@ -167,6 +175,13 @@ spec:
               reason: "authenticated user"
               expression:
                 - "evt.Parsed.remote_user != '' && evt.Parsed.remote_user != '-' && evt.Parsed.remote_user != ' '"
+          traefik-accept.yaml: |
+            name: custom/traefik-accept-header
+            description: "Expose the Accept request header of Traefik JSON access logs as meta"
+            filter: "evt.Meta.log_type == 'http_access-log' && evt.Unmarshaled.traefik != nil"
+            statics:
+              - meta: http_accept
+                expression: "evt.Unmarshaled.traefik['request_Accept'] ?? ''"
           whitelisted-ips.yaml: |
             name: custom/whitelisted-ips
             description: "Whitelist explicitly trusted source IPs"
@@ -176,6 +191,28 @@ spec:
               expression:
                 - 'evt.Meta.source_ip in [${SECRET_CROWDSEC_WHITELISTED_IPS}]'
       scenarios:
+        geo-browser-captcha.yaml: |
+          type: trigger
+          format: 3.0
+          name: custom/geo-browser-captcha
+          description: "Captcha browser-like page loads (GET, Mozilla UA, Accept text/html) from outside RU/KZ/DE/NL/PL"
+          filter: evt.Meta.log_type == 'http_access-log' &&
+            evt.Parsed.verb == 'GET' &&
+            evt.Meta.http_user_agent startsWith 'Mozilla/' &&
+            evt.Meta.http_accept contains 'text/html' &&
+            evt.Enriched.IsoCode != '' &&
+            evt.Enriched.IsoCode not in ['RU', 'KZ', 'DE', 'NL', 'PL'] &&
+            !(evt.Meta.http_path startsWith '/.well-known/acme-challenge/') &&
+            !(evt.Meta.http_user_agent contains "Let's Encrypt validation server")
+          blackhole: 1m
+          groupby: evt.Meta.source_ip
+          labels:
+            confidence: 5
+            spoofable: 0
+            behavior: "http:bot-like"
+            label: "Browser-like request from a non-allowed country"
+            service: http
+            remediation: true
         wp-admin-ban.yaml: |
           type: trigger
           name: custom/http-wp-admin-ban
@@ -272,6 +309,8 @@ spec:
       env:
         - name: COLLECTIONS
           value: crowdsecurity/nginx crowdsecurity/traefik crowdsecurity/base-http-scenarios
+        - name: PARSERS
+          value: crowdsecurity/geoip-enrich
       metrics:
         enabled: true
         serviceMonitor:
@@ -292,6 +331,22 @@ spec:
         # entrypoint run a hub update and retry (the appsec pod has no hub volume to upgrade).
         - name: APPSEC_RULES
           value: "crowdsecurity/vpatch-CVE-2026-109618 crowdsecurity/vpatch-CVE-2026-109619"
+      rules:
+        # CVE-2026-111497 (Brotli decoder OOB write): no hub vpatch yet, so reject Brotli request bodies.
+        # Deliberately not named vpatch-* so it only returns 403 and does not trigger the 7d exploit ban.
+        block-brotli-request-body.yaml: |
+          name: custom/block-brotli-request-body
+          description: "Block Content-Encoding: br request bodies (CVE-2026-111497)"
+          rules:
+            - zones:
+                - HEADERS
+              variables:
+                - Content-Encoding
+              transform:
+                - lowercase
+              match:
+                type: regex
+                value: '(^|[\s,])br($|[\s,;])'
       configs:
         vpatch-appsec.yaml: |
           name: custom/vpatch-appsec
@@ -300,6 +355,7 @@ spec:
             - crowdsecurity/base-config
             - crowdsecurity/vpatch-*
             - crowdsecurity/generic-*
+            - custom/block-brotli-request-body
             # GET /crowdsec-test-NtktlJHV4TfBSK3wvlhiOBnl -> 403, used by Gatus to verify the bouncer
             - crowdsecurity/appsec-generic-test
       scenarios:

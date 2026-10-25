@@ -111,6 +111,12 @@ spec:
     accessLog:
       enabled: true
       format: json
+      fields:
+        headers:
+          defaultMode: drop
+          names:
+            User-Agent: keep
+            Accept: keep
     metrics:
       prometheus:
         enabled: true
