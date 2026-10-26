@@ -123,7 +123,7 @@ spec:
           main:
             image:
               repository: ghcr.io/librespeed/speedtest
-              tag: latest@sha256:9d593a68732a8bf194e0791cc8cb5de1bfe5e36ee93fbd0c8bd1253f4723faa0
+              tag: latest@sha256:c0b5192262a5cdf8802fd0d0876aa4909789c3db5799b987aeed5515ae0faf16
             env:
               MODE: standalone
             resources:
