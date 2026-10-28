@@ -7,3 +7,9 @@ resources:
   - ./config-pvc.yaml
   - ./traefik.yaml
   - ./helm-release.yaml
+configMapGenerator:
+  - name: paperless-indra-init
+    files:
+      - 10-indra.sh
+generatorOptions:
+  disableNameSuffixHash: true

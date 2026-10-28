@@ -84,6 +84,9 @@ spec:
               # Configure OCR
               PAPERLESS_OCR_LANGUAGES: rus eng
               PAPERLESS_OCR_LANGUAGE: rus
+              # Indra OCR plugin (installed by /custom-cont-init.d/10-indra.sh)
+              PAPERLESS_OCR_USER_ARGS: '{"plugins": ["ocrmypdf_indra"]}'
+              HF_HOME: /usr/src/paperless/indra/hf
               # Configure redis integration
               PAPERLESS_REDIS: redis://paperless-redis.default.svc.cluster.local:6379
               # llm
@@ -249,6 +252,22 @@ spec:
             app:
               - path: /data/docs/incoming/inbox
                 subPath: output
+      indra-init:
+        type: configMap
+        name: paperless-indra-init
+        defaultMode: 0555
+        advancedMounts:
+          paperless:
+            app:
+              - path: /custom-cont-init.d
+                readOnly: true
+      indra-cache:
+        type: persistentVolumeClaim
+        existingClaim: paperless-indra
+        advancedMounts:
+          paperless:
+            app:
+              - path: /usr/src/paperless/indra
       gotenberg-temp:
         type: emptyDir
         enabled: true
