@@ -255,6 +255,9 @@ spec:
       resources:
         requests:
           cpu: 50m
+          memory: 192Mi
+        limits:
+          memory: 512Mi
       ingress:
         enabled: false
         ingressClassName: traefik-private
@@ -295,6 +298,9 @@ spec:
       resources:
         requests:
           cpu: 50m
+          memory: 96Mi
+        limits:
+          memory: 512Mi
       persistentVolume:
         config:
           enabled: true
@@ -317,6 +323,12 @@ spec:
           enabled: true
     appsec:
       enabled: true
+      resources:
+        requests:
+          cpu: 50m
+          memory: 192Mi
+        limits:
+          memory: 512Mi
       acquisitions:
         - source: appsec
           listen_addr: "0.0.0.0:7422"

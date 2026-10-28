@@ -123,7 +123,7 @@ spec:
             resources:
               requests:
                 cpu: 1m
-                memory: 250Mi
+                memory: 192Mi
               limits:
                 memory: 6000Mi
             probes:

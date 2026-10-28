@@ -145,7 +145,7 @@ spec:
               CHROMIUM_DISABLE_JAVASCRIPT: 'true'
             resources:
               requests:
-                memory: 256Mi
+                memory: 64Mi
               limits:
                 memory: 512Mi
             securityContext:
@@ -164,7 +164,7 @@ spec:
               LC_ALL: C.UTF-8
             resources:
               requests:
-                memory: 768Mi
+                memory: 512Mi
               limits:
                 memory: 1Gi
             securityContext:

@@ -127,7 +127,7 @@ spec:
                 cpu: 500m
                 memory: 512Mi
               limits:
-                memory: 2Gi
+                memory: 1Gi
           frontend:
             image: *frappeImage
             command:
@@ -170,7 +170,7 @@ spec:
                 cpu: 100m
                 memory: 256Mi
               limits:
-                memory: 1Gi
+                memory: 512Mi
           queue-long:
             image: *frappeImage
             command:
@@ -187,9 +187,9 @@ spec:
             resources:
               requests:
                 cpu: 50m
-                memory: 256Mi
+                memory: 192Mi
               limits:
-                memory: 1Gi
+                memory: 512Mi
       redis:
         containers:
           redis:

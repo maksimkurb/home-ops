@@ -27,6 +27,11 @@ spec:
     nodeFeatureRule:
       createCRD: true
     worker:
+      resources:
+        requests:
+          memory: 64Mi
+        limits:
+          memory: 512Mi
       serviceAccount:
         name: node-feature-discovery
         # disable creation to avoid duplicate serviceaccount creation by master spec below
@@ -102,6 +107,17 @@ spec:
                     #     - usbId:
                     #         vendor: ["1a6e", "18d1"]
     master:
+      resources:
+        requests:
+          memory: 96Mi
+        limits:
+          memory: 512Mi
       serviceAccount:
         name: node-feature-discovery
         create: true
+    gc:
+      resources:
+        requests:
+          memory: 64Mi
+        limits:
+          memory: 512Mi

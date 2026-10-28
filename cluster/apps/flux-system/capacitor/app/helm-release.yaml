@@ -40,10 +40,10 @@ spec:
               tag: v0.4.8@sha256:c999a42cccc523b91086547f890466d09be4755bf05a52763b0d14594bf60782
             resources:
               requests:
-                memory: 1Gi
+                memory: 192Mi
                 ephemeral-storage: 128Mi
               limits:
-                memory: 2Gi
+                memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

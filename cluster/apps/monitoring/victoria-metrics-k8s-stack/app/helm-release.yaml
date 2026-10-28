@@ -140,8 +140,10 @@ spec:
       spec:
         replicaCount: 1
         resources:
+          requests:
+            memory: 1536Mi
           limits:
-            memory: 2Gi
+            memory: 2560Mi
         extraArgs:
           dedup.minScrapeInterval: 60s
         storage:
@@ -180,6 +182,11 @@ spec:
         hosts:
           - vmalert.${SECRET_PRIVATE_DOMAIN}
       spec:
+        resources:
+          requests:
+            memory: 64Mi
+          limits:
+            memory: 512Mi
         extraArgs:
           external.url: https://vmalert.${SECRET_PRIVATE_DOMAIN}
     # -- Provide custom recording or alerting rules to be deployed into the cluster.

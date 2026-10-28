@@ -76,6 +76,9 @@ spec:
     resources:
       requests:
         cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 512Mi
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
     affinity:

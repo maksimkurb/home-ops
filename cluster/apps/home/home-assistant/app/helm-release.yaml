@@ -114,7 +114,7 @@ spec:
                 memory: 768Mi
               limits:
                 cpu: 1000m
-                memory: 2Gi
+                memory: 1536Mi
             securityContext:
               privileged: true
         initContainers:
