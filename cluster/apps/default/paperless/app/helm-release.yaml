@@ -259,7 +259,10 @@ spec:
         advancedMounts:
           paperless:
             app:
-              - path: /custom-cont-init.d
+              # Mount the file only: paperless refuses to run /custom-cont-init.d
+              # if the directory itself is world-writable (as a ConfigMap mount is).
+              - path: /custom-cont-init.d/10-indra.sh
+                subPath: 10-indra.sh
                 readOnly: true
       indra-cache:
         type: persistentVolumeClaim
