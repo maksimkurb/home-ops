@@ -370,13 +370,19 @@ spec:
             - custom/block-brotli-request-body
             # GET /crowdsec-test-NtktlJHV4TfBSK3wvlhiOBnl -> 403, used by Gatus to verify the bouncer
             - crowdsecurity/appsec-generic-test
+          # WebDAV serves arbitrary user files (.git dirs, .env, ...); path-based scan rules are false positives there
+          pre_eval:
+            - filter: req.Host == 'f.${SECRET_PUBLIC_DOMAIN}' && req.URL.Path startsWith '/dav/'
+              apply:
+                - RemoveInBandRuleByName("crowdsecurity/vpatch-git-config")
+                - RemoveInBandRuleByName("crowdsecurity/vpatch-env-access")
       scenarios:
         vpatch-exploit-ban.yaml: |
           type: trigger
           format: 3.0
           name: custom/appsec-vpatch-exploit-ban
           description: "Ban on first hit of a known-exploit virtual patch (incl. PHP2Shell CVE-2026-109618/109619)"
-          filter: evt.Meta.log_type == 'appsec-block' && evt.Meta.rule_name startsWith 'crowdsecurity/vpatch-'
+          filter: evt.Meta.log_type == 'appsec-block' && evt.Meta.rule_name startsWith 'crowdsecurity/vpatch-' && evt.Meta.rule_name not in ['crowdsecurity/vpatch-git-config', 'crowdsecurity/vpatch-env-access']
           blackhole: 1m
           groupby: evt.Meta.source_ip
           labels:
