@@ -27,14 +27,17 @@ if installed; then
     exit 0
 fi
 
+echo "indra: installing $SPEC"
 # shellcheck disable=SC2086  # UV_ARGS is a list of flags
 if uv pip install $UV_ARGS --offline "$SPEC" >/dev/null 2>&1; then
     echo "indra: installed ocrmypdf-indra $VERSION from the local cache"
 elif uv pip install $UV_ARGS "$SPEC"; then
     echo "indra: installed ocrmypdf-indra $VERSION"
 else
-    echo "indra: could not install ocrmypdf-indra $VERSION: no network and nothing cached." >&2
-    echo "indra: start once with network access, mount a cache volume at $UV_CACHE_DIR," >&2
-    echo "indra: or set INDRA_PLUGIN_SPEC to a local wheel." >&2
+    echo "indra: could not install ocrmypdf-indra $VERSION from: $SPEC" >&2
+    echo "indra: check the error above (a bad INDRA_PLUGIN_SPEC, e.g. an empty \${...} expanded by" >&2
+    echo "indra: compose, or no network and an empty cache). Either start once with network access" >&2
+    echo "indra: and a cache volume at $UV_CACHE_DIR, or set INDRA_PLUGIN_SPEC to a local wheel," >&2
+    echo "indra: or unset INDRA_PLUGIN_SPEC to use the default release URL." >&2
     exit 1
 fi
