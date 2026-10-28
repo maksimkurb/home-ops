@@ -9,7 +9,7 @@
 #   3. otherwise download                        -> needs network
 set -eu
 
-VERSION="${INDRA_PLUGIN_VERSION:-0.1.0}"
+VERSION="${INDRA_PLUGIN_VERSION:-0.1.1}"
 # Override INDRA_PLUGIN_SPEC with a local wheel (e.g. /wheels/ocrmypdf_indra-0.1.0-py3-none-any.whl)
 # to avoid the network completely.
 SPEC="${INDRA_PLUGIN_SPEC:-https://github.com/maksimkurb/paperless-ngx-indra/releases/download/v${VERSION}/ocrmypdf_indra-${VERSION}-py3-none-any.whl}"
