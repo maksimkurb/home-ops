@@ -13,3 +13,6 @@ configMapGenerator:
       - 10-indra.sh
 generatorOptions:
   disableNameSuffixHash: true
+  annotations:
+    # The script uses ${VAR} shell syntax; don't let Flux postBuild substitute it.
+    kustomize.toolkit.fluxcd.io/substitute: disabled
