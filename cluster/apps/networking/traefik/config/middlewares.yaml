@@ -11,6 +11,8 @@ spec:
       crowdsecLapiScheme: http
       crowdsecLapiHost: crowdsec-service.security.svc.cluster.local:8080
       crowdsecLapiKey: ${SECRET_CROWDSEC_NGINX_BOUNCER_API_KEY}
+      # Not 401/403: Bitwarden clients log the user out on those
+      remediationStatusCode: 451
       # Fail open: never block all traffic when LAPI is unreachable (Gatus monitors the bouncer)
       updateMaxFailure: -1
       crowdsecAppsecEnabled: true
