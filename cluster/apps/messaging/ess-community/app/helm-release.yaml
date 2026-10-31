@@ -142,6 +142,10 @@ spec:
           secretKey: password
       ingress:
         host: synapse.matrix.${SECRET_PUBLIC_DOMAIN}
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: 'true'
+          traefik.ingress.kubernetes.io/router.middlewares: messaging_ess-synapse-msc2965-compat@kubernetescrd
       media:
         storage:
           size: 20Gi
