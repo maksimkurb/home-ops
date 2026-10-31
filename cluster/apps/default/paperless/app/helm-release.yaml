@@ -131,7 +131,7 @@ spec:
           app:
             image:
               repository: docker.io/gotenberg/gotenberg
-              tag: "8.38"
+              tag: "8.39"
             command:
               # The gotenberg chromium route is used to convert .eml files. We do not
               # want to allow external content like tracking pixels or even javascript.
@@ -158,7 +158,7 @@ spec:
           app:
             image:
               repository: docker.io/apache/tika
-              tag: 3.3.1.0
+              tag: 3.3.3.0
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
@@ -175,7 +175,7 @@ spec:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.1.2
+              tag: 9.1.3
             resources:
               requests:
                 cpu: 5m

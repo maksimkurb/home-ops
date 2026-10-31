@@ -46,7 +46,7 @@ spec:
           app:
             image:
               repository: samanhappy/mcphub
-              tag: 1.1.5
+              tag: 1.1.15
               pullPolicy: IfNotPresent
             env:
               TZ: ${TIMEZONE_FAILSAFE}

@@ -82,7 +82,7 @@ spec:
   values:
     image:
       repository: crowdsecurity/crowdsec
-      tag: v1.8.1
+      tag: v1.8.2
     container_runtime: containerd
     secrets:
       externalSecret:

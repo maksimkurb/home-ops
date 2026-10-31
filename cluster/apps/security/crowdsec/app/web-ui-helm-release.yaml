@@ -68,7 +68,7 @@ spec:
           register-lapi:
             image:
               repository: crowdsecurity/crowdsec
-              tag: v1.8.1
+              tag: v1.8.2
             command:
               - sh
               - -c
@@ -98,7 +98,7 @@ spec:
           main:
             image:
               repository: ghcr.io/theduffman85/crowdsec-web-ui
-              tag: 2026.10.7
+              tag: 2026.10.13
             env:
               CONFIG_INSTANCE_LAPI_URL: http://crowdsec-service.security.svc.cluster.local:8080
               CONFIG_INSTANCE_LAPI_AUTH_USERNAME:
