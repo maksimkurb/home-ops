@@ -23,3 +23,40 @@ spec:
         name: cluster-settings
       - kind: Secret
         name: cluster-secrets
+  # Image pulls from foreign registries can take longer than Helm's default
+  # 5m wait, which triggers a rollback that cancels the pull and restarts it.
+  patches:
+    # HelmReleases applied directly by this Kustomization
+    - target:
+        group: helm.toolkit.fluxcd.io
+        kind: HelmRelease
+      patch: |-
+        apiVersion: helm.toolkit.fluxcd.io/v2
+        kind: HelmRelease
+        metadata:
+          name: not-used
+        spec:
+          timeout: 15m
+    # Child Flux Kustomizations: HelmRelease timeout plus a longer health-check
+    # wait, so it does not expire before the HelmRelease does
+    - target:
+        group: kustomize.toolkit.fluxcd.io
+        kind: Kustomization
+      patch: |-
+        apiVersion: kustomize.toolkit.fluxcd.io/v1
+        kind: Kustomization
+        metadata:
+          name: not-used
+        spec:
+          timeout: 20m
+          patches:
+            - target:
+                group: helm.toolkit.fluxcd.io
+                kind: HelmRelease
+              patch: |-
+                apiVersion: helm.toolkit.fluxcd.io/v2
+                kind: HelmRelease
+                metadata:
+                  name: not-used
+                spec:
+                  timeout: 15m
