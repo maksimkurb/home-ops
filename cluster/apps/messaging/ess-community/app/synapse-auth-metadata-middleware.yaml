@@ -1,0 +1,13 @@
+---
+# Synapse 1.164 dropped the unstable MSC2965 auth_metadata endpoint, but older
+# Element X builds still only query it to refresh OAuth tokens. Map it to the
+# stable endpoint so those clients keep working.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ess-synapse-msc2965-compat
+  namespace: messaging
+spec:
+  replacePathRegex:
+    regex: ^/_matrix/client/unstable/org\.matrix\.msc2965/auth_metadata$
+    replacement: /_matrix/client/v1/auth_metadata
