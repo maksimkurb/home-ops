@@ -68,7 +68,7 @@ spec:
           fix-icons-permissions:
             image:
               repository: alpine
-              tag: 3.24.3
+              tag: 3.24.4
             securityContext:
               runAsUser: 0
               runAsGroup: 0
