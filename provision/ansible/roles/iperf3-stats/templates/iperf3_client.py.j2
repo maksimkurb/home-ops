@@ -6,6 +6,7 @@ Runs bandwidth tests and sends results to n8n webhook
 """
 
 import argparse
+import ctypes
 import json
 import re
 import shutil
@@ -120,9 +121,12 @@ def run_iperf3_test(
             # Set timeout
             client.connect_timeout = TEST_TIMEOUT * 1000  # Convert to milliseconds
 
-            # Bind to interface if specified
+            # The iperf3 Python wrapper has no bind_dev property (assigning one is
+            # a silent no-op), so call libiperf directly for SO_BINDTODEVICE.
             if bind_interface:
-                client.bind_dev = bind_interface
+                client.lib.iperf_set_test_bind_dev.restype = None
+                client.lib.iperf_set_test_bind_dev.argtypes = (ctypes.c_void_p, ctypes.c_char_p)
+                client.lib.iperf_set_test_bind_dev(client._test, bind_interface.encode())
 
             # Run the test
             result = client.run()
