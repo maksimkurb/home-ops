@@ -51,6 +51,8 @@ spec:
       config:
         core:
           labelSources:
+            # gpu-operator needs feature.node.kubernetes.io/system-os_release.ID
+            - system
             - custom
             - pci
             - usb
