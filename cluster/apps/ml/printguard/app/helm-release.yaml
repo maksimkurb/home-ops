@@ -41,6 +41,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: ${TIMEZONE}
+              PRINTGUARD_ORIGINS: "http://printguard.ml:8000,https://printguard.${SECRET_PRIVATE_DOMAIN}"
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

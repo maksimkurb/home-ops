@@ -74,6 +74,38 @@ spec:
               - op: replace
                 path: /spec/template/spec/containers/0/volumeMounts/0/name
                 value: crowdsec-agent-config
+          # Same idempotent register as the agent: the stock init does a bare `cscli lapi register`,
+          # which fails with "user already exist" (CrashLoopBackOff) once the machine is in LAPI but
+          # the emptyDir credentials are gone (e.g. after a node reboot). Fall back to a unique name.
+          - target:
+              kind: Deployment
+              name: crowdsec-appsec
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: crowdsec-appsec
+              spec:
+                template:
+                  spec:
+                    initContainers:
+                      - name: wait-for-lapi-and-register
+                        command:
+                          - sh
+                          - -c
+                          - |
+                            until nc "$LAPI_HOST" "$LAPI_PORT" -z; do echo waiting for lapi to start; sleep 5; done
+                            ln -s /staging/etc/crowdsec /etc/crowdsec
+                            if [ -s /tmp_config/local_api_credentials.yaml ]; then
+                              cp /tmp_config/local_api_credentials.yaml /etc/crowdsec/local_api_credentials.yaml
+                              if ! cscli lapi status; then
+                                rm -f /tmp_config/local_api_credentials.yaml
+                              fi
+                            fi
+                            if [ ! -s /tmp_config/local_api_credentials.yaml ]; then
+                              until cscli lapi register --machine "$USERNAME-$(date +%s)" -u "$LAPI_URL" --token "$REGISTRATION_TOKEN"; do sleep 5; done
+                              cp /etc/crowdsec/local_api_credentials.yaml /tmp_config/local_api_credentials.yaml
+                            fi
   uninstall:
     keepHistory: false
   driftDetection:
