@@ -1,13 +1,5 @@
 ---
 apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: router-insecure
-  namespace: default
-spec:
-  insecureSkipVerify: true
----
-apiVersion: traefik.io/v1alpha1
 kind: TraefikService
 metadata:
   name: router
@@ -16,9 +8,8 @@ spec:
   weighted:
     services:
       - name: ext-svc-router-dashboard
-        port: 443
-        scheme: https
-        serversTransport: router-insecure
+        port: 80
+        scheme: http
         passHostHeader: false
 ---
 apiVersion: traefik.io/v1alpha1
@@ -30,5 +21,5 @@ spec:
   headers:
     customRequestHeaders:
       Host: "${ROUTER_IP}"
-      Origin: "https://${ROUTER_IP}"
-      Referer: "https://${ROUTER_IP}"
+      Origin: "http://${ROUTER_IP}"
+      Referer: "http://${ROUTER_IP}"
