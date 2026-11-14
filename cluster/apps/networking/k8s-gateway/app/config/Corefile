@@ -28,7 +28,7 @@ ${SECRET_PRIVATE_DOMAIN}:1053 {
   ready
 
   k8s_gateway ${SECRET_PRIVATE_DOMAIN} {
-    resources Ingress HTTPRoute
+    resources Ingress HTTPRoute Service
     gatewayClasses traefik-private
   }
 

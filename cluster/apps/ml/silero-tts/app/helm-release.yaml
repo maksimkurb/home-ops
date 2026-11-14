@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  namespace: ml
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s-labs.github.io/helm-charts/
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  values:
+    service:
+      app:
+        controller: app
+        type: LoadBalancer
+        externalTrafficPolicy: Cluster
+        loadBalancerIP: "${SVC_SILERO_TTS_ADDR}"
+        annotations:
+          lbipam.cilium.io/ips: "${SVC_SILERO_TTS_ADDR}"
+          coredns.io/hostname: silero-tts.${SECRET_PRIVATE_DOMAIN}
+        ports:
+          wyoming:
+            port: 10200
+            protocol: TCP
+    controllers:
+      app:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/maksimkurb/wyoming-silero
+              tag: "20261114213347"
+              pullPolicy: Always
+            env:
+              TZ: "${TIMEZONE}"
+              SAMPLE_RATE: "24000"
+              DEFAULT_SPEAKER: aidar
+              NUM_THREADS: "4"
+              URI: tcp://0.0.0.0:10200
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 10200
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 1
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                cpu: 4000m
+                memory: 2Gi

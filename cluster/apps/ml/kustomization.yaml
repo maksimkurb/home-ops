@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - oidc.yaml
   - ./faster-whisper/ks.yaml
+  - ./silero-tts/ks.yaml
   - ./llama-cpp/ks.yaml
   - ./bifrost/ks.yaml
   - ./mcphub/ks.yaml
