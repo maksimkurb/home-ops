@@ -55,6 +55,17 @@ spec:
           value: nvidia
         - name: CONTAINERD_SET_AS_DEFAULT
           value: "true"
+    # GTX 1060 is Pascal (sm_61): the CUDA 13 vectorAdd sample in the validator
+    # image segfaults on it, so skip the workload checks (the GPU itself works).
+    validator:
+      cuda:
+        env:
+          - name: WITH_WORKLOAD
+            value: "false"
+      plugin:
+        env:
+          - name: WITH_WORKLOAD
+            value: "false"
     devicePlugin:
       enabled: true
       config:

@@ -34,27 +34,28 @@ spec:
               repository: easytier/easytier
               tag: v2.6.4
             # the image's entrypoint is easytier-core; run the embedded web console instead
+            # easytier-web 2.6.4 reads only OIDC_CLIENT_SECRET from the environment,
+            # everything else has to be passed as arguments
             command:
               - /sbin/tini
               - --
               - easytier-web-embed
+              - --db=/data/et.db
+              - --api-server-port=11211
+              # UI + REST API share one port; nodes use the config server (ws behind the
+              # HTTPS gateway: wss://<host>/<user>)
+              - --config-server-protocol=ws
+              - --config-server-port=22020
+              # api_meta.js: where the browser finds the API (default is easytier.cn)
+              - --api-host=https://et-admin.${SECRET_PRIVATE_DOMAIN}
+              # sign-in is OIDC only (Authelia, group admins); the password endpoints are
+              # also blocked on the UI route
+              - --disable-registration
               - --oidc-issuer-url=https://auth.${SECRET_PUBLIC_DOMAIN}
               - --oidc-client-id=easytier
               - --oidc-redirect-url=https://et-admin.${SECRET_PRIVATE_DOMAIN}/api/v1/auth/oidc/callback
             env:
               TZ: ${TIMEZONE}
-              ET_WEB_DB: /data/et.db
-              # UI + REST API share one port (same-origin), nodes use the config server
-              ET_API_SERVER_PORT: "11211"
-              # api_meta.js tells the browser where the API lives; without this the bundled
-              # default (https://config-server.easytier.cn) can be served
-              ET_API_HOST: https://et-admin.${SECRET_PRIVATE_DOMAIN}
-              # ws behind the HTTPS gateway: nodes connect with wss://<host>/<user>
-              ET_CONFIG_SERVER_PROTOCOL: ws
-              ET_CONFIG_SERVER_PORT: "22020"
-              # sign-in is OIDC only (Authelia, group admins): registration is off and the
-              # password endpoints are blocked on the UI route
-              ET_DISABLE_REGISTRATION: "true"
               OIDC_CLIENT_SECRET: ${SECRET_EASYTIER_OAUTH_CLIENT_SECRET}
             probes:
               liveness: &probes
