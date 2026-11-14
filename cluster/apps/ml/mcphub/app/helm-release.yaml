@@ -152,6 +152,26 @@ spec:
           gethomepage.dev/icon: mdi-hub
           gethomepage.dev/name: MCPHub
         rules:
+          # Home Assistant fetches discovery URLs in parallel and takes the first 2xx:
+          # - root RFC9728 metadata claims resource=<origin>, which != the /mcp URL
+          # - openid-configuration falls through to the SPA (200 text/html)
+          # Make both fail (401 JSON) so the correct documents win.
+          - matches:
+              - path:
+                  type: Exact
+                  value: /.well-known/oauth-protected-resource
+              - path:
+                  type: Exact
+                  value: /.well-known/openid-configuration
+            filters:
+              - type: URLRewrite
+                urlRewrite:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /oauth/userinfo
+            backendRefs:
+              - identifier: app
+                port: 3000
           - matches:
               - path:
                   type: PathPrefix
@@ -173,6 +193,26 @@ spec:
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
           external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
         rules:
+          # Home Assistant fetches discovery URLs in parallel and takes the first 2xx:
+          # - root RFC9728 metadata claims resource=<origin>, which != the /mcp URL
+          # - openid-configuration falls through to the SPA (200 text/html)
+          # Make both fail (401 JSON) so the correct documents win.
+          - matches:
+              - path:
+                  type: Exact
+                  value: /.well-known/oauth-protected-resource
+              - path:
+                  type: Exact
+                  value: /.well-known/openid-configuration
+            filters:
+              - type: URLRewrite
+                urlRewrite:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /oauth/userinfo
+            backendRefs:
+              - identifier: app
+                port: 3000
           - matches:
               - path:
                   type: PathPrefix
