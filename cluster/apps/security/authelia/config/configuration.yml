@@ -55,6 +55,14 @@ access_control:
         - "hass-config.${SECRET_PRIVATE_DOMAIN}"
       policy: one_factor
       subject: "group:home"
+    # Home Assistant command_line auth provider (/config/scripts/auth.sh) checks
+    # credentials via /api/verify against this URL; needed since default_policy: deny.
+    - domain:
+        - "hass.${SECRET_PUBLIC_DOMAIN}"
+      resources:
+        - "^/[?]console_auth$"
+      policy: one_factor
+      subject: "group:home"
     - domain:
         - "syncthing.${SECRET_PRIVATE_DOMAIN}"
         - "z2m.${SECRET_PRIVATE_DOMAIN}"
