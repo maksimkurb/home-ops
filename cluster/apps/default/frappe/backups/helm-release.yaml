@@ -55,7 +55,7 @@ spec:
           postgres-client:
             image:
               repository: docker.io/library/postgres
-              tag: 18.6-bookworm
+              tag: 18.7-bookworm
             command:
               - /bin/bash
               - -c
