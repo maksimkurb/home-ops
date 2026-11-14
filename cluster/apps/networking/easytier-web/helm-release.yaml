@@ -46,6 +46,9 @@ spec:
               ET_WEB_DB: /data/et.db
               # UI + REST API share one port (same-origin), nodes use the config server
               ET_API_SERVER_PORT: "11211"
+              # api_meta.js tells the browser where the API lives; without this the bundled
+              # default (https://config-server.easytier.cn) can be served
+              ET_API_HOST: https://et-admin.${SECRET_PRIVATE_DOMAIN}
               # ws behind the HTTPS gateway: nodes connect with wss://<host>/<user>
               ET_CONFIG_SERVER_PROTOCOL: ws
               ET_CONFIG_SERVER_PORT: "22020"
