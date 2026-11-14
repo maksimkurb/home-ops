@@ -1,0 +1,12 @@
+#!/bin/sh
+# Managed by Ansible
+PIDF=/opt/var/run/easytier.pid
+CMD="{{ easytier_bin_dir }}/easytier-core {{ easytier_cmdline }}"
+case "$1" in
+  start)  [ -f $PIDF ] && kill -0 "$(cat $PIDF)" 2>/dev/null && exit 0
+          modprobe tun 2>/dev/null; [ -c /dev/net/tun ] || { mkdir -p /dev/net; mknod /dev/net/tun c 10 200; }
+          start-stop-daemon -S -b -m -p $PIDF -x /bin/sh -- -c "exec $CMD >>/opt/var/log/easytier.log 2>&1" ;;
+  stop)   [ -f $PIDF ] && kill "$(cat $PIDF)"; rm -f $PIDF ;;
+  restart) $0 stop; sleep 1; $0 start ;;
+  *) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

@@ -1,0 +1,22 @@
+---
+- name: Download release zip
+  ansible.builtin.get_url:
+    url: "https://github.com/EasyTier/EasyTier/releases/download/v{{ easytier_version }}/easytier-linux-{{ easytier_arch_r }}-v{{ easytier_version }}.zip"
+    dest: "/tmp/easytier-{{ easytier_arch_r }}-{{ easytier_version }}.zip"
+    mode: "0644"
+  delegate_to: localhost
+  become: false
+- name: Unpack
+  ansible.builtin.unarchive:
+    src: "/tmp/easytier-{{ easytier_arch_r }}-{{ easytier_version }}.zip"
+    dest: "/tmp/"
+    creates: "/tmp/easytier-linux-{{ easytier_arch_r }}/easytier-core"
+  delegate_to: localhost
+  become: false
+- name: Copy binaries to the node
+  ansible.builtin.copy:
+    src: "/tmp/easytier-linux-{{ easytier_arch_r }}/{{ item }}"
+    dest: "{{ easytier_bin_dir }}/{{ item }}"
+    mode: "0755"
+  loop: [easytier-core, easytier-cli]
+  notify: Restart easytier

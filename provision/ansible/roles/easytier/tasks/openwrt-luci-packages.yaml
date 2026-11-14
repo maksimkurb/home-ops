@@ -1,0 +1,74 @@
+---
+- name: Detect OpenWrt package arch and package manager
+  ansible.builtin.shell: |
+    . /etc/openwrt_release
+    if command -v apk >/dev/null 2>&1; then pm=apk; else pm=opkg; fi
+    echo "$DISTRIB_ARCH $pm"
+  register: easytier_owrt_info
+  changed_when: false
+- name: Set package facts
+  ansible.builtin.set_fact:
+    easytier_pkg_arch: "{{ easytier_owrt_info.stdout.split()[0] }}"
+    easytier_pkg_mgr: "{{ easytier_owrt_info.stdout.split()[1] }}"
+- name: Check installed version
+  ansible.builtin.shell: >-
+    /usr/bin/easytier-core -V 2>/dev/null | grep -q '{{ easytier_luci_version }}' &&
+    {{ 'apk info -e luci-app-easytier' if easytier_pkg_mgr == 'apk' else 'opkg list-installed | grep -q "^luci-app-easytier "' }}
+  register: easytier_pkg_present
+  changed_when: false
+  failed_when: false
+- name: Install the packages
+  when: easytier_pkg_present.rc != 0
+  block:
+    - name: Download package bundle (controller)
+      ansible.builtin.get_url:
+        url: "https://github.com/EasyTier/luci-app-easytier/releases/download/v{{ easytier_luci_version }}/EasyTier-v{{ easytier_luci_version }}-{{ easytier_pkg_arch }}-{{ 'SNAPSHOT' if easytier_pkg_mgr == 'apk' else '22.03.7' }}.zip"
+        dest: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}.zip"
+        mode: "0644"
+      delegate_to: localhost
+      become: false
+    - name: Create the unpack dir (controller)
+      ansible.builtin.file:
+        path: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      become: false
+    - name: Unpack (controller)
+      ansible.builtin.unarchive:
+        src: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}.zip"
+        dest: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}"
+      delegate_to: localhost
+      become: false
+    - name: Find the packages (controller)
+      ansible.builtin.find:
+        paths: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}"
+        patterns:
+          - "easytier-noweb*"
+          - "luci-app-easytier*"
+        recurse: true
+      register: easytier_pkg_files
+      delegate_to: localhost
+      become: false
+    - name: Check the packages were found
+      ansible.builtin.assert:
+        that: easytier_pkg_files.files | length == 2
+        fail_msg: "Expected easytier-noweb and luci-app-easytier in the bundle, found {{ easytier_pkg_files.files | map(attribute='path') | list }}"
+    - name: Copy the packages to the router
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "/tmp/{{ item.path | basename }}"
+        mode: "0644"
+      loop: "{{ easytier_pkg_files.files }}"
+      loop_control: {label: "{{ item.path | basename }}"}
+    - name: Install (apk, local packages are unsigned)
+      ansible.builtin.shell: apk add --allow-untrusted /tmp/easytier-noweb-*.apk /tmp/luci-app-easytier-*.apk
+      when: easytier_pkg_mgr == 'apk'
+      notify: Restart easytier
+    - name: Install (opkg)
+      ansible.builtin.shell: opkg update; opkg install /tmp/easytier-noweb*.ipk /tmp/luci-app-easytier*.ipk
+      when: easytier_pkg_mgr == 'opkg'
+      notify: Restart easytier
+    - name: Remove the copied packages
+      ansible.builtin.shell: rm -f /tmp/easytier-noweb* /tmp/luci-app-easytier*
+      changed_when: false

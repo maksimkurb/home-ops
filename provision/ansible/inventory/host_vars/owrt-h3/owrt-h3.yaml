@@ -2,3 +2,9 @@
 # OpenWRT uses ash shell, not bash
 ansible_shell_type: sh
 ansible_shell_executable: /bin/sh
+
+# This router is logged in to the official Tailscale cloud; move it to headscale (it leaves that tailnet)
+tailscale_allow_relogin: true
+
+# Name in the tailnet and exit node
+tailscale_advertise_exit_node: true

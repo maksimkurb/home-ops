@@ -1,0 +1,9 @@
+---
+- name: Restart easytier
+  ansible.builtin.shell: |
+    case "{{ easytier_platform_r }}" in
+      debian) systemctl restart easytier ;;
+      openwrt) /etc/init.d/easytier restart ;;
+      entware) /opt/etc/init.d/S60easytier restart ;;
+    esac
+  changed_when: true

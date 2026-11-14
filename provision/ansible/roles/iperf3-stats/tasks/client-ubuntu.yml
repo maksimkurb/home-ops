@@ -29,6 +29,13 @@
   tags:
     - iperf3
     - iperf3-client
+- name: Install ttl traceroute
+  ansible.builtin.include_tasks: ttl.yml
+  when: iperf3_client_trace_enabled | bool or (iperf3_client_runs | selectattr('trace', 'defined') | selectattr('trace') | list | length > 0)
+  tags:
+    - iperf3
+    - iperf3-client
+    - ttl
 - name: Deploy iperf3 client script
   ansible.builtin.template:
     src: iperf3_client.py.j2
@@ -61,13 +68,13 @@
     - iperf3-client
 - name: Create cron jobs for iperf3 client tests
   ansible.builtin.cron:
-    name: "iperf3 client test - {{ item.host }}:{{ item.port }}{{ ' (' + item.bind_interface + ')' if item.bind_interface is defined else '' }}"
+    name: "iperf3 client test - {{ item.host }}:{{ item.port | default('icmp') }}{{ ' (' + item.bind_interface + ')' if item.bind_interface is defined else '' }}"
     minute: "{{ item.cron.split()[0] }}"
     hour: "{{ item.cron.split()[1] }}"
     day: "{{ item.cron.split()[2] }}"
     month: "{{ item.cron.split()[3] }}"
     weekday: "{{ item.cron.split()[4] }}"
-    job: "/usr/local/bin/iperf3_client.py --host {{ item.host }}{{ ' --icmp-only --count ' + (item.count | default(10) | string) if item.icmp_only | default(false) else ' --port ' + item.port | string + ' --threads ' + item.threads | string + ' --duration ' + item.duration_sec | string }}{{ ' --bind-interface ' + item.bind_interface if item.bind_interface is defined else '' }}{{ ' --client-hostname ' + (item.client_hostname | default(iperf3_client_hostname)) if (item.client_hostname | default(iperf3_client_hostname)) else '' }}"
+    job: "/usr/local/bin/iperf3_client.py {{ _iperf3_client_args }}"
     user: root
     state: present
   loop: "{{ iperf3_client_runs }}"

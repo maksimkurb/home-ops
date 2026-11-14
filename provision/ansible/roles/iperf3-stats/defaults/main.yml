@@ -24,10 +24,13 @@ iperf3_client_hostname: ""
 #   - host: Target iperf3 server hostname or IP
 #   - port: Target iperf3 server port
 #   - threads: Number of parallel streams
-#   - duration_sec: Test duration in seconds
+#   - duration_sec: Measured test duration in seconds, per direction
+#   - omit_sec: (optional) Seconds of TCP slow-start to drop before measuring
+#     (default iperf3_client_omit_sec). Wall time per direction = omit_sec + duration_sec
 #   - bind_interface: (optional) Network interface to bind to
 #   - icmp_only: (optional, default false) Only ping the host (no iperf3); port/threads/duration_sec are not needed
 #   - count: (optional) Number of ICMP probes when icmp_only is set (default 10)
+#   - trace: (optional, default iperf3_client_trace_enabled) Run a ttl traceroute before the tests
 #   - client_hostname: (optional) Per-run override of iperf3_client_hostname, e.g. to tell
 #     apart tests over different WAN interfaces of the same host
 #
@@ -55,3 +58,36 @@ iperf3_client_webhook_attempts: 5
 iperf3_client_test_connect_timeout_sec: 20
 # Connection timeout for webhook HTTP requests in seconds
 iperf3_client_webhook_connect_timeout_sec: 20
+# Seconds of TCP slow-start iperf3 drops (--omit) before measuring
+iperf3_client_omit_sec: 1
+# Idle ICMP probes (1/s) sent while the traceroute runs, before the load starts
+iperf3_client_idle_ping_count: 5
+
+# ============================================================================
+# Traceroute (https://github.com/lance0/ttl)
+# ============================================================================
+# Two ttl passes run in parallel before the bandwidth tests:
+#   - "path": ICMP, single flow. Gives per-hop loss/latency/jitter and reliably
+#     detects the destination (UDP/TCP replies from it are rate-limited/filtered).
+#   - "ecmp": UDP (or TCP) with several flows (Paris-style source-port variation)
+#     to discover load-balanced paths.
+iperf3_client_trace_enabled: true
+iperf3_client_trace_path_rounds: 10
+iperf3_client_trace_ecmp_rounds: 4
+iperf3_client_trace_ecmp_flows: 4
+# udp or tcp; tcp needs iperf3_client_trace_ecmp_port (e.g. the iperf3 port)
+iperf3_client_trace_ecmp_protocol: udp
+iperf3_client_trace_ecmp_port: ""
+# Seconds between rounds. Keep >= 1: Linux routers (net.ipv4.icmp_ratelimit=1000ms,
+# burst ~6) drop faster TIME_EXCEEDED replies, which shows up as fake hop loss.
+iperf3_client_trace_interval_sec: 1.0
+iperf3_client_trace_timeout_sec: 2
+iperf3_client_trace_max_ttl: 24
+
+iperf3_client_ttl_version: "0.24.1"
+# sha256 of the release archives, from the release's SHA256SUMS
+iperf3_client_ttl_checksums:
+  x86_64: a08eb976788cb368e7c129ca94295d327b2dd9cbb2fe102048a3f620d2c215b5
+  aarch64: 756133c69423354ca306855bfc0e8e57a2b74fea11de2d9d2ed5a9c6fcc88bbe
+iperf3_client_ttl_install_dir: /usr/local/lib/ttl
+iperf3_client_ttl_path: /usr/local/bin/ttl

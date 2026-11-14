@@ -52,6 +52,37 @@ frp:
         owrt-h3: {}
         owrt-tkh2: {}
 
+# headscale: control plane, DERP relays and tailnet clients
+headscale:
+  hosts:
+    vps-c: {}
+derp:
+  hosts:
+    vps-c: {}
+pubproxy:
+  hosts:
+    vps-c: {}
+tailscale:
+  hosts:
+    vps-c: {}
+    owrt-h1: {}
+    owrt-h3: {}
+# easytier: mesh nodes (Debian/OpenWrt/Entware)
+easytier:
+  hosts:
+    vps-c: {}
+    owrt-h1: {}
+    owrt-h3: {}
+# netbird_relay: NetBird relay + STUN on a public VPS
+netbird_relay:
+  hosts:
+    vps-c: {}
+# netbird: clients (Debian/Ubuntu, OpenWrt, Keenetic Entware); set netbird_platform: keenetic in host_vars
+netbird:
+  hosts:
+    owrt-h1: {}
+    owrt-h3: {}
+
 # reverse-proxy:
 #   hosts:
 #     vps-1: {}

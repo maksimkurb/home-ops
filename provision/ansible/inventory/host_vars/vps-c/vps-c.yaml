@@ -5,3 +5,35 @@ vpn_xui_enabled: true
 vpn_tgproxy_enabled: false
 vpn_warp_enabled: false
 traefik_enabled: true
+
+# Headscale and derper use certificates from /root/cert (issued by Ansible, see the end of this file).
+headscale_caddy_compatibility: true
+headscale_derp_caddy_compatibility: true
+# headscale_derp_hostname, headscale_derp_region_code and headscale_derp_region_name live in vps-c-derp.sops.yaml
+headscale_derp_region_id: 900
+headscale_manage_ufw: true
+headscale_derp_manage_ufw: true
+
+# vps-c is the internet-facing node of the tailnet: it may reach only the published apps (see ACL)
+tailscale_tags:
+  - tag:public
+
+# Services behind the panel SNI gateway (443) go through Cover inbounds (siteSource upstream):
+# headscale_hostname -> http://127.0.0.1:18080, *.headscale_published_apps_domain -> http://127.0.0.1:18445 (pubproxy).
+# DERP keeps its own public port.
+headscale_panel_cover: true
+headscale_public_port: 443
+headscale_derp_gateway_route: false
+headscale_derp_public_port: 4444
+
+# Certificates are issued by Ansible via DNS-01 (token headscale_pub_cloudflare_dns_token in vps-c-pub.sops.yaml)
+headscale_derp_acme_dns: true
+headscale_acme_dns: true
+
+# Panel API (credentials in vps-c-panel.sops.yaml): create the covers automatically.
+# Applying the gateway moves everything on 443 behind the SNI mux, so it stays a deliberate switch.
+headscale_panel_api: true
+headscale_backup_enabled: true
+headscale_pub_panel_api: true
+headscale_panel_api_apply_gateway: false
+headscale_panel_api_reapply_gateway: false

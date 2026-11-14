@@ -2,20 +2,30 @@
 
 """
 iperf3 Network Testing Client
-Runs bandwidth tests and sends results to n8n webhook
+Runs a traceroute (ttl), idle/loaded latency probes and bandwidth tests, and sends
+the results to an n8n webhook.
+
+Webhook calls of one invocation share `run_id`:
+  test_type=trace     ttl traceroute: ICMP "path" pass + multi-flow "ecmp" pass
+  test_type=download  iperf3 reverse test (server -> client)
+  test_type=upload    iperf3 normal test (client -> server)
+  test_type=icmp      --icmp-only runs (ping only, no iperf3)
 """
 
 import argparse
 import ctypes
 import json
+import math
+import os
 import re
 import shutil
 import socket
 import subprocess
 import sys
 import time
+import uuid
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 try:
     import iperf3
@@ -36,12 +46,31 @@ TEST_ATTEMPTS = {{ iperf3_client_test_attempts }}
 WEBHOOK_ATTEMPTS = {{ iperf3_client_webhook_attempts }}
 TEST_TIMEOUT = {{ iperf3_client_test_connect_timeout_sec }}
 WEBHOOK_TIMEOUT = {{ iperf3_client_webhook_connect_timeout_sec }}
+DEFAULT_OMIT = {{ iperf3_client_omit_sec }}
+IDLE_PING_COUNT = {{ iperf3_client_idle_ping_count }}
+
+TTL_BIN = "{{ iperf3_client_ttl_path }}"
+TRACE_PATH_ROUNDS = {{ iperf3_client_trace_path_rounds }}
+TRACE_ECMP_ROUNDS = {{ iperf3_client_trace_ecmp_rounds }}
+TRACE_ECMP_FLOWS = {{ iperf3_client_trace_ecmp_flows }}
+TRACE_ECMP_PROTOCOL = "{{ iperf3_client_trace_ecmp_protocol }}"
+TRACE_ECMP_PORT = "{{ iperf3_client_trace_ecmp_port }}"
+TRACE_INTERVAL = {{ iperf3_client_trace_interval_sec }}
+TRACE_TIMEOUT = {{ iperf3_client_trace_timeout_sec }}
+TRACE_MAX_TTL = {{ iperf3_client_trace_max_ttl }}
+
+# Bumped when the payload shape changes; n8n/Postgres branch on it.
+SCHEMA_VERSION = 2
 
 
 def generate_idempotency_key() -> str:
     """Generate a unique idempotency key with microsecond precision"""
     return datetime.now().strftime('%Y%m%d%H%M%S%f')
 
+
+# ============================================================================
+# ping (idle / loaded latency)
+# ============================================================================
 
 def start_ping(host: str, count: int, bind_interface: Optional[str] = None) -> Optional[subprocess.Popen]:
     """Start ping in background (1 probe/sec, negligible load). Returns None if unavailable."""
@@ -59,7 +88,13 @@ def start_ping(host: str, count: int, bind_interface: Optional[str] = None) -> O
 
 
 def finish_ping(proc: Optional[subprocess.Popen], timeout: int) -> Optional[Dict[str, Any]]:
-    """Wait for ping and parse min/avg/max (ms) and packet loss. Never raises."""
+    """
+    Wait for ping and compute stats from the per-reply RTTs, so jitter works with
+    both iputils and BusyBox ping (BusyBox prints no mdev). Never raises.
+
+    jitter_ms: mean absolute difference of consecutive RTTs (RFC 3550 style, unsmoothed)
+    stddev_ms: population standard deviation of RTTs (iputils "mdev")
+    """
     if proc is None:
         return None
     try:
@@ -69,23 +104,152 @@ def finish_ping(proc: Optional[subprocess.Popen], timeout: int) -> Optional[Dict
             proc.terminate()
             out, _ = proc.communicate()
         loss = re.search(r"([0-9.]+)% packet loss", out)
-        rtt = re.search(r"min/avg/max(?:/[a-z]+)? = ([0-9.]+)/([0-9.]+)/([0-9.]+)", out)
         if not loss:
             return None
-        result = {"loss_pct": float(loss.group(1))}
-        if rtt:
-            result.update(min_ms=float(rtt.group(1)), avg_ms=float(rtt.group(2)), max_ms=float(rtt.group(3)))
+        sent = re.search(r"(\d+) packets transmitted", out)
+        rtts = [float(m) for m in re.findall(r"time[=<]([0-9.]+) ?ms", out)]
+        result: Dict[str, Any] = {"loss_pct": float(loss.group(1))}
+        if sent:
+            result["sent"] = int(sent.group(1))
+        result["received"] = len(rtts)
+        if rtts:
+            avg = sum(rtts) / len(rtts)
+            result.update(
+                min_ms=round(min(rtts), 3),
+                avg_ms=round(avg, 3),
+                max_ms=round(max(rtts), 3),
+                stddev_ms=round(math.sqrt(sum((r - avg) ** 2 for r in rtts) / len(rtts)), 3),
+            )
+            if len(rtts) > 1:
+                diffs = [abs(b - a) for a, b in zip(rtts, rtts[1:])]
+                result["jitter_ms"] = round(sum(diffs) / len(diffs), 3)
         return result
     except Exception as e:
         print(f"  ⚠ Ping failed: {e}")
         return None
 
 
+# ============================================================================
+# ttl traceroute
+# ============================================================================
+
+def start_ttl(host: str, mode: str, bind_interface: Optional[str] = None) -> Optional[subprocess.Popen]:
+    """
+    Start one ttl pass in background. mode:
+      path - ICMP, one flow: per-hop loss/latency/jitter and destination detection
+      ecmp - UDP/TCP with several source ports: load-balanced path discovery
+    """
+    if not os.access(TTL_BIN, os.X_OK):
+        print(f"  ⚠ {TTL_BIN} not found, skipping {mode} trace")
+        return None
+    cmd = [
+        TTL_BIN, host, "--json", "--no-update-check", "--no-geo", "--no-ix",
+        "-i", str(TRACE_INTERVAL), "--timeout", str(TRACE_TIMEOUT), "-m", str(TRACE_MAX_TTL),
+    ]
+    if mode == "path":
+        cmd += ["-p", "icmp", "-c", str(TRACE_PATH_ROUNDS)]
+    else:
+        cmd += ["-p", TRACE_ECMP_PROTOCOL, "--flows", str(TRACE_ECMP_FLOWS), "-c", str(TRACE_ECMP_ROUNDS)]
+        if TRACE_ECMP_PORT:
+            cmd += ["--port", str(TRACE_ECMP_PORT)]
+    if bind_interface:
+        cmd += ["--interface", bind_interface]
+    env = dict(os.environ, DO_NOT_TRACK="1", TTL_NO_UPDATE_CHECK="1")
+    try:
+        return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env)
+    except Exception as e:
+        print(f"  ⚠ Could not start ttl ({mode}): {e}")
+        return None
+
+
+def finish_ttl(proc: Optional[subprocess.Popen], mode: str, timeout: int) -> Optional[Dict[str, Any]]:
+    """Wait for a ttl pass and return its JSON session. Never raises."""
+    if proc is None:
+        return None
+    try:
+        try:
+            out, err = proc.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            out, err = proc.communicate()
+            print(f"  ⚠ ttl ({mode}) timed out after {timeout}s")
+            return None
+        if proc.returncode != 0:
+            print(f"  ⚠ ttl ({mode}) exited with {proc.returncode}: {err.strip()[:300]}")
+            return None
+        session = json.loads(out)
+        return session[0] if isinstance(session, list) else session
+    except Exception as e:
+        print(f"  ⚠ ttl ({mode}) failed: {e}")
+        return None
+
+
+def _compact_responder(resp: Dict[str, Any]) -> Dict[str, Any]:
+    # geo/ix are disabled; responder-level "sent" is always 0 (see ttl ResponderStats)
+    return {k: v for k, v in resp.items() if k not in ("geo", "ix", "sent") and v is not None}
+
+
+def compact_ttl(session: Optional[Dict[str, Any]], dest_ttl: Optional[int]) -> Optional[Dict[str, Any]]:
+    """
+    Shrink a ttl session for the webhook: drop the per-probe event log and the hops
+    past the destination (ttl reports every TTL up to --max-ttl, and the destination
+    answers all of them). dest_ttl falls back to the last responding hop.
+    """
+    if session is None:
+        return None
+    hops = session.get("hops") or []
+    cutoff = dest_ttl or session.get("dest_ttl")
+    if not cutoff:
+        responding = [h["ttl"] for h in hops if h.get("received")]
+        cutoff = max(responding) if responding else 0
+    compact_hops = []
+    for hop in hops:
+        if hop["ttl"] > cutoff:
+            break
+        hop = dict(hop)
+        hop["responders"] = {ip: _compact_responder(r) for ip, r in (hop.get("responders") or {}).items()}
+        compact_hops.append(hop)
+    result = {k: v for k, v in session.items() if k not in ("hops", "events")}
+    result["hops"] = compact_hops
+    return result
+
+
+def start_trace(host: str, bind_interface: Optional[str]) -> Dict[str, Optional[subprocess.Popen]]:
+    return {mode: start_ttl(host, mode, bind_interface) for mode in ("path", "ecmp")}
+
+
+def finish_trace(procs: Dict[str, Optional[subprocess.Popen]]) -> Optional[Dict[str, Any]]:
+    # rounds * interval + probe timeout, plus slack for rDNS/ASN lookups
+    budget = int(max(TRACE_PATH_ROUNDS, TRACE_ECMP_ROUNDS) * TRACE_INTERVAL + TRACE_TIMEOUT) + 45
+    path = finish_ttl(procs.get("path"), "path", budget)
+    ecmp = finish_ttl(procs.get("ecmp"), "ecmp", budget)
+    if path is None and ecmp is None:
+        return None
+    path_dest = path.get("dest_ttl") if path else None
+    return {"path": compact_ttl(path, path_dest), "ecmp": compact_ttl(ecmp, path_dest)}
+
+
+def summarize_trace(trace: Dict[str, Any]) -> str:
+    path = trace.get("path") or {}
+    hops = path.get("hops") or []
+    dest = hops[-1] if hops else {}
+    sent = (dest.get("received") or 0) + (dest.get("timeouts") or 0)
+    loss = 100.0 * (dest.get("timeouts") or 0) / sent if sent else None
+    ecmp_hops = sum(1 for h in (trace.get("ecmp") or {}).get("hops") or [] if len(h.get("responders") or {}) > 1)
+    loss_txt = f"{loss:.0f}%" if loss is not None else "n/a"
+    return f"{len(hops)} hops, reached={path.get('complete')}, dest loss={loss_txt}, ECMP hops={ecmp_hops}"
+
+
+# ============================================================================
+# iperf3
+# ============================================================================
+
 def run_iperf3_test(
     host: str,
     port: int,
     threads: int,
     duration: int,
+    omit: int,
     reverse: bool = False,
     bind_interface: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
@@ -96,15 +260,14 @@ def run_iperf3_test(
         host: Target server hostname or IP
         port: Target server port
         threads: Number of parallel streams
-        duration: Test duration in seconds
+        duration: Measured test duration in seconds
+        omit: Seconds of slow-start excluded from the results (run before `duration`)
         reverse: If True, run in reverse mode (download), else upload
         bind_interface: Optional network interface to bind to
 
     Returns:
         Test results as dict, or None if all attempts failed
     """
-    test_type = "download" if reverse else "upload"
-
     for attempt in range(1, TEST_ATTEMPTS + 1):
         try:
             print(f"  Attempt {attempt}/{TEST_ATTEMPTS}...")
@@ -114,6 +277,7 @@ def run_iperf3_test(
             client.port = port
             client.num_streams = threads
             client.duration = duration
+            client.omit = omit
             client.zerocopy = True
             client.verbose = False
             client.reverse = reverse
@@ -139,23 +303,12 @@ def run_iperf3_test(
                     time.sleep(2)
                 continue
 
-            # Extract metrics for display
-            if reverse:
-                # Download test - data received
-                bitrate = result.received_Mbps
-                bytes_transferred = result.received_bytes
-            else:
-                # Upload test - data sent
-                bitrate = result.sent_Mbps
-                bytes_transferred = result.sent_bytes
-
-            # Extract additional metrics
-            retransmits = getattr(result, 'retransmits', 0)
-
+            # Receiver-side totals: for upload the sender-side numbers include data
+            # still sitting in socket buffers and overstate the bitrate.
             print(f"  ✓ Test completed successfully")
-            print(f"    Bitrate: {bitrate:.2f} Mbps")
-            print(f"    Bytes: {bytes_transferred:,}")
-            if retransmits > 0:
+            print(f"    Bitrate (receiver): {result.received_Mbps:.2f} Mbps")
+            retransmits = getattr(result, 'retransmits', 0)
+            if retransmits:
                 print(f"    Retransmits: {retransmits}")
 
             # Return the raw JSON output from iperf3
@@ -171,12 +324,16 @@ def run_iperf3_test(
     return None
 
 
+# ============================================================================
+# webhook
+# ============================================================================
+
 def check_kill_switch() -> bool:
     """
     Check kill-switch endpoint to see if tests should be aborted
 
     Returns:
-        True if tests should be aborted (kill-switch returned 201), False otherwise
+        True if tests should be aborted (kill-switch returned non-200), False otherwise
     """
     if not WEBHOOK_URL:
         print("  ⚠ Webhook URL not configured, skipping kill-switch check")
@@ -186,7 +343,7 @@ def check_kill_switch() -> bool:
     kill_switch_url = WEBHOOK_URL.rstrip('/') + '/kill-switch'
 
     try:
-        print(f"  Checking kill-switch at {kill_switch_url}...")
+        print(f"  Checking kill-switch...")
 
         response = requests.get(
             kill_switch_url,
@@ -269,54 +426,79 @@ def send_webhook(payload: Dict[str, Any], idempotency_key: str) -> bool:
     return False
 
 
+def base_payload(
+    run_id: str,
+    test_type: str,
+    source_hostname: str,
+    target_hostname: str,
+    local_hostname: str,
+    bind_interface: Optional[str]
+) -> Dict[str, Any]:
+    payload = {
+        "schema_version": SCHEMA_VERSION,
+        "run_id": run_id,
+        "test_type": test_type,
+        "source_hostname": source_hostname,
+        "target_hostname": target_hostname,
+        "iperf_run_on_hostname": local_hostname,
+        "timestamp": datetime.now().astimezone().isoformat(),
+    }
+    if bind_interface:
+        payload["bind_interface"] = bind_interface
+    return payload
+
+
+def send_trace(
+    run_id: str,
+    target_host: str,
+    local_hostname: str,
+    bind_interface: Optional[str],
+    trace: Optional[Dict[str, Any]]
+) -> bool:
+    if trace is None:
+        print("✗ Trace failed (ttl unavailable or no output)")
+        return False
+    print(f"  Trace: {summarize_trace(trace)}")
+    payload = base_payload(run_id, "trace", local_hostname, target_host, local_hostname, bind_interface)
+    payload["trace"] = trace
+    if send_webhook(payload, generate_idempotency_key()):
+        print("✓ Trace sent")
+        return True
+    print("✗ Trace webhook delivery failed")
+    return False
+
+
 def run_test_and_send(
+    run_id: str,
     target_host: str,
     port: int,
     threads: int,
     duration: int,
+    omit: int,
     reverse: bool,
+    local_hostname: str,
     bind_interface: Optional[str] = None,
-    client_hostname: Optional[str] = None,
     latency_idle: Optional[Dict[str, Any]] = None
 ) -> bool:
     """
     Run a single test and send results to webhook
 
-    Args:
-        target_host: Target server hostname or IP
-        port: Target server port
-        threads: Number of parallel streams
-        duration: Test duration in seconds
-        reverse: If True, run in reverse mode (server sends data to client)
-        bind_interface: Optional network interface to bind to
-        client_hostname: Optional override for client hostname
-        latency_idle: Optional ping stats measured before the tests
-
     Returns:
         True if both test and webhook were successful, False otherwise
     """
-    test_direction = "REVERSE (download)" if reverse else "NORMAL (upload)"
-    print(f"\nRunning {test_direction} test...")
-
-    # Get local hostname
-    if client_hostname:
-        local_hostname = client_hostname
-    else:
-        try:
-            local_hostname = socket.gethostname()
-        except Exception:
-            local_hostname = "unknown"
+    test_type = "download" if reverse else "upload"
+    print(f"\nRunning {test_type} test ({omit}s omitted + {duration}s)...")
 
     # Generate idempotency key before test starts
     idempotency_key = generate_idempotency_key()
 
-    # Run iperf3 test
-    ping_proc = start_ping(target_host, duration, bind_interface)
-    result = run_iperf3_test(target_host, port, threads, duration, reverse, bind_interface)
+    # Ping alongside iperf3 to measure latency under load (bufferbloat)
+    ping_proc = start_ping(target_host, omit + duration, bind_interface)
+    result = run_iperf3_test(target_host, port, threads, duration, omit, reverse, bind_interface)
     latency_loaded = finish_ping(ping_proc, 5)
 
     if result is None:
-        print(f"✗ {test_direction} test failed")
+        print(f"✗ {test_type} test failed")
         return False
 
     # Parse iperf3 JSON result
@@ -326,59 +508,53 @@ def run_test_and_send(
         print(f"✗ Failed to parse iperf3 result")
         return False
 
-    # Determine source and target based on test direction
-    # In normal mode (reverse=False): client sends data, so client is source
-    # In reverse mode (reverse=True): server sends data, so server is source
+    # In normal mode (upload) the client sends data, so it is the source;
+    # in reverse mode (download) the server is.
     if reverse:
-        source_hostname = target_host
-        target_hostname = local_hostname
+        source_hostname, target_hostname = target_host, local_hostname
     else:
-        source_hostname = local_hostname
-        target_hostname = target_host
+        source_hostname, target_hostname = local_hostname, target_host
 
-    # Prepare webhook payload - merge iperf3 JSON with metadata
+    # Merge the raw iperf3 JSON with metadata
     payload = {
         **result_data,
-        "source_hostname": source_hostname,
-        "target_hostname": target_hostname,
-        "iperf_run_on_hostname": local_hostname,
-        "timestamp": datetime.now().isoformat()
+        **base_payload(run_id, test_type, source_hostname, target_hostname, local_hostname, bind_interface),
+        "omit_sec": omit,
+        "duration_sec": duration,
     }
-
     if latency_idle:
         payload["latency_idle"] = latency_idle
     if latency_loaded:
         payload["latency_loaded"] = latency_loaded
 
-    # Add bind_interface to payload if specified
-    if bind_interface:
-        payload["bind_interface"] = bind_interface
-
-    # Send to webhook
-    webhook_success = send_webhook(payload, idempotency_key)
-
-    if webhook_success:
-        print(f"✓ {test_direction} test completed and results sent")
+    if send_webhook(payload, idempotency_key):
+        print(f"✓ {test_type} test completed and results sent")
         return True
-    else:
-        print(f"✗ {test_direction} test completed but webhook delivery failed")
-        return False
+    print(f"✗ {test_type} test completed but webhook delivery failed")
+    return False
 
 
 def run_icmp_only(
+    run_id: str,
     target_host: str,
     count: int,
     local_hostname: str,
-    bind_interface: Optional[str] = None
+    bind_interface: Optional[str] = None,
+    trace_enabled: bool = True
 ) -> bool:
     """
-    Ping-only mode: measure latency/loss and send it to the webhook using the
-    same payload shape as an iperf3 run, with empty iperf3 data (n8n-compatible).
+    Ping-only mode: measure latency/loss (and optionally trace the path) and send it
+    to the webhook. The ping payload keeps the iperf3 shape with empty data.
     """
     print(f"\nRunning ICMP-only test ({count} probes)...")
     idempotency_key = generate_idempotency_key()
 
+    trace_procs = start_trace(target_host, bind_interface) if trace_enabled else {}
     stats = finish_ping(start_ping(target_host, count, bind_interface), count * 2 + 5)
+    trace_ok = True
+    if trace_enabled:
+        trace_ok = send_trace(run_id, target_host, local_hostname, bind_interface, finish_trace(trace_procs))
+
     if stats is None:
         print("✗ ICMP test failed (ping unavailable or no output)")
         return False
@@ -387,19 +563,13 @@ def run_icmp_only(
     payload = {
         "intervals": [],
         "end": {},
-        "test_type": "icmp",
-        "source_hostname": local_hostname,
-        "target_hostname": target_host,
-        "iperf_run_on_hostname": local_hostname,
-        "timestamp": datetime.now().isoformat(),
-        "latency_idle": stats
+        **base_payload(run_id, "icmp", local_hostname, target_host, local_hostname, bind_interface),
+        "latency_idle": stats,
     }
-    if bind_interface:
-        payload["bind_interface"] = bind_interface
 
     if send_webhook(payload, idempotency_key):
         print("✓ ICMP test completed and results sent")
-        return True
+        return trace_ok
     print("✗ ICMP test completed but webhook delivery failed")
     return False
 
@@ -412,11 +582,14 @@ def main():
     parser.add_argument('--host', required=True, help='Target iperf3 server hostname or IP')
     parser.add_argument('--port', type=int, help='Target iperf3 server port')
     parser.add_argument('--threads', type=int, help='Number of parallel streams')
-    parser.add_argument('--duration', type=int, help='Test duration in seconds')
+    parser.add_argument('--duration', type=int, help='Measured test duration in seconds, per direction')
+    parser.add_argument('--omit', type=int, default=DEFAULT_OMIT,
+                        help=f'Seconds of slow-start to drop before measuring (default: {DEFAULT_OMIT})')
     parser.add_argument('--bind-interface', help='Network interface to bind to (optional)')
     parser.add_argument('--client-hostname', help='Override client hostname (optional)')
     parser.add_argument('--icmp-only', action='store_true', help='Only ping the host (no iperf3); send latency stats to the webhook')
     parser.add_argument('--count', type=int, default=10, help='Number of ICMP probes in --icmp-only mode (default: 10)')
+    parser.add_argument('--no-trace', dest='trace', action='store_false', help='Skip the ttl traceroute')
 
     args = parser.parse_args()
     if not args.icmp_only and None in (args.port, args.threads, args.duration):
@@ -431,19 +604,23 @@ def main():
         except Exception:
             local_hostname = "unknown"
 
+    run_id = str(uuid.uuid4())
+
     print("=" * 60)
     print("iperf3 Network Test")
     print("=" * 60)
+    print(f"Run ID: {run_id}")
     print(f"Local hostname: {local_hostname}")
     if args.icmp_only:
         print(f"Target host (ICMP only): {args.host}")
     else:
         print(f"Target server: {args.host}:{args.port}")
         print(f"Threads: {args.threads}")
-        print(f"Duration: {args.duration}s")
+        print(f"Duration: {args.omit}s omitted + {args.duration}s per direction")
     if args.bind_interface:
         print(f"Bind interface: {args.bind_interface}")
-    print(f"Webhook URL: {WEBHOOK_URL if WEBHOOK_URL else 'Not configured'}")
+    print(f"Trace: {'enabled' if args.trace else 'disabled'}")
+    print(f"Webhook URL: {'configured' if WEBHOOK_URL else 'Not configured'}")
     print("=" * 60)
 
     # Check kill-switch before running tests
@@ -455,49 +632,37 @@ def main():
         sys.exit(0)
 
     if args.icmp_only:
-        sys.exit(0 if run_icmp_only(args.host, args.count, local_hostname, args.bind_interface) else 1)
+        ok = run_icmp_only(run_id, args.host, args.count, local_hostname, args.bind_interface, args.trace)
+        sys.exit(0 if ok else 1)
 
-    # Measure idle latency before the load starts (3 probes, ~2s)
-    latency_idle = finish_ping(start_ping(args.host, 3, args.bind_interface), 8)
+    # Idle phase: traceroute and idle latency in parallel, before any load
+    print("\nMeasuring idle path...")
+    trace_procs = start_trace(args.host, args.bind_interface) if args.trace else {}
+    latency_idle = finish_ping(start_ping(args.host, IDLE_PING_COUNT, args.bind_interface), IDLE_PING_COUNT * 2 + 5)
     if latency_idle:
-        print(f"Idle latency: {latency_idle}")
+        print(f"  Idle latency: {latency_idle}")
+    trace_success = True
+    if args.trace:
+        trace_success = send_trace(run_id, args.host, local_hostname, args.bind_interface, finish_trace(trace_procs))
 
-    # Run reverse test (server sends to client - download)
-    reverse_success = run_test_and_send(
-        args.host,
-        args.port,
-        args.threads,
-        args.duration,
-        reverse=True,
-        bind_interface=args.bind_interface,
-        client_hostname=args.client_hostname,
-        latency_idle=latency_idle
-    )
-
-    # Run normal test (client sends to server - upload)
-    normal_success = run_test_and_send(
-        args.host,
-        args.port,
-        args.threads,
-        args.duration,
-        reverse=False,
-        bind_interface=args.bind_interface,
-        client_hostname=args.client_hostname,
-        latency_idle=latency_idle
-    )
+    results = {}
+    for reverse in (True, False):
+        results["download" if reverse else "upload"] = run_test_and_send(
+            run_id, args.host, args.port, args.threads, args.duration, args.omit, reverse,
+            local_hostname, args.bind_interface, latency_idle
+        )
 
     print("\n" + "=" * 60)
     print("Summary")
     print("=" * 60)
-    print(f"Reverse test (download): {'✓ Success' if reverse_success else '✗ Failed'}")
-    print(f"Normal test (upload): {'✓ Success' if normal_success else '✗ Failed'}")
+    if args.trace:
+        print(f"Trace: {'✓ Success' if trace_success else '✗ Failed'}")
+    for name, ok in results.items():
+        print(f"{name.capitalize()} test: {'✓ Success' if ok else '✗ Failed'}")
     print("=" * 60)
 
-    # Exit with error code if either test failed
-    if not (reverse_success and normal_success):
-        sys.exit(1)
-
-    sys.exit(0)
+    # Exit with error code if anything failed
+    sys.exit(0 if trace_success and all(results.values()) else 1)
 
 
 if __name__ == "__main__":

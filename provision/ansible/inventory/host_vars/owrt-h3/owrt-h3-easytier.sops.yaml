@@ -1,0 +1,22 @@
+easytier_ipv4: ENC[AES256_GCM,data:N+OTvjJEkKKcyaVg,iv:fxgUDx2CQc4r7MSQ8/3pXA0kVwQ+bmH4EBvlMzyvV/w=,tag:Ow3eMfe5td0S8Tad9zuArg==,type:str]
+easytier_proxy_networks:
+  - ENC[AES256_GCM,data:e4pJvghbWzp+zYEAh3Sd,iv:kFs97tD2EZm+uDQHU4fTs7Fd9Q6rjxKQKSBU8tF3OEU=,tag:hWwVi5KRp6AsyCHtEsLx0Q==,type:str]
+  - ENC[AES256_GCM,data:0ybjjQLaT9F6gzUzjWPE,iv:TO3BPzR5hVxnDySh3erqk0xz8iYsw1MeKqwtyTknt4Q=,tag:3iHIJL5xIaVhlmdcDUBMtA==,type:str]
+easytier_listeners:
+  - ENC[AES256_GCM,data:o7wroY27GnXp8yKtmdsLIxfvXQ==,iv:6fEYQJQAEaRO5+60Uzh+3ZoUUcq+11+CZrMmSB168CE=,tag:3QPXG46wVDgMuwJd6RdEkQ==,type:str]
+  - ENC[AES256_GCM,data:4yB7qnniIAapymsm0eLSafdmPg==,iv:Q1hLDMUmMVgnvNyUfQ5cYUiDRn9Vo1EzRcn3wsGocMM=,tag:/jy1dUx438QGGWtUvDY2zQ==,type:str]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBZ0R5enBsUDBaWWJEbmNn
+        ckpha3M4K0NnekdkYnlBNm9OSkswT0w2S2l3ClpmcVVuWHJGeERzb1ZDNkxBYUxX
+        bUROb3JEVW5qVEdNODRGUlk0MUhGclkKLS0tIDMraTluaWttZUZjL0N2cXBhSTk2
+        RkcwSG8ySWw4YlNCQU5ENWE1b2hBQlkKr8bCtVhjyuBLOut3e4OEUousHEfNhgDZ
+        VUwLsHXKXF9/Vnpr9lrAQ0nf5qkAHG+fKuddl3q14exIA0Xs/n+Qwg==
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+  lastmodified: "2026-11-14T13:06:50Z"
+  mac: ENC[AES256_GCM,data:CK2nOnLTao/c8wEJu2zEeOfwzwUPN346z0QWaimzs6bxpiHFh6chRJo8cvfJuel+k5EXI/fi1MICWTQYVRJhp/mN3yaal9zzJqGy5pAsuFnZgvljGwR5qA1+75jnpc2PCDVZcpHhVFT9MkcfmKZcDo+g35L6PZKKXECAzl4vsPw=,iv:u5KvHWqUSdsv6gkXFHAI4Ck5iLLNP/x7J0AJ+WGhgY0=,tag:VvcCIUEm36PUL7OmzgW5Tw==,type:str]
+  unencrypted_regex: ^(kind)$
+  version: 3.13.3

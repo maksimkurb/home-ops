@@ -1,0 +1,344 @@
+{
+  "id": "F42l6CXVbJTH2in7",
+  "name": "Send speed results 3.0",
+  "nodes": [
+    {
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "webhookId": "__IPERF_WEBHOOK_PATH__",
+      "id": "7537616c-0fa9-4147-a554-54dcd6979d89",
+      "name": "Webhook",
+      "position": [
+        -608,
+        -176
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "__IPERF_WEBHOOK_PATH__",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "595a3ab3-b736-4c65-8210-d0db29ca106a",
+      "name": "Normalize payload",
+      "position": [
+        -384,
+        -176
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Validate the webhook call and hand the raw body to iperf_ingest().\n// All parsing (iperf3 intervals, ttl hops, host lookup) lives in Postgres, so a\n// replayed call with the same x-idempotency-key is a no-op.\nconst { body, headers } = $input.item.json;\nconst key = headers['x-idempotency-key'];\nif (!key) {\n  throw new Error('x-idempotency-key header is required');\n}\nif (!body || typeof body !== 'object' || Array.isArray(body)) {\n  throw new Error('Webhook body must be a JSON object');\n}\nfor (const field of ['source_hostname', 'target_hostname', 'iperf_run_on_hostname']) {\n  if (!body[field]) throw new Error(`${field} is required`);\n}\nreturn { json: { idempotency_key: String(key), payload: body } };\n"
+      }
+    },
+    {
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "id": "0c3452aa-1f11-4073-aec1-3eecd2950eb9",
+      "name": "Ingest",
+      "position": [
+        -160,
+        -176
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "XGMegkBlfiIM6IE6",
+          "name": "Postgres lab db"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT iperf_ingest($1::jsonb) AS result;",
+        "options": {
+          "queryReplacement": "=[{{ $json }}]"
+        }
+      }
+    },
+    {
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "id": "bcc2d4fe-b3e0-487e-8da7-26ad53fdc540",
+      "name": "Daily 04:00",
+      "position": [
+        -608,
+        400
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 4
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "id": "799e4751-f681-42d3-b7e4-ad8d8172ff31",
+      "name": "Prune old traces",
+      "position": [
+        -384,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "XGMegkBlfiIM6IE6",
+          "name": "Postgres lab db"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT iperf_prune(14, 180) AS result;",
+        "options": {}
+      }
+    },
+    {
+      "parameters": {
+        "path": "__IPERF_WEBHOOK_PATH__/kill-switch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        64
+      ],
+      "id": "e5385f52-2a10-4b73-9c66-9e31cd1c8b71",
+      "name": "Kill-Switch",
+      "webhookId": "__IPERF_WEBHOOK_PATH__"
+    },
+    {
+      "parameters": {
+        "resource": "state",
+        "entityId": "input_boolean.iperf3_tests_kill_switch"
+      },
+      "type": "n8n-nodes-base.homeAssistant",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        96
+      ],
+      "id": "61a68044-02c3-4d7b-b1ab-c9223a9adbbf",
+      "name": "Get a state",
+      "credentials": {
+        "homeAssistantApi": {
+          "id": "ZnWHf2wKNhCW7PiK",
+          "name": "Home Assistant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "on",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8f0f3a54-1c20-4a2f-8f4f-605ab91ef500"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ON"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d659706b-9026-4b23-b9fd-fcfd258a70a9",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "off",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OFF"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -128,
+        96
+      ],
+      "id": "c47a54f8-4ff9-4234-8426-54159e19446d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "iperf tests should be enabled",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        112,
+        0
+      ],
+      "id": "a911d357-3a1c-4de9-9659-59a95442b611",
+      "name": "Respond ON"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "iperf tests should be disabled",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        112,
+        160
+      ],
+      "id": "14928892-efb8-4351-80ca-274de84e3ead",
+      "name": "Respond OFF"
+    },
+    {
+      "parameters": {
+        "path": "__IPERF_WEBHOOK_PATH__",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        240
+      ],
+      "id": "0b386c19-a165-4d32-aa5e-abcb1ff00297",
+      "name": "Kill-Switch1",
+      "webhookId": "__IPERF_WEBHOOK_PATH__"
+    }
+  ],
+  "connections": {
+    "Kill-Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a state": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Respond ON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond OFF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kill-Switch1": {
+      "main": [
+        [
+          {
+            "node": "Get a state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize payload": {
+      "main": [
+        [
+          {
+            "node": "Ingest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 04:00": {
+      "main": [
+        [
+          {
+            "node": "Prune old traces",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "active": false
+}

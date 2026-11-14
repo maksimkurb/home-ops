@@ -1,0 +1,13 @@
+[Unit]
+Description=EasyTier
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart={{ easytier_bin_dir }}/easytier-core {{ easytier_cmdline }}
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,45 @@
+---
+easytier_enabled: true
+easytier_version: "2.6.4"
+# auto-detected: debian | openwrt | entware (override in host_vars)
+easytier_platform: ""
+# auto-detected from ansible_architecture; override for routers (mips vs mipsel!)
+# values: x86_64 aarch64 armv7 armv7hf arm armhf mips mipsel riscv64
+easytier_arch: ""
+
+easytier_hostname: "{{ inventory_hostname }}"
+# Network identity (put real values in sops)
+easytier_network_name: ""
+easytier_network_secret: ""
+# Public peers to bootstrap from, e.g. ["tcp://vps.example.com:11010"]
+easytier_peers: []
+# Static overlay IP (e.g. 10.144.144.2). Empty + dhcp true => automatic
+easytier_ipv4: ""
+easytier_dhcp: false
+# Listeners (empty on NAT-ed clients is fine)
+easytier_listeners: []
+# LAN subnets this node exposes into the overlay, e.g. ["192.168.40.0/24"]
+easytier_proxy_networks: []
+easytier_enable_exit_node: false
+easytier_no_tun: false
+easytier_latency_first: true
+easytier_extra_flags: {} # raw [flags] keys of the TOML config
+
+# Remote management through easytier-web (config-server). When set, the node is
+# managed from the panel instead of the local TOML: "udp://host:22020/<user>"
+easytier_web_url: ""
+
+easytier_rpc_portal: "127.0.0.1:15888"
+easytier_enable_ip_forward: false
+easytier_firewall_zone: easytier # OpenWrt
+
+# Open the listener ports: ufw (Debian/Ubuntu, only if ufw is installed and active)
+# or a firewall rule on the OpenWrt wan zone
+easytier_manage_firewall: true
+easytier_wan_zone: wan # OpenWrt
+
+# OpenWrt: install the official easytier-noweb + luci-app-easytier packages
+# (EasyTier/luci-app-easytier releases). The node still runs from our TOML
+# (etcmd=config) or from easytier-web; LuCI is used for status/logs.
+easytier_openwrt_luci: true
+easytier_luci_version: "{{ easytier_version }}"

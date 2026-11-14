@@ -1,0 +1,31 @@
+# Managed by Ansible
+instance_name = "default"
+hostname = "{{ easytier_hostname }}"
+{% if easytier_ipv4 | length %}
+ipv4 = "{{ easytier_ipv4 }}"
+{% endif %}
+dhcp = {{ easytier_dhcp | bool | lower }}
+listeners = {{ easytier_listeners | to_json }}
+rpc_portal = "{{ easytier_rpc_portal }}"
+
+[network_identity]
+network_name = "{{ easytier_network_name }}"
+network_secret = "{{ easytier_network_secret }}"
+
+{% for p in easytier_peers %}
+[[peer]]
+uri = "{{ p }}"
+
+{% endfor %}
+{% for n in easytier_proxy_networks %}
+[[proxy_network]]
+cidr = "{{ n }}"
+
+{% endfor %}
+[flags]
+latency_first = {{ easytier_latency_first | bool | lower }}
+enable_exit_node = {{ easytier_enable_exit_node | bool | lower }}
+no_tun = {{ easytier_no_tun | bool | lower }}
+{% for k, v in easytier_extra_flags.items() %}
+{{ k }} = {{ v | to_json }}
+{% endfor %}

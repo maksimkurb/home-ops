@@ -1,0 +1,50 @@
+---
+- name: Skip hosts where EasyTier is not managed
+  ansible.builtin.meta: end_host
+  when: not (easytier_enabled | bool)
+  tags: [easytier]
+
+- name: Detect OpenWrt
+  ansible.builtin.stat: {path: /etc/openwrt_release}
+  register: easytier_st_owrt
+  tags: [easytier]
+- name: Detect Entware
+  ansible.builtin.stat: {path: /opt/bin/opkg}
+  register: easytier_st_entware
+  tags: [easytier]
+
+- name: Resolve platform and arch
+  ansible.builtin.set_fact:
+    easytier_platform_r: >-
+      {{ easytier_platform if easytier_platform | length else
+         ('openwrt' if easytier_st_owrt.stat.exists else
+          ('entware' if easytier_st_entware.stat.exists else 'debian')) }}
+    easytier_arch_r: >-
+      {{ easytier_arch if easytier_arch | length else
+         {'x86_64': 'x86_64', 'aarch64': 'aarch64', 'armv7l': 'armv7',
+          'armv6l': 'arm', 'mips': 'mips', 'mipsel': 'mipsel',
+          'riscv64': 'riscv64'}[ansible_architecture] | default('') }}
+  tags: [easytier]
+
+- name: Build the list of listener ports (proto/port)
+  ansible.builtin.set_fact:
+    easytier_listen_rules: >-
+      {{ easytier_listen_rules | default([]) + [{'proto': item.split('://')[0],
+                                                 'port': (item.split('://')[1] | regex_replace('/.*$', '')).split(':')[-1]}] }}
+  loop: "{{ easytier_listeners }}"
+  when: item is match('^(tcp|udp)://')
+  tags: [easytier]
+
+- name: Check arch and network settings
+  ansible.builtin.assert:
+    that:
+      - easytier_arch_r | length > 0
+      - easytier_network_name | length > 0 or easytier_web_url | length > 0
+      - easytier_network_secret | length > 0 or easytier_web_url | length > 0
+    fail_msg: "Set easytier_arch (arch not detected) and easytier_network_name/secret (or easytier_web_url)"
+  no_log: true
+  tags: [easytier]
+
+- name: Install on {{ easytier_platform_r }}
+  ansible.builtin.include_tasks: "install-{{ easytier_platform_r }}.yaml"
+  tags: [easytier]

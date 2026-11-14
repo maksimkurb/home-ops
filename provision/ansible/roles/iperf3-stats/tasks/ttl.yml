@@ -1,0 +1,120 @@
+---
+# Installs the ttl traceroute binary (static musl release) for x86_64 and aarch64.
+# Works on Debian/Ubuntu and OpenWrt: only busybox-compatible tar/ln are used.
+- name: Check ttl architecture support
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in _iperf3_client_ttl_targets
+    fail_msg: >-
+      ttl has no release build for {{ ansible_facts['architecture'] }};
+      set iperf3_client_trace_enabled: false for this host.
+    quiet: true
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Set ttl release facts
+  ansible.builtin.set_fact:
+    _ttl_archive: "ttl-{{ _iperf3_client_ttl_targets[ansible_facts['architecture']] }}.tar.gz"
+    _ttl_version_dir: "{{ iperf3_client_ttl_install_dir }}/{{ iperf3_client_ttl_version }}"
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Check installed ttl version
+  ansible.builtin.stat:
+    path: "{{ _ttl_version_dir }}/ttl"
+  register: _ttl_installed
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Install ttl {{ iperf3_client_ttl_version }}
+  when: not _ttl_installed.stat.exists
+  tags: [iperf3, iperf3-client, ttl]
+  block:
+    - name: Create ttl install directory
+      ansible.builtin.file:
+        path: "{{ iperf3_client_ttl_install_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    # busybox df has no --output; take the "Available" column of the last line
+    - name: Check free space for ttl (~10 MB unpacked)
+      ansible.builtin.shell: "df -k {{ iperf3_client_ttl_install_dir }} | awk 'END {print $(NF-2)}'"
+      register: _ttl_free_kb
+      changed_when: false
+
+    - name: Assert enough free space for ttl
+      ansible.builtin.assert:
+        that: _ttl_free_kb.stdout | int > 16384
+        fail_msg: "Only {{ _ttl_free_kb.stdout }} KB free under {{ iperf3_client_ttl_install_dir }}; ttl needs ~10 MB."
+        quiet: true
+
+    - name: Create ttl version directory
+      ansible.builtin.file:
+        path: "{{ _ttl_version_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download ttl release archive
+      ansible.builtin.get_url:
+        url: "https://github.com/lance0/ttl/releases/download/v{{ iperf3_client_ttl_version }}/{{ _ttl_archive }}"
+        dest: "/tmp/{{ _ttl_archive }}"
+        checksum: "sha256:{{ iperf3_client_ttl_checksums[ansible_facts['architecture']] }}"
+        mode: "0600"
+
+    # unarchive needs GNU tar, which OpenWrt does not ship
+    - name: Unpack ttl
+      ansible.builtin.command:
+        cmd: "tar -xzf /tmp/{{ _ttl_archive }} -C {{ _ttl_version_dir }} ttl"
+        creates: "{{ _ttl_version_dir }}/ttl"
+
+    - name: Remove ttl release archive
+      ansible.builtin.file:
+        path: "/tmp/{{ _ttl_archive }}"
+        state: absent
+
+- name: Make ttl executable
+  ansible.builtin.file:
+    path: "{{ _ttl_version_dir }}/ttl"
+    owner: root
+    group: root
+    mode: "0755"
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Ensure ttl link directory exists
+  ansible.builtin.file:
+    path: "{{ iperf3_client_ttl_path | dirname }}"
+    state: directory
+    mode: "0755"
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Link ttl into PATH
+  ansible.builtin.file:
+    src: "{{ _ttl_version_dir }}/ttl"
+    dest: "{{ iperf3_client_ttl_path }}"
+    state: link
+    force: true
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Find old ttl versions
+  ansible.builtin.find:
+    paths: "{{ iperf3_client_ttl_install_dir }}"
+    file_type: directory
+    excludes: "{{ iperf3_client_ttl_version }}"
+  register: _ttl_old_versions
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Remove old ttl versions
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ _ttl_old_versions.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  tags: [iperf3, iperf3-client, ttl]
+
+- name: Check that ttl runs
+  ansible.builtin.command: "{{ iperf3_client_ttl_path }} --version"
+  register: _ttl_version_out
+  changed_when: false
+  failed_when: iperf3_client_ttl_version not in _ttl_version_out.stdout
+  tags: [iperf3, iperf3-client, ttl]

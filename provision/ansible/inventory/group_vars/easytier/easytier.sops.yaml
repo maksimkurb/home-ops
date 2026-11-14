@@ -1,0 +1,20 @@
+easytier_network_name: ENC[AES256_GCM,data:4Nur1WxrUxwNPw==,iv:K7DUvzsQUuQDdDVAsZ3ivcqRsM//PUwbXQrSnaBUZiA=,tag:28/ybPOqzd3I4jJSqt/hfQ==,type:str]
+easytier_network_secret: ENC[AES256_GCM,data:6qBWjyw2of7kAAuxVXp3iYVbQht9I6ZgXBUm88eG2r/9VwZyr30lIrxuwC1E336oRMODUps1VQrj8dHNZEqg9w==,iv:AL8bW48gy9+VU+a2ND8UV2VR6tLzbItS+hOi+eyu0uA=,tag:39PNME9o/cOS/xpomQsWPg==,type:str]
+easytier_peers:
+    - ENC[AES256_GCM,data:OvtiBHIAcz2ksFCQomdkckjZ9p2+uOptoOD1rA==,iv:6hKBh2g8Lf27B5V/0ec6zMv0F6D1N8kQRwPSU6+paps=,tag:pL7JE5LeGHY3yPJ8v3rbzQ==,type:str]
+    - ENC[AES256_GCM,data:lkwdGE9xPyCS3zMUlPT2kMYJFYFLI8/yRZTcP5puorY=,iv:DznCpVURgTQanT6fbrM9GzNNGW2blhaet2dMmKakWoc=,tag:lhDElLX+gAf2ZWFGp0pwig==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwcGEyQXkrWGVpOFR0aWFO
+            TngxMERHZXF4OWVNelpwQ0Z3aWxEWCtwSURBCjBITTFwd0FwRlp6cTN6L3NoNUZa
+            WlptbWxaU0t4a3RnNEhwbUhNQVI1WmMKLS0tIGV5RHVzRnhRaGNXcnFRSlRqQi81
+            R0tTcVRmeW1PbEhJSDFUaTUzT3JzSHcKLl0HhlIh7k4isaR4xOYnmqYaF2IpIPZF
+            WVTczUNqGElVJd8XLQF7PI0NT4mw5A9pO7lDyt0PVSIe2emCL5Bu5Q==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+    lastmodified: "2026-11-14T11:52:41Z"
+    mac: ENC[AES256_GCM,data:z5JCLCk39rcqElGUAJpziH9zdJgHVhzr3ZSa6Dr0ti8ebaE5heN6xVg/dqN4udHHIJJWW3JbEw2jGeM0vSAGAOIp9ycPUX8fz3NO6Wqki6NetyFw8iGROf7syJV45zVrM4mb4I9ILz0NTVHOo69kbfDJtMJ3CJrueMTYJuqjfYc=,iv:MM07+6PcIni0GUp1On6ktj3AmKIFl8juCaxc8ySDSJg=,tag:NoVDdFNrpxvr3j9aNVeCHw==,type:str]
+    unencrypted_regex: ^(kind)$
+    version: 3.13.3

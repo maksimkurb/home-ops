@@ -1,0 +1,38 @@
+---
+- name: Set paths
+  ansible.builtin.set_fact:
+    easytier_bin_dir: /usr/local/bin
+    easytier_conf: /etc/easytier/config.toml
+- name: Config dir
+  ansible.builtin.file: {path: /etc/easytier, state: directory, mode: "0700"}
+- name: Binaries
+  ansible.builtin.include_tasks: fetch.yaml
+- name: Config
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: /etc/easytier/config.toml
+    mode: "0600"
+  when: easytier_web_url | length == 0
+  no_log: true
+  notify: Restart easytier
+- name: Command line
+  ansible.builtin.set_fact:
+    easytier_cmdline: "{{ '-w ' ~ easytier_web_url ~ ' --hostname ' ~ easytier_hostname if easytier_web_url | length else '-c /etc/easytier/config.toml' }}"
+- name: ip_forward
+  ansible.posix.sysctl: {name: net.ipv4.ip_forward, value: "1", sysctl_file: /etc/sysctl.d/99-easytier.conf}
+  when: easytier_enable_ip_forward | bool
+- name: Open listener ports in ufw (if ufw is active)
+  ansible.builtin.shell: |
+    command -v ufw >/dev/null 2>&1 || exit 0
+    ufw status | grep -q '^Status: active' || exit 0
+    ufw status | grep -qE '^{{ item.port }}/{{ item.proto }} +ALLOW' && exit 0
+    ufw allow {{ item.port }}/{{ item.proto }} comment 'easytier' >/dev/null && echo changed
+  register: easytier_ufw
+  changed_when: "'changed' in easytier_ufw.stdout"
+  loop: "{{ easytier_listen_rules | default([]) }}"
+  when: easytier_manage_firewall | bool
+- name: systemd unit
+  ansible.builtin.template: {src: easytier.service.j2, dest: /etc/systemd/system/easytier.service, mode: "0644"}
+  notify: Restart easytier
+- name: Enable and start
+  ansible.builtin.systemd: {name: easytier, enabled: true, state: started, daemon_reload: true}

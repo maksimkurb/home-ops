@@ -1,0 +1,19 @@
+---
+- hosts:
+    - easytier
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  pre_tasks:
+    - name: Install Python for Ansible on OpenWrt
+      ansible.builtin.raw: |
+        if [ -f /etc/openwrt_release ]; then
+          command -v python3 >/dev/null 2>&1 || {
+            if command -v apk >/dev/null 2>&1; then apk add python3 python3-unzip; else opkg update && opkg install python3; fi
+          }
+        fi
+      changed_when: false
+    - name: Gather facts
+      ansible.builtin.setup:
+  roles:
+    - easytier

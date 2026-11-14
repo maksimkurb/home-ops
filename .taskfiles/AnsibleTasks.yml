@@ -31,6 +31,51 @@ tasks:
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/frpc-install.yaml {{ .CLI_ARGS }}"
+  playbook:headscale-install:
+    desc: Install Headscale control server
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/headscale-install.yaml {{ .CLI_ARGS }}"
+  playbook:derp-install:
+    desc: Install DERP relays (derper) for Headscale
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/derp-install.yaml {{ .CLI_ARGS }}"
+  playbook:pubproxy-install:
+    desc: Install wildcard TLS proxy for published apps (pubproxy)
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/pubproxy-install.yaml {{ .CLI_ARGS }}"
+  playbook:tailscale-install:
+    desc: Install Tailscale client (Debian/Ubuntu/OpenWrt/Keenetic) and join Headscale
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/tailscale-install.yaml {{ .CLI_ARGS }}"
+  playbook:netbird-install:
+    desc: Install NetBird client (Debian/Ubuntu/OpenWrt/Keenetic) and join the network
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/netbird-install.yaml {{ .CLI_ARGS }}"
+  playbook:easytier-install:
+    desc: Install EasyTier on Debian/OpenWrt/Entware nodes
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/easytier-install.yaml {{ .CLI_ARGS }}"
+  playbook:tailscale-uninstall:
+    desc: Remove tailscale from routers and servers (and node records in headscale)
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/tailscale-uninstall.yaml {{ .CLI_ARGS }}"
+  playbook:headscale-uninstall:
+    desc: Remove DERP, headscale and pubproxy from charlie (data is archived first)
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/headscale-uninstall.yaml {{ .CLI_ARGS }}"
+  playbook:netbird-relay-install:
+    desc: Install the NetBird relay and STUN server (built from source) on the relay hosts
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/netbird-relay-install.yaml {{ .CLI_ARGS }}"
   playbook:iperf3-stats-install:
     desc: Configure iperf3 Statistics Collection
     dir: provision/ansible

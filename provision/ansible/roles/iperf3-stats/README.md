@@ -14,7 +14,11 @@ This Ansible role provides comprehensive iPerf3 network testing capabilities for
 ### Client Mode
 - Python-based automated testing client using libiperf3
 - Scheduled tests via cron jobs
-- Tests both upload and download bandwidth
+- Tests both upload and download bandwidth (TCP slow-start dropped with `--omit`)
+- Idle and loaded ping: latency, loss, jitter (works with iputils and BusyBox ping)
+- Traceroute with [ttl](https://github.com/lance0/ttl) before the load: an ICMP pass
+  (per-hop loss/latency/jitter) and a multi-flow UDP pass (ECMP discovery);
+  static musl binaries for x86_64 and aarch64 on Debian/Ubuntu and OpenWrt
 - Retry logic for both tests and webhook delivery
 - Sends results to n8n webhook for monitoring
 - Configurable timeouts and retry attempts
@@ -60,9 +64,15 @@ iperf3_client_runs:
     host: "192.168.1.100"          # Target iperf3 server
     port: 5201                      # Target port
     threads: 4                      # Number of parallel streams
-    duration_sec: 30                # Test duration in seconds
+    duration_sec: 7                 # Measured seconds per direction
+    omit_sec: 1                     # (Optional) Slow-start seconds dropped first (default iperf3_client_omit_sec)
     bind_interface: "eth1"          # (Optional) Network interface to bind to
     client_hostname: "h-3-wan1"     # (Optional) Per-run override of iperf3_client_hostname
+    trace: true                     # (Optional) Run the ttl traceroute (default iperf3_client_trace_enabled)
+  - cron: "*/15 * * * *"
+    host: "game.example.com"
+    icmp_only: true                 # Ping (+ traceroute) only, no iperf3
+    count: 10
 
 # n8n webhook URL for sending test results
 iperf3_client_webhook_url: "https://n8n.example.com/webhook/your-webhook-id"
@@ -78,7 +88,22 @@ iperf3_client_test_connect_timeout_sec: 20
 
 # Connection timeout for webhook HTTP requests in seconds (default: 20)
 iperf3_client_webhook_connect_timeout_sec: 20
+
+# Slow-start seconds iperf3 drops before measuring (default: 1)
+iperf3_client_omit_sec: 1
+
+# Traceroute (see defaults/main.yml for the full list)
+iperf3_client_trace_enabled: true
+iperf3_client_trace_path_rounds: 10     # ICMP probes per hop
+iperf3_client_trace_ecmp_flows: 4       # source ports for ECMP discovery
+iperf3_client_trace_interval_sec: 1.0   # keep >= 1, see below
+iperf3_client_ttl_version: "0.24.1"     # bump together with iperf3_client_ttl_checksums
 ```
+
+One run takes about `10 s` (traceroute and idle ping in parallel) `+ 2 × (omit_sec + duration_sec)`.
+Keep `iperf3_client_trace_interval_sec` at 1 s or more: Linux routers rate-limit ICMP
+time-exceeded replies (`net.ipv4.icmp_ratelimit`, 1 s with a burst of ~6), and faster probing
+shows up as fake loss on intermediate hops.
 
 ## Dependencies
 
@@ -183,7 +208,10 @@ sudo systemctl stop iperf3
 ### Client - Manual Test
 ```bash
 # Run a manual test
-/usr/local/bin/iperf3_client.py --host 192.168.1.100 --port 5201 --threads 4 --duration 30
+/usr/local/bin/iperf3_client.py --host 192.168.1.100 --port 5201 --threads 4 --duration 7
+
+# Without the traceroute
+/usr/local/bin/iperf3_client.py --host 192.168.1.100 --port 5201 --threads 4 --duration 7 --no-trace
 
 # Run with interface binding
 /usr/local/bin/iperf3_client.py --host 192.168.1.100 --port 5201 --threads 4 --duration 30 --bind-interface eth1
@@ -201,50 +229,38 @@ cat /etc/crontabs/root
 
 ## Webhook Payload Format
 
-The client sends the following JSON payload to the n8n webhook:
+Each invocation sends several webhook calls that share a `run_id`; every call carries
+`schema_version: 2`, `test_type`, `source_hostname`, `target_hostname`,
+`iperf_run_on_hostname`, `timestamp` and, when set, `bind_interface`.
 
-```json
-{
-  "start": {
-    "connected": [{
-      "socket": 1,
-      "local_host": "10.0.1.5",
-      "local_port": 54321,
-      "remote_host": "192.168.1.100",
-      "remote_port": 5201
-    }],
-    "test_start": {
-      "protocol": "TCP",
-      "num_streams": 4,
-      "duration": 30,
-      "reverse": 0
-    }
-  },
-  "end": {
-    "sum_sent": {
-      "bytes": 3750000000,
-      "bits_per_second": 1000000000
-    },
-    "sum_received": {
-      "bytes": 0,
-      "bits_per_second": 0
-    }
-  },
-  "sent_Mbps": 953.67,
-  "received_Mbps": 0.0,
-  "sent_bytes": 3750000000,
-  "received_bytes": 0,
-  "retransmits": 0,
-  "node_host": "192.168.1.100",
-  "test_type": "upload",
-  "timestamp": "2025-01-15T10:30:00.123456",
-  "bind_interface": "eth1"
-}
-```
+| `test_type` | Body |
+|---|---|
+| `trace` | `trace.path` / `trace.ecmp`: ttl JSON sessions without the per-probe event log, cut at the destination |
+| `download` | raw iperf3 JSON (reverse mode) + `omit_sec`, `duration_sec`, `latency_idle`, `latency_loaded` |
+| `upload` | same, normal mode |
+| `icmp` | `--icmp-only` runs: empty `intervals`/`end` + `latency_idle` |
 
-Each test execution sends **two** webhook calls:
-1. One for download test (`test_type: "download"`)
-2. One for upload test (`test_type: "upload"`)
+`latency_idle` / `latency_loaded`: `loss_pct`, `sent`, `received`, `min_ms`, `avg_ms`,
+`max_ms`, `stddev_ms`, `jitter_ms` (mean absolute difference of consecutive RTTs).
+
+## n8n and Postgres
+
+[`n8n/`](n8n/) holds the server side:
+
+- `schema-v2.sql`: migration for the `lab` database (idempotent). Adds `test_type`, `run_id`,
+  `peer_host_id` and receiver/sender Mbps to `iperf_logs`, the `iperf_traces`,
+  `iperf_trace_hops` and `iperf_trace_responders` tables, `iperf_ingest(jsonb)`
+  (atomic, idempotent ingest of any payload above, v1 payloads included) and `iperf_prune()`.
+- `workflow-v3.json`: "Send speed results 3.0" (Webhook → validate → `SELECT iperf_ingest(...)`,
+  answering only after the insert so failed ingests are retried by the client; the
+  kill-switch branch is unchanged; daily prune at 04:00). The webhook path is the
+  `__IPERF_WEBHOOK_PATH__` placeholder; use the path from `iperf3_client_webhook_url`.
+
+Rollout order: apply `schema-v2.sql` → import the workflow over "Send speed results 2.0"
+(same id, so the webhook URL does not change) → run this role. Old clients keep working
+with the new workflow; new clients need it (the v2 workflow would store traces as 0 Mbps rows).
+
+The Grafana dashboard is `cluster/apps/monitoring/grafana/app/dashboards/iperf-n8n-stats.json`.
 
 ## Testing
 

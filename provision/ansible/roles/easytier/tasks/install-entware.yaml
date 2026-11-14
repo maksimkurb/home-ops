@@ -1,0 +1,22 @@
+---
+- name: Set paths
+  ansible.builtin.set_fact:
+    easytier_bin_dir: /opt/bin
+- name: Binaries
+  ansible.builtin.include_tasks: fetch.yaml
+- name: Config dir
+  ansible.builtin.file: {path: /opt/etc/easytier, state: directory, mode: "0700"}
+- name: Config
+  ansible.builtin.template: {src: config.toml.j2, dest: /opt/etc/easytier/config.toml, mode: "0600"}
+  when: easytier_web_url | length == 0
+  no_log: true
+  notify: Restart easytier
+- name: Command line
+  ansible.builtin.set_fact:
+    easytier_cmdline: "{{ '-w ' ~ easytier_web_url ~ ' --hostname ' ~ easytier_hostname if easytier_web_url | length else '-c /opt/etc/easytier/config.toml' }}"
+- name: init script
+  ansible.builtin.template: {src: easytier.entware.j2, dest: /opt/etc/init.d/S60easytier, mode: "0755"}
+  notify: Restart easytier
+- name: Start
+  ansible.builtin.command: /opt/etc/init.d/S60easytier start
+  changed_when: false

@@ -1,0 +1,21 @@
+---
+# Arguments of iperf3_client.py for one entry of iperf3_client_runs.
+# Evaluated lazily, so `item` is the current loop element of the cron tasks.
+_iperf3_client_run_hostname: "{{ item.client_hostname | default(iperf3_client_hostname) }}"
+_iperf3_client_args: >-
+  --host {{ item.host }}
+  {%- if item.icmp_only | default(false) %}
+  --icmp-only --count {{ item.count | default(10) }}
+  {%- else %}
+  --port {{ item.port }} --threads {{ item.threads }} --duration {{ item.duration_sec }}
+  --omit {{ item.omit_sec | default(iperf3_client_omit_sec) }}
+  {%- endif %}
+  {%- if not (item.trace | default(iperf3_client_trace_enabled)) %} --no-trace{% endif %}
+  {%- if item.bind_interface is defined %} --bind-interface {{ item.bind_interface }}{% endif %}
+  {%- if _iperf3_client_run_hostname %} --client-hostname {{ _iperf3_client_run_hostname }}{% endif %}
+
+# Release asset suffix by `ansible_facts.architecture`; static musl builds run on
+# glibc distros and on OpenWrt alike.
+_iperf3_client_ttl_targets:
+  x86_64: x86_64-unknown-linux-musl
+  aarch64: aarch64-unknown-linux-musl
