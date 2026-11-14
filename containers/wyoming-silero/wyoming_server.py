@@ -15,6 +15,8 @@ from wyoming.info import Attribution, Describe, Info, TtsProgram, TtsVoice
 from wyoming.server import AsyncEventHandler, AsyncServer
 from wyoming.tts import Synthesize
 
+from text_prep import prepare_text
+
 _LOGGER = logging.getLogger(__name__)
 _SENTENCE_RE = re.compile(r"(?<=[.!?…])\s+|\n+")
 _MAX_CHARS = 700
@@ -62,7 +64,7 @@ class SileroEventHandler(AsyncEventHandler):
             _LOGGER.warning("Unknown voice %r, using %s", speaker, self.args.default_speaker)
             speaker = self.args.default_speaker
 
-        sentences = split_text(synthesize.text)
+        sentences = split_text(prepare_text(synthesize.text))
         _LOGGER.info("Synthesizing %d chars (%d parts) speaker=%s", len(synthesize.text), len(sentences), speaker)
         rate, width, channels = self.args.sample_rate, 2, 1
         await self.write_event(AudioStart(rate=rate, width=width, channels=channels).event())
@@ -73,7 +75,7 @@ class SileroEventHandler(AsyncEventHandler):
                     async with self.lock:
                         pcm = await asyncio.to_thread(self._synthesize, sentence, speaker)
                 except Exception:
-                    _LOGGER.exception("Failed to synthesize part: %r", sentence[:80])
+                    _LOGGER.error("Failed to synthesize part: %r", sentence[:80], exc_info=True)
                     continue
                 produced = True
                 for start in range(0, len(pcm), _CHUNK_SAMPLES):
