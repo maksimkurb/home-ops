@@ -7,4 +7,5 @@ resources:
   - authelia-redis
   - crowdsec/ks.yaml
   - glauth
+  - headplane
   - vaultwarden

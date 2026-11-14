@@ -1,0 +1,92 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app headplane
+  namespace: security
+spec:
+  interval: 30m
+  releaseName: *app
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    global:
+      nameOverride: *app
+    controllers:
+      main:
+        containers:
+          main:
+            image:
+              repository: ghcr.io/tale/headplane
+              tag: 0.8.2
+            resources:
+              requests:
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 3000
+    route:
+      main:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - headplane.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - matches:
+              - path:
+                  type: Exact
+                  value: /
+            filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /admin/
+                  statusCode: 302
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: main
+                port: 3000
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Maintenance
+          gethomepage.dev/icon: mdi-lan-connect
+          gethomepage.dev/name: Headplane
+          gethomepage.dev/href: https://headplane.${SECRET_PRIVATE_DOMAIN}/admin/
+    persistence:
+      data:
+        existingClaim: headplane-data-v1
+        globalMounts:
+          - path: /var/lib/headplane
+      config:
+        type: secret
+        name: headplane-config
+        globalMounts:
+          - path: /etc/headplane/config.yaml
+            subPath: config.yaml
+            readOnly: true
