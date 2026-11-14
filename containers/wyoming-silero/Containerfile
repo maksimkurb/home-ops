@@ -15,8 +15,11 @@ ENV PYTHONUNBUFFERED=1 \
 RUN pip install torch numpy scipy "wyoming==1.8.0" --extra-index-url https://download.pytorch.org/whl/cpu
 
 ADD https://models.silero.ai/models/tts/ru/${SILERO_MODEL}.pt /opt/models/silero.pt
+COPY SILERO_LICENSE /usr/share/licenses/Silero/LICENSE
 COPY THIRD_PARTY_NOTICES.md /usr/share/doc/wyoming-silero/THIRD_PARTY_NOTICES.md
 COPY wyoming_server.py /app/wyoming_server.py
+
+LABEL org.opencontainers.image.description="Wyoming TTS server with bundled Silero model (CC BY-NC-SA 4.0, non-commercial use only)"
 
 EXPOSE 10200
 

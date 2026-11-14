@@ -26,4 +26,5 @@ Latin text, so numbers should be written out in words.
 
 ## License
 
-Silero models are CC BY-NC-SA 4.0 (non-commercial). See `THIRD_PARTY_NOTICES.md`.
+The bundled Silero model is CC BY-NC-SA 4.0: attribution required, **non-commercial use only**.
+See `THIRD_PARTY_NOTICES.md` and `SILERO_LICENSE`.
