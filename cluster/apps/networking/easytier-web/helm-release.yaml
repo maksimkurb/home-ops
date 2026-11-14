@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app easytier-web
+  namespace: networking
+spec:
+  interval: 30m
+  releaseName: *app
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    global:
+      nameOverride: *app
+    controllers:
+      main:
+        strategy: Recreate # sqlite on a RWO volume
+        containers:
+          main:
+            image:
+              repository: easytier/easytier
+              tag: v2.6.4
+            # the image's entrypoint is easytier-core; run the embedded web console instead
+            command:
+              - /sbin/tini
+              - --
+              - easytier-web-embed
+              - --oidc-issuer-url=https://auth.${SECRET_PUBLIC_DOMAIN}
+              - --oidc-client-id=easytier
+              - --oidc-redirect-url=https://et-admin.${SECRET_PRIVATE_DOMAIN}/api/v1/auth/oidc/callback
+            env:
+              TZ: ${TIMEZONE}
+              ET_WEB_DB: /data/et.db
+              # UI + REST API share one port (same-origin), nodes use the config server
+              ET_API_SERVER_PORT: "11211"
+              # ws behind the HTTPS gateway: nodes connect with wss://<host>/<user>
+              ET_CONFIG_SERVER_PROTOCOL: ws
+              ET_CONFIG_SERVER_PORT: "22020"
+              # sign-in is OIDC only (Authelia, group admins): registration is off and the
+              # password endpoints are blocked on the UI route
+              ET_DISABLE_REGISTRATION: "true"
+              OIDC_CLIENT_SECRET: ${SECRET_EASYTIER_OAUTH_CLIENT_SECRET}
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 11211
+                  initialDelaySeconds: 10
+                  periodSeconds: 20
+              readiness: *probes
+            resources:
+              requests:
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: 11211
+      config:
+        controller: main
+        ports:
+          http:
+            port: 80
+            targetPort: 22020
+    route:
+      ui:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - et-admin.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          # no local accounts: password login and registration are not reachable
+          - matches:
+              - path:
+                  type: Exact
+                  value: /api/v1/auth/login
+              - path:
+                  type: Exact
+                  value: /api/v1/auth/register
+            filters:
+              - type: URLRewrite
+                urlRewrite:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /blocked
+            backendRefs:
+              - identifier: main
+                port: 80
+          - backendRefs:
+              - identifier: main
+                port: 80
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Maintenance
+          gethomepage.dev/icon: mdi-lan-connect
+          gethomepage.dev/name: EasyTier
+          gethomepage.dev/href: https://et-admin.${SECRET_PRIVATE_DOMAIN}
+      config:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - et.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - backendRefs:
+              - identifier: config
+                port: 80
+    persistence:
+      data:
+        existingClaim: easytier-web-data-v1
+        globalMounts:
+          - path: /data
