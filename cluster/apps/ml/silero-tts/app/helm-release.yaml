@@ -38,7 +38,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maksimkurb/wyoming-silero
-              tag: "20261114213347"
+              tag: "20261114222751"
               pullPolicy: Always
             env:
               TZ: "${TIMEZONE}"
