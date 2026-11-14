@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1
+FROM python:3.12-slim
+
+ARG SILERO_MODEL=v5_6_ru
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    SILERO_MODEL=${SILERO_MODEL} \
+    MODEL_PATH=/opt/models/silero.pt \
+    SAMPLE_RATE=24000 \
+    DEFAULT_SPEAKER=aidar \
+    NUM_THREADS=4 \
+    URI=tcp://0.0.0.0:10200
+
+RUN pip install torch numpy scipy "wyoming==1.8.0" --extra-index-url https://download.pytorch.org/whl/cpu
+
+ADD https://models.silero.ai/models/tts/ru/${SILERO_MODEL}.pt /opt/models/silero.pt
+COPY THIRD_PARTY_NOTICES.md /usr/share/doc/wyoming-silero/THIRD_PARTY_NOTICES.md
+COPY wyoming_server.py /app/wyoming_server.py
+
+EXPOSE 10200
+
+ENTRYPOINT ["python", "/app/wyoming_server.py"]
