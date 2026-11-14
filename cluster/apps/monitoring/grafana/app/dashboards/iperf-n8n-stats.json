@@ -1,47 +1,21 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_GRAFANA-POSTGRESQL-DATASOURCE",
-      "label": "grafana-postgresql-datasource",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "grafana-postgresql-datasource",
-      "pluginName": "PostgreSQL"
-    }
+  "uid": "mam8zpv",
+  "title": "iPerf Dashboard (Public)",
+  "description": "A ↔ B connectivity: iperf3 throughput, ping latency/jitter/loss, ttl traceroute with ECMP discovery.",
+  "tags": [
+    "network",
+    "iperf3",
+    "ttl"
   ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.6.1"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-postgresql-datasource",
-      "name": "PostgreSQL",
-      "version": "11.6.1"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "trend",
-      "name": "Trend",
-      "version": ""
-    }
-  ],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "5m",
+  "schemaVersion": 42,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
   "annotations": {
     "list": [
       {
@@ -58,1259 +32,2820 @@
       }
     ]
   },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": 22,
   "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Datasource",
+        "type": "datasource",
+        "query": "grafana-postgresql-datasource",
+        "current": {
+          "text": "PostgreSQL Lab",
+          "value": "postgres"
+        },
+        "refresh": 1,
+        "regex": "",
+        "options": []
+      },
+      {
+        "name": "client",
+        "label": "A (client)",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT DISTINCT h.id || '___' || COALESCE(h.alias, h.host)\nFROM iperf_hosts h\nWHERE h.id IN (SELECT run_on_host_id FROM iperf_logs WHERE created_at > now() - interval '30 days'\n               UNION SELECT run_on_host_id FROM iperf_traces WHERE created_at > now() - interval '30 days')",
+        "query": "SELECT DISTINCT h.id || '___' || COALESCE(h.alias, h.host)\nFROM iperf_hosts h\nWHERE h.id IN (SELECT run_on_host_id FROM iperf_logs WHERE created_at > now() - interval '30 days'\n               UNION SELECT run_on_host_id FROM iperf_traces WHERE created_at > now() - interval '30 days')",
+        "refresh": 1,
+        "multi": true,
+        "includeAll": true,
+        "options": [],
+        "current": {},
+        "sort": 1,
+        "description": "Host that ran the test (one per WAN). Pick several to compare them against the same peer.",
+        "allValue": "0",
+        "regex": "/(?<value>.*)___(?<text>.*)/"
+      },
+      {
+        "name": "peer",
+        "label": "B (peer)",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT DISTINCT h.id || '___' || COALESCE(h.alias, h.host)\nFROM iperf_hosts h\nWHERE h.id IN (\n  SELECT peer_host_id FROM iperf_logs\n  WHERE created_at > now() - interval '30 days' AND ('0' IN ($client) OR run_on_host_id IN ($client))\n  UNION\n  SELECT peer_host_id FROM iperf_traces\n  WHERE created_at > now() - interval '30 days' AND ('0' IN ($client) OR run_on_host_id IN ($client)))",
+        "query": "SELECT DISTINCT h.id || '___' || COALESCE(h.alias, h.host)\nFROM iperf_hosts h\nWHERE h.id IN (\n  SELECT peer_host_id FROM iperf_logs\n  WHERE created_at > now() - interval '30 days' AND ('0' IN ($client) OR run_on_host_id IN ($client))\n  UNION\n  SELECT peer_host_id FROM iperf_traces\n  WHERE created_at > now() - interval '30 days' AND ('0' IN ($client) OR run_on_host_id IN ($client)))",
+        "refresh": 1,
+        "multi": true,
+        "includeAll": true,
+        "options": [],
+        "current": {},
+        "sort": 1,
+        "description": "The other end: iperf3 server / ping target.",
+        "allValue": "0",
+        "regex": "/(?<value>.*)___(?<text>.*)/"
+      },
+      {
+        "name": "trace_id",
+        "label": "Trace",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT t.id AS __value,\n  t.id || ' · ' || to_char(t.created_at AT TIME ZONE 'UTC', 'MM-DD HH24:MI') || ' UTC · ' || COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS __text\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY t.id DESC\nLIMIT 100",
+        "query": "SELECT t.id AS __value,\n  t.id || ' · ' || to_char(t.created_at AT TIME ZONE 'UTC', 'MM-DD HH24:MI') || ' UTC · ' || COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS __text\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY t.id DESC\nLIMIT 100",
+        "refresh": 2,
+        "multi": false,
+        "includeAll": false,
+        "options": [],
+        "current": {},
+        "sort": 0,
+        "description": "Defaults to the latest trace of the selection."
+      },
+      {
+        "name": "test_id",
+        "label": "Test",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "${datasource}"
+        },
+        "definition": "SELECT l.id AS __value,\n  l.id || ' · ' || to_char(l.created_at AT TIME ZONE 'UTC', 'MM-DD HH24:MI') || ' UTC · ' || COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host)\n    || CASE l.test_type WHEN 'download' THEN ' ↓' ELSE ' ↑' END AS __text\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at) AND l.test_type <> 'icmp' AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY l.id DESC\nLIMIT 100",
+        "query": "SELECT l.id AS __value,\n  l.id || ' · ' || to_char(l.created_at AT TIME ZONE 'UTC', 'MM-DD HH24:MI') || ' UTC · ' || COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host)\n    || CASE l.test_type WHEN 'download' THEN ' ↓' ELSE ' ↑' END AS __text\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at) AND l.test_type <> 'icmp' AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY l.id DESC\nLIMIT 100",
+        "refresh": 2,
+        "multi": false,
+        "includeAll": false,
+        "options": [],
+        "current": {},
+        "sort": 0,
+        "description": "Per-second speed of one test (Raw results row)."
+      }
+    ]
+  },
   "panels": [
     {
+      "id": 1,
+      "type": "table",
+      "title": "Pairs (A ↔ B) — selected range",
+      "description": "One row per client (A, the host running the test — one per WAN) and peer (B).\np10 = speed you get 90 % of the time. Bloat = loaded − idle RTT (median). Loss trace = ICMP loss at the destination from ttl. Routes = distinct router paths seen. ECMP = most routers answering a single hop. Click A or B to focus the dashboard on that pair.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "${datasource}"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "area"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "orange",
-                "value": 50
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "green",
-                "value": 200
-              }
-            ]
-          },
-          "unit": "Mbits"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "number"
-            },
-            "properties": [
-              {
-                "id": "min",
-                "value": 0
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 500
-              }
-            ]
-          }
-        ]
-      },
       "gridPos": {
-        "h": 12,
-        "w": 12,
+        "h": 9,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "median"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND jsonb_array_length(l.second_measurements->'data') > 0\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.created_at",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [
-                  {
-                    "name": "average_speed",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              },
-              {
-                "parameters": [
-                  {
-                    "name": "created_at",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [],
-            "orderBy": {
-              "property": {
-                "type": "string"
-              },
-              "type": "property"
-            }
-          },
-          "table": "n8n_iperf_logs"
-        }
-      ],
-      "title": "Host 1 avg. speed",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "area"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "orange",
-                "value": 50
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "green",
-                "value": 200
-              }
-            ]
-          },
-          "unit": "Mbits"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "number"
-            },
-            "properties": [
-              {
-                "id": "min",
-                "value": 0
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 500
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "median"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\r\n  l.\"created_at\" AS time,\r\n  l.\"average_speed\" AS value,\r\n  COALESCE(sh.\"alias\", sh.\"host\") || ' -> ' || COALESCE(th.\"alias\", th.\"host\") AS metric\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\r\nJOIN iperf_hosts th ON th.id = l.target_host_id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE\r\n      WHEN '0' IN ($host_filter) THEN false\r\n      WHEN '0' IN ($second_host_filter) THEN false\r\n      ELSE true\r\n    END\r\n  )\r\n  AND (\r\n    (l.\"source_host_id\" IN ($host_filter) AND l.\"target_host_id\" IN ($second_host_filter))\r\n    OR\r\n    (l.\"target_host_id\" IN ($host_filter) AND l.\"source_host_id\" IN ($second_host_filter))\r\n  )\r\nORDER BY l.created_at",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [
-                  {
-                    "name": "average_speed",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              },
-              {
-                "parameters": [
-                  {
-                    "name": "created_at",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [],
-            "orderBy": {
-              "property": {
-                "type": "string"
-              },
-              "type": "property"
-            }
-          },
-          "table": "n8n_iperf_logs"
-        }
-      ],
-      "title": "Host 1 <-> Host 2 avg. speed",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "custom": {
             "align": "auto",
             "cellOptions": {
               "type": "auto"
             },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
+            "inspect": true
           }
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "average_speed"
+              "options": "A (client)"
             },
             "properties": [
-              {
-                "id": "custom.width",
-                "value": 127
-              },
-              {
-                "id": "unit",
-                "value": "Mbits"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "created_at"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 444
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 118
-              },
               {
                 "id": "links",
                 "value": [
                   {
-                    "title": "Show details",
-                    "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-test_id=${__data.fields.ID}&${__all_variables:queryparam}"
+                    "title": "Focus on this pair",
+                    "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-client=${__data.fields.c_id}&var-peer=${__data.fields.p_id}&var-trace_id=${__data.fields.last_trace}&${datasource:queryparam}&${__url_time_range}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "B (peer)"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Focus on this pair",
+                    "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-client=${__data.fields.c_id}&var-peer=${__data.fields.p_id}&var-trace_id=${__data.fields.last_trace}&${datasource:queryparam}&${__url_time_range}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "↓ p50"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Mbits"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "↓ p10"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Mbits"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "↑ p50"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Mbits"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "↑ p10"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Mbits"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "green",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RTT idle"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 80
+                    },
+                    {
+                      "color": "orange",
+                      "value": 150
+                    },
+                    {
+                      "color": "red",
+                      "value": 250
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bloat ↓"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 30
+                    },
+                    {
+                      "color": "orange",
+                      "value": 100
+                    },
+                    {
+                      "color": "red",
+                      "value": 300
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bloat ↑"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 30
+                    },
+                    {
+                      "color": "orange",
+                      "value": 100
+                    },
+                    {
+                      "color": "red",
+                      "value": 300
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Jitter"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 15
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Loss idle"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Loss load"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Loss trace"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Routes"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 4
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ECMP"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "text",
+                      "value": null
+                    },
+                    {
+                      "color": "blue",
+                      "value": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last seen"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              },
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_id"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p_id"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "last_trace"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [],
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH l AS (\n  SELECT l.* FROM iperf_logs l\n  WHERE $__timeFilter(l.created_at)\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\n), s AS (\n  SELECT run_on_host_id AS c_id, peer_host_id AS p_id,\n    max(created_at) AS last_seen,\n    count(*) FILTER (WHERE test_type <> 'icmp') AS tests,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY average_speed) FILTER (WHERE test_type = 'download') AS down_p50,\n    percentile_cont(0.1) WITHIN GROUP (ORDER BY average_speed) FILTER (WHERE test_type = 'download') AS down_p10,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY average_speed) FILTER (WHERE test_type = 'upload') AS up_p50,\n    percentile_cont(0.1) WITHIN GROUP (ORDER BY average_speed) FILTER (WHERE test_type = 'upload') AS up_p10,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY (latency_idle->>'avg_ms')::numeric)\n      FILTER (WHERE test_type IN ('download', 'icmp')) AS idle_rtt,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY (latency_loaded->>'avg_ms')::numeric - (latency_idle->>'avg_ms')::numeric)\n      FILTER (WHERE test_type = 'download') AS bloat_down,\n    percentile_cont(0.5) WITHIN GROUP (ORDER BY (latency_loaded->>'avg_ms')::numeric - (latency_idle->>'avg_ms')::numeric)\n      FILTER (WHERE test_type = 'upload') AS bloat_up,\n    avg((latency_idle->>'jitter_ms')::numeric) FILTER (WHERE test_type IN ('download', 'icmp')) AS idle_jitter,\n    avg((latency_idle->>'loss_pct')::numeric) FILTER (WHERE test_type IN ('download', 'icmp')) AS idle_loss,\n    avg((latency_loaded->>'loss_pct')::numeric) FILTER (WHERE test_type IN ('download', 'upload')) AS loaded_loss\n  FROM l GROUP BY 1, 2\n), t AS (\n  SELECT t.run_on_host_id AS c_id, t.peer_host_id AS p_id,\n    max(t.id) AS last_trace,\n    (array_agg(t.hop_count ORDER BY t.created_at DESC))[1] AS hops,\n    (array_agg(t.asn_path ORDER BY t.created_at DESC))[1] AS asn_path,\n    count(DISTINCT t.path_hash) AS routes,\n    max(t.ecmp_max_width) AS ecmp_width,\n    avg(t.dest_loss_pct) AS trace_loss\n  FROM iperf_traces t\n  WHERE $__timeFilter(t.created_at)\n  AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n  GROUP BY 1, 2\n)\nSELECT\n  COALESCE(c.alias, c.host) AS \"A (client)\",\n  COALESCE(p.alias, p.host) AS \"B (peer)\",\n  s.down_p50 AS \"↓ p50\", s.down_p10 AS \"↓ p10\",\n  s.up_p50 AS \"↑ p50\", s.up_p10 AS \"↑ p10\",\n  s.idle_rtt AS \"RTT idle\",\n  s.bloat_down AS \"Bloat ↓\", s.bloat_up AS \"Bloat ↑\",\n  s.idle_jitter AS \"Jitter\",\n  s.idle_loss AS \"Loss idle\", s.loaded_loss AS \"Loss load\", t.trace_loss AS \"Loss trace\",\n  t.hops AS \"Hops\", t.routes AS \"Routes\", t.ecmp_width AS \"ECMP\",\n  t.asn_path AS \"AS path\",\n  GREATEST(s.last_seen, (SELECT created_at FROM iperf_traces WHERE id = t.last_trace)) AS \"Last seen\",\n  COALESCE(s.c_id, t.c_id) AS c_id, COALESCE(s.p_id, t.p_id) AS p_id, t.last_trace\nFROM s FULL JOIN t USING (c_id, p_id)\nJOIN iperf_hosts c ON c.id = COALESCE(s.c_id, t.c_id)\nJOIN iperf_hosts p ON p.id = COALESCE(s.p_id, t.p_id)\nORDER BY 1, 2",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "row",
+      "title": "Throughput",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "panels": []
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "↓ Download (receiver Mbps)",
+      "description": "Receiver-side average after the --omit slow-start window (v2 clients); v1 rows average the last 70 % of seconds.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbits",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT l.created_at AS time, l.average_speed AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at)\n  AND l.test_type = 'download'\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "↑ Upload (receiver Mbps)",
+      "description": "Receiver-side average after the --omit slow-start window (v2 clients); v1 rows average the last 70 % of seconds.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbits",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT l.created_at AS time, l.average_speed AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at)\n  AND l.test_type = 'upload'\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "row",
+      "title": "Latency, jitter, loss",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "panels": []
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "RTT idle (ping avg)",
+      "description": "ICMP RTT measured before the bandwidth test (ICMP-only runs included).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT l.created_at AS time, (l.latency_idle->>'avg_ms')::numeric AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at)\n  AND l.test_type IN ('download', 'icmp')\n  AND l.latency_idle->>'avg_ms' IS NOT NULL\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Bufferbloat (loaded − idle RTT)",
+      "description": "How much the RTT grows while the link is saturated. < 30 ms is good, > 100 ms hurts games/calls.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "thresholdsStyle": {
+              "mode": "dashed+area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "orange",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 300
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT l.created_at AS time,\n  (l.latency_loaded->>'avg_ms')::numeric - (l.latency_idle->>'avg_ms')::numeric AS value,\n  COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || CASE l.test_type WHEN 'download' THEN ' ↓' ELSE ' ↑' END AS metric\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at)\n  AND l.test_type IN ('download', 'upload')\n  AND l.latency_loaded->>'avg_ms' IS NOT NULL AND l.latency_idle->>'avg_ms' IS NOT NULL\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Jitter (mean |ΔRTT|)",
+      "description": "idle/load: ping during the idle phase and under load. trace: ttl ICMP probes to the destination.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "dashed+area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 15
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, value, metric FROM (\n  SELECT l.created_at AS time, (l.latency_idle->>'jitter_ms')::numeric AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' idle' AS metric\n  FROM iperf_logs l\n  JOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\n  WHERE $__timeFilter(l.created_at) AND l.test_type IN ('download', 'icmp')\n    AND l.latency_idle->>'jitter_ms' IS NOT NULL AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\n  UNION ALL\n  SELECT l.created_at, (l.latency_loaded->>'jitter_ms')::numeric,\n         COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || CASE l.test_type WHEN 'download' THEN ' load ↓' ELSE ' load ↑' END\n  FROM iperf_logs l\n  JOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\n  WHERE $__timeFilter(l.created_at) AND l.test_type IN ('download', 'upload')\n    AND l.latency_loaded->>'jitter_ms' IS NOT NULL AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\n  UNION ALL\n  SELECT t.created_at, t.dest_jitter_ms, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' trace'\n  FROM iperf_traces t\n  JOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\n  WHERE $__timeFilter(t.created_at) AND t.dest_jitter_ms IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n) x\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Packet loss",
+      "description": "ICMP loss to the peer: idle ping, ping under load, and ttl probes (10 per run).",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 60,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "dashed+area"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, value, metric FROM (\n  SELECT l.created_at AS time, (l.latency_idle->>'loss_pct')::numeric AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' idle' AS metric\n  FROM iperf_logs l\n  JOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\n  WHERE $__timeFilter(l.created_at) AND l.test_type IN ('download', 'icmp')\n    AND l.latency_idle->>'loss_pct' IS NOT NULL AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\n  UNION ALL\n  SELECT l.created_at, (l.latency_loaded->>'loss_pct')::numeric,\n         COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || CASE l.test_type WHEN 'download' THEN ' load ↓' ELSE ' load ↑' END\n  FROM iperf_logs l\n  JOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\n  WHERE $__timeFilter(l.created_at) AND l.test_type IN ('download', 'upload')\n    AND l.latency_loaded->>'loss_pct' IS NOT NULL AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\n  UNION ALL\n  SELECT t.created_at, t.dest_loss_pct, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' trace'\n  FROM iperf_traces t\n  JOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\n  WHERE $__timeFilter(t.created_at) AND t.dest_loss_pct IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n) x\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "TCP retransmits per second",
+      "description": "Sender-side retransmits / measured seconds. Rows without duration_sec (v1) assume 15 s.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 36
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT l.created_at AS time, l.retransmits::numeric / COALESCE(NULLIF(l.duration_sec, 0), 15) AS value,\n  COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || CASE l.test_type WHEN 'download' THEN ' ↓' ELSE ' ↑' END AS metric\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at)\n  AND l.test_type IN ('download', 'upload') AND l.retransmits IS NOT NULL\n  AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "Destination RTT spread (ttl min / max)",
+      "description": "Lowest and highest of the 10 ttl ICMP probes per run. A growing gap = queueing/instability.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, value, metric FROM (\n  SELECT t.created_at AS time, t.dest_min_ms AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' min' AS metric\n  FROM iperf_traces t JOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\n  WHERE $__timeFilter(t.created_at) AND t.dest_min_ms IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n  UNION ALL\n  SELECT t.created_at, t.dest_max_ms, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) || ' max'\n  FROM iperf_traces t JOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\n  WHERE $__timeFilter(t.created_at) AND t.dest_max_ms IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n) x\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "row",
+      "title": "Path (ttl traceroute)",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "panels": []
+    },
+    {
+      "id": 13,
+      "type": "state-timeline",
+      "title": "Route changes",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "description": "Route number per pair, in order of first appearance in the range (1 = the first route seen). A colour change = a router on the ICMP path changed. See the Traces table for the AS path.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "fieldConfig": {
+        "defaults": {
+          "displayName": "${__field.labels.metric}",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "text": "route 1",
+                  "color": "green",
+                  "index": 0
+                },
+                "2": {
+                  "text": "route 2",
+                  "color": "blue",
+                  "index": 1
+                },
+                "3": {
+                  "text": "route 3",
+                  "color": "purple",
+                  "index": 2
+                },
+                "4": {
+                  "text": "route 4",
+                  "color": "orange",
+                  "index": 3
+                },
+                "5": {
+                  "text": "route 5",
+                  "color": "yellow",
+                  "index": 4
+                },
+                "6": {
+                  "text": "route 6",
+                  "color": "red",
+                  "index": 5
+                },
+                "7": {
+                  "text": "route 7",
+                  "color": "super-light-blue",
+                  "index": 6
+                },
+                "8": {
+                  "text": "route 8",
+                  "color": "dark-purple",
+                  "index": 7
+                }
+              }
+            }
+          ],
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "auto",
+        "mergeValues": true,
+        "rowHeight": 0.8,
+        "alignValue": "left",
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH t AS (\n  SELECT t.*, min(t.created_at) OVER (PARTITION BY t.run_on_host_id, t.peer_host_id, t.path_hash) AS first_seen\n  FROM iperf_traces t\n  WHERE $__timeFilter(t.created_at) AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\n)\nSELECT t.created_at AS time, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric,\n  dense_rank() OVER (PARTITION BY t.run_on_host_id, t.peer_host_id ORDER BY t.first_seen, t.path_hash)::text AS route\nFROM t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nORDER BY 1",
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "metric"
+            ],
+            "keepFields": false,
+            "naming": {
+              "asLabels": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Hop count",
+      "description": "",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 53
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "stepAfter",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT t.created_at AS time, t.hop_count AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND t.hop_count IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "ECMP width (routers at the widest hop)",
+      "description": "From the multi-flow (UDP, 4 source ports) pass. 1 = single path.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 53
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 0,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "stepAfter",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT t.created_at AS time, t.ecmp_max_width AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND t.ecmp_max_width IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "Where loss starts (TTL)",
+      "description": "First hop from which every later hop loses ≥ 5 % — real loss, not ICMP rate limiting on one router. Empty = no persistent loss.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 53
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 60,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": 3600000,
+            "lineInterpolation": "linear",
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "min",
+            "max",
+            "count"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT t.created_at AS time, t.loss_origin_ttl AS value, COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS metric\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND t.loss_origin_ttl IS NOT NULL AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY 1",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "type": "row",
+      "title": "Trace ${trace_id}",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 61
+      },
+      "panels": []
+    },
+    {
+      "id": 18,
+      "type": "table",
+      "title": "Hops — trace ${trace_id}",
+      "description": "ICMP pass: loss/latency per hop. Loss on a single middle hop that does not carry on to later hops is ICMP rate limiting on that router, not real loss. ECMP/Alternative routers come from the multi-flow UDP pass.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 14,
+        "x": 0,
+        "y": 62
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TTL"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Router"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Hostname"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AS"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Loss"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Min"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "StdDev"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Jitter"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 15
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ECMP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "text",
+                      "value": null
+                    },
+                    {
+                      "color": "blue",
+                      "value": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [],
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH e AS (\n  SELECT ttl, count(*) AS n,\n         string_agg(host(ip) || COALESCE(' ' || hostname, ''), ', ' ORDER BY received DESC) AS routers\n  FROM iperf_trace_responders\n  WHERE trace_id = ${trace_id} AND pass = 'ecmp'\n  GROUP BY ttl\n), o AS (\n  SELECT r.ttl, string_agg(host(r.ip), ', ' ORDER BY r.received DESC) AS others\n  FROM iperf_trace_responders r\n  JOIN iperf_trace_hops h USING (trace_id, pass, ttl)\n  WHERE r.trace_id = ${trace_id} AND r.pass = 'path' AND r.ip IS DISTINCT FROM h.primary_ip\n  GROUP BY r.ttl\n)\nSELECT h.ttl AS \"TTL\",\n  COALESCE(host(h.primary_ip), '*') AS \"Router\",\n  r.hostname AS \"Hostname\",\n  CASE WHEN r.asn IS NOT NULL THEN 'AS' || r.asn || ' ' || split_part(r.asn_name, ' - ', 1) END AS \"AS\",\n  h.loss_pct AS \"Loss\",\n  r.avg_ms AS \"Avg\", r.min_ms AS \"Min\", r.max_ms AS \"Max\", r.stddev_ms AS \"StdDev\", r.jitter_ms AS \"Jitter\",\n  COALESCE(e.n, 0) AS \"ECMP\",\n  concat_ws(' | ', o.others, CASE WHEN e.n > 1 THEN e.routers END) AS \"Alternative routers\"\nFROM iperf_trace_hops h\nLEFT JOIN iperf_trace_responders r\n  ON r.trace_id = h.trace_id AND r.pass = h.pass AND r.ttl = h.ttl AND r.ip = h.primary_ip\nLEFT JOIN e ON e.ttl = h.ttl\nLEFT JOIN o ON o.ttl = h.ttl\nWHERE h.trace_id = ${trace_id} AND h.pass = 'path'\nORDER BY h.ttl",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "barchart",
+      "title": "Latency by hop (stacked min → avg → max)",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 10,
+        "x": 14,
+        "y": 62
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "min"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "avg"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "yellow"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "xField": "hop",
+        "stacking": "normal",
+        "showValue": "never",
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        },
+        "barWidth": 0.8,
+        "groupWidth": 0.7,
+        "xTickLabelRotation": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT lpad(h.ttl::text, 2, '0') || ' ' || COALESCE(host(h.primary_ip), '*') AS hop,\n  r.min_ms AS \"min\", r.avg_ms - r.min_ms AS \"avg\", r.max_ms - r.avg_ms AS \"max\"\nFROM iperf_trace_hops h\nLEFT JOIN iperf_trace_responders r\n  ON r.trace_id = h.trace_id AND r.pass = h.pass AND r.ttl = h.ttl AND r.ip = h.primary_ip\nWHERE h.trace_id = ${trace_id} AND h.pass = 'path'\nORDER BY h.ttl",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "table",
+      "title": "Traces",
+      "description": "Click a trace id to load its hops above.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trace"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show hops",
+                    "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-trace_id=${__data.fields.Trace}&${client:queryparam}&${peer:queryparam}&${datasource:queryparam}&${__url_time_range}"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Loss"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 2
+                    },
+                    {
+                      "color": "red",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RTT"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Jitter"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 5
+                    },
+                    {
+                      "color": "orange",
+                      "value": 15
+                    },
+                    {
+                      "color": "red",
+                      "value": 30
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Route changed"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "true": {
+                        "text": "changed",
+                        "color": "orange"
+                      },
+                      "false": {
+                        "text": "",
+                        "color": "transparent"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [],
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": ""
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT t.id AS \"Trace\", t.created_at AS \"Time\", COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS \"Pair\",\n  t.hop_count AS \"Hops\", t.reached AS \"Reached\", t.dest_loss_pct AS \"Loss\", t.dest_avg_ms AS \"RTT\",\n  t.dest_jitter_ms AS \"Jitter\", t.ecmp_hops AS \"ECMP hops\", t.ecmp_max_width AS \"ECMP width\",\n  t.path_hash IS DISTINCT FROM lag(t.path_hash) OVER (PARTITION BY t.run_on_host_id, t.peer_host_id ORDER BY t.created_at)\n    AS \"Route changed\",\n  t.asn_path AS \"AS path\", t.bind_interface AS \"Iface\"\nFROM iperf_traces t\nJOIN iperf_hosts c ON c.id = t.run_on_host_id\nJOIN iperf_hosts p ON p.id = t.peer_host_id\nWHERE $__timeFilter(t.created_at) AND ('0' IN ($client) OR t.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR t.peer_host_id IN ($peer))\nORDER BY t.created_at DESC\nLIMIT 300",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "type": "row",
+      "title": "Raw results",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 84
+      },
+      "panels": [
+        {
+          "id": 21,
+          "type": "table",
+          "title": "Latest results",
+          "description": "",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 14,
+            "x": 0,
+            "y": 85
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": true
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ID"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Per-second speed",
+                        "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-test_id=${__data.fields.ID}&${client:queryparam}&${peer:queryparam}&${datasource:queryparam}&${__url_time_range}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Trace"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Show hops",
+                        "url": "/d/${__dashboard.uid}/${__dashboard.url}?var-trace_id=${__data.fields.Trace}&${client:queryparam}&${peer:queryparam}&${datasource:queryparam}&${__url_time_range}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 70
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsLocal"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Mbps"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red",
+                          "value": null
+                        },
+                        {
+                          "color": "orange",
+                          "value": 20
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "green",
+                          "value": 100
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "RTT idle"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "RTT load"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Jitter load"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Loss load"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 0.5
+                        },
+                        {
+                          "color": "orange",
+                          "value": 2
+                        },
+                        {
+                          "color": "red",
+                          "value": 5
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
                   }
                 ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "host"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 174
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "date"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 178
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 124
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "source_host"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 217
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "target_host"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 230
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Date"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 209
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "iperf_host"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 158
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Source"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 171
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 12
-      },
-      "id": 2,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "ID"
-          }
-        ]
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT \r\n  l.id,\r\n  l.created_at,\r\n  COALESCE(ih.alias, ih.host) as iperf_host,\r\n  COALESCE(sh.alias, sh.host) as source_host,\r\n  COALESCE(th.alias, th.host) as target_host,\r\n  l.average_speed,\r\n  l.bind_interface,\r\n  (l.latency_idle->>'avg_ms')::numeric AS idle_ms,\r\n  (l.latency_loaded->>'avg_ms')::numeric AS loaded_ms,\r\n  l.retransmits,\r\n  l.second_measurements\r\nFROM iperf_logs l\r\nJOIN iperf_hosts sh ON l.source_host_id = sh.id\r\nJOIN iperf_hosts th ON l.target_host_id = th.id\r\nJOIN iperf_hosts ih ON l.run_on_host_id = ih.id\r\nWHERE\r\n  $__timeFilter(l.created_at)\r\n  AND jsonb_array_length(l.second_measurements->'data') > 0\r\n  AND (\r\n    -- host_filter: matches either source or target\r\n    CASE \r\n      WHEN '0' IN ($host_filter) THEN true\r\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\r\n    END\r\n  )\r\nORDER BY l.id DESC\r\nLIMIT 100",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Latest results",
-      "transformations": [
-        {
-          "id": "organize",
           "options": {
-            "excludeByName": {
-              "id": false,
-              "second_measurements": true
-            },
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "average_speed": "Avg. speed",
-              "created_at": "Date",
-              "id": "ID",
-              "iperf_host": "Client on",
-              "second_measurements": "",
-              "source_host": "Source",
-              "target_host": "Target",
-              "test_type": "type",
-              "bind_interface": "Interface",
-              "idle_ms": "Idle ms",
-              "loaded_ms": "Loaded ms",
-              "retransmits": "Retrans."
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "area"
+            "showHeader": true,
+            "cellHeight": "sm",
+            "sortBy": [],
+            "footer": {
+              "show": false,
+              "reducer": [
+                "sum"
+              ],
+              "fields": ""
             }
           },
-          "fieldMinMax": false,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": 0
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "${datasource}"
               },
-              {
-                "color": "orange",
-                "value": 50
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT l.id AS \"ID\", l.created_at AS \"Time\", COALESCE(c.alias, c.host) || ' ↔ ' || COALESCE(p.alias, p.host) AS \"Pair\", l.test_type AS \"Type\",\n  l.average_speed AS \"Mbps\", l.bind_interface AS \"Iface\", l.streams AS \"Streams\",\n  (l.latency_idle->>'avg_ms')::numeric AS \"RTT idle\", (l.latency_loaded->>'avg_ms')::numeric AS \"RTT load\",\n  (l.latency_loaded->>'jitter_ms')::numeric AS \"Jitter load\",\n  (l.latency_loaded->>'loss_pct')::numeric AS \"Loss load\", l.retransmits AS \"Retr\",\n  (SELECT max(t.id) FROM iperf_traces t WHERE t.run_id = l.run_id) AS \"Trace\"\nFROM iperf_logs l\nJOIN iperf_hosts c ON c.id = l.run_on_host_id\nJOIN iperf_hosts p ON p.id = l.peer_host_id\nWHERE $__timeFilter(l.created_at) AND l.test_type <> 'icmp' AND ('0' IN ($client) OR l.run_on_host_id IN ($client))\n  AND ('0' IN ($peer) OR l.peer_host_id IN ($peer))\nORDER BY l.id DESC\nLIMIT 200",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "type": "trend",
+          "title": "Per-second speed — test ${test_id}",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "${datasource}"
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 10,
+            "x": 14,
+            "y": 85
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Mbits",
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "showPoints": "always",
+                "axisSoftMin": 0
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "xField": "second",
+            "legend": {
+              "showLegend": false
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-postgresql-datasource",
+                "uid": "${datasource}"
               },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "green",
-                "value": 200
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "second"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "s"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "speed"
-            },
-            "properties": [
-              {
-                "id": "min",
-                "value": 0
-              },
-              {
-                "id": "custom.axisSoftMax",
-                "value": 500
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 12
-      },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT \r\n  (series.ordinality - 1) AS second,\r\n  (series.value)::numeric AS speed\r\nFROM iperf_logs l\r\nCROSS JOIN LATERAL jsonb_array_elements(l.second_measurements->'data') WITH ORDINALITY AS series(value, ordinality)\r\nWHERE\r\n  l.id = ${test_id}\r\nORDER BY second",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Per-Second Speed - Test ID: ${test_id}",
-      "type": "trend"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT (series.ordinality)::int AS second, (series.value)::numeric AS speed\nFROM iperf_logs l\nCROSS JOIN LATERAL jsonb_array_elements(l.second_measurements->'data') WITH ORDINALITY AS series(value, ordinality)\nWHERE l.id = ${test_id}\nORDER BY second",
+              "refId": "A"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ms",
-          "min": 0
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 19
-      },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
+          ]
         }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  l.created_at AS time,\n  (l.latency_loaded->>'avg_ms')::numeric AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.latency_loaded->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
-          "refId": "A"
-        }
-      ],
-      "title": "Latency under load (avg)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ms",
-          "min": 0
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 19
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT time, value, metric FROM (\n  SELECT l.created_at AS time, (l.latency_idle->>'avg_ms')::numeric AS value,\n         COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' idle' AS metric\n  FROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\n  WHERE $__timeFilter(l.created_at)\n    AND l.source_host_id = l.run_on_host_id\n    AND l.latency_idle->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\n  UNION ALL\n  SELECT l.created_at AS time, (l.latency_loaded->>'avg_ms')::numeric AS value,\n         COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' loaded (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\n  FROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\n  WHERE $__timeFilter(l.created_at)\n    AND l.latency_loaded->>'avg_ms' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\n) t\nORDER BY time",
-          "refId": "A"
-        }
-      ],
-      "title": "Idle vs loaded latency (avg)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent",
-          "min": 0
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  l.created_at AS time,\n  (l.latency_loaded->>'loss_pct')::numeric AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.latency_loaded->>'loss_pct' IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
-          "refId": "A"
-        }
-      ],
-      "title": "Packet loss under load",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": 3600000,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none",
-          "min": 0
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  l.created_at AS time,\n  l.retransmits AS value,\n  COALESCE(ih.alias, ih.host) || ' -> ' || CASE WHEN l.source_host_id = l.run_on_host_id THEN COALESCE(th.alias, th.host) ELSE COALESCE(sh.alias, sh.host) END || ' (' || CASE WHEN l.source_host_id = l.run_on_host_id THEN 'up' ELSE 'down' END || ')' AS metric\nFROM iperf_logs l\nJOIN iperf_hosts ih ON ih.id = l.run_on_host_id\nJOIN iperf_hosts sh ON sh.id = l.source_host_id\nJOIN iperf_hosts th ON th.id = l.target_host_id\nWHERE\n  $__timeFilter(l.created_at)\n  AND l.retransmits IS NOT NULL\n  AND (\n    CASE\n      WHEN '0' IN ($host_filter) THEN true\n      ELSE (l.\"source_host_id\" IN ($host_filter) OR l.\"target_host_id\" IN ($host_filter))\n    END\n  )\nORDER BY l.created_at",
-          "refId": "A"
-        }
-      ],
-      "title": "TCP retransmits",
-      "type": "timeseries"
+      ]
     }
-  ],
-  "preload": false,
-  "refresh": "1m",
-  "schemaVersion": 42,
-  "tags": [],
-  "templating": {
-    "list": [
-      {
-        "current": {
-          "text": "PostgreSQL Lab",
-          "value": "postgres"
-        },
-        "includeAll": false,
-        "name": "datasource",
-        "options": [],
-        "query": "grafana-postgresql-datasource",
-        "refresh": 1,
-        "regex": "",
-        "type": "datasource"
-      },
-      {
-        "current": {
-          "text": "129",
-          "value": "129"
-        },
-        "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "${datasource}"
-        },
-        "definition": "SELECT MAX(id) FROM iperf_logs;",
-        "label": "Test ID",
-        "name": "test_id",
-        "options": [],
-        "query": "SELECT MAX(id) FROM iperf_logs;",
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "allValue": "0",
-        "allowCustomValue": false,
-        "current": {
-          "text": [
-            "h-3.node.kurb.me"
-          ],
-          "value": [
-            "7"
-          ]
-        },
-        "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "${datasource}"
-        },
-        "definition": "SELECT id || '___' || COALESCE(alias, host)\nFROM iperf_hosts \nORDER BY host",
-        "description": "",
-        "includeAll": true,
-        "label": "Host",
-        "multi": true,
-        "name": "host_filter",
-        "options": [],
-        "query": "SELECT id || '___' || COALESCE(alias, host)\nFROM iperf_hosts \nORDER BY host",
-        "refresh": 1,
-        "regex": "/(?<value>.*)___(?<text>.*)/",
-        "type": "query"
-      },
-      {
-        "allValue": "0",
-        "allowCustomValue": false,
-        "current": {
-          "text": [
-            "h-1.node.kurb.me"
-          ],
-          "value": [
-            "4"
-          ]
-        },
-        "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "${datasource}"
-        },
-        "definition": "SELECT h.id || '___' || COALESCE(alias, host)\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
-        "description": "",
-        "includeAll": true,
-        "label": "Host 2",
-        "multi": true,
-        "name": "second_host_filter",
-        "options": [],
-        "query": "SELECT h.id || '___' || COALESCE(alias, host)\nFROM iperf_hosts h\nWHERE (\n    CASE \n      WHEN '0' IN ($host_filter) THEN false\n      ELSE (h.\"id\" NOT IN ($host_filter))\n    END\n)\nORDER BY host",
-        "refresh": 1,
-        "regex": "/(?<value>.*)___(?<text>.*)/",
-        "type": "query"
-      }
-    ]
-  },
-  "time": {
-    "from": "now-12h",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "iPerf Dashboard (Public)",
-  "uid": "mam8zpv",
-  "version": 1
+  ]
 }
