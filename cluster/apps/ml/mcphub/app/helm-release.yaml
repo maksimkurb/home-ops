@@ -81,6 +81,11 @@ spec:
                     name: ${APP}
                     key: OIDC_CLIENT_SECRET
               MCPHUB_SETTING_PATH: /data/mcp_settings.json
+              MCPHUB_CREDENTIAL_ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: ${APP}
+                    key: MCPHUB_CREDENTIAL_ENCRYPTION_KEY
               INSTALL_BASE_URL: https://mcphub.${SECRET_PUBLIC_DOMAIN}
               ADMIN_PASSWORD:
                 valueFrom:
