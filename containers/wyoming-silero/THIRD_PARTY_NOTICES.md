@@ -19,4 +19,5 @@ not a derivative work of it.
 ## Python dependencies
 
 PyTorch (BSD-3-Clause), NumPy (BSD-3-Clause), SciPy (BSD-3-Clause),
-wyoming (MIT).
+wyoming (MIT), cmudict (BSD-style, CMU Pronouncing Dictionary),
+pymorphy3 (MIT), pymorphy3-dicts-ru (dictionaries from OpenCorpora, CC BY-SA 3.0).

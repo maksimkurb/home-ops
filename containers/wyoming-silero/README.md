@@ -21,8 +21,12 @@ docker build --build-arg SILERO_MODEL=v5_1_ru -t wyoming-silero containers/wyomi
 ```
 
 Available models are listed in `models.yml` of snakers4/silero-models.
-Text is split into sentences before synthesis. Silero does not expand digits or
-Latin text, so numbers should be written out in words.
+Text is cleaned before synthesis, because Silero only understands Cyrillic and drops digits:
+- markdown, links and emoji are removed (`text_prep.py`);
+- English words are transcribed to Cyrillic via the CMU dictionary;
+- numbers are spelled out in Russian (`numbers_ru.py`): integers with gender and
+  simple case agreement, decimals (`20.3` -> "двадцать целых три десятых"), times,
+  dates, years, percents and degrees.
 
 ## License
 

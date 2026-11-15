@@ -9,6 +9,8 @@ from functools import lru_cache
 
 import cmudict
 
+from numbers_ru import spell_numbers
+
 _CMU = cmudict.dict()
 
 # ARPAbet -> Russian approximation (stress is marked with "+" before the vowel)
@@ -93,6 +95,7 @@ def prepare_text(text: str) -> str:
     for pattern, repl in _MARKDOWN:
         text = pattern.sub(repl, text)
     text = _EMOJI.sub(" ", text)
+    text = spell_numbers(text)
     text = _LATIN_WORD.sub(lambda m: " " + transcribe_word(m.group(0)) + " ", text)
     text = text.replace("&", " и ")
     text = _ALLOWED.sub(" ", text)
