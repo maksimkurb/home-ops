@@ -75,9 +75,17 @@ spec:
               EASYPLANE_LOG_LEVEL: info
               # AES-256-GCM key for EasyTier secrets at rest. Losing it makes the
               # stored network secrets unrecoverable - back it up with the DB.
-              EASYPLANE_ENCRYPTION_KEY: ${SECRET_EASYPLANE_ENCRYPTION_KEY}
+              EASYPLANE_ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: easyplane-secret
+                    key: EASYPLANE_ENCRYPTION_KEY
               # One-time admin bootstrap; refused once an admin exists.
-              EASYPLANE_BOOTSTRAP_ADMIN_TOKEN: ${SECRET_EASYPLANE_BOOTSTRAP_ADMIN_TOKEN}
+              EASYPLANE_BOOTSTRAP_ADMIN_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: easyplane-secret
+                    key: EASYPLANE_BOOTSTRAP_ADMIN_TOKEN
               EASYPLANE_BOOTSTRAP_REENABLE: 'false'
               # OIDC callback: https://et-admin.<private>/api/auth/callback/authelia
               EASYPLANE_OIDC_PROVIDERS: >-
