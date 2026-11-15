@@ -79,6 +79,7 @@ spec:
     ml.mcphub: []
     games.openquester: []
     oxygen.remnawave: []
+    networking.easyplane: []
   databases:
     vaultwarden: vaultwarden
     firefly: firefly
@@ -113,6 +114,7 @@ spec:
     mcphub: ml.mcphub
     openquester: games.openquester
     remnawave: oxygen.remnawave
+    easyplane: networking.easyplane
   enableMasterLoadBalancer: true
   masterServiceAnnotations:
     metallb.io/loadBalancerIPs: "${SVC_DATABASE_ADDR}"
