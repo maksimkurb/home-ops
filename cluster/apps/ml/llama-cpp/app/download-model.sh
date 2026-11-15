@@ -41,16 +41,6 @@ if [ ! -s "$BONSAI_MODEL" ]; then
   mv "$BONSAI_MODEL.tmp" "$BONSAI_MODEL"
 fi
 
-if [ ! -s "$HOME_MODEL" ]; then
-  echo "Downloading Home-Gemma3-4b-ru Q4_K_M"
-  wget -O "$HOME_MODEL.tmp" \
-    "https://huggingface.co/maksimkurb/Home-Gemma3-4b-ru-GGUF/resolve/main/Home-Gemma3-4b-ru-Q4_K_M.gguf"
-
-  echo "24867695727692b33b82ea2e0ea5d93570abf4bff3a44d5cc5a5c6934580026b  $HOME_MODEL.tmp" | sha256sum -c -
-
-  mv "$HOME_MODEL.tmp" "$HOME_MODEL"
-fi
-
 download_if_missing "$EMBEDDING_MODEL"   "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf"
 
 # Remove incompatible legacy g128 GGUF if it exists from the previous deployment.\nrm -f /models/Ternary-Bonsai-1.7B-Q2_0.gguf\n\nmkdir -p /models/dartai-home
