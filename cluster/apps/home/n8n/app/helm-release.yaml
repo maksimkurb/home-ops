@@ -336,6 +336,9 @@ spec:
                   value: /mcp-oauth
               - path:
                   type: PathPrefix
+                  value: /oauth
+              - path:
+                  type: PathPrefix
                   value: /.well-known
             backendRefs:
               - identifier: app
