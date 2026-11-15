@@ -13,40 +13,12 @@
     }
   },
   "providers": {
-    "llama-pc": {
-      "keys": [
-        {
-          "name": "llama-pc",
-          "value": "env.LLAMA_PC_API_KEY",
-          "models": ["${LLAMA_PC_CHAT_MODEL}"],
-          "weight": 1.0
-        }
-      ],
-      "network_config": {
-        "base_url": "http://${SECRET_MAX_PC_IP}:9931",
-        "allow_private_network": true,
-        "default_request_timeout_in_seconds": 120
-      },
-      "custom_provider_config": {
-        "base_provider_type": "openai",
-        "allowed_requests": {
-          "list_models": true,
-          "text_completion": true,
-          "text_completion_stream": true,
-          "chat_completion": true,
-          "chat_completion_stream": true,
-          "responses": true,
-          "responses_stream": true,
-          "count_tokens": true
-        }
-      }
-    },
     "llama-cluster": {
       "keys": [
         {
           "name": "llama-cluster",
           "value": "env.LLAMA_CLUSTER_API_KEY",
-          "models": ["ternary-bonsai-1.7b", "qwen3-embedding-0.6b"],
+          "models": ["ternary-bonsai-1.7b", "qwen3-embedding-0.6b", "home-gemma3-4b-ru"],
           "weight": 1.0
         }
       ],
@@ -85,11 +57,6 @@
         "is_active": true,
         "provider_configs": [
           {
-            "provider": "llama-pc",
-            "allowed_models": ["*"],
-            "key_ids": ["*"]
-          },
-          {
             "provider": "llama-cluster",
             "allowed_models": ["*"],
             "key_ids": ["*"]
@@ -99,25 +66,6 @@
     ],
     "routing_rules": [
       {
-        "id": "auto-pc-first",
-        "name": "Auto: PC then cluster",
-        "priority": 0,
-        "cel_expression": "model == 'auto'",
-        "targets": [
-          {
-            "provider": "llama-pc",
-            "model": "${LLAMA_PC_CHAT_MODEL}",
-            "weight": 1.0
-          }
-        ],
-        "fallbacks": [
-          {
-            "provider": "llama-cluster",
-            "model": "ternary-bonsai-1.7b"
-          }
-        ]
-      },
-      {
         "id": "cluster-only",
         "name": "Cluster only",
         "priority": 1,
@@ -126,19 +74,6 @@
           {
             "provider": "llama-cluster",
             "model": "ternary-bonsai-1.7b",
-            "weight": 1.0
-          }
-        ]
-      },
-      {
-        "id": "pc-only",
-        "name": "PC only",
-        "priority": 2,
-        "cel_expression": "model == 'pc'",
-        "targets": [
-          {
-            "provider": "llama-pc",
-            "model": "${LLAMA_PC_CHAT_MODEL}",
             "weight": 1.0
           }
         ]

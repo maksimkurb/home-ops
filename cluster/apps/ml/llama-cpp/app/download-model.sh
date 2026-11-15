@@ -6,6 +6,7 @@ DARTAI_DIR="/models/dartai-$DARTAI_VERSION"
 DARTAI_ARCHIVE="/tmp/dartai-linux-x64-cuda12-$DARTAI_VERSION.tar.gz"
 BONSAI_MODEL="/models/Ternary-Bonsai-1.7B-Q2_0_g64.gguf"
 EMBEDDING_MODEL="/models/Qwen3-Embedding-0.6B-Q8_0.gguf"
+HOME_MODEL="/models/Home-Gemma3-4b-ru-Q4_K_M.gguf"
 
 download_if_missing() {
   path="$1"
@@ -38,6 +39,16 @@ if [ ! -s "$BONSAI_MODEL" ]; then
   echo "6d0ecb3d9055969b5cde332b6fdb60e67ed3599e9f73e56b977731e1467e5c91  $BONSAI_MODEL.tmp"     | sha256sum -c -
 
   mv "$BONSAI_MODEL.tmp" "$BONSAI_MODEL"
+fi
+
+if [ ! -s "$HOME_MODEL" ]; then
+  echo "Downloading Home-Gemma3-4b-ru Q4_K_M"
+  wget -O "$HOME_MODEL.tmp" \
+    "https://huggingface.co/maksimkurb/Home-Gemma3-4b-ru-GGUF/resolve/main/Home-Gemma3-4b-ru-Q4_K_M.gguf"
+
+  echo "638e4165ee52d252ac9e795c2863b384dd3bf27fdb91ff07f8fb6d04aafdd88d  $HOME_MODEL.tmp" | sha256sum -c -
+
+  mv "$HOME_MODEL.tmp" "$HOME_MODEL"
 fi
 
 download_if_missing "$EMBEDDING_MODEL"   "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf"
