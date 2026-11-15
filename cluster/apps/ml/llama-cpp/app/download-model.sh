@@ -46,7 +46,7 @@ if [ ! -s "$HOME_MODEL" ]; then
   wget -O "$HOME_MODEL.tmp" \
     "https://huggingface.co/maksimkurb/Home-Gemma3-4b-ru-GGUF/resolve/main/Home-Gemma3-4b-ru-Q4_K_M.gguf"
 
-  echo "638e4165ee52d252ac9e795c2863b384dd3bf27fdb91ff07f8fb6d04aafdd88d  $HOME_MODEL.tmp" | sha256sum -c -
+  echo "24867695727692b33b82ea2e0ea5d93570abf4bff3a44d5cc5a5c6934580026b  $HOME_MODEL.tmp" | sha256sum -c -
 
   mv "$HOME_MODEL.tmp" "$HOME_MODEL"
 fi
