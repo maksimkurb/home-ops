@@ -1,0 +1,183 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app easyplane
+  namespace: networking
+spec:
+  interval: 30m
+  releaseName: *app
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    global:
+      nameOverride: *app
+    controllers:
+      main:
+        # Exactly one replica: the device session registry, SSE hub, topology
+        # snapshots, rate limiters, reconcile timer and import drafts are all
+        # in-process (docs/DEPLOY.md §6). Recreate keeps two pods from
+        # overlapping during an upgrade.
+        replicas: 1
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        containers:
+          main:
+            image:
+              repository: ghcr.io/maksimkurb/easyplane
+              # Immutable image published from main (commit 1ae4fbc). No release
+              # tags exist yet; bump to the next `sha-*`/`X.Y.Z` tag on upgrade.
+              tag: sha-1ae4fbc
+            # The server only reads EASYPLANE_DATABASE_URL, so assemble it from
+            # the Zalando-generated credentials. $PGUSER/$PGPASSWORD are
+            # deliberately brace-less: Flux would substitute ${PGUSER}.
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - |
+                export EASYPLANE_DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@homelab-pgsql.database.svc.cluster.local:5432/easyplane"
+                exec node apps/server/dist/main.js
+            env:
+              TZ: ${TIMEZONE}
+              PGUSER:
+                valueFrom:
+                  secretKeyRef:
+                    name: networking.easyplane.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: username
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: networking.easyplane.homelab-pgsql.credentials.postgresql.acid.zalan.do
+                    key: password
+              EASYPLANE_ORG_NAME: EasyPlane
+              # Panel UI keeps its old hostname, the config server keeps et.<public>.
+              EASYPLANE_PUBLIC_URL: https://et-admin.${SECRET_PRIVATE_DOMAIN}
+              EASYPLANE_PUBLIC_CONFIG_SERVER_URL: wss://et.${SECRET_PUBLIC_DOMAIN}
+              # Both routes sit behind the in-cluster gateways, so X-Forwarded-*
+              # is trusted for OIDC redirects and per-IP rate limiting.
+              EASYPLANE_TRUST_PROXY: 'true'
+              EASYPLANE_SECURE_COOKIES: 'true'
+              EASYPLANE_LOG_LEVEL: info
+              # AES-256-GCM key for EasyTier secrets at rest. Losing it makes the
+              # stored network secrets unrecoverable - back it up with the DB.
+              EASYPLANE_ENCRYPTION_KEY: ${SECRET_EASYPLANE_ENCRYPTION_KEY}
+              # One-time admin bootstrap; refused once an admin exists.
+              EASYPLANE_BOOTSTRAP_ADMIN_TOKEN: ${SECRET_EASYPLANE_BOOTSTRAP_ADMIN_TOKEN}
+              EASYPLANE_BOOTSTRAP_REENABLE: 'false'
+              # OIDC callback: https://et-admin.<private>/api/auth/callback/authelia
+              EASYPLANE_OIDC_PROVIDERS: >-
+                [{"id":"authelia","label":"Authelia","issuer":"https://auth.${SECRET_PUBLIC_DOMAIN}","clientId":"easyplane","clientSecret":"${SECRET_EASYPLANE_OAUTH_CLIENT_SECRET}","scopes":"openid email profile groups","roleClaim":"groups","adminGroups":["admins"],"memberGroups":["people"],"defaultRole":"viewer"}]
+            probes:
+              # Liveness only checks the process; /health returns 503 when the
+              # database is down and that must not restart the pod.
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 8080
+                  initialDelaySeconds: 20
+                  periodSeconds: 30
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  initialDelaySeconds: 5
+                  periodSeconds: 15
+                  failureThreshold: 3
+              # Migrations run on startup, so allow a longer first start.
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8080
+                  periodSeconds: 5
+                  failureThreshold: 60
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1000
+              runAsGroup: 1000
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+            targetPort: 8080
+      config:
+        controller: main
+        ports:
+          ws:
+            port: 22023
+            targetPort: 22023
+    route:
+      # UI + API on the private gateway. Traefik streams SSE without response
+      # buffering and has no write timeout by default, and the app sends
+      # X-Accel-Buffering: no plus a 15 s keep-alive on /api/events, so the
+      # event stream survives as long as no entrypoint timeout is introduced.
+      ui:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - et-admin.${SECRET_PRIVATE_DOMAIN}
+        rules:
+          - backendRefs:
+              - identifier: main
+                port: 8080
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Maintenance
+          gethomepage.dev/icon: mdi-lan-connect
+          gethomepage.dev/name: EasyPlane
+          gethomepage.dev/href: https://et-admin.${SECRET_PRIVATE_DOMAIN}
+      # EasyTier config server: wss://et.<public>/<invite-token>. The invite
+      # token is the last path segment, so the whole path is forwarded to the
+      # ws listener; Traefik upgrades the connection transparently.
+      config:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: public
+            sectionName: websecure-public
+            namespace: networking
+        hostnames:
+          - et.${SECRET_PUBLIC_DOMAIN}
+        rules:
+          - backendRefs:
+              - identifier: config
+                port: 22023
+        annotations:
+          external-dns.kubernetes.io/enabled: 'true'
+          external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
+          external-dns.kubernetes.io/cloudflare-proxied: ${quote}${INGRESS_DEFAULT_CF_PROXY}${quote}
