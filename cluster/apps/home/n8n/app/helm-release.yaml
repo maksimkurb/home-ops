@@ -323,6 +323,23 @@ spec:
                   group: traefik.io
                   kind: Middleware
                   name: n8n-form-cors
+          # MCP Server Trigger + its OAuth discovery/authorization endpoints
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /mcp
+              - path:
+                  type: PathPrefix
+                  value: /mcp-test
+              - path:
+                  type: PathPrefix
+                  value: /mcp-oauth
+              - path:
+                  type: PathPrefix
+                  value: /.well-known
+            backendRefs:
+              - identifier: app
+                port: 8080
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
