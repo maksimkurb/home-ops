@@ -1,9 +1,9 @@
 ---
 collections:
   - name: community.general
-    version: 13.5.0
+    version: 13.5.1
   - name: community.sops
-    version: 2.5.0
+    version: 2.5.1
   - name: ansible.posix
     version: 2.2.2
 roles:
