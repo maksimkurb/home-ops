@@ -10,7 +10,7 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 26.10.4
+    tag: 26.11.1
   url: oci://ghcr.io/element-hq/ess-helm/matrix-stack
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
@@ -158,11 +158,6 @@ spec:
               search_all_users: true
               prefer_local_users: true
               exclude_remote_users: true
-        01-matrix-rtc.yaml: # <--- ADD THIS BLOCK
-          config: |
-            matrix_rtc:
-              enabled: true
-              server_url: "https://mrtc.matrix.${SECRET_PUBLIC_DOMAIN}"
         # Configures TURN for legacy clients and standard signaling
         02-turn.yaml:
           config: |
@@ -174,6 +169,13 @@ spec:
             turn_shared_secret: "${SECRET_COTURN_KEY}"
             turn_user_lifetime: 86400000
             turn_allow_guests: true
+        # The chart already sets msc4143/msc4222/msc4502/msc4512 and
+        # max_event_delay_duration (MSC4140). Only add what it doesn't.
+        03-calls.yaml:
+          config: |
+            experimental_features:
+              # MSC4075 ring push rules (sound: ring) for call notifications
+              msc4075_enabled: true
         # 03-disable-msc4108.yaml:
         #   config: |
         #     experimental_features:
@@ -190,10 +192,3 @@ spec:
     wellKnownDelegation:
       baseDomainRedirect:
         enabled: false
-      additional:
-        client: |
-          {
-            "org.matrix.msc4140.calls": {
-              "preferred_backend": "matrix-org/livekit"
-            }
-          }
