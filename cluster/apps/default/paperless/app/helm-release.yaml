@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: dev@sha256:74936068ee0a29c9fe0ffc852eb066b0e0e2a9272c642bf51622797531660c59
+              tag: dev@sha256:b9517ae63fa4e126bcff3078b68239103c360bc419173d380463b7cef8ddf9d9
             env:
               # Encoding
               # WARNING: for German / Russian PDFs it is required to set "PDF" renderer instead of "PDF/A" in paperless-ngx settings
@@ -131,7 +131,7 @@ spec:
           app:
             image:
               repository: docker.io/gotenberg/gotenberg
-              tag: "8.39"
+              tag: "8.40"
             command:
               # The gotenberg chromium route is used to convert .eml files. We do not
               # want to allow external content like tracking pixels or even javascript.
