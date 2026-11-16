@@ -20,3 +20,4 @@ resources:
   - ./plik/ks.yaml
   - ./frappe/ks.yaml
   - ./openwrt-asu/ks.yaml
+  - ./cublyverse/ks.yaml
