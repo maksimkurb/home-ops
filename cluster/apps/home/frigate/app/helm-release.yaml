@@ -137,7 +137,7 @@ spec:
           seed-config:
             image:
               repository: ghcr.io/blakeblackshear/frigate
-              tag: 0.18.2-tensorrt
+              tag: 0.18.3-tensorrt
             command:
               - sh
               - -c
@@ -150,7 +150,7 @@ spec:
           app:
             image:
               repository: ghcr.io/blakeblackshear/frigate
-              tag: 0.18.2-tensorrt
+              tag: 0.18.3-tensorrt
             env:
               TZ: ${TIMEZONE}
             envFrom:

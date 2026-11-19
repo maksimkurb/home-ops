@@ -71,7 +71,7 @@ spec:
           main:
             image:
               repository: docker.io/eclipse-mosquitto
-              tag: 2.1.2-alpine
+              tag: 2.1.4-alpine
             resources:
               requests:
                 cpu: 1m
