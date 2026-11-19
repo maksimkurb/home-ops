@@ -1,5 +1,5 @@
 ---
-# Distributes a cleaned CA bundle (no eMudhra/emSign, no AAA Certificate Services)
+# Distributes a cleaned CA bundle (without the compromised emSign G3 roots)
 # as ConfigMap "trusted-ca-bundle" into every namespace.
 # Keys: ca-certificates.crt (PEM), bundle.jks (JKS, password "changeit").
 # Consumed by Kyverno policy inject-trusted-ca-bundle (cluster/apps/kyverno).

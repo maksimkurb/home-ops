@@ -19,7 +19,7 @@ spec:
     name: flux-cluster
   wait: false
   dependsOn:
-    # kyverno CRDs (ClusterPolicy)
+    # kyverno CRDs (MutatingPolicy)
     - name: kyverno
       namespace: flux-system
     # ConfigMap trusted-ca-bundle is produced by the trust-manager Bundle
