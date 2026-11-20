@@ -3,9 +3,9 @@
 # into every container/initContainer of new Pods, so images need not be rebuilt.
 # (Kyverno >= 1.20 no longer runs legacy ClusterPolicy, hence a CEL MutatingPolicy.)
 #
-# ROLLOUT STAGES (see matchConstraints.namespaceSelector below):
-#   Stage 1 (current): opt-in per namespace:  kubectl label ns <ns> trusted-ca-bundle/enabled=true
-#   Stage 2: delete the "trusted-ca-bundle/enabled" matchExpression -> all namespaces.
+# SCOPE: only pods running one of the images listed in variable "images" (repository, no tag/digest)
+# in any namespace. Those images ship a CA store that still trusts the compromised emSign G3 roots.
+# To cover another image, add its repository to "images" (see hack/ for scanning).
 # OPT-OUT: label namespace OR pod (template) with  trusted-ca-bundle/skip: "true".
 #
 # Known limitations / pitfalls:
@@ -50,10 +50,6 @@ spec:
         resources: ["pods"]
     namespaceSelector:
       matchExpressions:
-        # STAGE 1 opt-in. Remove this expression for all-namespaces (stage 2).
-        - key: trusted-ca-bundle/enabled
-          operator: In
-          values: ["true"]
         - key: trusted-ca-bundle/skip
           operator: NotIn
           values: ["true"]
@@ -65,7 +61,22 @@ spec:
         - key: trusted-ca-bundle/skip
           operator: NotIn
           values: ["true"]
+  matchConditions:
+    - name: affected-image
+      expression: >-
+        object.spec.containers.exists(c, variables.images.exists(i, c.image.split('@')[0].split(':')[0] == i))
   variables:
+    # Image repositories (as written in pod specs) whose CA store trusts the emSign G3 roots.
+    - name: images
+      expression: >-
+        ['ghcr.io/maksimkurb/spilo-18', 'ghcr.io/zalando/postgres-operator',
+        'ghcr.io/maksimkurb/frappe-kazip', 'kopia/kopia', 'ghcr.io/maksimkurb/scanservjs',
+        'syncthing/syncthing', 'docker.io/pgsty/silo', 'ghcr.io/immich-app/immich-machine-learning',
+        'oci.element.io/element-admin', 'oci.element.io/element-web',
+        'docker.io/mumblevoip/mumble-server', 'ghcr.io/maksimkurb/wyoming-gigaam',
+        'ghcr.io/ggml-org/llama.cpp', 'ghcr.io/victoriametrics/mcp-victorialogs',
+        'ghcr.io/victoriametrics/mcp-victoriametrics', 'quay.io/kiwigrid/k8s-sidecar',
+        'quay.io/prometheus/node-exporter', 'docker.io/authelia/authelia']
     # Containers already mounting any of these paths are skipped entirely.
     - name: skipPaths
       expression: >-
