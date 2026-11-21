@@ -47,6 +47,10 @@ spec:
               HERMES_DASHBOARD: '1'
               HERMES_DASHBOARD_HOST: 0.0.0.0
               HERMES_DASHBOARD_PORT: '9119'
+              HERMES_DASHBOARD_PUBLIC_URL: https://hermes.${SECRET_PRIVATE_DOMAIN}
+              HERMES_DASHBOARD_OIDC_ISSUER: https://auth.${SECRET_PUBLIC_DOMAIN}
+              HERMES_DASHBOARD_OIDC_CLIENT_ID: hermes
+              HERMES_DASHBOARD_OIDC_SCOPES: openid profile email groups
               API_SERVER_ENABLED: 'true'
               API_SERVER_HOST: 0.0.0.0
               OPENAI_BASE_URL: http://bifrost.ml.svc.cluster.local/v1
