@@ -338,6 +338,7 @@ identity_providers:
           - groups
         redirect_uris:
           - https://mcphub.${SECRET_PUBLIC_DOMAIN}/api/auth/better/oauth2/callback/authelia
+          - https://mcphub.${SECRET_PRIVATE_DOMAIN}/api/auth/better/oauth2/callback/authelia
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: client_secret_post
       - client_id: hermes
