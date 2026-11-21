@@ -6,6 +6,7 @@ resources:
   - keys.sops.yaml
   - secret.sops.yaml
   - cluster-secrets.yaml
+  - oidc-clients.sops.yaml
   - middleware.yaml
   - helm-release.yaml
 configMapGenerator:
