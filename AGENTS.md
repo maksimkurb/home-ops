@@ -17,7 +17,8 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - `ks.yaml` normally enables SOPS decryption and injects `cluster-settings` plus `cluster-secrets` with `postBuild.substituteFrom`.
 - App folders usually contain `app/kustomization.yaml`, `app/helm-release.yaml`, and optional PVC, ConfigMap, certificate, dashboard, or non-secret config files.
 - Prefer the existing bjw-s `app-template` HelmRelease pattern before adding new chart structure.
-- When a namespace uses an `oidc-*` Traefik middleware, add `<namespace>/oidc.yaml` containing its `authelia-chain-<namespace>` Flux Kustomization, include it from that namespace's `kustomization.yaml`, and register every protected domain's `https://<domain>/_gateway-oidc/callback` URI in Authelia's `traefik` client.
+- When a namespace uses an `oidc-*` Traefik middleware, add `<namespace>/oidc.yaml` containing its `authelia-chain-<namespace>` Flux Kustomization,
+  include it from that namespace's `kustomization.yaml`, and register every protected domain's `https://<domain>/_gateway-oidc/callback` URI in Authelia's `traefik` client.
 
 ## Service Configuration
 
@@ -28,6 +29,7 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - Always put public and private HTTP ingress on separate `HTTPRoute` resources, each with its own parent and domain.
 - Use `${SECRET_PUBLIC_DOMAIN}` and `${SECRET_PRIVATE_DOMAIN}` for service domains.
 - Every public service must use these external-dns annotations:
+
   ```yaml
   external-dns.kubernetes.io/enabled: 'true'
   external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
