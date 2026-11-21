@@ -5,6 +5,7 @@ namespace: security
 resources:
   - keys.sops.yaml
   - secret.sops.yaml
+  - cluster-secrets.yaml
   - middleware.yaml
   - helm-release.yaml
 configMapGenerator:

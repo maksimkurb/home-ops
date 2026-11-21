@@ -88,8 +88,12 @@ spec:
                     key: EASYPLANE_BOOTSTRAP_ADMIN_TOKEN
               EASYPLANE_BOOTSTRAP_REENABLE: 'false'
               # OIDC callback: https://et-admin.<private>/api/auth/callback/authelia
-              EASYPLANE_OIDC_PROVIDERS: >-
-                [{"id":"authelia","label":"Authelia","issuer":"https://auth.${SECRET_PUBLIC_DOMAIN}","clientId":"easyplane","clientSecret":"${SECRET_EASYPLANE_OAUTH_CLIENT_SECRET}","scopes":"openid email profile groups","roleClaim":"groups","adminGroups":["admins"],"memberGroups":["people"],"defaultRole":"viewer"}]
+              # JSON includes the OIDC client secret, so it is rendered into a Secret
+              EASYPLANE_OIDC_PROVIDERS:
+                valueFrom:
+                  secretKeyRef:
+                    name: easyplane-cluster-secrets
+                    key: EASYPLANE_OIDC_PROVIDERS
             probes:
               # Liveness only checks the process; /health returns 503 when the
               # database is down and that must not restart the pod.

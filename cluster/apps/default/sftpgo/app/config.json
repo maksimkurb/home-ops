@@ -309,7 +309,7 @@
         "web_client_integrations": [],
         "oidc": {
           "client_id": "sftpgo",
-          "client_secret": "${SECRET_SFTPGO_OAUTH_CLIENT_SECRET}",
+          "client_secret": "",
           "config_url": "https://auth.${SECRET_PUBLIC_DOMAIN}",
           "redirect_base_url": "https://f.${SECRET_PUBLIC_DOMAIN}",
           "scopes": [
@@ -409,7 +409,7 @@
     "port": 587,
     "from": "",
     "user": "${SMTP_EMAIL}",
-    "password": "${SECRET_SMTP_PASSWORD}",
+    "password": "",
     "auth_type": 1,
     "encryption": 1,
     "domain": "${SMTP_HOST}",

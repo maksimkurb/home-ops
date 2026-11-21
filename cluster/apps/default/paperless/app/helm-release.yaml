@@ -231,7 +231,7 @@ spec:
           gethomepage.dev/name: Paperless
           gethomepage.dev/widget.type: paperlessngx
           gethomepage.dev/widget.url: http://paperless-app.default:8000
-          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_PAPERLESSNGX_API_KEY}
+          gethomepage.dev/widget.key: '{{HOMEPAGE_VAR_PAPERLESSNGX_API_KEY}}'
     persistence:
       data:
         existingClaim: paperless-data

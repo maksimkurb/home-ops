@@ -149,6 +149,9 @@ spec:
             envFrom:
               - secretRef:
                   name: *app
+              # OIDC client secret and SMTP password override the empty values in config.json
+              - secretRef:
+                  name: sftpgo-cluster-secrets
             probes:
               liveness:
                 enabled: true

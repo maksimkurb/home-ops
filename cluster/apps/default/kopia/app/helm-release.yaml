@@ -153,7 +153,11 @@ spec:
             env:
               TZ: ${TIMEZONE}
               KOPIA_CONFIG_PATH: /config/repository.config
-              KOPIA_PASSWORD: ${SECRET_KOPIA_REPO_PASSWORD}
+              KOPIA_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kopia-cluster-secrets
+                    key: SECRET_KOPIA_REPO_PASSWORD
             command: kopia
             args:
               - --log-level=debug
@@ -194,7 +198,11 @@ spec:
             env:
               TZ: ${TIMEZONE}
               KOPIA_CONFIG_PATH: /config/repository.config
-              KOPIA_PASSWORD: ${SECRET_KOPIA_REPO_PASSWORD}
+              KOPIA_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kopia-cluster-secrets
+                    key: SECRET_KOPIA_REPO_PASSWORD
             command:
               - /bin/sh
               - -c

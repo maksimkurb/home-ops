@@ -49,6 +49,15 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - Add new database users and databases in `cluster/apps/database/zalando/postgres-cluster.yaml`.
 - Cross-namespace credential secrets follow `{username}.homelab-pgsql.credentials.postgresql.acid.zalan.do`.
 
+## Credentials From cluster-secrets
+
+Flux substitution pastes `${SECRET_*}` values into the resource that references them, so a credential inlined into a HelmRelease, ConfigMap or Middleware is readable by anyone who can read that object.
+
+- Only non-credential values (domains, public IPs, e-mails; see `ALLOWED` in `scripts/check-secret-substitution.py`) may be substituted directly.
+- Render credentials into the app's `cluster-secrets.yaml`: a plain `kind: Secret` whose `stringData` values are only `${SECRET_*}` placeholders, named `<app>-cluster-secrets`, listed in the app `kustomization.yaml`.
+- Reference it with `secretKeyRef`/`envFrom`, or with the app's own env expansion (Authelia `{{ env "..." }}`, CrowdSec `$${VAR}`, Homepage `{{HOMEPAGE_VAR_*}}`, sftpgo `SFTPGO_*` overrides, ESS `configSecret`).
+- The `check-secret-substitution` pre-commit hook enforces this.
+
 ## SOPS Rules
 
 AI agents may create a new plaintext `*.sops.*` file when the path does not exist, so the user can encrypt it. Existing encrypted SOPS files are off limits.

@@ -36,7 +36,11 @@ spec:
               MAIL_ENCRYPTION: tls
               MAIL_USERNAME: ${SMTP_EMAIL}
               MAIL_FROM: ${SMTP_EMAIL}
-              MAIL_PASSWORD: ${SECRET_SMTP_PASSWORD}
+              MAIL_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: firefly-iii-cluster-secrets
+                    key: SECRET_SMTP_PASSWORD
               DB_HOST: homelab-pgsql.database.svc.cluster.local
               DB_PORT: '5432'
               DB_CONNECTION: pgsql

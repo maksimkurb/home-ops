@@ -82,7 +82,11 @@ spec:
               SMTP_SSL: true
               SMTP_PORT: 587
               SMTP_USERNAME: ${SMTP_EMAIL}
-              SMTP_PASSWORD: ${SECRET_SMTP_PASSWORD}
+              SMTP_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: vaultwarden-cluster-secrets
+                    key: SECRET_SMTP_PASSWORD
               EXPERIMENTAL_CLIENT_FEATURE_FLAGS: ssh-key-vault-item,ssh-agent
             envFrom:
               - secretRef:

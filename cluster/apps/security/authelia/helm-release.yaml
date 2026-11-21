@@ -145,6 +145,8 @@ spec:
             envFrom:
               - secretRef:
                   name: *app
+              - secretRef:
+                  name: authelia-cluster-secrets
             resources:
               requests:
                 cpu: 1m

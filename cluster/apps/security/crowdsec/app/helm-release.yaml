@@ -137,7 +137,7 @@ spec:
           type: postgresql
           user: crowdsec
           db_name: crowdsec
-          password: ${SECRET_CROWDSEC_POSTGRES_PASSWORD}
+          password: "$${CROWDSEC_DB_PASSWORD}" # expanded by crowdsec from lapi env
           host: homelab-pgsql.database.svc.cluster.local
           port: 5432
           flush:
@@ -282,8 +282,11 @@ spec:
             {{end -}}
             {{end -}}
 
-          webhook: ${SECRET_CROWDSEC_WEBHOOK_URL}
+          webhook: $${CROWDSEC_WEBHOOK_URL} # expanded by crowdsec from lapi env
     lapi:
+      envFrom:
+        - secretRef:
+            name: crowdsec-cluster-secrets
       resources:
         requests:
           cpu: 50m

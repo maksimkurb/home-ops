@@ -31,3 +31,13 @@ repos:
     rev: v2.1.1
     hooks:
       - id: forbid-secrets
+        # cluster-secrets.yaml holds only ${...} placeholders rendered by Flux;
+        # check-secret-substitution enforces that.
+        exclude: (^|/)cluster-secrets\.yaml$
+  - repo: local
+    hooks:
+      - id: check-secret-substitution
+        name: forbid credentials inlined via Flux substitution
+        entry: python3 scripts/check-secret-substitution.py
+        language: system
+        files: ^cluster/

@@ -33,7 +33,7 @@ data:
       Maintenance: {}
     language: ru
     providers:
-      openweathermap: ${SECRET_HOMEPAGE_OPENWEATHERMAP_API_KEY}
+      openweathermap: '{{HOMEPAGE_VAR_OPENWEATHERMAP_API_KEY}}'
   custom.css: ""
   custom.js: ""
   bookmarks.yaml: |
