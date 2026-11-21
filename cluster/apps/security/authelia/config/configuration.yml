@@ -326,7 +326,7 @@ identity_providers:
         token_endpoint_auth_method: none
       - client_id: mcphub
         client_name: MCPHub
-        client_secret: '{{ secret "/secrets/oidc/mcphub" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_MCPHUB_OAUTH_CLIENT_SECRET" }}'
         public: false
         claims_policy: default
         authorization_policy: require_group_admins
@@ -359,7 +359,7 @@ identity_providers:
         token_endpoint_auth_method: none
       - client_id: homarr
         client_name: Homarr
-        client_secret: '{{ secret "/secrets/oidc/homarr" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_HOMARR_OAUTH_CLIENT_SECRET" }}'
         public: false
         claims_policy: homarr
         authorization_policy: require_group_people
@@ -376,7 +376,7 @@ identity_providers:
         token_endpoint_auth_method: client_secret_basic
       - client_id: crowdsec-web-ui
         client_name: CrowdSec Web UI
-        client_secret: '{{ secret "/secrets/oidc/crowdsec-web-ui" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_CROWDSEC_WEB_UI_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_admins
@@ -392,7 +392,7 @@ identity_providers:
         token_endpoint_auth_method: client_secret_post
       - client_id: grafana
         client_name: Grafana
-        client_secret: '{{ secret "/secrets/oidc/grafana" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_GRAFANA_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_admins
@@ -408,7 +408,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
       - client_id: sftpgo
         client_name: SFTPGo
-        client_secret: '{{ secret "/secrets/oidc/sftpgo" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_SFTPGO_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_files
@@ -423,7 +423,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
       - client_id: plik
         client_name: Plik
-        client_secret: '{{ secret "/secrets/oidc/plik" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_PLIK_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_people
@@ -438,7 +438,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
       - client_id: cublyverse
         client_name: Cublyverse
-        client_secret: '{{ secret "/secrets/oidc/cublyverse" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_CUBLYVERSE_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_people
@@ -452,7 +452,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
       - client_id: nodered
         client_name: NodeRED
-        client_secret: '{{ secret "/secrets/oidc/nodered" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_NODERED_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_home
@@ -468,7 +468,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
       - client_id: immich
         client_name: Immich
-        client_secret: '{{ secret "/secrets/oidc/immich" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_IMMICH_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_photos
@@ -486,7 +486,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: paperless
         client_name: Paperless-ngx
-        client_secret: '{{ secret "/secrets/oidc/paperless" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_PAPERLESS_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_documents_two_factor
@@ -502,7 +502,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: stirling-pdf
         client_name: Stirling PDF
-        client_secret: '{{ secret "/secrets/oidc/stirling-pdf" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_STIRLING_PDF_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
         public: false
         authorization_policy: require_group_documents
@@ -514,7 +514,7 @@ identity_providers:
         token_endpoint_auth_method: client_secret_basic
       - client_id: 'homeassistant'
         client_name: 'Home Assistant'
-        client_secret: '{{ secret "/secrets/oidc/hass" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_HASS_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: true
         claims_policy: 'default'
@@ -531,7 +531,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: 'grist'
         client_name: 'Grist'
-        client_secret: '{{ secret "/secrets/oidc/grist" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_GRIST_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: true
         claims_policy: 'default'
@@ -547,7 +547,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_basic'
       - client_id: 'snapotter'
         client_name: 'SnapOtter'
-        client_secret: '{{ secret "/secrets/oidc/snapotter" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: false
         claims_policy: 'default'
@@ -563,7 +563,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: 'envrouter'
         client_name: 'EnvRouter'
-        client_secret: '{{ secret "/secrets/oidc/envrouter" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_ENVROUTER_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: false
         claims_policy: 'default'
@@ -580,7 +580,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: 'frappe'
         client_name: 'Frappe'
-        client_secret: '{{ secret "/secrets/oidc/frappe" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_FRAPPE_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: false
         claims_policy: 'default'
@@ -598,7 +598,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: silo
         client_name: Silo
-        client_secret: '{{ secret "/secrets/oidc/silo" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_SILO_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: false
         claims_policy: default
@@ -616,7 +616,7 @@ identity_providers:
 
       - client_id: 'unibot'
         client_name: 'UniBot'
-        client_secret: '{{ secret "/secrets/oidc/unibot" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_UNIBOT_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: true
         pkce_challenge_method: 'S256'
@@ -639,7 +639,7 @@ identity_providers:
 
       - client_id: 'wallos'
         client_name: 'Wallos'
-        client_secret: '{{ secret "/secrets/oidc/wallos" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_WALLOS_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: false
         pkce_challenge_method: ''
@@ -658,7 +658,7 @@ identity_providers:
 
       - client_id: 'easyplane'
         client_name: 'EasyPlane'
-        client_secret: '{{ secret "/secrets/oidc/easyplane" }}'
+        client_secret: '{{ secret "/secrets/oidc/SECRET_EASYPLANE_OAUTH_CLIENT_SECRET" }}'
         public: false
         require_pkce: true
         pkce_challenge_method: 'S256'

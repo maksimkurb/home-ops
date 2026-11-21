@@ -2,12 +2,12 @@
 """Regenerate Authelia's OIDC client secret bundle from the SOPS files.
 
 Scans every `cluster/**/*.sops.yaml` Secret for keys named
-`[SECRET_]<NAME>_OAUTH_CLIENT_SECRET` and writes them, one key per client, to
+`*_OAUTH_CLIENT_SECRET` and writes them, one key per client, to
 cluster/apps/security/authelia/oidc-clients.sops.yaml (encrypted with sops).
 
 Authelia mounts that Secret at /secrets/oidc, so a client reads its secret with
-`client_secret: '{{ secret "/secrets/oidc/<name>" }}'`, where <name> is <NAME>
-lower-cased with `_` -> `-` (SECRET_HASS_OAUTH_CLIENT_SECRET -> hass).
+`client_secret: '{{ secret "/secrets/oidc/<KEY>" }}'`, where <KEY> is the full key
+name (e.g. /secrets/oidc/SECRET_HASS_OAUTH_CLIENT_SECRET).
 
 Run locally from anywhere in the repo (needs sops with the age key):
     scripts/sync-authelia-oidc-secrets.py          # write if changed
@@ -27,8 +27,8 @@ import yaml
 ROOT = pathlib.Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
 OUT = ROOT / "cluster/apps/security/authelia/oidc-clients.sops.yaml"
 CONFIG = ROOT / "cluster/apps/security/authelia/config/configuration.yml"
-KEY_RE = re.compile(r"^(?:SECRET_)?([A-Z0-9_]+)_OAUTH_CLIENT_SECRET$")
-REF_RE = re.compile(r'\{\{\s*secret\s+"/secrets/oidc/([a-z0-9-]+)"\s*\}\}')
+KEY_RE = re.compile(r"^[A-Z0-9_]+_OAUTH_CLIENT_SECRET$")
+REF_RE = re.compile(r'\{\{\s*secret\s+"/secrets/oidc/([A-Za-z0-9_-]+)"\s*\}\}')
 
 HEADER = """\
 ---
@@ -62,10 +62,9 @@ def collect():
             continue  # key names stay in cleartext under sops; skip decrypting others
         for doc in decrypt(path):
             for key, value in secret_items(doc):
-                m = KEY_RE.match(key)
-                if not m:
+                if not KEY_RE.match(key):
                     continue
-                name = m.group(1).lower().replace("_", "-")
+                name = key
                 if name in found and found[name] != value:
                     sys.exit(f"conflict: {name} differs between {origin[name]} and {path.relative_to(ROOT)}")
                 found[name] = value
