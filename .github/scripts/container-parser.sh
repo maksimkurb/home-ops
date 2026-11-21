@@ -21,7 +21,6 @@ main() {
     local file=
     local nothing=
     parse_command_line "$@"
-    check "jo"
     check "jq"
     check "yq"
     entry
@@ -74,7 +73,8 @@ entry() {
     chart_name=$(yq eval-all .spec.chart.spec.chart "${file}" 2>/dev/null)
     if [[ -n ${chart_registry_url} && -n "${chart_name}" && ! "${chart_name}" =~ "null" ]]; then
         chart_version=$(yq eval .spec.chart.spec.version "${file}" 2>/dev/null)
-        chart_values=$(yq eval .spec.values "${file}" 2>/dev/null)
+        # explode: anchors defined outside .spec.values (e.g. metadata.name: &app) would dangle
+        chart_values=$(yq eval 'explode(.) | .spec.values' "${file}" 2>/dev/null)
         pushd "$(mktemp -d)" > /dev/null 2>&1
         helm repo add main "${chart_registry_url}" > /dev/null 2>&1
         helm pull "main/${chart_name}" --untar --version "${chart_version}"
@@ -117,7 +117,7 @@ entry() {
     # check if parsed_images array has items
     if (( ${#parsed_images[@]} )); then
         # convert the bash array to json and wrap array in an containers object
-        jo -a "${parsed_images[@]}" | jq -c '{containers: [(.[])]}'
+        printf '%s\n' "${parsed_images[@]}" | jq -R . | jq -cs '{containers: .}'
     fi
 }
 
