@@ -71,10 +71,15 @@ parse_command_line() {
         exit 1
     fi
 
-    if [[ -e "${source_file}" ]] && [[ $(yq eval .kind "${source_file}" 2>/dev/null) != "HelmRelease" ]]; then
-        echo "ERROR: '--source-file' is not a HelmRelease" >&2
-        show_help
-        exit 1
+    # Files may hold several documents (e.g. OCIRepository + HelmRelease):
+    # keep only the HelmRelease so the .spec lookups below are unambiguous.
+    if [[ -e "${source_file}" ]]; then
+        source_file=$(only_helm_release "${source_file}")
+        if [[ ! -s "${source_file}" ]]; then
+            echo "ERROR: '--source-file' is not a HelmRelease" >&2
+            show_help
+            exit 1
+        fi
     fi
 
     if [[ -z "${target_file}" ]]; then
@@ -83,7 +88,9 @@ parse_command_line() {
         exit 1
     fi
 
-    if [[ $(yq eval .kind "${target_file}" 2>/dev/null) != "HelmRelease" ]]; then
+    original_target_file="${target_file}"
+    target_file=$(only_helm_release "${target_file}")
+    if [[ ! -s "${target_file}" ]]; then
         echo "ERROR: '--target-file' is not a HelmRelease" >&2
         show_help
         exit 1
@@ -92,6 +99,13 @@ parse_command_line() {
     if [[ -z "$remove_common_labels" ]]; then
         remove_common_labels=false
     fi
+}
+
+only_helm_release() {
+    local out=
+    out=$(mktemp --suffix=.yaml)
+    yq eval 'select(.kind == "HelmRelease")' "${1}" > "${out}" 2>/dev/null || true
+    echo "${out}"
 }
 
 _resources() {
@@ -123,6 +137,13 @@ _resources() {
 entry() {
     local comments=
 
+    # Charts referenced through chartRef (OCIRepository) are not supported yet.
+    if [[ $(yq eval '.spec.chart.spec.chart // ""' "${target_file}") == "" ]]; then
+        # shellcheck disable=SC2016
+        printf 'Path: `%s`\n\n```\nSkipped: chart is not referenced via spec.chart.spec (e.g. chartRef/OCIRepository)\n```\n' "${original_target_file}"
+        return
+    fi
+
     # Always render the target first. For a newly added HelmRelease this still
     # validates that the chart and values can be rendered successfully.
     target_chart_version=$(chart_version "${target_file}")
@@ -136,7 +157,7 @@ entry() {
     comments=()
 
     # shellcheck disable=SC2016
-    comments+=( "$(printf 'Path: `%s`' "${target_file}")" )
+    comments+=( "$(printf 'Path: `%s`' "${original_target_file}")" )
 
     if [[ ! -e "${source_file}" ]]; then
         # There is no baseline on the default branch for a newly added release.

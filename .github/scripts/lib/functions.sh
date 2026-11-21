@@ -43,5 +43,6 @@ chart_version() {
 chart_values() {
     local helm_release=
     helm_release="${1}"
-    yq eval .spec.values "${helm_release}" 2>/dev/null
+    # explode: anchors defined outside .spec.values (e.g. metadata.name: &app) would dangle
+    yq eval 'explode(.) | .spec.values' "${helm_release}" 2>/dev/null
 }

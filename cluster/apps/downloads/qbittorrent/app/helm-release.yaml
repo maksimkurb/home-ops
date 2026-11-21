@@ -71,8 +71,8 @@ spec:
           gethomepage.dev/pod-selector: app.kubernetes.io/name=${APP}
           gethomepage.dev/widget.type: qbittorrent
           gethomepage.dev/widget.url: http://qbittorrent.downloads:50400
-          gethomepage.dev/widget.username: '{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}'
-          gethomepage.dev/widget.password: '{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}'
+          gethomepage.dev/widget.username: '{{ "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}" }}'
+          gethomepage.dev/widget.password: '{{ "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}" }}'
           gethomepage.dev/widget.enableLeechProgress: 'true'
           gethomepage.dev/widget.enableLeechSize: 'true'
       api:
