@@ -92,6 +92,9 @@ log:
 server:
   address: 'tcp://:8000/'
   disable_healthcheck: true
+  headers:
+    # frame-ancestors whitelist: allow embedding into Telegram Web only
+    csp_template: "default-src 'self'; base-uri 'self'; connect-src 'self'; frame-ancestors 'self' https://web.telegram.org https://webk.telegram.org https://webz.telegram.org; frame-src 'none'; object-src 'none'; script-src 'self'; style-src 'self' 'nonce-${NONCE}'"
   buffers:
     read: 16384
     write: 4096

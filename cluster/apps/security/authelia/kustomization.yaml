@@ -5,6 +5,7 @@ namespace: security
 resources:
   - keys.sops.yaml
   - secret.sops.yaml
+  - middleware.yaml
   - helm-release.yaml
 configMapGenerator:
   - name: authelia

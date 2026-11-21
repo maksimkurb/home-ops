@@ -1,0 +1,11 @@
+---
+# Authelia hardcodes X-Frame-Options: DENY (not configurable); strip it so that
+# the CSP frame-ancestors whitelist (server.headers.csp_template) takes effect.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: authelia-allow-framing
+spec:
+  headers:
+    customResponseHeaders:
+      X-Frame-Options: ""

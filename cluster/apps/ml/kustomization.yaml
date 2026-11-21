@@ -9,6 +9,7 @@ resources:
   - ./llama-cpp/ks.yaml
   - ./bifrost/ks.yaml
   - ./mcphub/ks.yaml
+  - ./hermes/ks.yaml
   - ./mcp-victorialogs/ks.yaml
   - ./mcp-victoriametrics/ks.yaml
   - ./printguard/ks.yaml

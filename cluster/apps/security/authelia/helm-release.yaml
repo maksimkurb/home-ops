@@ -68,6 +68,12 @@ spec:
             backendRefs:
               - identifier: main
                 port: 8000
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: traefik.io
+                  kind: Middleware
+                  name: authelia-allow-framing
         annotations:
           external-dns.kubernetes.io/enabled: 'true'
           external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}

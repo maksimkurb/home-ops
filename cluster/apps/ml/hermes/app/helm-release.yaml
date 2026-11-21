@@ -1,0 +1,129 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/app-template-5.1.0/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP}
+  labels:
+    app.kubernetes.io/name: ${APP}
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      app:
+        # state.db and sessions must never be written by two pods at once
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        containers:
+          app:
+            image:
+              repository: nousresearch/hermes-agent
+              tag: v0.23.3
+              pullPolicy: IfNotPresent
+            args:
+              - gateway
+              - run
+            env:
+              TZ: ${TIMEZONE_FAILSAFE}
+              HERMES_DASHBOARD: '1'
+              HERMES_DASHBOARD_HOST: 0.0.0.0
+              HERMES_DASHBOARD_PORT: '9119'
+              API_SERVER_ENABLED: 'true'
+              API_SERVER_HOST: 0.0.0.0
+              OPENAI_BASE_URL: http://bifrost.ml.svc.cluster.local/v1
+            envFrom:
+              - secretRef:
+                  name: ${APP}
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 9119
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 9119
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 9119
+                  periodSeconds: 10
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 4Gi
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: local-path
+        retain: true
+        globalMounts:
+          - path: /opt/data
+    service:
+      app:
+        controller: app
+        ports:
+          http:
+            port: 80
+            targetPort: 9119
+          api:
+            port: 8080
+            targetPort: 8642
+    route:
+      app-private:
+        enabled: true
+        kind: HTTPRoute
+        parentRefs:
+          - name: private
+            sectionName: websecure-private
+            namespace: networking
+        hostnames:
+          - hermes.${SECRET_PRIVATE_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: 'true'
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: mdi-robot
+          gethomepage.dev/name: Hermes
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - identifier: app
+                port: 80
