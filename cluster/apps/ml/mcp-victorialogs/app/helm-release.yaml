@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/victoriametrics/mcp-victorialogs
-              tag: v1.9.0
+              tag: v1.10.0
             env:
               VL_INSTANCE_ENTRYPOINT: http://victoria-logs-victoria-logs-single-server.monitoring.svc.cluster.local:9428
               MCP_SERVER_MODE: sse
