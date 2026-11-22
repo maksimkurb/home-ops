@@ -1,0 +1,14 @@
+---
+exclude_paths:
+  # SOPS-encrypted ciphertext, not hand-written YAML
+  - "**/*.sops.yaml"
+  # Third-party roles from requirements.yaml (gitignored)
+  - roles/xanmanning.k3s/
+  - roles/mrlesmithjr.netplan/
+  - .ansible/
+
+skip_list:
+  # Roles are named after their playbooks (reverse-proxy, iperf3-stats, ...).
+  # Renaming them to snake_case would also force every role var onto the new
+  # prefix (var-naming[no-role-prefix]), e.g. traefik_* -> reverse_proxy_*.
+  - role-name

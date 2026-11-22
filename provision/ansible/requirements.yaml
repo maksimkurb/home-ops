@@ -6,6 +6,8 @@ collections:
     version: 2.5.1
   - name: ansible.posix
     version: 2.2.2
+  - name: community.docker
+    version: 5.4.0
 roles:
   - src: xanmanning.k3s
     version: v3.6.4

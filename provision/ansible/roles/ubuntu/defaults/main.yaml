@@ -1,6 +1,6 @@
 ---
-k3s_loadbalancer_ip: "10.5.0.100"
-haproxy_stats_port: "8404"
-haproxy_stats_user: "admin"
-haproxy_stats_password: "changeme123"
-enable_unattended_upgrades: true
+ubuntu_k3s_loadbalancer_ip: "10.5.0.100"
+ubuntu_haproxy_stats_port: "8404"
+ubuntu_haproxy_stats_user: "admin"
+ubuntu_haproxy_stats_password: "changeme123"
+ubuntu_enable_unattended_upgrades: true

@@ -1,21 +1,23 @@
 ---
-- hosts:
+- name: Install NVIDIA container toolkit
+  hosts:
     - nvidia
   become: true
   gather_facts: true
   any_errors_fatal: true
   pre_tasks:
     - name: Pausing for 5 seconds...
-      pause:
+      ansible.builtin.pause:
         seconds: 5
   vars:
     nvidia_driver_version: "580"
   tasks:
-    - name: Download and install NVIDIA GPG key
-      ansible.builtin.shell: |
-        curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
-          | gpg --dearmor --yes -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
-      changed_when: true
+    # apt reads ASCII-armored keys directly when the file ends in .asc
+    - name: Download NVIDIA GPG key
+      ansible.builtin.get_url:
+        url: https://nvidia.github.io/libnvidia-container/gpgkey
+        dest: /usr/share/keyrings/nvidia-container-toolkit-keyring.asc
+        mode: "0644"
     - name: Create nvidia-container-toolkit sources file (DEB822 format)
       ansible.builtin.copy:
         dest: /etc/apt/sources.list.d/libnvidia-container.sources
@@ -24,7 +26,7 @@
           Types: deb
           URIs: https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH)
           Suites: /
-          Signed-By: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+          Signed-By: /usr/share/keyrings/nvidia-container-toolkit-keyring.asc
         mode: '0644'
     - name: Upgrade all system packages
       ansible.builtin.apt:
@@ -43,7 +45,7 @@
           - "nvidia-headless-{{ nvidia_driver_version }}-server"
           - "libnvidia-encode-{{ nvidia_driver_version }}-server"
           - "libnvidia-decode-{{ nvidia_driver_version }}-server"
-          - "nvidia-utils-{{ nvidia_driver_version  }}-server"
+          - "nvidia-utils-{{ nvidia_driver_version }}-server"
         install_recommends: false
         update_cache: true
         cache_valid_time: 3600
@@ -57,7 +59,7 @@
         path: /etc/nvidia-container-runtime/config.toml
         regexp: '^#\s*no-cgroups = false'
         line: 'no-cgroups = false'
-        backup: yes
+        backup: true
     - name: Restart k3s-agent service
       ansible.builtin.service:
         name: k3s.service

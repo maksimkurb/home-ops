@@ -1,5 +1,6 @@
 ---
-- hosts:
+- name: Install Scrutiny collector
+  hosts:
     - scrutiny-collector
   become: true
   gather_facts: true

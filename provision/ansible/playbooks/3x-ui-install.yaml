@@ -1,19 +1,21 @@
 ---
-- hosts:
+- name: 3x-ui / Prepare host
+  hosts:
     - 3xui
   become: true
   gather_facts: true
   any_errors_fatal: true
   roles:
-    - ubuntu-external
-- hosts:
+    - reverse-proxy
+- name: 3x-ui / Install
+  hosts:
     - 3xui
   become: true
   gather_facts: true
   any_errors_fatal: true
   tasks:
     - name: 3x-ui / Enable and persist ip forwarding
-      sysctl:
+      ansible.posix.sysctl:
         name: "{{ item }}"
         value: "1"
         state: present

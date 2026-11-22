@@ -1,5 +1,6 @@
 ---
-- hosts:
+- name: Install frp client
+  hosts:
     - frpc
   become: true
   gather_facts: false

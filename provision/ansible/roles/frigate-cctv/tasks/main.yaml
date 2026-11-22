@@ -1,4 +1,5 @@
 ---
-- import_tasks: frigate.yaml
+- name: Import frigate tasks
+  ansible.builtin.import_tasks: frigate.yaml
   tags:
     - frigate

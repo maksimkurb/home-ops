@@ -21,27 +21,27 @@
     mode: "{{ item.mode }}"
   loop:
     - {path: /opt/frp, group: root, mode: "0755"}
-    - {path: "/opt/frp/{{ frp_version }}", group: root, mode: "0755"}
+    - {path: "/opt/frp/{{ frps_version }}", group: root, mode: "0755"}
     - {path: /etc/frp, group: frp, mode: "0750"}
   tags: [frps]
 - name: Download frp release
   ansible.builtin.get_url:
-    url: "https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
-    dest: "/opt/frp/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
-    checksum: "sha256:https://github.com/fatedier/frp/releases/download/v{{ frp_version }}/frp_sha256_checksums.txt"
+    url: "https://github.com/fatedier/frp/releases/download/v{{ frps_version }}/frp_{{ frps_version }}_linux_{{ frps_arch }}.tar.gz"
+    dest: "/opt/frp/frp_{{ frps_version }}_linux_{{ frps_arch }}.tar.gz"
+    checksum: "sha256:https://github.com/fatedier/frp/releases/download/v{{ frps_version }}/frp_sha256_checksums.txt"
     mode: "0644"
   tags: [frps]
 - name: Unpack frp release
   ansible.builtin.unarchive:
-    src: "/opt/frp/frp_{{ frp_version }}_linux_{{ frps_arch }}.tar.gz"
-    dest: "/opt/frp/{{ frp_version }}"
+    src: "/opt/frp/frp_{{ frps_version }}_linux_{{ frps_arch }}.tar.gz"
+    dest: "/opt/frp/{{ frps_version }}"
     remote_src: true
     extra_opts: ["--strip-components=1"]
-    creates: "/opt/frp/{{ frp_version }}/frps"
+    creates: "/opt/frp/{{ frps_version }}/frps"
   tags: [frps]
 - name: Link frps binary
   ansible.builtin.file:
-    src: "/opt/frp/{{ frp_version }}/frps"
+    src: "/opt/frp/{{ frps_version }}/frps"
     dest: /usr/local/bin/frps
     state: link
     force: true

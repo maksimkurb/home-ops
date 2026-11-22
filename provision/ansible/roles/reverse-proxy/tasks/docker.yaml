@@ -1,6 +1,6 @@
 ---
 - name: Prepare / Install required system packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - apt-transport-https
       - ca-certificates
@@ -10,15 +10,15 @@
       - virtualenv
       - python3-setuptools
       - wireguard
-    state: latest
+    state: present
     update_cache: true
 - name: Prepare / Create apt keyrings directory
-  file:
+  ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: "0755"
 - name: Prepare / Add Docker GPG keyring
-  get_url:
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
     dest: /etc/apt/keyrings/docker.asc
     mode: "0644"
@@ -38,13 +38,13 @@
     path: /etc/apt/sources.list.d/download_docker_com_linux_ubuntu.list
     state: absent
 - name: Prepare / Remove distro Docker Compose packages
-  apt:
+  ansible.builtin.apt:
     pkg:
       - docker-compose
       - docker-compose-v2
     state: absent
 - name: Prepare / Install Docker
-  apt:
+  ansible.builtin.apt:
     pkg:
       - docker-ce
       - docker-ce-cli
@@ -52,7 +52,7 @@
       - docker-buildx-plugin
       - docker-compose-plugin
       - python3-docker
-    state: latest
+    state: present
     update_cache: true
 - name: Prepare / Create docker networks
   community.docker.docker_network:

@@ -1,6 +1,6 @@
 ---
 - name: Update NTP config
-  template:
+  ansible.builtin.template:
     dest: "/etc/systemd/timesyncd.conf"
     src: "timesyncd.j2"
     owner: root

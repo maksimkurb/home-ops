@@ -1,13 +1,20 @@
 ---
-- import_tasks: docker.yaml
+- name: Import docker tasks
+  ansible.builtin.import_tasks: docker.yaml
   tags:
     - docker
-  when: (traefik_enabled | default(false)) or (gatus_config is defined) or (vpn_tgproxy_enabled | default(false)) or (vpn_xui_enabled | default(false))
-- import_tasks: traefik.yaml
+  when: >-
+    (traefik_enabled | default(false))
+    or (gatus_config is defined)
+    or (vpn_tgproxy_enabled | default(false))
+    or (vpn_xui_enabled | default(false))
+- name: Import traefik tasks
+  ansible.builtin.import_tasks: traefik.yaml
   tags:
     - traefik
   when: traefik_enabled | default(false)
-- import_tasks: gatus.yaml
+- name: Import gatus tasks
+  ansible.builtin.import_tasks: gatus.yaml
   tags:
     - gatus
   when: gatus_config is defined

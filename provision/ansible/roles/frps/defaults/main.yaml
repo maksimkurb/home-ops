@@ -1,6 +1,6 @@
 ---
 # frp release to install (keep in sync with the frpc role)
-frp_version: "0.71.1"
+frps_version: "0.71.1"
 
 frps_bind_addr: "0.0.0.0"
 frps_bind_port: 7000

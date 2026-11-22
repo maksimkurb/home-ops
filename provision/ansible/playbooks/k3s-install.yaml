@@ -1,5 +1,6 @@
 ---
-- hosts:
+- name: Install k3s
+  hosts:
     - master
     - worker
   become: true
@@ -7,7 +8,7 @@
   any_errors_fatal: true
   pre_tasks:
     - name: Pausing for 5 seconds...
-      pause:
+      ansible.builtin.pause:
         seconds: 5
   tasks:
     - name: Check if cluster is installed
@@ -21,16 +22,17 @@
         k3s_server_manifests_urls: []
       when: k3s_check_installed.stat.exists
     - name: Install Kubernetes
-      include_role:
+      ansible.builtin.include_role:
         name: xanmanning.k3s
         public: true
-    - name: Get absolute path to this Git repository
+    - name: Get absolute path to this Git repository # noqa: run-once[task]
       delegate_to: localhost
       become: false
       run_once: true
       ansible.builtin.command: "git rev-parse --show-toplevel"
       register: repo_abs_path
-    - name: Copy kubeconfig to provision folder
+      changed_when: false
+    - name: Copy kubeconfig to provision folder # noqa: run-once[task]
       run_once: true
       ansible.builtin.fetch:
         src: "/etc/rancher/k3s/k3s.yaml"
@@ -39,7 +41,7 @@
       when:
         - k3s_control_node is defined
         - k3s_control_node
-    - name: Update kubeconfig with the right IPv4 address
+    - name: Update kubeconfig with the right IPv4 address # noqa: run-once[task]
       delegate_to: localhost
       become: false
       run_once: true

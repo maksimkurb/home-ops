@@ -48,7 +48,7 @@
     - iperf3
     - iperf3-client
 - name: Get list of existing iperf3 cron jobs
-  ansible.builtin.shell: "crontab -l -u root 2>/dev/null | grep 'iperf3 client test -' | sed -n 's/^#Ansible: \\(iperf3 client test - .*\\)/\\1/p' || true"
+  ansible.builtin.shell: "set -o pipefail; crontab -l -u root 2>/dev/null | sed -n 's/^#Ansible: \\(iperf3 client test - .*\\)/\\1/p' || true"
   register: existing_iperf3_crons
   changed_when: false
   become: true
@@ -68,7 +68,7 @@
     - iperf3-client
 - name: Create cron jobs for iperf3 client tests
   ansible.builtin.cron:
-    name: "iperf3 client test - {{ item.host }}:{{ item.port | default('icmp') }}{{ ' (' + item.bind_interface + ')' if item.bind_interface is defined else '' }}"
+    name: "iperf3 client test - {{ item.host }}:{{ item.port | default('icmp') }}{{ _bind_suffix }}"
     minute: "{{ item.cron.split()[0] }}"
     hour: "{{ item.cron.split()[1] }}"
     day: "{{ item.cron.split()[2] }}"
@@ -78,6 +78,8 @@
     user: root
     state: present
   loop: "{{ iperf3_client_runs }}"
+  vars:
+    _bind_suffix: "{{ ' (' + item.bind_interface + ')' if item.bind_interface is defined else '' }}"
   become: true
   when: iperf3_client_runs | length > 0
   tags:

@@ -1,8 +1,9 @@
 ---
 - name: Ensure kmod-tun
   ansible.builtin.shell: |
+    set -o pipefail
     if command -v apk >/dev/null 2>&1; then apk info -e kmod-tun >/dev/null || apk add kmod-tun
-    else opkg list-installed | grep -q '^kmod-tun ' || { opkg update && opkg install kmod-tun; }; fi
+    else opkg list-installed | grep '^kmod-tun ' >/dev/null || { opkg update && opkg install kmod-tun; }; fi
   changed_when: false
 - name: Config dir
   ansible.builtin.file: {path: /etc/easytier, state: directory, mode: "0700"}
@@ -12,7 +13,7 @@
   ansible.builtin.file: {path: /etc/easytier/config.toml, state: absent}
 - name: Dir for configs received from the panel
   ansible.builtin.file: {path: "{{ easytier_config_dir_r }}", state: directory, mode: "0700"}
-- name: easytier-core wrapper that adds the config dir
+- name: Install easytier-core wrapper that adds the config dir
   ansible.builtin.template: {src: easytier-core.wrapper.j2, dest: /etc/easytier/easytier-core, mode: "0755"}
   notify: Restart easytier
 - name: Machine id (the LuCI init script passes it as --machine-id)

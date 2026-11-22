@@ -1,23 +1,30 @@
 ---
-- import_tasks: locale.yaml
+- name: Import locale tasks
+  ansible.builtin.import_tasks: locale.yaml
   tags:
     - locale
-- import_tasks: packages.yaml
+- name: Import packages tasks
+  ansible.builtin.import_tasks: packages.yaml
   tags:
     - packages
-- import_tasks: network.yaml
+- name: Import network tasks
+  ansible.builtin.import_tasks: network.yaml
   tags:
     - network
-- import_tasks: filesystem.yaml
+- name: Import filesystem tasks
+  ansible.builtin.import_tasks: filesystem.yaml
   tags:
     - filesystem
-- import_tasks: user.yaml
+- name: Import user tasks
+  ansible.builtin.import_tasks: user.yaml
   tags:
     - user
-- import_tasks: time.yaml
+- name: Import time tasks
+  ansible.builtin.import_tasks: time.yaml
   tags:
     - time
-- import_tasks: haproxy.yaml
+- name: Import haproxy tasks
+  ansible.builtin.import_tasks: haproxy.yaml
   tags:
     - haproxy
-  when: haproxy_enabled | default(false)
+  when: ubuntu_haproxy_enabled | default(false)

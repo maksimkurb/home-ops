@@ -17,21 +17,22 @@
     mode: "0600"
   no_log: true
   notify: Restart easytier
-- name: ip_forward
+- name: Enable ip_forward
   ansible.posix.sysctl: {name: net.ipv4.ip_forward, value: "1", sysctl_file: /etc/sysctl.d/99-easytier.conf}
   when: easytier_enable_ip_forward | bool
 - name: Open listener ports in ufw (if ufw is active)
   ansible.builtin.shell: |
+    set -o pipefail
     command -v ufw >/dev/null 2>&1 || exit 0
-    ufw status | grep -q '^Status: active' || exit 0
+    ufw status | grep '^Status: active' >/dev/null || exit 0
     rule="{{ item.split('/')[1] }}/{{ item.split('/')[0] }}"
-    ufw status | grep -qE "^$rule +ALLOW" && exit 0
+    ufw status | grep -E "^$rule +ALLOW" >/dev/null && exit 0
     ufw allow "$rule" comment 'easytier' >/dev/null && echo changed
   register: easytier_ufw
   changed_when: "'changed' in easytier_ufw.stdout"
   loop: "{{ easytier_open_ports }}"
   when: easytier_manage_firewall | bool
-- name: systemd unit
+- name: Install systemd unit
   ansible.builtin.template: {src: easytier.service.j2, dest: /etc/systemd/system/easytier.service, mode: "0644"}
   notify: Restart easytier
 - name: Enable and start

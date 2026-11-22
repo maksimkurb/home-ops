@@ -39,7 +39,9 @@
       - easytier_config_server is match('^(udp|tcp|ws|wss)://.+/.+')
       - easytier_machine_id | length == 0 or easytier_machine_id is match('^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$')
       - easytier_open_ports | reject('match', '^(tcp|udp)/[0-9]+$') | list | length == 0
-    fail_msg: "Set easytier_arch (arch not detected) and easytier_config_server (e.g. wss://et.cubly.ru/<token>); easytier_open_ports items look like tcp/11010; easytier_machine_id must be a UUID"
+    fail_msg: >-
+      Set easytier_arch (arch not detected) and easytier_config_server (e.g. wss://et.cubly.ru/<token>);
+      easytier_open_ports items look like tcp/11010; easytier_machine_id must be a UUID
   no_log: true
   tags: [easytier]
 

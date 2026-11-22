@@ -12,8 +12,10 @@
     easytier_pkg_mgr: "{{ easytier_owrt_info.stdout.split()[1] }}"
 - name: Check installed version
   ansible.builtin.shell: >-
+    set -o pipefail;
     /usr/bin/easytier-core -V 2>/dev/null | grep -q '{{ easytier_luci_version }}' &&
-    {{ 'apk info -e luci-app-easytier' if easytier_pkg_mgr == 'apk' else 'opkg list-installed | grep -q "^luci-app-easytier "' }}
+    {{ 'apk info -e luci-app-easytier' if easytier_pkg_mgr == 'apk'
+       else 'opkg list-installed | grep "^luci-app-easytier " >/dev/null' }}
   register: easytier_pkg_present
   changed_when: false
   failed_when: false
@@ -22,9 +24,12 @@
   block:
     - name: Download package bundle (controller)
       ansible.builtin.get_url:
-        url: "https://github.com/EasyTier/luci-app-easytier/releases/download/v{{ easytier_luci_version }}/EasyTier-v{{ easytier_luci_version }}-{{ easytier_pkg_arch }}-{{ 'SNAPSHOT' if easytier_pkg_mgr == 'apk' else '22.03.7' }}.zip"
+        url: "{{ _release_url }}/EasyTier-v{{ easytier_luci_version }}-{{ easytier_pkg_arch }}-{{ _owrt_release }}.zip"
         dest: "/tmp/easytier-luci-{{ easytier_pkg_arch }}-{{ easytier_pkg_mgr }}-{{ easytier_luci_version }}.zip"
         mode: "0644"
+      vars:
+        _release_url: "https://github.com/EasyTier/luci-app-easytier/releases/download/v{{ easytier_luci_version }}"
+        _owrt_release: "{{ 'SNAPSHOT' if easytier_pkg_mgr == 'apk' else '22.03.7' }}"
       delegate_to: localhost
       become: false
     - name: Create the unpack dir (controller)
@@ -64,10 +69,12 @@
     - name: Install (apk, local packages are unsigned)
       ansible.builtin.shell: apk add --allow-untrusted /tmp/easytier-noweb-*.apk /tmp/luci-app-easytier-*.apk
       when: easytier_pkg_mgr == 'apk'
+      changed_when: true
       notify: Restart easytier
     - name: Install (opkg)
       ansible.builtin.shell: opkg update; opkg install /tmp/easytier-noweb*.ipk /tmp/luci-app-easytier*.ipk
       when: easytier_pkg_mgr == 'opkg'
+      changed_when: true
       notify: Restart easytier
     - name: Remove the copied packages
       ansible.builtin.shell: rm -f /tmp/easytier-noweb* /tmp/luci-app-easytier*

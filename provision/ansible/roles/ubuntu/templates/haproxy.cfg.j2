@@ -22,13 +22,13 @@ defaults
 
 # Statistics interface
 listen stats
-    bind *:{{ haproxy_stats_port }}
+    bind *:{{ ubuntu_haproxy_stats_port }}
     mode http
     stats enable
     stats uri /stats
     stats refresh 30s
     stats admin if TRUE
-    stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}
+    stats auth {{ ubuntu_haproxy_stats_user }}:{{ ubuntu_haproxy_stats_password }}
 
 # HTTP frontend (for redirects and health checks)
 frontend k3s_http
@@ -58,7 +58,7 @@ backend k3s_http_backend
     mode http
     option forwardfor
     option httpchk GET /healthz
-    server k3s-http {{ k3s_loadbalancer_ip }}:80 check inter 5000ms fall 3 rise 2 send-proxy-v2
+    server k3s-http {{ ubuntu_k3s_loadbalancer_ip }}:80 check inter 5000ms fall 3 rise 2 send-proxy-v2
 
 # HTTPS backend (TLS passthrough)
 backend k3s_https_backend
@@ -66,4 +66,4 @@ backend k3s_https_backend
     option tcp-check
     tcp-check connect
     # Preserve client IP at TCP level
-    server k3s-https {{ k3s_loadbalancer_ip }}:443 check inter 5000ms fall 3 rise 2 send-proxy-v2
+    server k3s-https {{ ubuntu_k3s_loadbalancer_ip }}:443 check inter 5000ms fall 3 rise 2 send-proxy-v2

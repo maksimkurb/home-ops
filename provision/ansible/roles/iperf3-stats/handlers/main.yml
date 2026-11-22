@@ -13,8 +13,10 @@
 - name: Restart iperf3
   ansible.builtin.command:
     cmd: /etc/init.d/iperf3 restart
+  changed_when: true
   when: ansible_facts['distribution'] == "OpenWrt" or ansible_facts['pkg_mgr'] == "apk"
 - name: Restart cron
   ansible.builtin.command:
     cmd: /etc/init.d/cron restart
+  changed_when: true
   when: ansible_facts['distribution'] == "OpenWrt" or ansible_facts['pkg_mgr'] == "apk"

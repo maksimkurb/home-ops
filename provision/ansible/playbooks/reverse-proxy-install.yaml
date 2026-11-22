@@ -1,5 +1,6 @@
 ---
-- hosts:
+- name: Install reverse proxy
+  hosts:
     - reverse-proxy
   become: true
   gather_facts: true

@@ -1,6 +1,6 @@
 ---
 # frp release to install (keep in sync with the frps role)
-frp_version: "0.71.1"
+frpc_version: "0.71.1"
 
 # One frpc process is started per entry, so several frps servers can be
 # used at once (frpc itself supports only a single serverAddr):

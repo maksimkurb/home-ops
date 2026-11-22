@@ -36,7 +36,7 @@
 
     # busybox df has no --output; take the "Available" column of the last line
     - name: Check free space for ttl (~10 MB unpacked)
-      ansible.builtin.shell: "df -k {{ iperf3_client_ttl_install_dir }} | awk 'END {print $(NF-2)}'"
+      ansible.builtin.shell: "set -o pipefail; df -k {{ iperf3_client_ttl_install_dir }} | awk 'END {print $(NF-2)}'"
       register: _ttl_free_kb
       changed_when: false
 
@@ -62,7 +62,7 @@
         mode: "0600"
 
     # unarchive needs GNU tar, which OpenWrt does not ship
-    - name: Unpack ttl
+    - name: Unpack ttl # noqa: command-instead-of-module
       ansible.builtin.command:
         cmd: "tar -xzf /tmp/{{ _ttl_archive }} -C {{ _ttl_version_dir }} ttl"
         creates: "{{ _ttl_version_dir }}/ttl"

@@ -37,9 +37,9 @@ iperf3-stats:
       iperf3_client_enabled: true
     owrt-h3:
       iperf3_client_enabled: true
-      #casa-sok:
-      #  iperf3_server_enabled: false
-      #  iperf3_client_enabled: true
+      # casa-sok:
+      #   iperf3_server_enabled: false
+      #   iperf3_client_enabled: true
 # frp: reverse tunnels (OpenWrt frpc -> VPS frps)
 frp:
   children:

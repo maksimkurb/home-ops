@@ -1,28 +1,28 @@
 ---
 - name: Traefik / Create config directory
-  file:
+  ansible.builtin.file:
     path: "/opt/traefik"
     state: directory
     mode: '0755'
 - name: Traefik / Determine port openings with IPv6
-  set_fact:
+  ansible.builtin.set_fact:
     traefik_ipv6_ports: |
       - "{{ '[' + external_ipv6 + ']:80:80' }}"
       - "{{ '[' + external_ipv6 + ']:443:443' }}"
   when: external_ipv6 is defined
 - name: Traefik / Set default port openings
-  set_fact:
+  ansible.builtin.set_fact:
     traefik_ipv6_ports: ""
   when: external_ipv6 is undefined
 - name: Traefik / Create docker-compose.yml file
-  template:
+  ansible.builtin.template:
     src: traefik-docker-compose.yml.j2
     dest: "/opt/traefik/docker-compose.yml"
     owner: root
     group: root
     mode: '0644'
 - name: Traefik / Create config file
-  template:
+  ansible.builtin.template:
     src: traefik-config.yml.j2
     dest: "/opt/traefik/traefik-config.yml"
     owner: root
@@ -43,6 +43,10 @@
       | Name | Original URL | Proxied URL |
       | --- | --- | --- |
       {% for upstream in traefik_doh_proxy_upstreams %}
-      | {{ upstream.name }} | {{ upstream.url }}/dns-query | {% for hostname in [traefik_base_domain] + dnsproxy_alternative_hostnames %}https://{{ hostname }}{{ traefik_doh_proxy_path_prefix }}/{{ upstream.name }}{% if not loop.last %}<br>{% endif %}{% endfor %} |
+      | {{ upstream.name }} | {{ upstream.url }}/dns-query |
+      {%- for hostname in _doh_hostnames %}{{ ' ' if loop.first else '<br>' }}https://{{ hostname }}{{ traefik_doh_proxy_path_prefix }}/{{ upstream.name }}
+      {%- endfor %} |
       {% endfor %}
+  vars:
+    _doh_hostnames: "{{ [traefik_base_domain] + dnsproxy_alternative_hostnames }}"
   when: traefik_doh_proxy_enabled | bool

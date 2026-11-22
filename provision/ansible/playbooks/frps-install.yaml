@@ -1,5 +1,6 @@
 ---
-- hosts:
+- name: Install frp server
+  hosts:
     - frps
   become: true
   gather_facts: true

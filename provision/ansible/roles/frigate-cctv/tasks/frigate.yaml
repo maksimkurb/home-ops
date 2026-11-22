@@ -1,23 +1,23 @@
 ---
 - name: CCTV / Create Frigate config directory
-  file:
+  ansible.builtin.file:
     path: "/opt/frigate"
     state: directory
     mode: '0755'
 - name: CCTV / Create Frigate media directory
-  file:
+  ansible.builtin.file:
     path: "/opt/frigate/media"
     state: directory
     mode: '0755'
 - name: CCTV / Create Frigate config
-  copy:
+  ansible.builtin.copy:
     dest: /opt/frigate/config.yml
     content: "{{ frigate_config_yaml }}"
     owner: root
     group: root
     mode: '0600'
 - name: CCTV / Create docker-compose.yml file
-  template:
+  ansible.builtin.template:
     dest: /opt/frigate/docker-compose.yml
     src: frigate-docker-compose.yml.j2
     owner: root

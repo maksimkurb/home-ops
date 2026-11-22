@@ -10,7 +10,7 @@
   ansible.builtin.file: {path: /opt/etc/easytier/config.toml, state: absent}
 - name: Dir for configs received from the panel
   ansible.builtin.file: {path: "{{ easytier_config_dir_r }}", state: directory, mode: "0700"}
-- name: init script
+- name: Install init script
   ansible.builtin.template: {src: easytier.entware.j2, dest: /opt/etc/init.d/S60easytier, mode: "0700"}
   no_log: true
   notify: Restart easytier

@@ -1,2 +1,2 @@
 ---
-enable_unattended_upgrades: false
+ubuntu_enable_unattended_upgrades: false
