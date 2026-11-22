@@ -38,6 +38,8 @@ spec:
                     name: paperless
                     key: PAPERLESS_SECRET_KEY
               PAPERLESS_URL: https://paperless.${SECRET_PUBLIC_DOMAIN}
+              # In-cluster callers (Gatus, Homepage widget) use the Service name as Host
+              PAPERLESS_ALLOWED_HOSTS: paperless.${SECRET_PUBLIC_DOMAIN},paperless-app.default,paperless-app.default.svc.cluster.local
               PAPERLESS_PORT: '8000'
               PAPERLESS_TIME_ZONE: ${TIMEZONE}
               PAPERLESS_WEBSERVER_WORKERS: '2'
