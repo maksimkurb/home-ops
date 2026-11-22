@@ -112,7 +112,7 @@ spec:
               CONFIG_AUTH_OIDC_CLIENT_SECRET:
                 valueFrom:
                   secretKeyRef:
-                    name: crowdsec-web-ui-cluster-secrets
+                    name: crowdsec-web-ui-secret
                     key: SECRET_CROWDSEC_WEB_UI_OAUTH_CLIENT_SECRET
               CONFIG_AUTH_OIDC_SCOPE: openid profile email groups
               CONFIG_AUTH_OIDC_GROUPS_CLAIM: groups

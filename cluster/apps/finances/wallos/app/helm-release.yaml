@@ -51,7 +51,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: ${APP}-secret
-                    key: OIDC_CLIENT_SECRET
+                    key: SECRET_WALLOS_OAUTH_CLIENT_SECRET
               SSRF_ALLOWLIST: auth.${SECRET_PUBLIC_DOMAIN},unified-push.${SECRET_PUBLIC_DOMAIN},llama-cpp.ml
             resources:
               requests:

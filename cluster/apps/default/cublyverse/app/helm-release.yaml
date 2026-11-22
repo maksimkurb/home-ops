@@ -65,7 +65,7 @@ spec:
               OIDC_CLIENT_SECRET:
                 valueFrom:
                   secretKeyRef:
-                    name: cublyverse-cluster-secrets
+                    name: cublyverse-secret
                     key: SECRET_CUBLYVERSE_OAUTH_CLIENT_SECRET
               OIDC_REDIRECT_URL: https://verse.${SECRET_PUBLIC_DOMAIN}/auth/callback
               PGUSER:

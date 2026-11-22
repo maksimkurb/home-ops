@@ -6,3 +6,4 @@ resources:
   - cluster-secrets.yaml
   - data-pvc.yaml
   - helm-release.yaml
+  - secret.sops.yaml

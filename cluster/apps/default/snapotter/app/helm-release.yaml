@@ -152,7 +152,7 @@ spec:
               OIDC_CLIENT_SECRET:
                 valueFrom:
                   secretKeyRef:
-                    name: snapotter-cluster-secrets
+                    name: snapotter-secret
                     key: SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET
               OIDC_PROVIDER_NAME: Authelia
               OIDC_SCOPES: openid profile email
