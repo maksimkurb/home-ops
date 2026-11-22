@@ -1,0 +1,15 @@
+# Managed by Ansible
+config easytier
+    option enabled '1'
+    option easytierbin '/etc/easytier/easytier-core'
+    option auto_config_interface '0'
+    option auto_config_firewall '0'
+    option web_enabled '0'
+    option webbin '/usr/bin/easytier-web'
+    option etcmd 'web'
+    option web_config '{{ easytier_config_server }}'
+    option tcp_port '11010'
+    option ws_port '11011'
+    option wss_port '11012'
+    option desvice_name '{{ easytier_hostname }}'
+    option log '{{ easytier_log_level }}'

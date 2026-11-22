@@ -25,23 +25,21 @@
           'armv6l': 'arm', 'mips': 'mips', 'mipsel': 'mipsel',
           'riscv64': 'riscv64'}[ansible_architecture] | default('') }}
   tags: [easytier]
-
-- name: Build the list of listener ports (proto/port)
+- name: Resolve the config dir
   ansible.builtin.set_fact:
-    easytier_listen_rules: >-
-      {{ easytier_listen_rules | default([]) + [{'proto': item.split('://')[0],
-                                                 'port': (item.split('://')[1] | regex_replace('/.*$', '')).split(':')[-1]}] }}
-  loop: "{{ easytier_listeners }}"
-  when: item is match('^(tcp|udp)://')
+    easytier_config_dir_r: >-
+      {{ easytier_config_dir if easytier_config_dir | length else
+         ('/opt/etc/easytier/configs' if easytier_platform_r == 'entware' else '/etc/easytier/configs') }}
   tags: [easytier]
 
-- name: Check arch and network settings
+- name: Check arch and config-server URL
   ansible.builtin.assert:
     that:
-      - easytier_arch_r | length > 0
-      - easytier_network_name | length > 0 or easytier_web_url | length > 0
-      - easytier_network_secret | length > 0 or easytier_web_url | length > 0
-    fail_msg: "Set easytier_arch (arch not detected) and easytier_network_name/secret (or easytier_web_url)"
+      - easytier_arch_r | length > 0 or easytier_platform_r == 'openwrt'
+      - easytier_config_server is match('^(udp|tcp|ws|wss)://.+/.+')
+      - easytier_machine_id | length == 0 or easytier_machine_id is match('^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$')
+      - easytier_open_ports | reject('match', '^(tcp|udp)/[0-9]+$') | list | length == 0
+    fail_msg: "Set easytier_arch (arch not detected) and easytier_config_server (e.g. wss://et.cubly.ru/<token>); easytier_open_ports items look like tcp/11010; easytier_machine_id must be a UUID"
   no_log: true
   tags: [easytier]
 

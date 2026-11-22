@@ -1,7 +1,7 @@
 #!/bin/sh
 # Managed by Ansible
 PIDF=/opt/var/run/easytier.pid
-CMD="{{ easytier_bin_dir }}/easytier-core {{ easytier_cmdline }}"
+CMD="{{ easytier_bin_dir }}/easytier-core --config-server {{ easytier_config_server }} --hostname {{ easytier_hostname }} --config-dir {{ easytier_config_dir_r }}{{ (" --machine-id " ~ easytier_machine_id) if easytier_machine_id | length else "" }}"
 case "$1" in
   start)  [ -f $PIDF ] && kill -0 "$(cat $PIDF)" 2>/dev/null && exit 0
           modprobe tun 2>/dev/null; [ -c /dev/net/tun ] || { mkdir -p /dev/net; mknod /dev/net/tun c 10 200; }

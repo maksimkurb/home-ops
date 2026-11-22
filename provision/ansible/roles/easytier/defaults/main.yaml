@@ -7,39 +7,34 @@ easytier_platform: ""
 # values: x86_64 aarch64 armv7 armv7hf arm armhf mips mipsel riscv64
 easytier_arch: ""
 
+# The node is fully managed from the easytier-web panel (network, IP, peers,
+# listeners, proxied subnets). Only the config-server URL lives here (sops):
+#   wss://et.cubly.ru/<user-token>
+easytier_config_server: ""
+# Configs received from the panel are stored here and loaded on start, so the
+# node comes up with its last known config while the panel is unreachable.
+# Default: /etc/easytier/configs (Debian, OpenWrt), /opt/etc/easytier/configs (Entware)
+easytier_config_dir: ""
+# Fixed machine UUID the panel uses to recognise this device and restore its
+# config. Empty: Debian/Entware derive it from the system
+# (~/.local/share/easytier/machine_id), OpenWrt LuCI generates
+# /etc/easytier/et_machine_id on first start.
+easytier_machine_id: ""
+# Device name shown in the panel
 easytier_hostname: "{{ inventory_hostname }}"
-# Network identity (put real values in sops)
-easytier_network_name: ""
-easytier_network_secret: ""
-# Public peers to bootstrap from, e.g. ["tcp://vps.example.com:11010"]
-easytier_peers: []
-# Static overlay IP (e.g. 10.144.144.2). Empty + dhcp true => automatic
-easytier_ipv4: ""
-easytier_dhcp: false
-# Listeners (empty on NAT-ed clients is fine)
-easytier_listeners: []
-# LAN subnets this node exposes into the overlay, e.g. ["192.168.40.0/24"]
-easytier_proxy_networks: []
-easytier_enable_exit_node: false
-easytier_no_tun: false
-easytier_latency_first: true
-easytier_extra_flags: {} # raw [flags] keys of the TOML config
+# warn | info | debug | trace | off (OpenWrt LuCI log level)
+easytier_log_level: warn
 
-# Remote management through easytier-web (config-server). When set, the node is
-# managed from the panel instead of the local TOML: "udp://host:22020/<user>"
-easytier_web_url: ""
-
-easytier_rpc_portal: "127.0.0.1:15888"
-easytier_enable_ip_forward: false
+easytier_enable_ip_forward: false # Debian
 easytier_firewall_zone: easytier # OpenWrt
+easytier_tun_device: tun0 # OpenWrt firewall zone device
 
-# Open the listener ports: ufw (Debian/Ubuntu, only if ufw is installed and active)
-# or a firewall rule on the OpenWrt wan zone
+# Listener ports configured in the panel that must be reachable from outside:
+# opened in ufw (Debian/Ubuntu, if ufw is active) or on the OpenWrt wan zone.
+# e.g. ["tcp/11010", "udp/11010"]
+easytier_open_ports: []
 easytier_manage_firewall: true
 easytier_wan_zone: wan # OpenWrt
 
-# OpenWrt: install the official easytier-noweb + luci-app-easytier packages
-# (EasyTier/luci-app-easytier releases). The node still runs from our TOML
-# (etcmd=config) or from easytier-web; LuCI is used for status/logs.
-easytier_openwrt_luci: true
+# OpenWrt: official easytier-noweb + luci-app-easytier packages
 easytier_luci_version: "{{ easytier_version }}"

@@ -1,7 +1,4 @@
 ---
-- name: Set paths
-  ansible.builtin.set_fact:
-    easytier_bin_dir: /usr/bin
 - name: Ensure kmod-tun
   ansible.builtin.shell: |
     if command -v apk >/dev/null 2>&1; then apk info -e kmod-tun >/dev/null || apk add kmod-tun
@@ -9,40 +6,28 @@
   changed_when: false
 - name: Config dir
   ansible.builtin.file: {path: /etc/easytier, state: directory, mode: "0700"}
-- name: Binaries (plain binary mode)
-  ansible.builtin.include_tasks: fetch.yaml
-  when: not easytier_openwrt_luci | bool
-- name: Packages (easytier + luci-app-easytier)
+- name: Packages (easytier-noweb + luci-app-easytier)
   ansible.builtin.include_tasks: openwrt-luci-packages.yaml
-  when: easytier_openwrt_luci | bool
-- name: Config
-  ansible.builtin.template: {src: config.toml.j2, dest: /etc/easytier/config.toml, mode: "0600"}
-  when: easytier_web_url | length == 0
+- name: Remove the old local TOML config
+  ansible.builtin.file: {path: /etc/easytier/config.toml, state: absent}
+- name: Dir for configs received from the panel
+  ansible.builtin.file: {path: "{{ easytier_config_dir_r }}", state: directory, mode: "0700"}
+- name: easytier-core wrapper that adds the config dir
+  ansible.builtin.template: {src: easytier-core.wrapper.j2, dest: /etc/easytier/easytier-core, mode: "0755"}
+  notify: Restart easytier
+- name: Machine id (the LuCI init script passes it as --machine-id)
+  ansible.builtin.copy:
+    content: "{{ easytier_machine_id }}\n"
+    dest: /etc/easytier/et_machine_id
+    mode: "0600"
+  when: easytier_machine_id | length > 0
+  notify: Restart easytier
+- name: LuCI config (run from easytier-web, we own network and firewall)
+  ansible.builtin.template:
+    src: easytier.uci.j2
+    dest: /etc/config/easytier
+    mode: "0600"
   no_log: true
-  notify: Restart easytier
-- name: Command line
-  ansible.builtin.set_fact:
-    easytier_cmdline: "{{ '-w ' ~ easytier_web_url ~ ' --hostname ' ~ easytier_hostname if easytier_web_url | length else '-c /etc/easytier/config.toml' }}"
-- name: procd init script (plain binary mode)
-  ansible.builtin.template: {src: easytier.procd.j2, dest: /etc/init.d/easytier, mode: "0755"}
-  when: not easytier_openwrt_luci | bool
-  notify: Restart easytier
-- name: Configure the LuCI package (run from our TOML or easytier-web, we own network and firewall)
-  ansible.builtin.shell: |
-    set -e
-    c=easytier.@easytier[0]
-    uci -q get easytier.@easytier[0] >/dev/null || uci add easytier easytier >/dev/null
-    want() { [ "$(uci -q get $c.$1)" = "$2" ] || { uci set $c.$1="$2"; ch=1; }; }
-    want enabled 1
-    want etcmd '{{ 'web' if easytier_web_url | length else 'config' }}'
-    want auto_config_interface 0
-    want auto_config_firewall 0
-    {{ ("want web_config '" ~ easytier_web_url ~ "'") if easytier_web_url | length else ':' }}
-    {{ ("want desvice_name '" ~ easytier_hostname ~ "'") if easytier_web_url | length else ':' }}
-    [ -z "$ch" ] || { uci commit easytier; echo changed; }
-  register: easytier_uci
-  changed_when: "'changed' in easytier_uci.stdout"
-  when: easytier_openwrt_luci | bool
   notify: Restart easytier
 - name: Firewall zone, forwarding to/from lan, allow input from the overlay
   ansible.builtin.shell: |
@@ -50,7 +35,7 @@
     uci -q get firewall.{{ easytier_firewall_zone }} >/dev/null && exit 0
     uci set firewall.{{ easytier_firewall_zone }}=zone
     uci set firewall.{{ easytier_firewall_zone }}.name='{{ easytier_firewall_zone }}'
-    uci set firewall.{{ easytier_firewall_zone }}.device='tun0'
+    uci set firewall.{{ easytier_firewall_zone }}.device='{{ easytier_tun_device }}'
     uci set firewall.{{ easytier_firewall_zone }}.input='ACCEPT'
     uci set firewall.{{ easytier_firewall_zone }}.output='ACCEPT'
     uci set firewall.{{ easytier_firewall_zone }}.forward='ACCEPT'
@@ -69,20 +54,21 @@
 - name: Allow listener ports on the wan zone
   ansible.builtin.shell: |
     set -e
-    n="easytier_{{ item.proto }}_{{ item.port }}"
+    proto="{{ item.split('/')[0] }}"; port="{{ item.split('/')[1] }}"
+    n="easytier_${proto}_${port}"
     uci -q get firewall.$n >/dev/null && exit 0
     uci set firewall.$n=rule
-    uci set firewall.$n.name='Allow-EasyTier-{{ item.proto }}-{{ item.port }}'
+    uci set firewall.$n.name="Allow-EasyTier-${proto}-${port}"
     uci set firewall.$n.src='{{ easytier_wan_zone }}'
-    uci set firewall.$n.proto='{{ item.proto }}'
-    uci set firewall.$n.dest_port='{{ item.port }}'
+    uci set firewall.$n.proto="$proto"
+    uci set firewall.$n.dest_port="$port"
     uci set firewall.$n.target='ACCEPT'
     uci commit firewall
     /etc/init.d/firewall reload
     echo changed
   register: easytier_wanfw
   changed_when: "'changed' in easytier_wanfw.stdout"
-  loop: "{{ easytier_listen_rules | default([]) }}"
+  loop: "{{ easytier_open_ports }}"
   when: easytier_manage_firewall | bool
 - name: Enable and start
   ansible.builtin.shell: /etc/init.d/easytier enable && /etc/init.d/easytier start

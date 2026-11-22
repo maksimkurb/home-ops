@@ -1,0 +1,7 @@
+#!/bin/sh
+# Managed by Ansible. The LuCI init script has no option for --config-dir, so
+# easytierbin points here: keep the configs received from easytier-web on flash
+# and start from them while the panel is unreachable.
+mkdir -p {{ easytier_config_dir_r }}
+export ET_CONFIG_DIR={{ easytier_config_dir_r }}
+exec /usr/bin/easytier-core "$@"

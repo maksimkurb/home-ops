@@ -1,10 +1,13 @@
+# Managed by Ansible
 [Unit]
-Description=EasyTier
+Description=EasyTier (managed by easytier-web)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart={{ easytier_bin_dir }}/easytier-core {{ easytier_cmdline }}
+EnvironmentFile=/etc/easytier/easytier.env
+# easytier-core reads ET_CONFIG_SERVER, ET_HOSTNAME, ET_CONFIG_DIR and ET_MACHINE_ID from the environment
+ExecStart={{ easytier_bin_dir }}/easytier-core
 Restart=always
 RestartSec=5
 LimitNOFILE=65536
