@@ -166,9 +166,12 @@ spec:
               - "turn:turn.${SECRET_PUBLIC_DOMAIN}:3478?transport=tcp"
               - "turns:turn.${SECRET_PUBLIC_DOMAIN}:5349?transport=udp"
               - "turns:turn.${SECRET_PUBLIC_DOMAIN}:5349?transport=tcp"
-            turn_shared_secret: "${SECRET_COTURN_KEY}"
             turn_user_lifetime: 86400000
             turn_allow_guests: true
+        # turn_shared_secret comes from a Secret so it never lands in HelmRelease values
+        02-turn-secret.yaml:
+          configSecret: ess-cluster-secrets
+          configSecretKey: turn-secret.yaml
         # The chart already sets msc4143/msc4222/msc4502/msc4512 and
         # max_event_delay_duration (MSC4140). Only add what it doesn't.
         03-calls.yaml:

@@ -93,6 +93,17 @@ spec:
               - path: /config/configuration.yml
                 subPath: configuration.yml
                 readOnly: true
+      # One file per OIDC client (file name = client_id) holding the
+      # client_secret digest; read via {{ secret "/secrets/oidc/<client_id>" }}.
+      oidc-clients:
+        enabled: true
+        type: secret
+        name: authelia-oidc-clients
+        advancedMounts:
+          main:
+            main:
+              - path: /secrets/oidc
+                readOnly: true
       keys:
         enabled: true
         type: secret
@@ -145,6 +156,8 @@ spec:
             envFrom:
               - secretRef:
                   name: *app
+              - secretRef:
+                  name: authelia-cluster-secrets
             resources:
               requests:
                 cpu: 1m

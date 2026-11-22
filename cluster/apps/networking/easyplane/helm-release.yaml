@@ -88,8 +88,15 @@ spec:
                     key: EASYPLANE_BOOTSTRAP_ADMIN_TOKEN
               EASYPLANE_BOOTSTRAP_REENABLE: 'false'
               # OIDC callback: https://et-admin.<private>/api/auth/callback/authelia
-              EASYPLANE_OIDC_PROVIDERS: >-
-                [{"id":"authelia","label":"Authelia","issuer":"https://auth.${SECRET_PUBLIC_DOMAIN}","clientId":"easyplane","clientSecret":"${SECRET_EASYPLANE_OAUTH_CLIENT_SECRET}","scopes":"openid email profile groups","roleClaim":"groups","adminGroups":["admins"],"memberGroups":["people"],"defaultRole":"viewer"}]
+              SECRET_EASYPLANE_OAUTH_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: easyplane-secret
+                    key: SECRET_EASYPLANE_OAUTH_CLIENT_SECRET
+              # $(SECRET_EASYPLANE_OAUTH_CLIENT_SECRET) is expanded by the kubelet
+              EASYPLANE_OIDC_PROVIDERS:
+                dependsOn: SECRET_EASYPLANE_OAUTH_CLIENT_SECRET
+                value: '[{"id":"authelia","label":"Authelia","issuer":"https://auth.${SECRET_PUBLIC_DOMAIN}","clientId":"easyplane","clientSecret":"$(SECRET_EASYPLANE_OAUTH_CLIENT_SECRET)","scopes":"openid email profile groups","roleClaim":"groups","adminGroups":["admins"],"memberGroups":["people"],"defaultRole":"viewer"}]'
             probes:
               # Liveness only checks the process; /health returns 503 when the
               # database is down and that must not restart the pod.

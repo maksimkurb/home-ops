@@ -71,6 +71,11 @@ spec:
               PLIKD_FEATURE_E2EE: enabled
               PLIKD_DATA_BACKEND: s3
               PLIKD_OIDC_CLIENT_ID: plik
+              PLIKD_OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: plik
+                    key: SECRET_PLIK_OAUTH_CLIENT_SECRET
               PLIKD_OIDC_PROVIDER_NAME: Authelia
               PLIKD_OIDC_REQUIRE_VERIFIED_EMAIL: 'false'
               PLIKD_OIDC_PROVIDER_URL: https://auth.${SECRET_PUBLIC_DOMAIN}

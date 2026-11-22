@@ -55,6 +55,7 @@ spec:
       auth.generic_oauth:
         enabled: true
         name: 56k
+        client_secret: $__env{SECRET_GRAFANA_OAUTH_CLIENT_SECRET}
         scopes: openid profile email groups
         empty_scopes: false
         auth_url: https://auth.${SECRET_PUBLIC_DOMAIN}/api/oidc/authorization

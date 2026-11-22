@@ -65,7 +65,7 @@ spec:
           gethomepage.dev/name: Prowlarr
           gethomepage.dev/widget.type: prowlarr
           gethomepage.dev/widget.url: http://prowlarr.downloads
-          gethomepage.dev/widget.key: ${SECRET_HOMEPAGE_PROWLARR_API_KEY}
+          gethomepage.dev/widget.key: '{{ "{{HOMEPAGE_VAR_PROWLARR_API_KEY}}" }}'
     persistence:
       config:
         enabled: true

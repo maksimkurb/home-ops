@@ -89,7 +89,11 @@ spec:
                   --external-ip="$TURN_PUBLIC_IP/$TURN_POD_IP"
             env:
               TZ: "${TIMEZONE}"
-              TURN_SHARED_SECRET: "${SECRET_COTURN_KEY}"
+              TURN_SHARED_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: coturn-cluster-secrets
+                    key: SECRET_COTURN_KEY
               TURN_PUBLIC_IP: "${SECRET_COTURN_PUBLIC_IP}"
               TURN_POD_IP:
                 valueFrom:

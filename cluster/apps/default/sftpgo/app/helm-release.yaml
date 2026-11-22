@@ -146,9 +146,18 @@ spec:
               tag: v2.7-distroless-slim
             env:
               TZ: ${TIMEZONE}
+              # OIDC client secret overrides the empty value in config.json
+              SFTPGO_HTTPD__BINDINGS__0__OIDC__CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: *app
+                    key: SECRET_SFTPGO_OAUTH_CLIENT_SECRET
             envFrom:
               - secretRef:
                   name: *app
+              # SMTP password overrides the empty value in config.json
+              - secretRef:
+                  name: sftpgo-cluster-secrets
             probes:
               liveness:
                 enabled: true

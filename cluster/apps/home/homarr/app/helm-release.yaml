@@ -50,7 +50,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: ${APP}-secret
-                    key: AUTH_OIDC_CLIENT_SECRET
+                    key: SECRET_HOMARR_OAUTH_CLIENT_SECRET
               SECRET_ENCRYPTION_KEY:
                 valueFrom:
                   secretKeyRef:

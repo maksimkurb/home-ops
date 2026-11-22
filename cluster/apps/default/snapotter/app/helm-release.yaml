@@ -122,7 +122,11 @@ spec:
               TRUST_PROXY: 'true'
               RATE_LIMIT_PER_MIN: '100'
               DEFAULT_USERNAME: admin
-              DEFAULT_PASSWORD: ${SECRET_SNAPOTTER_DEFAULT_PASSWORD}
+              DEFAULT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: snapotter-cluster-secrets
+                    key: SECRET_SNAPOTTER_DEFAULT_PASSWORD
               POSTGRES_USER:
                 valueFrom:
                   secretKeyRef:
@@ -137,11 +141,19 @@ spec:
               FILES_STORAGE_PATH: /data/files
               WORKSPACE_PATH: /tmp/workspace
               EXTERNAL_URL: https://snapotter.${SECRET_PUBLIC_DOMAIN}
-              COOKIE_SECRET: ${SECRET_SNAPOTTER_COOKIE_SECRET}
+              COOKIE_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: snapotter-cluster-secrets
+                    key: SECRET_SNAPOTTER_COOKIE_SECRET
               OIDC_ENABLED: 'true'
               OIDC_ISSUER_URL: https://auth.${SECRET_PUBLIC_DOMAIN}
               OIDC_CLIENT_ID: snapotter
-              OIDC_CLIENT_SECRET: ${SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET}
+              OIDC_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: snapotter-secret
+                    key: SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET
               OIDC_PROVIDER_NAME: Authelia
               OIDC_SCOPES: openid profile email
               OIDC_AUTO_CREATE_USERS: 'true'

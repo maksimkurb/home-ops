@@ -17,7 +17,8 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - `ks.yaml` normally enables SOPS decryption and injects `cluster-settings` plus `cluster-secrets` with `postBuild.substituteFrom`.
 - App folders usually contain `app/kustomization.yaml`, `app/helm-release.yaml`, and optional PVC, ConfigMap, certificate, dashboard, or non-secret config files.
 - Prefer the existing bjw-s `app-template` HelmRelease pattern before adding new chart structure.
-- When a namespace uses an `oidc-*` Traefik middleware, add `<namespace>/oidc.yaml` containing its `authelia-chain-<namespace>` Flux Kustomization, include it from that namespace's `kustomization.yaml`, and register every protected domain's `https://<domain>/_gateway-oidc/callback` URI in Authelia's `traefik` client.
+- When a namespace uses an `oidc-*` Traefik middleware, add `<namespace>/oidc.yaml` containing its `authelia-chain-<namespace>` Flux Kustomization,
+  include it from that namespace's `kustomization.yaml`, and register every protected domain's `https://<domain>/_gateway-oidc/callback` URI in Authelia's `traefik` client.
 
 ## Service Configuration
 
@@ -28,6 +29,7 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - Always put public and private HTTP ingress on separate `HTTPRoute` resources, each with its own parent and domain.
 - Use `${SECRET_PUBLIC_DOMAIN}` and `${SECRET_PRIVATE_DOMAIN}` for service domains.
 - Every public service must use these external-dns annotations:
+
   ```yaml
   external-dns.kubernetes.io/enabled: 'true'
   external-dns.kubernetes.io/target: ${INGRESS_DEFAULT}
@@ -48,6 +50,31 @@ This repository is the source of truth for a home infrastructure GitOps setup.
 - In-cluster host is `homelab-pgsql.database.svc.cluster.local` or `homelab-pgsql.database`.
 - Add new database users and databases in `cluster/apps/database/zalando/postgres-cluster.yaml`.
 - Cross-namespace credential secrets follow `{username}.homelab-pgsql.credentials.postgresql.acid.zalan.do`.
+
+## Credentials From cluster-secrets
+
+Flux substitution pastes `${SECRET_*}` values into the resource that references them, so a credential inlined into a HelmRelease, ConfigMap or Middleware is readable by anyone who can read that object.
+
+- Only non-credential values (domains, public IPs, e-mails; see `ALLOWED` in `scripts/check-secret-substitution.py`) may be substituted directly.
+- Render credentials into the app's `cluster-secrets.yaml`: a plain `kind: Secret` whose `stringData` values are only `${SECRET_*}` placeholders, named `<app>-cluster-secrets`, listed in the app `kustomization.yaml`.
+- Reference it with `secretKeyRef`/`envFrom`, or with the app's own env expansion (Authelia `{{ env "..." }}`, CrowdSec `$${VAR}`, Homepage `{{HOMEPAGE_VAR_*}}`, sftpgo `SFTPGO_*` overrides, ESS `configSecret`).
+- The `check-secret-substitution` pre-commit hook enforces this.
+
+### Authelia OIDC client secrets
+
+- The client app owns its secret: it lives in the app's own SOPS Secret under `SECRET_<APP>_OAUTH_CLIENT_SECRET`,
+  and the app maps it onto whatever env var it reads with `secretKeyRef` (or kubelet `$(VAR)` expansion inside a larger value, with `dependsOn`).
+- Clients with no consumer in this repo (configured in the app's UI or running elsewhere) keep the key in `cluster-secrets`.
+- Authelia reads client secrets from files: `client_secret: '{{ secret "/secrets/oidc/<KEY>" }}'`, where `<KEY>` is the full key name.
+- `/secrets/oidc` is the `authelia-oidc-clients` Secret (`cluster/apps/security/authelia/oidc-clients.sops.yaml`), a generated mirror.
+  `scripts/sync-authelia-oidc-secrets.py` collects every `SECRET_*_OAUTH_CLIENT_SECRET` key from `cluster/**/*.sops.yaml` and fails on conflicting values.
+- To add or rotate a client: change the key in the app's SOPS Secret, reference `/secrets/oidc/<KEY>` in `configuration.yml`,
+  and ask the user to run the script (it decrypts SOPS, so agents must not run it).
+
+### Credentials shared between apps
+
+- When two apps share a credential (an API token between a service in `default` and one in `ml`), keep a copy in each app's own SOPS Secret.
+- Add a comment next to each copy naming the other file, so a rotation updates both.
 
 ## SOPS Rules
 

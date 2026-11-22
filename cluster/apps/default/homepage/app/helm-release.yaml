@@ -32,6 +32,9 @@ spec:
                 value: start.${SECRET_PUBLIC_DOMAIN},homepage-app.default:3000
               - name: LOG_TARGETS
                 value: stdout
+            envFrom:
+              - secretRef:
+                  name: homepage-cluster-secrets
             resources:
               requests:
                 cpu: 25m

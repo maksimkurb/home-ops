@@ -79,7 +79,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: ${APP}
-                    key: OIDC_CLIENT_SECRET
+                    key: SECRET_MCPHUB_OAUTH_CLIENT_SECRET
               MCPHUB_SETTING_PATH: /data/mcp_settings.json
               MCPHUB_CREDENTIAL_ENCRYPTION_KEY:
                 valueFrom:
