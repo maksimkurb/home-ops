@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: dev@sha256:647b935e826a7aee7c9924177ebffe2fd624bc2328b27c57f05facef8c160ad5
+              tag: 3.5.1
             env:
               # Encoding
               # WARNING: for German / Russian PDFs it is required to set "PDF" renderer instead of "PDF/A" in paperless-ngx settings
