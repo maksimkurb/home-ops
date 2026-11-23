@@ -2,6 +2,3 @@
 # OpenWRT uses ash shell, not bash
 ansible_shell_type: sh
 ansible_shell_executable: /bin/sh
-
-# Name in the tailnet and exit node
-tailscale_advertise_exit_node: true

@@ -32,17 +32,40 @@
          ('/opt/etc/easytier/configs' if easytier_platform_r == 'entware' else '/etc/easytier/configs') }}
   tags: [easytier]
 
-- name: Check arch and config-server URL
+- name: Detect MIPS endianness from the package arch (ansible reports both as mips)
+  ansible.builtin.shell: >-
+    { opkg print-architecture 2>/dev/null; dpkg --print-architecture 2>/dev/null; }
+    | grep -q mipsel && echo mipsel || echo mips
+  register: easytier_elf_data
+  changed_when: false
+  check_mode: false
+  when: easytier_arch | length == 0 and easytier_arch_r == 'mips'
+  tags: [easytier]
+- name: Use mipsel on little-endian MIPS
+  ansible.builtin.set_fact:
+    easytier_arch_r: mipsel
+  when: easytier_elf_data.stdout is defined and easytier_elf_data.stdout | trim == 'mipsel'
+  tags: [easytier]
+
+- name: Check settings
   ansible.builtin.assert:
-    that:
-      - easytier_arch_r | length > 0 or easytier_platform_r == 'openwrt'
-      - easytier_config_server is match('^(udp|tcp|ws|wss)://.+/.+')
-      - easytier_machine_id | length == 0 or easytier_machine_id is match('^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$')
-      - easytier_open_ports | reject('match', '^(tcp|udp)/[0-9]+$') | list | length == 0
-    fail_msg: >-
-      Set easytier_arch (arch not detected) and easytier_config_server (e.g. wss://et.cubly.ru/<token>);
-      easytier_open_ports items look like tcp/11010; easytier_machine_id must be a UUID
-  no_log: true
+    that: "{{ item.that }}"
+    fail_msg: "{{ inventory_hostname }}: {{ item.msg }}"
+    quiet: true
+  loop:
+    - name: arch
+      that: easytier_arch_r | length > 0 or easytier_platform_r == 'openwrt'
+      msg: "arch not detected ({{ ansible_facts.architecture }}), set easytier_arch"
+    - name: config_server
+      that: easytier_config_server is match('^(udp|tcp|ws|wss)://.+/.+')
+      msg: "easytier_config_server is empty or not a URL like wss://et.cubly.ru/<token>"
+    - name: machine_id
+      that: easytier_machine_id | length == 0 or easytier_machine_id is match('^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$')
+      msg: "easytier_machine_id must be a UUID"
+    - name: open_ports
+      that: easytier_open_ports | reject('match', '^(tcp|udp)/[0-9]+$') | list | length == 0
+      msg: "easytier_open_ports items must look like tcp/11010"
+  loop_control: {label: "{{ item.name }}"}
   tags: [easytier]
 
 - name: Install on {{ easytier_platform_r }}
