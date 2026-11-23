@@ -273,6 +273,7 @@ identity_providers:
             subject: 'group:tailscale'
     clients:
       - client_id: opencloud
+        consent_mode: implicit
         client_name: OpenCloud
         public: true
         require_pkce: true
@@ -288,6 +289,7 @@ identity_providers:
           - https://cloud.${SECRET_PUBLIC_DOMAIN}/web-oidc-callback
         token_endpoint_auth_method: none
       - client_id: traefik
+        consent_mode: implicit
         client_name: Traefik OIDC middleware
         public: true
         require_pkce: true
@@ -325,6 +327,7 @@ identity_providers:
           - https://z2m.${SECRET_PRIVATE_DOMAIN}/_gateway-oidc/callback
         token_endpoint_auth_method: none
       - client_id: mcphub
+        consent_mode: implicit
         client_name: MCPHub
         client_secret: '{{ secret "/secrets/oidc/SECRET_MCPHUB_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -342,6 +345,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: client_secret_post
       - client_id: hermes
+        consent_mode: implicit
         client_name: Hermes Agent
         public: true
         require_pkce: true
@@ -358,6 +362,7 @@ identity_providers:
           - https://hermes.${SECRET_PRIVATE_DOMAIN}/auth/callback
         token_endpoint_auth_method: none
       - client_id: homarr
+        consent_mode: implicit
         client_name: Homarr
         client_secret: '{{ secret "/secrets/oidc/SECRET_HOMARR_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -375,6 +380,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: client_secret_basic
       - client_id: crowdsec-web-ui
+        consent_mode: implicit
         client_name: CrowdSec Web UI
         client_secret: '{{ secret "/secrets/oidc/SECRET_CROWDSEC_WEB_UI_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -391,6 +397,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: client_secret_post
       - client_id: grafana
+        consent_mode: implicit
         client_name: Grafana
         client_secret: '{{ secret "/secrets/oidc/SECRET_GRAFANA_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -407,6 +414,7 @@ identity_providers:
           - https://grafana.${SECRET_PUBLIC_DOMAIN}/login/generic_oauth
         userinfo_signed_response_alg: 'none'
       - client_id: sftpgo
+        consent_mode: implicit
         client_name: SFTPGo
         client_secret: '{{ secret "/secrets/oidc/SECRET_SFTPGO_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -422,6 +430,7 @@ identity_providers:
           - https://f.${SECRET_PUBLIC_DOMAIN}/web/oidc/redirect
         userinfo_signed_response_alg: 'none'
       - client_id: plik
+        consent_mode: implicit
         client_name: Plik
         client_secret: '{{ secret "/secrets/oidc/SECRET_PLIK_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -437,6 +446,7 @@ identity_providers:
           - https://plik.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback
         userinfo_signed_response_alg: 'none'
       - client_id: cublyverse
+        consent_mode: implicit
         client_name: Cublyverse
         client_secret: '{{ secret "/secrets/oidc/SECRET_CUBLYVERSE_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -451,6 +461,7 @@ identity_providers:
           - https://verse.${SECRET_PUBLIC_DOMAIN}/auth/callback
         userinfo_signed_response_alg: 'none'
       - client_id: nodered
+        consent_mode: implicit
         client_name: NodeRED
         client_secret: '{{ secret "/secrets/oidc/SECRET_NODERED_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -467,6 +478,7 @@ identity_providers:
           - https://nodered.${SECRET_PRIVATE_DOMAIN}/auth/strategy/callback
         userinfo_signed_response_alg: 'none'
       - client_id: immich
+        consent_mode: implicit
         client_name: Immich
         client_secret: '{{ secret "/secrets/oidc/SECRET_IMMICH_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -485,6 +497,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: paperless
+        consent_mode: implicit
         client_name: Paperless-ngx
         client_secret: '{{ secret "/secrets/oidc/SECRET_PAPERLESS_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -501,6 +514,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: stirling-pdf
+        consent_mode: implicit
         client_name: Stirling PDF
         client_secret: '{{ secret "/secrets/oidc/SECRET_STIRLING_PDF_OAUTH_CLIENT_SECRET" }}'
         claims_policy: 'default'
@@ -520,6 +534,7 @@ identity_providers:
         claims_policy: 'default'
         pkce_challenge_method: 'S256'
         authorization_policy: 'require_group_home'
+        consent_mode: implicit
         redirect_uris:
           - 'https://hass.${SECRET_PUBLIC_DOMAIN}/auth/oidc/callback'
         scopes:
@@ -530,6 +545,7 @@ identity_providers:
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: 'grist'
+        consent_mode: implicit
         client_name: 'Grist'
         client_secret: '{{ secret "/secrets/oidc/SECRET_GRIST_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -546,6 +562,7 @@ identity_providers:
         id_token_signed_response_alg: 'RS256'
         token_endpoint_auth_method: 'client_secret_basic'
       - client_id: 'snapotter'
+        consent_mode: implicit
         client_name: 'SnapOtter'
         client_secret: '{{ secret "/secrets/oidc/SECRET_SNAPOTTER_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -562,6 +579,7 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: 'envrouter'
+        consent_mode: implicit
         client_name: 'EnvRouter'
         client_secret: '{{ secret "/secrets/oidc/SECRET_ENVROUTER_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -597,6 +615,7 @@ identity_providers:
         consent_mode: implicit
         token_endpoint_auth_method: 'client_secret_post'
       - client_id: silo
+        consent_mode: implicit
         client_name: Silo
         client_secret: '{{ secret "/secrets/oidc/SECRET_SILO_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -615,6 +634,7 @@ identity_providers:
         token_endpoint_auth_method: client_secret_post
 
       - client_id: 'unibot'
+        consent_mode: implicit
         client_name: 'UniBot'
         client_secret: '{{ secret "/secrets/oidc/SECRET_UNIBOT_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -638,6 +658,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_basic'
 
       - client_id: 'wallos'
+        consent_mode: implicit
         client_name: 'Wallos'
         client_secret: '{{ secret "/secrets/oidc/SECRET_WALLOS_OAUTH_CLIENT_SECRET" }}'
         public: false
@@ -657,6 +678,7 @@ identity_providers:
         token_endpoint_auth_method: 'client_secret_post'
 
       - client_id: 'easyplane'
+        consent_mode: implicit
         client_name: 'EasyPlane'
         client_secret: '{{ secret "/secrets/oidc/SECRET_EASYPLANE_OAUTH_CLIENT_SECRET" }}'
         public: false
