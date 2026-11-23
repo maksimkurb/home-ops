@@ -49,7 +49,7 @@ frp:
     frpc:
       hosts:
         owrt-h1: {}
-        keen-h2: {}
+        prox-h2: {}
         owrt-h3: {}
         owrt-tkh2: {}
 
@@ -58,6 +58,6 @@ easytier:
   hosts:
     vps-c: {}
     owrt-h1: {}
-    keen-h2: {}
+    prox-h2: {}
     owrt-h3: {}
     owrt-tkh2: {}

@@ -1,0 +1,4 @@
+---
+# OpenWRT uses ash shell, not bash
+ansible_shell_type: sh
+ansible_shell_executable: /bin/sh

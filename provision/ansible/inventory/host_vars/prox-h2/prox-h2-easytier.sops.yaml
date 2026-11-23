@@ -1,0 +1,20 @@
+easytier_open_ports:
+    - ENC[AES256_GCM,data:9J0/kzxl1L5X,iv:6nxdlfg3gkwq5CM9cKXGSHBjQg9JQEpdPLVmeXTZXZ8=,tag:YquIUmLVQ5IM3vDi85tRKg==,type:str]
+    - ENC[AES256_GCM,data:Hd3LL8c0E+NO,iv:j22UOVgMmubnbae+L2Wf7uCF1DZLFir8Xki7exRVZCs=,tag:qAv1DpI0FXLgyUooFmofYQ==,type:str]
+easytier_config_server: ENC[AES256_GCM,data:PFZuRjfbCuXs+BKm7vtzAiPsij64pBUbye9k72dnBim9LPTKunXqLuwa3i9x5NKA7aM=,iv:vuGcqdSRL2dsy1w6I4hsLNlwDplk2QcPD2xxhklSg+0=,tag:FmL50UBI6qKHyuEZdkzb4A==,type:str]
+easytier_machine_id: ENC[AES256_GCM,data:+2nevVamQ/4l2ps+srnqHDm7ZIiwOlgdr6X+/pVhCyObgP6J,iv:K2IlwnE0L8b7SJB/56kb7oEc7I+0Y93pHSyxl4+lmQE=,tag:uiBhmsADgqdw3U2kip2BwA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqSFM1VGVNMUswOFkwWFAz
+            WU02dWIwVHBibDRRK24zVSs4VFpOT1dYNmlvCnFGMjR4QWhra3Z3eWlVd1hHd1cz
+            a1NEYUN1SWliTDRXWTZFNUVieGFKVmcKLS0tIFJ3b05HUS9EQzBicnViWXVDUThp
+            a3A3Q1FBT2NLSG04Q2xQQzcwYjByTDQKW18TS086t5cPD6PTu7guSlR5yLy92xoq
+            qYHEX78qxDpiRauGE4uxoAy5xr3xV9v1pJrPRKrcPTmCJPSCghLT/w==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
+    lastmodified: "2026-11-23T13:07:03Z"
+    mac: ENC[AES256_GCM,data:AiNsvUcOjfSAZI06/ZSeXPACwHhlK5ui3/io4CLs5PFzjha9ciyQ+FVtEyZTXVi3hr9TOPpo18AgA0XFhO9g37wxgF5KoMSWWhbcLkcmcM1jgOlrgDa8pZxzACaLCZMyPKB+UWlD6on9E4rA40EtA+0PltUZiog9OG7r/PeZMG0=,iv:vCFlCABeqbxlnw23m3yURaagiv6gTMOlDgTd6PIzuu4=,tag:KblkhBZL088TenBkUTpsMg==,type:str]
+    unencrypted_regex: ^(kind)$
+    version: 3.13.3
