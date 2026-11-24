@@ -41,7 +41,7 @@ spec:
               repository: ghcr.io/maksimkurb/easyplane
               # Immutable image published from main (commit a2acda0). No release
               # tags exist yet; bump to the next `sha-*`/`X.Y.Z` tag on upgrade.
-              tag: sha-46a5e15
+              tag: sha-1665e73
             # The server only reads EASYPLANE_DATABASE_URL, so assemble it from
             # the Zalando-generated credentials. $PGUSER/$PGPASSWORD are
             # deliberately brace-less: Flux would substitute ${PGUSER}.
