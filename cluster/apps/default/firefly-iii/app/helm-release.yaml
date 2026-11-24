@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: fireflyiii/core
-              tag: version-6.7.9@sha256:d51ab6a3a7b91a5c892441578e0da7f2935f84f36bd1151fc3833acc6e060871
+              tag: version-6.7.9@sha256:10bbe21fbdc68b8fa955d85827aeed197ab46d62c8c745e949d322b9f4b73ff5
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
