@@ -1,0 +1,10 @@
+---
+- name: Restart rpcd
+  ansible.builtin.command: /etc/init.d/rpcd restart
+  changed_when: true
+- name: Reload uhttpd
+  ansible.builtin.command: /etc/init.d/uhttpd reload
+  changed_when: true
+- name: Reload firewall
+  ansible.builtin.command: /etc/init.d/firewall reload
+  changed_when: true

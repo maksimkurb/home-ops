@@ -1,0 +1,44 @@
+---
+# Idempotent: creates the netifd interface and the firewall zone for the overlay
+# only when they are missing. Also used by other roles via
+#   include_role: {name: easytier, tasks_from: openwrt-network}
+- name: Network interface over the EasyTier tun device (proto none, EasyTier owns the address)
+  ansible.builtin.shell: |
+    set -eo pipefail
+    uci -q get network.{{ easytier_interface }} >/dev/null && exit 0
+    # the device is already bound to another interface: do not add a second one
+    uci show network | grep -E "^network\.[^.]+\.(device|ifname)='{{ easytier_tun_device }}'$" >/dev/null && exit 0
+    uci set network.{{ easytier_interface }}=interface
+    uci set network.{{ easytier_interface }}.proto='none'
+    uci set network.{{ easytier_interface }}.device='{{ easytier_tun_device }}'
+    uci commit network
+    ubus call network reload
+    echo changed
+  register: easytier_net
+  changed_when: "'changed' in easytier_net.stdout"
+- name: Firewall zone, forwarding to/from lan, allow input from the overlay
+  ansible.builtin.shell: |
+    set -eo pipefail
+    z='{{ easytier_firewall_zone }}'
+    # the zone may be anonymous (created in LuCI), so look it up by name
+    for s in $(uci show firewall | sed -n 's/^\(firewall\.[^.=]*\)=zone$/\1/p'); do
+      [ "$(uci -q get "$s.name")" = "$z" ] && exit 0
+    done
+    uci set firewall.$z=zone
+    uci set firewall.$z.name="$z"
+    uci set firewall.$z.device='{{ easytier_tun_device }}'
+    uci set firewall.$z.input='ACCEPT'
+    uci set firewall.$z.output='ACCEPT'
+    uci set firewall.$z.forward='ACCEPT'
+    uci set firewall.$z.masq='0'
+    for d in "lan:$z" "$z:lan"; do
+      n="et_${d%%:*}_${d##*:}"
+      uci set firewall.$n=forwarding
+      uci set firewall.$n.src="${d%%:*}"
+      uci set firewall.$n.dest="${d##*:}"
+    done
+    uci commit firewall
+    /etc/init.d/firewall reload
+    echo changed
+  register: easytier_fw
+  changed_when: "'changed' in easytier_fw.stdout"

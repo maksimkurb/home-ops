@@ -1,0 +1,135 @@
+---
+# Read-only remote access to the OpenWrt ubus (JSON-RPC over HTTP, /ubus).
+# Served by the main uhttpd (the one LuCI uses): http://<router>/ubus.
+# Reachable from the EasyTier overlay and lan; this role never opens it on wan.
+# No shell: the login only gets the ACL group below, which has no "write" part.
+rpc_ro_enabled: true
+
+# Login that the client (e.g. Hermes) uses. Password is plain text in sops
+# (group_vars/openwrt-rpc-ro/rpc-ro.sops.yaml), the router stores only a hash.
+# No " or \ in it (it goes into a JSON string).
+rpc_ro_username: hermes
+rpc_ro_password: ""
+
+# rpcd ACL group: /usr/share/rpcd/acl.d/<name>.json
+rpc_ro_acl_name: rpc-ro
+# ubus object -> allowed methods. ACL limits object and method, not arguments:
+# never add exec/write-like methods, nor "uci" (network/wireless/dropbear hold keys),
+# and do not use read '*'. Current list on the router: `ubus -v list`.
+rpc_ro_acl_ubus:
+  system: [board, info]
+  log: [read]
+  network.interface: [dump]
+  network.device: [status]
+  luci-rpc: [getDHCPLeases, getNetworkDevices, getHostHints, getBoardJSON]
+  dnsmasq: [metrics]
+  iwinfo: [devices, info, assoclist]
+  luci: [getVersion, getUnixtime, getFeatures]
+  luci.pbr: [getInitStatus, getInterfaces]
+  luci.netbird: [get_status, list_peers, list_networks, get_connection_info]
+  luci.amneziawg: [getAwgInstances]
+  rc: [list]
+# Files readable through the ubus "file" object (the ubus "file" entry is added
+# automatically). Path -> operations. Never add /etc/config/*, /etc/adguardhome/*,
+# /etc/keen-pbr/* (keys, password and token hashes): use the redacted views instead.
+# /proc/net/nf_conntrack is not listed on purpose (every LAN flow): see the conntrack view.
+rpc_ro_acl_files:
+  /proc/net/dev: [read]
+  /proc/loadavg: [read]
+  /tmp/dhcp.leases: [read]
+  /proc/uptime: [read]
+  /proc/meminfo: [read]
+  /proc/softirqs: [read]
+  /proc/net/sockstat: [read]
+  /proc/net/softnet_stat: [read]
+  /proc/net/route: [read]
+  /proc/net/arp: [read]
+  /proc/sys/net/netfilter/nf_conntrack_count: [read]
+  /proc/sys/net/netfilter/nf_conntrack_max: [read]
+  /etc/resolv.conf: [read]
+  /tmp/resolv.conf.d/resolv.conf.auto: [read]
+  /etc/dnsmasq.conf: [read]
+  /var/etc/dnsmasq.conf.*: [read]
+  /tmp/dnsmasq.*.d/*: [read]
+  /tmp/keen-pbr-crash.log.current: [read]
+  /tmp/keen-pbr-cmdfail.log: [read]
+
+# Diagnostic views: files/rpc-ro-view (Python, no shell), called as
+# /usr/libexec/rpc-ro-view <view> through ubus "file exec". The ACL pins the exact command
+# line of every view; the script writes nothing and masks secrets (password/token/key fields).
+# Its settings are rendered to /etc/rpc-ro/view.json from the rpc_ro_* variables below.
+rpc_ro_views:
+  - conntrack
+  - dns-probe
+  - egress
+  - links
+  - routing
+  - vpn
+  - kernel
+  - procs
+  - keen-pbr
+  - keen-pbr-status
+  - keen-pbr-dnsmasq
+  - delta
+  - tunnel-path
+  - mtu
+  - agh-stats
+  - time
+  - syslog
+  - syslog-errors
+  - easytier
+  - easytier-stats
+  - config-adguardhome
+  - config-keen-pbr
+  - snapshot
+# Views that take arguments. The ACL entry is a pattern ("<view> *"), so the script itself
+# validates them: test-routing <ip-or-domain> [--proto ..] [--src-addr ..] [--src-port ..]
+# [--dest-port ..] [--dscp ..], nothing else is passed to keen-pbr.
+rpc_ro_views_with_args:
+  - test-routing
+rpc_ro_dns_probe_domain: youtube.com
+# A name that is not filtered anywhere: when the probe domain gets NXDOMAIN but this one works, the
+# resolver is fine and the path or the resolver is filtering that one name.
+rpc_ro_dns_probe_control_domain: example.com
+# Resolvers to compare: the router itself (AdGuard) vs direct UDP/53 vs through the tunnel.
+rpc_ro_dns_probe_servers: [127.0.0.1, 8.8.8.8, 77.88.8.8, 9.9.9.10, 9.9.9.11]
+rpc_ro_egress_ip_url: https://ifconfig.co
+rpc_ro_egress_tcp_target: 77.88.8.8
+rpc_ro_pbr_test_domains: [youtube.com, gosuslugi.ru, telegram.org]
+# delta: two samples of every counter this many seconds apart
+rpc_ro_delta_seconds: 5
+# --- Per-host settings: these differ between routers, so set them in host_vars/<host>/, not here.
+# AWG interfaces whose peer endpoints tunnel-path and mtu probe (empty = every interface with an
+# IPv4 endpoint). Set it on a router that is a hub with many client peers: their endpoints are
+# dynamic and not worth probing.
+rpc_ro_tunnel_ifaces: []
+# Addresses reachable only through a tunnel, for the DF ping inside it:
+#   - {host: <the other end of the tunnel>, dev: <tunnel interface>}
+# Find the other end on the router itself (it must answer ICMP): `ping -I <iface> <ip>`.
+rpc_ro_mtu_inner_targets: []
+
+# tunnel-path: TCP ports to try on every AWG peer endpoint next to the endpoint's own port,
+# and the control targets that do not depend on a specific tunnel
+rpc_ro_tunnel_tcp_ports: [443]
+rpc_ro_control_tcp_targets: ["1.1.1.1:443"]
+# mtu: IP packet sizes for the DF ping sweep (100 is the control)
+rpc_ro_mtu_sizes: [100, 1200, 1240, 1280, 1320, 1360, 1380, 1400, 1420, 1460, 1500]
+# agh-stats: how many of the last AdGuardHome query-log entries to aggregate
+rpc_ro_agh_stats_entries: 20000
+
+# The main uhttpd (uhttpd.main) serves /ubus on this port. The overlay is encrypted by
+# EasyTier itself, so plain HTTP is used inside it.
+rpc_ro_port: 80
+
+# Firewall: ACCEPT the port from these zones (the overlay zone and lan; the login and
+# the ACL protect the rest). wan is not listed: it rejects input by default.
+# The overlay zone is the one the easytier role manages (the easytier role defaults are
+# not loaded here, so the fallback is spelled out).
+rpc_ro_overlay_zone: "{{ easytier_firewall_zone | default('easytier') }}"
+rpc_ro_allow_zones: ["{{ rpc_ro_overlay_zone }}", lan]
+
+# Create the interface and zone for the overlay if missing
+# (easytier_interface = cubly_et over easytier_tun_device = tun0, zone easytier_firewall_zone)
+rpc_ro_manage_network: true
+
+rpc_ro_packages: [rpcd, rpcd-mod-file, uhttpd, uhttpd-mod-ubus]

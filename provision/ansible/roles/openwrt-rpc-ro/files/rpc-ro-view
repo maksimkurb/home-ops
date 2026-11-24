@@ -1,0 +1,869 @@
+#!/usr/bin/python3
+"""Managed by Ansible. Read-only diagnostic views for the rpc-ro ACL group.
+
+Called through rpcd "file exec" as `rpc-ro-view <view>`. The ACL pins the exact command
+line of every view. The only view that takes arguments is test-routing; its ACL entry is
+a pattern, so this script is what validates the arguments (see v_test_routing).
+
+Safety rules for this file:
+  * nothing is written anywhere, every external command is run as an argument list
+    (never through a shell) with a fixed environment;
+  * secrets are masked before they are printed (config views, awg);
+  * a view takes no arguments unless it is listed in ARG_VIEWS.
+Settings come from /etc/rpc-ro/view.json (rendered by Ansible), DEFAULTS fill the gaps.
+"""
+import base64
+import collections
+import concurrent.futures
+import glob
+import ipaddress
+import json
+import os
+import random
+import re
+import select
+import shutil
+import signal
+import socket
+import struct
+import subprocess
+import sys
+import time
+
+CONFIG_PATH = "/etc/rpc-ro/view.json"
+ENV = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LC_ALL": "C"}
+DEADLINE = 25  # seconds; rpcd stops waiting for a file exec after about 30
+
+DEFAULTS = {
+    "dns_probe_domain": "example.com",
+    "dns_probe_control_domain": "example.com",
+    "dns_probe_servers": ["127.0.0.1", "8.8.8.8", "9.9.9.10"],
+    "egress_ip_url": "https://ifconfig.co",
+    "egress_tcp_target": "77.88.8.8",
+    "pbr_test_domains": ["example.com"],
+    "delta_seconds": 5,
+    "tunnel_ifaces": [],
+    "tunnel_tcp_ports": [443],
+    "control_tcp_targets": ["1.1.1.1:443"],
+    "mtu_sizes": [100, 1200, 1280, 1360, 1400, 1420, 1460, 1500],
+    "mtu_inner_targets": [],
+    "agh_stats_entries": 20000,
+}
+
+
+def load_config():
+    cfg = dict(DEFAULTS)
+    try:
+        with open(CONFIG_PATH) as f:
+            cfg.update(json.load(f))
+    except (OSError, ValueError):
+        pass
+    return cfg
+
+
+CFG = load_config()
+IPF = "/usr/libexec/ip-full" if os.path.exists("/usr/libexec/ip-full") else "ip"
+
+
+# ---------------------------------------------------------------- helpers
+def read(path, default=""):
+    try:
+        with open(path, errors="replace") as f:
+            return f.read()
+    except OSError:
+        return default
+
+
+def num(path):
+    try:
+        return int(read(path).strip())
+    except ValueError:
+        return 0
+
+
+def execute(cmd, timeout=10):
+    """Run cmd (a list) -> (returncode or None on timeout, stdout+stderr)."""
+    try:
+        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                           stdin=subprocess.DEVNULL, timeout=timeout, env=ENV)
+        return p.returncode, p.stdout.decode(errors="replace")
+    except subprocess.TimeoutExpired as e:
+        return None, (e.stdout or b"").decode(errors="replace") + "\n(timed out after %ss)\n" % timeout
+    except FileNotFoundError:
+        return 127, "%s: not found\n" % cmd[0]
+
+
+def show(cmd, timeout=10, limit=0, tail=False):
+    _, text = execute(cmd, timeout)
+    lines = text.splitlines()
+    if limit:
+        lines = lines[-limit:] if tail else lines[:limit]
+    print("\n".join(lines))
+
+
+def header(title):
+    print("== %s ==" % title)
+
+
+def have(tool):
+    return shutil.which(tool, path=ENV["PATH"]) is not None
+
+
+# ---------------------------------------------------------------- network probes
+def checksum(data):
+    if len(data) % 2:
+        data += b"\0"
+    s = sum(struct.unpack("!%dH" % (len(data) // 2), data))
+    s = (s >> 16) + (s & 0xFFFF)
+    s += s >> 16
+    return ~s & 0xFFFF
+
+
+def echo_packet(ident, seq, size):
+    body = bytes(max(size, 0))
+    hdr = struct.pack("!BBHHH", 8, 0, 0, ident, seq)
+    return struct.pack("!BBHHH", 8, 0, checksum(hdr + body), ident, seq) + body
+
+
+def raw_socket(dev=None, df=False):
+    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+    if df:
+        s.setsockopt(socket.IPPROTO_IP, 10, 2)  # IP_MTU_DISCOVER = IP_PMTUDISC_DO
+    if dev:
+        s.setsockopt(socket.SOL_SOCKET, 25, dev.encode())  # SO_BINDTODEVICE
+    return s
+
+
+def icmp_ping(hosts, dev=None, count=5, interval=0.3, wait=2.0):
+    """`count` echoes to every host at once. Prints loss and rtt per host."""
+    ident = (os.getpid() + 1) & 0xFFFF
+    s = raw_socket(dev)
+    ips = [socket.gethostbyname(h) for h in hosts]
+    sent, rtts = {}, {ip: [] for ip in ips}
+
+    def collect():
+        data, (src, _) = s.recvfrom(65535)
+        ihl = (data[0] & 0x0F) * 4
+        if data[ihl] == 0 and struct.unpack("!H", data[ihl + 4:ihl + 6])[0] == ident:
+            seq = struct.unpack("!H", data[ihl + 6:ihl + 8])[0]
+            t0 = sent.pop((src, seq), None)
+            if t0 is not None:
+                rtts[src].append((time.time() - t0) * 1000)
+
+    def pump(seconds):
+        end = time.time() + seconds
+        while time.time() < end:
+            r, _, _ = select.select([s], [], [], max(end - time.time(), 0))
+            if r:
+                collect()
+
+    for k in range(count):
+        for i, ip in enumerate(ips):
+            seq = i * count + k + 1
+            sent[(ip, seq)] = time.time()
+            try:
+                s.sendto(echo_packet(ident, seq, 56), (ip, 0))
+            except OSError:
+                pass
+        pump(interval)
+    pump(wait)
+    s.close()
+    for h, ip in zip(hosts, ips):
+        got = rtts[ip]
+        loss = 100 * (count - len(got)) // count
+        rtt = ("rtt min/avg/max = %.1f/%.1f/%.1f ms" % (min(got), sum(got) / len(got), max(got))
+               if got else "no replies")
+        print("ping %-18s %d sent, %d received, %d%% loss, %s" % (h, count, len(got), loss, rtt))
+
+
+def df_ping(host, sizes, dev=None, wait=2.0, tries=2):
+    """DF-bit echoes of every size (bytes of IP packet) at once: finds the usable path MTU.
+
+    Every size is sent `tries` times and a reply to any of them counts, so one lost packet
+    is not reported as a PMTU black hole."""
+    ident = os.getpid() & 0xFFFF
+    s = raw_socket(dev, df=True)
+    where = {}  # seq -> index of the size
+    result, sent_at = {}, {}
+    seq = 0
+    for _ in range(tries):
+        for idx, size in enumerate(sizes):
+            seq += 1
+            where[seq] = idx
+            sent_at[seq] = time.time()
+            try:
+                s.sendto(echo_packet(ident, seq, size - 28), (host, 0))  # 20 IP + 8 ICMP
+            except OSError:
+                result.setdefault(idx, "too big for the local route MTU")
+    deadline = time.time() + wait
+    while time.time() < deadline and any(i not in result for i in range(len(sizes))):
+        r, _, _ = select.select([s], [], [], max(deadline - time.time(), 0))
+        if not r:
+            break
+        data, _ = s.recvfrom(65535)
+        ihl = (data[0] & 0x0F) * 4
+        kind, code = data[ihl], data[ihl + 1]
+        if kind == 0 and struct.unpack("!H", data[ihl + 4:ihl + 6])[0] == ident:
+            q = struct.unpack("!H", data[ihl + 6:ihl + 8])[0]
+            if q in where:
+                result[where[q]] = "ok, %.0f ms" % ((time.time() - sent_at[q]) * 1000)
+        elif kind == 3 and code == 4:  # fragmentation needed; the original echo is quoted
+            nh = struct.unpack("!H", data[ihl + 6:ihl + 8])[0]
+            inner = data[ihl + 8:]
+            iihl = (inner[0] & 0x0F) * 4
+            if struct.unpack("!H", inner[iihl + 4:iihl + 6])[0] == ident:
+                q = struct.unpack("!H", inner[iihl + 6:iihl + 8])[0]
+                if q in where and not result.get(where[q], "").startswith("ok"):
+                    result[where[q]] = "rejected: fragmentation needed, next-hop MTU %d" % nh
+    s.close()
+    passed = []
+    for idx, size in enumerate(sizes):
+        res = result.get(idx, "no reply (lost, or a PMTU black hole)")
+        if res.startswith("ok"):
+            passed.append(size)
+        print("%s DF size=%-5d %s" % (host, size, res))
+    print("%s largest DF size that passed: %s" % (host, max(passed) if passed else "none"))
+
+
+def tcp_probe(target, timeout=3.0):
+    host, _, port = target.rpartition(":")
+    t0 = time.time()
+    try:
+        socket.create_connection((host, int(port)), timeout).close()
+        res = "connected in %.0f ms" % ((time.time() - t0) * 1000)
+    except socket.timeout:
+        res = "timeout (no answer, or filtered)"
+    except ConnectionRefusedError:
+        res = "refused (the host answers, the port is closed)"
+    except OSError as e:
+        res = "error: %s" % e.strerror
+    return "tcp %-24s %s" % (target, res)
+
+
+def tcp_probes(targets):
+    if not targets:
+        return
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(targets)) as ex:
+        for line in ex.map(tcp_probe, targets):
+            print(line)
+
+
+def awg_endpoints():
+    """AWG peers with an IPv4 endpoint -> [(interface, ip, port)], only on CFG["tunnel_ifaces"] if set.
+
+    A hub terminates many client peers whose endpoints are dynamic and not worth probing;
+    the interfaces to check are chosen per host (rpc_ro_tunnel_ifaces)."""
+    out = []
+    for line in execute(["awg", "show", "all", "endpoints"], 5)[1].splitlines():
+        parts = line.split("\t")
+        m = re.fullmatch(r"(\d+\.\d+\.\d+\.\d+):(\d+)", parts[-1]) if len(parts) == 3 else None
+        if m and (not CFG["tunnel_ifaces"] or parts[0] in CFG["tunnel_ifaces"]):
+            out.append((parts[0], m.group(1), m.group(2)))
+    return out
+
+
+# ---------------------------------------------------------------- redaction
+SECRET_KEY = re.compile(r"password|passwd|token|secret|key|certificate_chain", re.I)
+
+
+def redact_yaml(text):
+    out, skip_indent = [], None
+    for line in text.splitlines():
+        indent = len(line) - len(line.lstrip(" "))
+        if skip_indent is not None:
+            if not line.strip() or indent > skip_indent:
+                continue  # a block value (a PEM key, for example) belongs to the masked key
+            skip_indent = None
+        m = re.match(r"^(\s*(?:- )?)([A-Za-z_]+):", line)
+        if m and SECRET_KEY.search(m.group(2)):
+            out.append("%s%s: <redacted>" % (m.group(1), m.group(2)))
+            skip_indent = indent
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
+def redact_json(node):
+    if isinstance(node, dict):
+        return {k: ("<redacted>" if SECRET_KEY.search(k) else redact_json(v)) for k, v in node.items()}
+    if isinstance(node, list):
+        return [redact_json(v) for v in node]
+    return node
+
+
+def redact_awg(text):
+    out = []
+    for line in text.splitlines():
+        s = line.strip()
+        if "key:" in s and not s.startswith("public key:"):
+            out.append(line.split(":")[0] + ": <redacted>")  # private, preshared, header protection
+        elif re.match(r"i[1-5]:", s):
+            out.append(line.split(":")[0] + ": <cut>")  # long obfuscation blobs
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
+# ---------------------------------------------------------------- views
+def v_time():
+    header("time")
+    now = time.time()
+    print("local: %s" % time.strftime("%a %b %d %H:%M:%S %Z %Y", time.localtime(now)))
+    print("utc:   %s" % time.strftime("%a %b %d %H:%M:%S UTC %Y", time.gmtime(now)))
+    zone = execute(["uci", "-q", "get", "system.@system[0].zonename"], 3)[1].strip()
+    tz = execute(["uci", "-q", "get", "system.@system[0].timezone"], 3)[1].strip()
+    print("timezone: %s (%s)" % (zone, tz))
+    up = float(read("/proc/uptime", "0 0").split()[0])
+    print("uptime: %.0f s (%.1f days), load %s" % (up, up / 86400, " ".join(read("/proc/loadavg").split()[:3])))
+    print("ntp servers: %s" % execute(["uci", "-q", "get", "system.ntp.server"], 3)[1].strip())
+    ntpd = any(read(p).strip() == "ntpd" for p in glob.glob("/proc/[0-9]*/comm"))
+    print("ntpd: %s" % ("running" if ntpd else "NOT running"))
+
+
+def v_conntrack():
+    header("conntrack")
+    print("count: %s" % read("/proc/sys/net/netfilter/nf_conntrack_count").strip())
+    print("max:   %s" % read("/proc/sys/net/netfilter/nf_conntrack_max").strip())
+    flows = read("/proc/net/nf_conntrack").splitlines()
+    print("dns flows (dport=53): %d" % sum(1 for line in flows if "dport=53 " in line))
+    dst, dport = collections.Counter(), collections.Counter()
+    for line in flows:
+        m = re.search(r"\bdst=(\S+)", line)
+        if m:
+            dst[m.group(1)] += 1
+        m = re.search(r"\bdport=(\d+)", line)
+        if m:
+            dport[m.group(1)] += 1
+    header("top dst")
+    for k, v in dst.most_common(15):
+        print("%7d  %s" % (v, k))
+    header("top dport")
+    for k, v in dport.most_common(15):
+        print("%7d  %s" % (v, k))
+    header("sockstat")
+    print(read("/proc/net/sockstat").rstrip())
+    header("softnet_stat (per cpu: processed dropped time_squeeze)")
+    for i, line in enumerate(read("/proc/net/softnet_stat").splitlines()):
+        f = [int(x, 16) for x in line.split()[:3]]
+        print("cpu%d processed=%d dropped=%d time_squeeze=%d" % (i, *f))
+    header("mem")
+    show(["free"])
+    header("load / top")
+    print(read("/proc/loadavg").rstrip())
+    show(["top", "-b", "-n1"], 5, limit=12)
+
+
+RCODE_NAMES = {0: "NOERROR", 1: "FORMERR", 2: "SERVFAIL", 3: "NXDOMAIN", 4: "NOTIMP", 5: "REFUSED"}
+
+
+def _skip_name(data, off):
+    while True:
+        n = data[off]
+        if n == 0:
+            return off + 1
+        if n & 0xC0 == 0xC0:
+            return off + 2
+        off += n + 1
+
+
+def dns_query(server, name, tcp=False, timeout=1.5, tries=2):
+    """One A query -> {"rcode", "answers", "addrs", "ms"} or None when nothing came back.
+
+    UDP is tried `tries` times, so one lost packet is not reported as an outage."""
+    msg = struct.pack("!HHHHHH", random.randint(0, 65535), 0x0100, 1, 0, 0, 0)
+    for label in name.rstrip(".").split("."):
+        msg += bytes([len(label)]) + label.encode()
+    msg += b"\0" + struct.pack("!HH", 1, 1)
+    for _ in range(1 if tcp else tries):
+        t0 = time.time()
+        try:
+            if tcp:
+                with socket.create_connection((server, 53), timeout + 1) as c:
+                    c.sendall(struct.pack("!H", len(msg)) + msg)
+                    c.settimeout(timeout + 1)
+                    raw = b""
+                    while len(raw) < 2 or len(raw) < 2 + struct.unpack("!H", raw[:2])[0]:
+                        chunk = c.recv(4096)
+                        if not chunk:
+                            break
+                        raw += chunk
+                data = raw[2:]
+            else:
+                with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as c:
+                    c.settimeout(timeout)
+                    c.sendto(msg, (server, 53))
+                    data = c.recv(4096)
+            if len(data) < 12:
+                continue
+        except OSError:
+            continue
+        ms = (time.time() - t0) * 1000
+        qd, an = struct.unpack("!HH", data[4:8])
+        off = 12
+        for _ in range(qd):
+            off = _skip_name(data, off) + 4
+        addrs = []
+        for _ in range(an):
+            off = _skip_name(data, off)
+            rtype, _cls, _ttl, rdlen = struct.unpack("!HHIH", data[off:off + 10])
+            off += 10
+            if rtype == 1 and rdlen == 4:
+                addrs.append(socket.inet_ntoa(data[off:off + 4]))
+            off += rdlen
+        return {"rcode": RCODE_NAMES.get(data[3] & 0x0F, str(data[3] & 0x0F)), "answers": an, "addrs": addrs, "ms": ms}
+    return None
+
+
+def _fmt_dns(r):
+    if r is None:
+        return "no answer"
+    return "%s, %d answers, %.0f ms" % (r["rcode"], r["answers"], r["ms"])
+
+
+def _dns_good(r):
+    return bool(r) and r["rcode"] == "NOERROR" and r["answers"] > 0
+
+
+def v_dns_probe():
+    domain, control = CFG["dns_probe_domain"], CFG["dns_probe_control_domain"]
+    header("dns probe: %s (control: %s)" % (domain, control))
+
+    def one(server):
+        udp, tcp = dns_query(server, domain), dns_query(server, domain, tcp=True)
+        ctl = dns_query(server, control)
+        if udp is None and tcp is None:
+            verdict = "NO ANSWER on udp or tcp"
+        elif _dns_good(udp):
+            verdict = "ok" if _dns_good(tcp) or tcp is None else "ok over udp, tcp/53 fails"
+        elif _dns_good(tcp):
+            verdict = ("UDP/53 answers are rewritten or dropped on the path (tcp/53 gives real answers)"
+                       if udp else "udp/53 does not answer, tcp/53 does")
+        elif udp is not None and udp["rcode"] == "NXDOMAIN":
+            verdict = ("the name is filtered or does not exist for this resolver; the control name works, so it is not an outage"
+                       if _dns_good(ctl) else "NXDOMAIN for both names: the resolver is broken")
+        else:
+            verdict = "no usable answer (%s)" % _fmt_dns(udp)
+        return "%-16s %s udp: %s | tcp: %s | %s udp: %s  => %s" % (
+            server, domain, _fmt_dns(udp), _fmt_dns(tcp), control, _fmt_dns(ctl), verdict)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(len(CFG["dns_probe_servers"]), 1)) as ex:
+        for line in ex.map(one, CFG["dns_probe_servers"]):
+            print(line)
+
+
+def v_egress():
+    header("exit ip")
+    show(["curl", "-s", "-m", "5", CFG["egress_ip_url"]], 8, limit=2)
+    header("direct TCP to %s" % CFG["egress_tcp_target"])
+    show(["curl", "-sk", "-m", "5", "-o", "/dev/null", "-w",
+          "http=%{http_code} connect=%{time_connect}s total=%{time_total}s\n",
+          "https://%s/" % CFG["egress_tcp_target"]], 8)
+
+
+def v_links():
+    show([IPF, "-d", "-s", "link", "show"])
+
+
+def v_routing():
+    header("ip rule")
+    show([IPF, "rule", "show"])
+    header("ip -6 rule")
+    show([IPF, "-6", "rule", "show"])
+    header("routes, all tables")
+    show([IPF, "route", "show", "table", "all"])
+    header("addresses")
+    show([IPF, "-br", "addr", "show"])
+
+
+def v_vpn():
+    header("awg")
+    print(redact_awg(execute(["awg", "show", "all"], 5)[1]))
+    header("tun/vpn links")
+    block = []
+    for line in execute([IPF, "-d", "link", "show"], 5)[1].splitlines() + ["0: end"]:
+        if re.match(r"^\d+: ", line):
+            if block and re.match(r"^\d+: (tun|tap|vpn|wg|awg|wt)", block[0]):
+                print("\n".join(block[:4]))
+            block = [line]
+        else:
+            block.append(line)
+
+
+def v_kernel():
+    pat = re.compile(r"conntrack|nfqueue|table full|drop|oom", re.I)
+    lines = [ln for ln in execute(["dmesg"], 5)[1].splitlines() if pat.search(ln)]
+    print("\n".join(lines[-20:]))
+
+
+def v_procs():
+    procs = []
+    for p in glob.glob("/proc/[0-9]*/comm"):
+        procs.append((read(p).strip(), int(p.split("/")[2])))
+    for name, pid in sorted(procs)[:200]:
+        print("%d %s" % (pid, name))
+
+
+def v_keen_pbr():
+    header("keen-pbr status")
+    show(["keen-pbr", "status"], 15, limit=300)
+    for d in CFG["pbr_test_domains"]:
+        header("keen-pbr test-routing %s" % d)
+        show(["keen-pbr", "test-routing", d], 10, limit=40)
+
+
+def v_keen_pbr_status():
+    show(["keen-pbr", "status"], 15, limit=300)
+
+
+def v_keen_pbr_dnsmasq():
+    # what keen-pbr sees and generates for dnsmasq (both only print, they change nothing)
+    header("keen-pbr resolver dnsmasq detect")
+    show(["keen-pbr", "resolver", "dnsmasq", "detect"], 15, limit=60)
+    header("keen-pbr resolver dnsmasq print-config")
+    show(["keen-pbr", "resolver", "dnsmasq", "print-config"], 15, limit=400)
+
+
+# test-routing is the only view with arguments: the ACL allows `test-routing *`, so every
+# argument is checked here and keen-pbr is started with an argument list, never a shell.
+HOSTNAME = re.compile(r"^(?=.{1,253}$)[A-Za-z0-9]([A-Za-z0-9_-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9_-]{0,61}[A-Za-z0-9])?)*\.?$")
+
+
+def _port(v):
+    return v.isdigit() and 0 <= int(v) <= 65535
+
+
+def _ip(v):
+    try:
+        ipaddress.ip_address(v)
+        return True
+    except ValueError:
+        return False
+
+
+TEST_ROUTING_OPTIONS = {
+    "--proto": lambda v: v in ("tcp", "udp", "other"),
+    "--src-addr": _ip,
+    "--src-port": _port,
+    "--dest-port": _port,
+    "--dscp": lambda v: v.isdigit() and 0 <= int(v) <= 63,
+}
+
+
+def v_test_routing(args):
+    usage = ("usage: rpc-ro-view test-routing <ip-or-domain> [--proto tcp|udp|other] [--src-addr IP] "
+             "[--src-port N] [--dest-port N] [--dscp 0-63]")
+    if not args:
+        print(usage)
+        return 2
+    target, rest = args[0], args[1:]
+    if not (_ip(target) or HOSTNAME.match(target)):
+        print("invalid target %r: expected an IP address or a host name\n%s" % (target[:80], usage))
+        return 2
+    if len(rest) % 2:
+        print("every option needs a value\n" + usage)
+        return 2
+    seen, cmd = set(), ["keen-pbr", "test-routing", target]
+    for flag, value in zip(rest[0::2], rest[1::2]):
+        check = TEST_ROUTING_OPTIONS.get(flag)
+        if check is None or flag in seen or not check(value):
+            print("invalid option %r %r\n%s" % (flag[:40], value[:40], usage))
+            return 2
+        seen.add(flag)
+        cmd += [flag, value]
+    show(cmd, 20, limit=120)
+    return 0
+
+
+def v_easytier():
+    if not have("easytier-cli"):
+        print("easytier-cli is not installed")
+        return
+    # fixed read-only subcommands: nothing that adds connectors, forwards or credentials
+    for sub in (["node"], ["peer"], ["route"], ["connector", "list"], ["proxy"], ["acl", "stats"]):
+        header("easytier-cli %s" % " ".join(sub))
+        show(["easytier-cli"] + sub, 10, limit=80)
+
+
+def v_easytier_stats():
+    if not have("easytier-cli"):
+        print("easytier-cli is not installed")
+        return
+    show(["easytier-cli", "stats"], 10, limit=150)
+
+
+def v_config_adguardhome():
+    print(redact_yaml(read("/etc/adguardhome/adguardhome.yaml", "no /etc/adguardhome/adguardhome.yaml")))
+
+
+def v_config_keen_pbr():
+    text = read("/etc/keen-pbr/config.json", "")
+    if not text:
+        print("no /etc/keen-pbr/config.json")
+        return
+    try:
+        print(json.dumps(redact_json(json.loads(text)), indent=2, ensure_ascii=False))
+    except ValueError:
+        print("config.json is not valid JSON; not shown, to keep the secrets out")
+
+
+def v_syslog():
+    show(["logread", "-l", "200"], 5)
+
+
+def v_syslog_errors():
+    # warnings, errors and the daemons that matter here; ansible's own command lines are noise
+    pat = re.compile(r"err|warn|fail|timeout|refus|handshake|amnezia|awg|dnsproxy|keen-pbr|easytier|netifd|pppd|l2tp|kernel:", re.I)
+    lines = [ln for ln in execute(["logread"], 5)[1].splitlines() if "ansible-" not in ln and pat.search(ln)]
+    print("\n".join(lines[-150:]))
+
+
+# ---- delta: growth of the counters between two samples
+def sample():
+    d = collections.OrderedDict()
+    for path in sorted(glob.glob("/sys/class/net/*")):
+        name = os.path.basename(path)
+        if name == "lo":
+            continue
+        for m in ("rx_bytes", "tx_bytes", "rx_dropped", "tx_dropped", "rx_errors", "tx_errors"):
+            d[("if", name, m)] = num("%s/statistics/%s" % (path, m))
+    for line in execute(["awg", "show", "all", "transfer"], 5)[1].splitlines():
+        f = line.split("\t")
+        if len(f) == 4:
+            d[("awg", f[0], f[1][:8], "rx")] = int(f[2])
+            d[("awg", f[0], f[1][:8], "tx")] = int(f[3])
+    d[("g", "conntrack.count")] = num("/proc/sys/net/netfilter/nf_conntrack_count")
+    d[("g", "conntrack.dns_flows")] = sum(1 for ln in read("/proc/net/nf_conntrack").splitlines() if "dport=53 " in ln)
+    sn = [0, 0, 0]
+    for line in read("/proc/net/softnet_stat").splitlines():
+        for i, x in enumerate(line.split()[:3]):
+            sn[i] += int(x, 16)
+    for name, v in zip(("softnet.processed", "softnet.dropped", "softnet.time_squeeze"), sn):
+        d[("c", name)] = v
+    wanted = {"Tcp": ("RetransSegs", "OutRsts", "AttemptFails", "InErrs"),
+              "Udp": ("InErrors", "RcvbufErrors", "SndbufErrors", "NoPorts")}
+    names = {}
+    for line in read("/proc/net/snmp").splitlines():
+        f = line.split()
+        proto = f[0].rstrip(":") if f else ""
+        if proto not in wanted:
+            continue
+        if proto not in names:
+            names[proto] = f[1:]
+            continue
+        for k, v in zip(names[proto], f[1:]):
+            if k in wanted[proto]:
+                d[("c", "snmp.%s.%s" % (proto, k))] = int(v)
+    try:
+        metrics = json.loads(execute(["ubus", "call", "dnsmasq", "metrics"], 3)[1])
+        for k in ("dns_queries_forwarded", "dns_local_answered", "dns_unanswered", "dns_cache_inserted"):
+            d[("c", "dnsmasq." + k)] = int(metrics.get(k, 0))
+    except ValueError:
+        pass
+    return d
+
+
+def v_delta():
+    t1 = float(read("/proc/uptime").split()[0])
+    a = sample()
+    time.sleep(CFG["delta_seconds"])
+    t2 = float(read("/proc/uptime").split()[0])
+    b = sample()
+    dt = max(t2 - t1, 0.001)
+    print("== delta over %.1f s (growth since the first sample; the other views show totals since boot) ==" % dt)
+    print("-- interfaces: bytes (B/s), dropped rx/tx, errors rx/tx --")
+    for name in sorted({k[1] for k in b if k[0] == "if"}):
+        g = lambda m: b[("if", name, m)] - a.get(("if", name, m), 0)  # noqa: E731
+        print("%-16s rx %+d (%.0f B/s)  tx %+d (%.0f B/s)  drop %+d/%+d  err %+d/%+d" % (
+            name, g("rx_bytes"), g("rx_bytes") / dt, g("tx_bytes"), g("tx_bytes") / dt,
+            g("rx_dropped"), g("tx_dropped"), g("rx_errors"), g("tx_errors")))
+    print("-- AWG peers (public key prefix) --")
+    for iface, peer in sorted({k[1:3] for k in b if k[0] == "awg"}):
+        rx = b[("awg", iface, peer, "rx")] - a.get(("awg", iface, peer, "rx"), 0)
+        tx = b[("awg", iface, peer, "tx")] - a.get(("awg", iface, peer, "tx"), 0)
+        print("%-16s peer %s  rx %+d (%.0f B/s)  tx %+d (%.0f B/s)%s" % (
+            iface, peer, rx, rx / dt, tx, tx / dt, "   <-- no traffic" if rx == 0 and tx == 0 else ""))
+    print("-- gauges (before -> after) --")
+    for k in b:
+        if k[0] == "g":
+            print("%-28s %d -> %d (%+d)" % (k[1], a.get(k, 0), b[k], b[k] - a.get(k, 0)))
+    print("-- counters (growth, per second) --")
+    for k in b:
+        if k[0] == "c":
+            d = b[k] - a.get(k, 0)
+            print("%-28s %+d (%.2f/s)" % (k[1], d, d / dt))
+
+
+def v_tunnel_path():
+    eps = awg_endpoints()
+    if not eps:
+        print("no AWG peer with an IPv4 endpoint")
+        return
+    header("ping x5 to every peer endpoint (the outer path, not through the tunnel)")
+    icmp_ping(sorted({ip for _, ip, _ in eps}))
+    for iface, ip, port in eps:
+        header("%s: TCP to the endpoint %s" % (iface, ip))
+        tcp_probes(["%s:%s" % (ip, port)] + ["%s:%s" % (ip, p) for p in CFG["tunnel_tcp_ports"]])
+    header("control: TCP to %s (default route, independent of the tunnels)" % " ".join(CFG["control_tcp_targets"]))
+    tcp_probes(CFG["control_tcp_targets"])
+
+
+def v_mtu():
+    header("interface MTU")
+    for path in sorted(glob.glob("/sys/class/net/*")):
+        print("%s %s" % (os.path.basename(path), read(path + "/mtu").strip()))
+    header("MSS clamping in nft")
+    for line in execute(["nft", "list", "ruleset"], 5)[1].splitlines():
+        if "maxseg" in line.lower():
+            print(line.strip()[:200])
+    header("routes with an explicit mtu")
+    print("\n".join([ln for ln in execute([IPF, "route", "show", "table", "all"], 5)[1].splitlines() if " mtu " in ln][:20]))
+    for iface, ip, _ in awg_endpoints():
+        header("DF ping to the %s endpoint %s (outer path; size = IP packet bytes)" % (iface, ip))
+        df_ping(ip, CFG["mtu_sizes"])
+    for t in CFG["mtu_inner_targets"]:
+        header("DF ping inside the tunnel to %s via %s (100 is the control: no reply means the target ignores ICMP)"
+               % (t["host"], t["dev"]))
+        df_ping(t["host"], CFG["mtu_sizes"], dev=t["dev"])
+
+
+# ---- agh-stats: aggregates over AdGuardHome's query log (no API login needed)
+RCODES = {0: "NOERROR", 1: "FORMERR", 2: "SERVFAIL", 3: "NXDOMAIN", 4: "NOTIMP", 5: "REFUSED"}
+
+
+def tail_lines(path, n, block=1 << 20):
+    with open(path, "rb") as f:
+        f.seek(0, os.SEEK_END)
+        pos, data = f.tell(), b""
+        while pos > 0 and data.count(b"\n") <= n:
+            step = min(block, pos)
+            pos -= step
+            f.seek(pos)
+            data = f.read(step) + data
+    return data.splitlines()[-n:]
+
+
+def rcode_of(answer_b64):
+    try:
+        return RCODES.get(base64.b64decode(answer_b64)[3] & 0x0F, "other")
+    except (ValueError, IndexError):
+        return "?"
+
+
+def v_agh_stats():
+    workdir = execute(["uci", "-q", "get", "adguardhome.config.workdir"], 3)[1].strip() or "/var/lib/adguardhome"
+    path = os.path.join(workdir, "data", "querylog.json")
+    if not os.path.exists(path):
+        print("no AdGuardHome query log at %s" % path)
+        return
+    rows = []
+    for line in tail_lines(path, CFG["agh_stats_entries"]):
+        try:
+            rows.append(json.loads(line))
+        except ValueError:
+            pass
+    if not rows:
+        print("query log is empty")
+        return
+    header("window")
+    print("entries: %d, from %s to %s" % (len(rows), rows[0].get("T"), rows[-1].get("T")))
+    per_up = collections.defaultdict(lambda: {"n": 0, "ms": [], "rc": collections.Counter()})
+    domains, clients, qtypes, rcs, noup = (collections.Counter() for _ in range(5))
+    blocked = cached = 0
+    for r in rows:
+        up = r.get("Upstream") or ""
+        rc = rcode_of(r["Answer"]) if r.get("Answer") else "no-answer"
+        rcs[rc] += 1
+        domains[r.get("QH", "?")] += 1
+        clients[r.get("IP", "?")] += 1
+        qtypes[r.get("QT", "?")] += 1
+        cached += bool(r.get("Cached"))
+        blocked += bool((r.get("Result") or {}).get("IsFiltered"))
+        if not up:
+            noup[rc] += 1
+            continue
+        d = per_up[up]
+        d["n"] += 1
+        d["rc"][rc] += 1
+        if r.get("Elapsed"):
+            d["ms"].append(r["Elapsed"] / 1e6)
+    header("per upstream (queries, avg/p95/max ms, answers by rcode)")
+    for up, d in sorted(per_up.items(), key=lambda kv: -kv[1]["n"]):
+        ms = sorted(d["ms"])
+        avg = sum(ms) / len(ms) if ms else 0
+        p95 = ms[max(int(len(ms) * 0.95) - 1, 0)] if ms else 0
+        print("%7d  %-52s avg %6.0f  p95 %6.0f  max %6.0f  %s" % (
+            d["n"], up, avg, p95, ms[-1] if ms else 0, dict(d["rc"])))
+    print("answered without an upstream (cache/blocked/local): %s" % dict(noup))
+    header("overall")
+    print("rcodes: %s" % dict(rcs))
+    print("cached: %d, blocked by filters: %d" % (cached, blocked))
+    print("query types: %s" % dict(qtypes.most_common(8)))
+    header("top domains")
+    for k, v in domains.most_common(15):
+        print("%7d  %s" % (v, k))
+    header("top clients")
+    for k, v in clients.most_common(10):
+        print("%7d  %s" % (v, k))
+
+
+def v_snapshot():
+    v_time()
+    v_conntrack()
+    v_dns_probe()
+    v_links()
+    header("kernel")
+    v_kernel()
+    v_keen_pbr()
+    header("keen-pbr resolver dnsmasq detect")
+    show(["keen-pbr", "resolver", "dnsmasq", "detect"], 15, limit=30)
+
+
+VIEWS = {
+    "conntrack": v_conntrack, "dns-probe": v_dns_probe, "egress": v_egress, "links": v_links,
+    "routing": v_routing, "vpn": v_vpn, "kernel": v_kernel, "procs": v_procs, "keen-pbr": v_keen_pbr,
+    "keen-pbr-status": v_keen_pbr_status, "keen-pbr-dnsmasq": v_keen_pbr_dnsmasq,
+    "delta": v_delta, "tunnel-path": v_tunnel_path, "mtu": v_mtu, "agh-stats": v_agh_stats,
+    "time": v_time, "syslog": v_syslog, "syslog-errors": v_syslog_errors,
+    "easytier": v_easytier, "easytier-stats": v_easytier_stats,
+    "config-adguardhome": v_config_adguardhome, "config-keen-pbr": v_config_keen_pbr,
+    "snapshot": v_snapshot,
+}
+ARG_VIEWS = {"test-routing": v_test_routing}
+
+
+def on_alarm(signum, frame):
+    print("\n(view stopped after %d s: rpcd would give up waiting)" % DEADLINE)
+    sys.stdout.flush()
+    os._exit(124)
+
+
+def main(argv):
+    names = sorted(VIEWS) + sorted(ARG_VIEWS)
+    if len(argv) < 2 or argv[1] in ("-h", "--help"):
+        print("usage: rpc-ro-view {%s}" % "|".join(names))
+        return 2
+    if argv[1] == "--list":  # used by Ansible to compare with the ACL
+        print("\n".join(names))
+        return 0
+    signal.signal(signal.SIGALRM, on_alarm)
+    signal.alarm(DEADLINE)
+    name, args = argv[1], argv[2:]
+    if name in ARG_VIEWS:
+        return ARG_VIEWS[name](args) or 0
+    if name in VIEWS:
+        if args:
+            print("the view %s takes no arguments" % name)
+            return 2
+        VIEWS[name]()
+        return 0
+    print("unknown view %r\nusage: rpc-ro-view {%s}" % (name[:40], "|".join(names)))
+    return 2
+
+
+if __name__ == "__main__":
+    try:
+        code = main(sys.argv)
+        sys.stdout.flush()
+        sys.exit(code)
+    except BrokenPipeError:
+        sys.exit(0)

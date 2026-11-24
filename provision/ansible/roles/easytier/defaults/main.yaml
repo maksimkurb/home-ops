@@ -28,6 +28,9 @@ easytier_log_level: warn
 easytier_enable_ip_forward: false # Debian
 easytier_firewall_zone: easytier # OpenWrt
 easytier_tun_device: tun0 # OpenWrt firewall zone device
+# OpenWrt netifd interface (proto none) over easytier_tun_device. UCI section
+# names cannot contain "-", so it is cubly_et and not cubly-et.
+easytier_interface: cubly_et
 
 # Listener ports configured in the panel that must be reachable from outside:
 # opened in ufw (Debian/Ubuntu, if ufw is active) or on the OpenWrt wan zone.

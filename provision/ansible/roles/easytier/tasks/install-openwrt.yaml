@@ -49,28 +49,8 @@
     mode: "0600"
   no_log: true
   notify: Restart easytier
-- name: Firewall zone, forwarding to/from lan, allow input from the overlay
-  ansible.builtin.shell: |
-    set -e
-    uci -q get firewall.{{ easytier_firewall_zone }} >/dev/null && exit 0
-    uci set firewall.{{ easytier_firewall_zone }}=zone
-    uci set firewall.{{ easytier_firewall_zone }}.name='{{ easytier_firewall_zone }}'
-    uci set firewall.{{ easytier_firewall_zone }}.device='{{ easytier_tun_device }}'
-    uci set firewall.{{ easytier_firewall_zone }}.input='ACCEPT'
-    uci set firewall.{{ easytier_firewall_zone }}.output='ACCEPT'
-    uci set firewall.{{ easytier_firewall_zone }}.forward='ACCEPT'
-    uci set firewall.{{ easytier_firewall_zone }}.masq='0'
-    for d in "lan:{{ easytier_firewall_zone }}" "{{ easytier_firewall_zone }}:lan"; do
-      n="et_${d%%:*}_${d##*:}"
-      uci set firewall.$n=forwarding
-      uci set firewall.$n.src="${d%%:*}"
-      uci set firewall.$n.dest="${d##*:}"
-    done
-    uci commit firewall
-    /etc/init.d/firewall reload
-    echo changed
-  register: easytier_fw
-  changed_when: "'changed' in easytier_fw.stdout"
+- name: Network interface and firewall zone for the overlay
+  ansible.builtin.include_tasks: openwrt-network.yaml
 - name: Allow listener ports on the wan zone
   ansible.builtin.shell: |
     set -e

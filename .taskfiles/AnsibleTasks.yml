@@ -61,6 +61,11 @@ tasks:
     dir: provision/ansible
     cmds:
       - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/easytier-install.yaml {{ .CLI_ARGS }}"
+  playbook:openwrt-rpc-ro-install:
+    desc: Read-only ubus RPC on OpenWrt, reachable from the EasyTier overlay only
+    dir: provision/ansible
+    cmds:
+      - "ansible-playbook -i {{.ANSIBLE_INVENTORY_DIR}}/hosts.yaml {{.ANSIBLE_PLAYBOOK_DIR}}/openwrt-rpc-ro-install.yaml {{ .CLI_ARGS }}"
   playbook:tailscale-uninstall:
     desc: Remove tailscale from routers and servers (and node records in headscale)
     dir: provision/ansible

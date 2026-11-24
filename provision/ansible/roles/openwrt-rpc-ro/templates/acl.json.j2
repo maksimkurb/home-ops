@@ -1,0 +1,4 @@
+{{ {rpc_ro_acl_name: {
+     'description': 'Read-only access for ' ~ rpc_ro_username ~ ' (managed by Ansible)',
+     'read': _rpc_ro_read
+   }} | to_nice_json(indent=2) }}

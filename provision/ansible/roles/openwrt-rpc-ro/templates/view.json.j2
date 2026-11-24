@@ -1,0 +1,15 @@
+{{ {
+  'dns_probe_domain': rpc_ro_dns_probe_domain,
+  'dns_probe_control_domain': rpc_ro_dns_probe_control_domain,
+  'dns_probe_servers': rpc_ro_dns_probe_servers,
+  'egress_ip_url': rpc_ro_egress_ip_url,
+  'egress_tcp_target': rpc_ro_egress_tcp_target,
+  'pbr_test_domains': rpc_ro_pbr_test_domains,
+  'delta_seconds': rpc_ro_delta_seconds,
+  'tunnel_ifaces': rpc_ro_tunnel_ifaces,
+  'tunnel_tcp_ports': rpc_ro_tunnel_tcp_ports,
+  'control_tcp_targets': rpc_ro_control_tcp_targets,
+  'mtu_sizes': rpc_ro_mtu_sizes,
+  'mtu_inner_targets': rpc_ro_mtu_inner_targets,
+  'agh_stats_entries': rpc_ro_agh_stats_entries,
+} | to_nice_json(indent=2) }}

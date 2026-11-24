@@ -61,3 +61,10 @@ easytier:
     prox-h2: {}
     owrt-h3: {}
     owrt-tkh2: {}
+
+# openwrt-rpc-ro: read-only ubus RPC (/ubus) reachable from the EasyTier overlay only
+openwrt-rpc-ro:
+  hosts:
+    owrt-h1: {}
+    owrt-h3: {}
+    owrt-tkh2: {}

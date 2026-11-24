@@ -1,0 +1,306 @@
+---
+- name: Skip hosts where read-only RPC is not managed
+  ansible.builtin.meta: end_host
+  when: not (rpc_ro_enabled | bool)
+  tags: [rpc-ro]
+
+- name: Detect OpenWrt
+  ansible.builtin.stat: {path: /etc/openwrt_release}
+  register: rpc_ro_st_owrt
+  tags: [rpc-ro]
+
+- name: Check settings
+  ansible.builtin.assert:
+    that: "{{ item.that }}"
+    fail_msg: "{{ inventory_hostname }}: {{ item.msg }}"
+    quiet: true
+  loop:
+    - name: openwrt
+      that: rpc_ro_st_owrt.stat.exists
+      msg: "not an OpenWrt host"
+    - name: username
+      that: rpc_ro_username is match('^[a-z][a-z0-9_]{1,31}$')
+      msg: "rpc_ro_username must match ^[a-z][a-z0-9_]{1,31}$"
+    - name: password
+      that: rpc_ro_password | length >= 16 and rpc_ro_password is not search('["\\\\\s]')
+      msg: "rpc_ro_password (sops) must be at least 16 characters, without quotes, backslash and spaces"
+    - name: acl_name
+      that: rpc_ro_acl_name is match('^[A-Za-z0-9_-]+$')
+      msg: "rpc_ro_acl_name must be a plain name"
+    - name: port
+      that: rpc_ro_port | int > 0 and rpc_ro_port | int < 65536
+      msg: "rpc_ro_port must be a TCP port"
+    - name: views
+      that: (rpc_ro_views + rpc_ro_views_with_args) | reject('match', '^[a-z][a-z0-9-]*$') | list | length == 0
+      msg: "rpc_ro_views and rpc_ro_views_with_args items must be plain lowercase names"
+    - name: no_wildcard_read
+      that: "'*' not in rpc_ro_acl_ubus and '*' not in rpc_ro_acl_files"
+      msg: "do not use '*' in the read-only ACL"
+  loop_control: {label: "{{ item.name }}"}
+  tags: [rpc-ro]
+
+- name: Interface and firewall zone for the EasyTier overlay
+  ansible.builtin.include_role:
+    name: easytier
+    tasks_from: openwrt-network
+  when: rpc_ro_manage_network | bool
+  tags: [rpc-ro]
+
+- name: Packages
+  ansible.builtin.shell: |
+    set -eo pipefail
+    if command -v apk >/dev/null 2>&1; then
+      apk info -e {{ item }} >/dev/null && exit 0
+      apk update >/dev/null; apk add {{ item }}
+    else
+      opkg list-installed | grep '^{{ item }} ' >/dev/null && exit 0
+      opkg update >/dev/null; opkg install {{ item }}
+    fi
+    echo changed
+  register: rpc_ro_pkg
+  changed_when: "'changed' in rpc_ro_pkg.stdout"
+  loop: "{{ rpc_ro_packages }}"
+  tags: [rpc-ro]
+
+- name: Settings directory for the views
+  ansible.builtin.file:
+    path: /etc/rpc-ro
+    state: directory
+    mode: "0755"
+  when: rpc_ro_views | length > 0
+  tags: [rpc-ro]
+
+- name: Settings for the views
+  ansible.builtin.template:
+    src: view.json.j2
+    dest: /etc/rpc-ro/view.json
+    mode: "0644"
+  when: rpc_ro_views | length > 0
+  tags: [rpc-ro]
+
+- name: Diagnostic views script (Python 3, which Ansible needs on the router anyway)
+  ansible.builtin.copy:
+    src: rpc-ro-view
+    dest: /usr/libexec/rpc-ro-view
+    owner: root
+    group: root
+    mode: "0755"
+  when: rpc_ro_views | length > 0
+  tags: [rpc-ro]
+
+- name: Check the script knows exactly the views the ACL allows
+  ansible.builtin.command: /usr/libexec/rpc-ro-view --list
+  register: rpc_ro_listed
+  changed_when: false
+  failed_when: >-
+    (rpc_ro_views + rpc_ro_views_with_args) | symmetric_difference(rpc_ro_listed.stdout_lines) | length > 0
+  when: rpc_ro_views | length > 0
+  tags: [rpc-ro]
+
+- name: Rpcd ACL group, read only because there is no write section
+  ansible.builtin.template:
+    src: acl.json.j2
+    dest: "/usr/share/rpcd/acl.d/{{ rpc_ro_acl_name }}.json"
+    mode: "0644"
+  vars:
+    _rpc_ro_file_methods: "{{ ['read'] + (['exec'] if rpc_ro_views or rpc_ro_views_with_args else []) }}"
+    _rpc_ro_exec_acl: >-
+      {%- set r = {} -%}
+      {%- for v in rpc_ro_views -%}
+      {%- set _ = r.update({'/usr/libexec/rpc-ro-view ' ~ v: ['exec']}) -%}
+      {%- endfor -%}
+      {%- for v in rpc_ro_views_with_args -%}
+      {%- set _ = r.update({'/usr/libexec/rpc-ro-view ' ~ v ~ ' *': ['exec']}) -%}
+      {%- endfor -%}
+      {{ r }}
+    _rpc_ro_read: >-
+      {{ {'ubus': rpc_ro_acl_ubus | combine({'file': _rpc_ro_file_methods}),
+          'file': rpc_ro_acl_files | combine(_rpc_ro_exec_acl)} }}
+  notify: Restart rpcd
+  tags: [rpc-ro]
+
+- name: Rpcd login (the password hash is kept if it is already set)
+  ansible.builtin.shell: |
+    set -eo pipefail
+    s=rpcd.rpc_ro
+    pw="$(uci -q get $s.password || true)"
+    before="$(uci -q show $s | sort || true)"
+    uci -q delete $s || true
+    uci set $s=login
+    uci set $s.username='{{ rpc_ro_username }}'
+    [ -n "$pw" ] && uci set $s.password="$pw"
+    uci add_list $s.read='{{ rpc_ro_acl_name }}'
+    after="$(uci show $s | sort)"
+    if [ "$before" = "$after" ]; then uci revert rpcd; exit 0; fi
+    uci commit rpcd
+    echo changed
+  register: rpc_ro_login
+  changed_when: "'changed' in rpc_ro_login.stdout"
+  notify: Restart rpcd
+  tags: [rpc-ro]
+
+# the login test below needs rpcd with the new ACL and login
+- name: Apply rpcd changes
+  ansible.builtin.meta: flush_handlers
+  tags: [rpc-ro]
+
+- name: Rpcd login password (set the hash only if the login with the password fails)
+  ansible.builtin.shell: |
+    set -eo pipefail
+    ubus call session login "{\"username\":\"{{ rpc_ro_username }}\",\"password\":\"$RPC_RO_PW\",\"timeout\":5}" >/dev/null 2>&1 && exit 0
+    uci set rpcd.rpc_ro.password="$(uhttpd -m "$RPC_RO_PW")"
+    uci commit rpcd
+    /etc/init.d/rpcd restart
+    sleep 1
+    echo changed
+  environment:
+    RPC_RO_PW: "{{ rpc_ro_password }}"
+  register: rpc_ro_pw
+  changed_when: "'changed' in rpc_ro_pw.stdout"
+  no_log: true
+  tags: [rpc-ro]
+
+- name: Main uhttpd serves /ubus
+  ansible.builtin.shell: |
+    set -eo pipefail
+    [ -n "$(uci -q get uhttpd.main.ubus_prefix)" ] && exit 0
+    uci set uhttpd.main.ubus_prefix='/ubus'
+    uci commit uhttpd
+    echo changed
+  register: rpc_ro_uhttpd
+  changed_when: "'changed' in rpc_ro_uhttpd.stdout"
+  notify: Reload uhttpd
+  tags: [rpc-ro]
+
+- name: Firewall rules
+  ansible.builtin.set_fact:
+    rpc_ro_fw_rules: >-
+      {%- set r = [] -%}
+      {%- for z in rpc_ro_allow_zones -%}
+      {%- set _ = r.append({'id': 'rpc_ro_allow_' ~ (z | regex_replace('[^A-Za-z0-9_]', '_')),
+                            'name': 'Allow-RPC-RO-' ~ z, 'zone': z, 'target': 'ACCEPT'}) -%}
+      {%- endfor -%}
+      {{ r }}
+  tags: [rpc-ro]
+- name: Firewall - accept from the allowed zones
+  ansible.builtin.shell: |
+    set -eo pipefail
+    s=firewall.{{ item.id }}
+    before="$(uci -q show $s || true)"
+    uci -q delete $s || true
+    uci set $s=rule
+    uci set $s.name='{{ item.name }}'
+    uci set $s.src='{{ item.zone }}'
+    uci set $s.proto='tcp'
+    uci set $s.dest_port='{{ rpc_ro_port }}'
+    uci set $s.target='{{ item.target }}'
+    after="$(uci show $s)"
+    if [ "$before" = "$after" ]; then uci revert firewall; exit 0; fi
+    uci commit firewall
+    echo changed
+  register: rpc_ro_fw
+  changed_when: "'changed' in rpc_ro_fw.stdout"
+  loop: "{{ rpc_ro_fw_rules }}"
+  loop_control: {label: "{{ item.name }}"}
+  notify: Reload firewall
+  tags: [rpc-ro]
+
+- name: Remove the leftovers of the earlier dedicated uhttpd instance (port 8088) and stale rules
+  ansible.builtin.shell: |
+    set -eo pipefail
+    keep=" {{ rpc_ro_fw_rules | map(attribute='id') | join(' ') }} "
+    if uci -q get uhttpd.rpc_ro >/dev/null; then
+      uci delete uhttpd.rpc_ro
+      uci commit uhttpd
+      echo changed
+    fi
+    for s in $(uci show firewall | sed -n 's/^firewall\.\(rpc_ro_[A-Za-z0-9_]*\)=rule$/\1/p'); do
+      case "$keep" in *" $s "*) continue ;; esac
+      uci delete firewall.$s
+      uci commit firewall
+      echo changed
+    done
+    rm -rf /usr/share/rpc-ro/www
+    rmdir /usr/share/rpc-ro 2>/dev/null || true
+  register: rpc_ro_cleanup
+  changed_when: "'changed' in rpc_ro_cleanup.stdout"
+  notify: [Reload uhttpd, Reload firewall]
+  tags: [rpc-ro]
+
+- name: Apply uhttpd and firewall changes
+  ansible.builtin.meta: flush_handlers
+  tags: [rpc-ro]
+
+# Handlers are lost if an earlier run failed after the config was written (the next run
+# then sees no change and queues nothing), so converge on the real state, not on "changed".
+- name: Make sure the main uhttpd is listening
+  ansible.builtin.shell: |
+    set -eo pipefail
+    listening() { netstat -lnt | grep -E '[:.]{{ rpc_ro_port }} ' >/dev/null; }
+    listening && exit 0
+    for action in reload restart; do
+      /etc/init.d/uhttpd $action
+      for i in 1 2 3 4 5; do
+        sleep 1
+        listening && { echo changed; exit 0; }
+      done
+    done
+    echo "uhttpd does not listen on port {{ rpc_ro_port }}" >&2
+    exit 1
+  register: rpc_ro_listen
+  changed_when: "'changed' in rpc_ro_listen.stdout"
+  tags: [rpc-ro]
+
+- name: Make sure the firewall rules are loaded
+  ansible.builtin.shell: |
+    set -eo pipefail
+    command -v nft >/dev/null 2>&1 || exit 0
+    loaded="$(nft list ruleset)"
+    for n in {{ rpc_ro_fw_rules | map(attribute='name') | join(' ') }}; do
+      echo "$loaded" | grep -F "$n" >/dev/null && continue
+      /etc/init.d/firewall reload
+      echo changed
+      exit 0
+    done
+  register: rpc_ro_fwload
+  changed_when: "'changed' in rpc_ro_fwload.stdout"
+  tags: [rpc-ro]
+
+- name: Check over HTTP - login and an allowed call work, a call outside the ACL is denied
+  ansible.builtin.shell: |
+    set -eo pipefail
+    u="http://127.0.0.1:{{ rpc_ro_port }}/ubus"
+    call() { uclient-fetch -q -O - --post-data="$1" "$u"; }
+    sleep 2
+    login="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"call\",\"params\":[\"00000000000000000000000000000000\",\"session\",\"login\","
+    login="$login{\"username\":\"{{ rpc_ro_username }}\",\"password\":\"$RPC_RO_PW\"}]}"
+    sid="$(call "$login" | jsonfilter -e '@.result[1].ubus_rpc_session')"
+    [ -n "$sid" ] || { echo "login over HTTP failed"; exit 1; }
+    call "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"call\",\"params\":[\"$sid\",\"system\",\"board\",{}]}" | grep -q '"hostname"' \
+      || { echo "system board is not allowed"; exit 1; }
+    # harmless probe: reading the rpcd config must NOT be allowed
+    call "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"call\",\"params\":[\"$sid\",\"uci\",\"get\",{\"config\":\"rpcd\"}]}" | grep -q '"code":-32002' \
+      || { echo "uci get is not denied: the ACL is too broad"; exit 1; }
+    {% if rpc_ro_views %}
+    ex() { call "{\"jsonrpc\":\"2.0\",\"id\":4,\"method\":\"call\",\"params\":[\"$sid\",\"file\",\"exec\",{\"command\":\"$1\",\"params\":[$2]}]}"; }
+    # a listed view runs; anything else (another binary, extra argument) must be denied
+    ex /usr/libexec/rpc-ro-view '"{{ rpc_ro_views | first }}"' | grep -q '"code":0' \
+      || { echo "view {{ rpc_ro_views | first }} did not run"; exit 1; }
+    # a denial by the ubus ACL is {"error":{"code":-32002}}, one by the file path ACL is {"result":[6]}
+    ex /bin/ls '"/"' | grep -qE '"code":-32002|"result":\[6\]' \
+      || { echo "file exec of an arbitrary command is not denied"; exit 1; }
+    ex /usr/libexec/rpc-ro-view '"{{ rpc_ro_views | first }}","; id"' | grep -qE '"code":-32002|"result":\[6\]' \
+      || { echo "file exec with an extra argument is not denied: exec ACL does not pin arguments"; exit 1; }
+    {% if 'test-routing' in rpc_ro_views_with_args %}
+    # the ACL entry is a pattern, so the script must reject a bad target and unknown options itself
+    ex /usr/libexec/rpc-ro-view '"test-routing","; id"' | grep -q '"code":2' \
+      || { echo "test-routing accepted a bad target: its argument validation does not work"; exit 1; }
+    ex /usr/libexec/rpc-ro-view '"test-routing","example.com","--config","/etc/passwd"' | grep -q '"code":2' \
+      || { echo "test-routing accepted an unknown option"; exit 1; }
+    {% endif %}
+    {% endif %}
+  environment:
+    RPC_RO_PW: "{{ rpc_ro_password }}"
+  changed_when: false
+  no_log: true
+  tags: [rpc-ro]
