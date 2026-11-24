@@ -1,4 +1,13 @@
 ---
+- name: Detect OpenWrt (procd init scripts) vs systemd hosts
+  ansible.builtin.stat:
+    path: /etc/openwrt_release
+  register: frpc_st_openwrt
+  tags: [frpc]
+- name: Set frpc_openwrt
+  ansible.builtin.set_fact:
+    frpc_openwrt: "{{ frpc_st_openwrt.stat.exists }}"
+  tags: [frpc]
 - name: Create download directory on the controller
   ansible.builtin.file:
     path: "{{ frpc_download_dir }}"
@@ -65,6 +74,7 @@
   loop_control:
     label: "{{ item.name }}"
   notify: Restart frpc
+  when: frpc_openwrt
   tags: [frpc]
 - name: Enable frpc services
   ansible.builtin.command:
@@ -73,6 +83,26 @@
   loop_control:
     label: "{{ item.name }}"
   changed_when: false
+  when: frpc_openwrt
+  tags: [frpc]
+- name: Deploy frpc systemd units
+  ansible.builtin.template:
+    src: frpc.service.j2
+    dest: "/etc/systemd/system/frpc-{{ item.name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: frpc_units
+  notify: Restart frpc
+  when: not frpc_openwrt
+  tags: [frpc]
+- name: Reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  when: not frpc_openwrt and frpc_units is changed
   tags: [frpc]
 - name: Flush handlers before starting the services
   ansible.builtin.meta: flush_handlers
@@ -86,4 +116,15 @@
   register: frpc_start
   changed_when: false
   failed_when: frpc_start.rc != 0 and "already running" not in frpc_start.stderr
+  when: frpc_openwrt
+  tags: [frpc]
+- name: Enable and start frpc services (systemd)
+  ansible.builtin.systemd_service:
+    name: "frpc-{{ item.name }}"
+    enabled: true
+    state: started
+  loop: "{{ frpc_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: not frpc_openwrt
   tags: [frpc]

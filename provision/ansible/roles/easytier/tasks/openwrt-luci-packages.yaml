@@ -10,10 +10,9 @@
   ansible.builtin.set_fact:
     easytier_pkg_arch: "{{ easytier_owrt_info.stdout.split()[0] }}"
     easytier_pkg_mgr: "{{ easytier_owrt_info.stdout.split()[1] }}"
-- name: Check installed version
+- name: Check the LuCI packages are installed
   ansible.builtin.shell: >-
     set -o pipefail;
-    /usr/bin/easytier-core -V 2>/dev/null | grep -q '{{ easytier_luci_version }}' &&
     {{ 'apk info -e luci-app-easytier' if easytier_pkg_mgr == 'apk'
        else 'opkg list-installed | grep "^luci-app-easytier " >/dev/null' }}
   register: easytier_pkg_present

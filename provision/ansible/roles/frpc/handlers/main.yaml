@@ -1,6 +1,16 @@
 ---
-- name: Restart frpc
+- name: Restart frpc (openwrt)
+  listen: Restart frpc
   ansible.builtin.command:
     cmd: "/etc/init.d/frpc-{{ item.name }} restart"
   loop: "{{ frpc_instances }}"
+  when: frpc_openwrt
   changed_when: true
+- name: Restart frpc (systemd)
+  ansible.builtin.systemd_service:
+    name: "frpc-{{ item.name }}"
+    state: restarted
+    daemon_reload: true
+  loop: "{{ frpc_instances }}"
+  when: not frpc_openwrt
+  listen: Restart frpc

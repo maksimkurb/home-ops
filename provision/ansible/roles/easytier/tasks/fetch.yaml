@@ -7,17 +7,25 @@
   delegate_to: localhost
   become: false
   check_mode: false
+- name: Unpack dir
+  ansible.builtin.file:
+    path: "/tmp/easytier-{{ easytier_version }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  become: false
+  check_mode: false
 - name: Unpack
   ansible.builtin.unarchive:
     src: "/tmp/easytier-{{ easytier_arch_r }}-{{ easytier_version }}.zip"
-    dest: "/tmp/"
-    creates: "/tmp/easytier-linux-{{ easytier_arch_r }}/easytier-core"
+    dest: "/tmp/easytier-{{ easytier_version }}/"
+    creates: "/tmp/easytier-{{ easytier_version }}/easytier-linux-{{ easytier_arch_r }}/easytier-core"
   delegate_to: localhost
   become: false
   check_mode: false
 - name: Copy binaries to the node
   ansible.builtin.copy:
-    src: "/tmp/easytier-linux-{{ easytier_arch_r }}/{{ item }}"
+    src: "/tmp/easytier-{{ easytier_version }}/easytier-linux-{{ easytier_arch_r }}/{{ item }}"
     dest: "{{ easytier_bin_dir }}/{{ item }}"
     mode: "0755"
   loop: [easytier-core, easytier-cli]

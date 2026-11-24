@@ -1,6 +1,10 @@
 easytier_open_ports:
     - ENC[AES256_GCM,data:9J0/kzxl1L5X,iv:6nxdlfg3gkwq5CM9cKXGSHBjQg9JQEpdPLVmeXTZXZ8=,tag:YquIUmLVQ5IM3vDi85tRKg==,type:str]
     - ENC[AES256_GCM,data:Hd3LL8c0E+NO,iv:j22UOVgMmubnbae+L2Wf7uCF1DZLFir8Xki7exRVZCs=,tag:qAv1DpI0FXLgyUooFmofYQ==,type:str]
+    - ENC[AES256_GCM,data:6eSTv6cQBLAc,iv:XtLh1eh/XO1RkGUfObHvuk62XEdfrtqPxMiC3WRmJN0=,tag:23Y8+avqyUBp72F5zVME5Q==,type:str]
+    - ENC[AES256_GCM,data:TjYaevH/jL4C,iv:z3lGxyVeSPrt4Fw28bsxas3Rq7kyZBpWQZZg3DQktEw=,tag:dxifgPnS1Xr8vjkcq4rwqw==,type:str]
+    - ENC[AES256_GCM,data:LjrAovMGp8B/,iv:LyFV/OnQSpKJsSsWd/t6q/RN04dgk+hT9JcrkuVb4jg=,tag:24A8HRvgzWa3SAvKsD15TA==,type:str]
+    - ENC[AES256_GCM,data:0KUxcgksuIrf,iv:zg92mLKVAVjG0se0q1wlgLxiflnnMbAi/JuiW+CsXc4=,tag:EaLsgjVL2lg5H8V9zOOe3A==,type:str]
 easytier_config_server: ENC[AES256_GCM,data:uLF1YtctWNGUYLg5gV6S7sPjmKagRmAtMzCzmuFizO/MDsV9+ftOnoVqwjr6H0aUQVk=,iv:uggDnCTPngPMh+lzET4SKYmeB8QWz7rJOjKSDDrs4KM=,tag:KSIPCWiiYjr5U5UyGHDxzA==,type:str]
 easytier_machine_id: ENC[AES256_GCM,data:RWy3ZqmDadglJrfZWJUJoa2wegZXLhudDu0prwgMCWdSk66f,iv:5JApZ9qEbQkMNWYVPDW7q+Ka/XZT7Ek2hjLHIsj3uAk=,tag:f7eZi2NobZRx+Ox/52VaoA==,type:str]
 sops:
@@ -14,7 +18,7 @@ sops:
             qYHEX78qxDpiRauGE4uxoAy5xr3xV9v1pJrPRKrcPTmCJPSCghLT/w==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-11-21T20:28:18Z"
-    mac: ENC[AES256_GCM,data:M9KINqHFZLEw/ZgIJXbHDQT19djZfCyBNLpojrPEmBR1pxacBMSPyBYylzGoyYaWcYu1yI4YGZkvHKrc6nY0K9nfR5Gzp7kcDup34+IAvD0Y5MGyxWCQbnD7d67jhCdvX1QBCvUH1khV0WzcDycUZbdgNTXo9nMdDDNgf/bUE7Q=,iv:e46X/JPmthIVJ5np158U3IUL0KL30dRCEDtY/ph0Uo8=,tag:tni1N1Vq81OBOkGHlEdgIA==,type:str]
+    lastmodified: "2026-11-24T05:33:56Z"
+    mac: ENC[AES256_GCM,data:FxuTKlsycOlmQp17iGbsokW9Lfqw9p6cOemmFOjGCX20anvAA4tFCYfecdE4MC2zVMKGioCCSEEE3m44ovOpmtstcEQkRLb8ig1wXGS9DAHDaG/L9izoLyh7Y5JJjq65dsr9f/v7vwNpuhf+pv8gANMimClkDicI4URs7y+QUkg=,iv:9eebIbpDj4fLUMzW846WN/oxsN4JBeyE+0e7swtw1VY=,tag:RdZAAm80fzjnXkRX2g0tFQ==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

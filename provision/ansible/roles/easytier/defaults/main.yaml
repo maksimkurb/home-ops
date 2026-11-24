@@ -1,6 +1,6 @@
 ---
 easytier_enabled: true
-easytier_version: "2.6.4"
+easytier_version: "2.7.1"
 # auto-detected: debian | openwrt | entware (override in host_vars)
 easytier_platform: ""
 # auto-detected from ansible_architecture; override for routers (mips vs mipsel!)
@@ -37,4 +37,8 @@ easytier_manage_firewall: true
 easytier_wan_zone: wan # OpenWrt
 
 # OpenWrt: official easytier-noweb + luci-app-easytier packages
-easytier_luci_version: "{{ easytier_version }}"
+# luci-app-easytier publishes bundles only for some releases (no v2.6.3, v2.7.x),
+# so the bundle (luci UI + init script) is pinned to the newest one that exists.
+# easytier-core/easytier-cli are then replaced with easytier_version from the
+# main EasyTier release.
+easytier_luci_version: "2.6.4"

@@ -9,6 +9,25 @@
   ansible.builtin.file: {path: /etc/easytier, state: directory, mode: "0700"}
 - name: Packages (easytier-noweb + luci-app-easytier)
   ansible.builtin.include_tasks: openwrt-luci-packages.yaml
+- name: Set aside the cached panel configs if easytier-core is not easytier_version
+  # The cache is only the last config received from the panel; a core of another
+  # version (e.g. nightly) may write fields this version refuses to parse and
+  # crash on start. The panel resends the config on connect.
+  ansible.builtin.shell: |
+    cur=$(/usr/bin/easytier-core -V 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^ ]*' | head -n1)
+    case "$cur" in "{{ easytier_version }}"|"{{ easytier_version }}"-*) exit 0;; esac
+    ls {{ easytier_config_dir_r }}/*.toml >/dev/null 2>&1 || exit 0
+    bak="{{ easytier_config_dir_r }}.bak-${cur:-unknown}-$(date +%s)"
+    mkdir -p "$bak" && mv {{ easytier_config_dir_r }}/*.toml "$bak"/
+    echo "changed: moved to $bak"
+  register: easytier_cfg_cache
+  changed_when: "'changed' in easytier_cfg_cache.stdout"
+  notify: Restart easytier
+- name: Replace easytier-core/cli from the bundle with easytier_version
+  ansible.builtin.include_tasks: fetch.yaml
+  vars:
+    easytier_bin_dir: /usr/bin
+    easytier_arch_r: "{{ easytier_arch if easytier_arch | length else easytier_pkg_arch.split('_')[0] }}"
 - name: Remove the old local TOML config
   ansible.builtin.file: {path: /etc/easytier/config.toml, state: absent}
 - name: Dir for configs received from the panel
@@ -74,3 +93,19 @@
 - name: Enable and start
   ansible.builtin.shell: /etc/init.d/easytier enable && /etc/init.d/easytier start
   changed_when: false
+- name: Check easytier-core stays up (a cached panel config it cannot parse makes it crash-loop)
+  # The init script stops the core with `ps | grep easytier-core | xargs kill`, which would
+  # also kill this very shell if its command line contained that name: build it at runtime.
+  ansible.builtin.shell: |
+    p=easytier; p="$p-core"
+    sleep 8
+    pidof "$p" >/dev/null && exit 0
+    ls {{ easytier_config_dir_r }}/*.toml >/dev/null 2>&1 || exit 1
+    bak="{{ easytier_config_dir_r }}.bak-crash-$(date +%s)"
+    mkdir -p "$bak" && mv {{ easytier_config_dir_r }}/*.toml "$bak"/
+    /etc/init.d/easytier restart
+    sleep 8
+    pidof "$p" >/dev/null || exit 1
+    echo "changed: unparsable config moved to $bak"
+  register: easytier_alive
+  changed_when: "'changed' in easytier_alive.stdout"

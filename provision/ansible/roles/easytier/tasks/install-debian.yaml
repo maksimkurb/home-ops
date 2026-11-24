@@ -4,6 +4,20 @@
     easytier_bin_dir: /usr/local/bin
 - name: Config dir
   ansible.builtin.file: {path: /etc/easytier, state: directory, mode: "0700"}
+- name: Set aside the cached panel configs if easytier-core is not easytier_version
+  # A core of another version may have written fields this version refuses to parse
+  # (e.g. source = "webhook") and would crash-loop; the panel resends the config on connect.
+  ansible.builtin.shell: |
+    cur=$({{ easytier_bin_dir }}/easytier-core -V 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[^ ]*' | head -n1)
+    [ -z "$cur" ] && exit 0
+    case "$cur" in "{{ easytier_version }}"|"{{ easytier_version }}"-*) exit 0;; esac
+    ls {{ easytier_config_dir_r }}/*.toml >/dev/null 2>&1 || exit 0
+    bak="{{ easytier_config_dir_r }}.bak-$cur-$(date +%s)"
+    mkdir -p "$bak" && mv {{ easytier_config_dir_r }}/*.toml "$bak"/
+    echo "changed: moved to $bak"
+  register: easytier_cfg_cache
+  changed_when: "'changed' in easytier_cfg_cache.stdout"
+  notify: Restart easytier
 - name: Binaries
   ansible.builtin.include_tasks: fetch.yaml
 - name: Remove the old local TOML config

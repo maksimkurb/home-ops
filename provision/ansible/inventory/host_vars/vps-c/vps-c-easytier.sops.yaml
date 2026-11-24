@@ -1,6 +1,10 @@
 easytier_open_ports:
     - ENC[AES256_GCM,data:o8A/IJpW8a0T,iv:K2lOhU4MICxN1wdzMw/XH8imo2EOKCtJgXoWxenekSc=,tag:ghNJSRqFdy0GxCW3RqbxMQ==,type:str]
     - ENC[AES256_GCM,data:o5C3vZAjxy7T,iv:7gJBw8k78VbwyhMEmxTV20+NFFQ3SRIh1kNY8gURJfM=,tag:xgorKvVhOyUH2j6K5cKCaA==,type:str]
+    - ENC[AES256_GCM,data:TpkwYXykW3xF,iv:lwOXXE6SMOENTb+/xeKsYv2Ey+EMxjQac8hC8kHhICE=,tag:sumB0FNVxhqa7krZAXGxNw==,type:str]
+    - ENC[AES256_GCM,data:LsuKV1F32Z9O,iv:D+OAmkkG0vFAOjdnEvB9/nmBvVccRCgazGY/F+s51sw=,tag:O1dEgH5Lr9kDciwpdhvE0g==,type:str]
+    - ENC[AES256_GCM,data:pXIC/5+ZVNO/,iv:8avLONIOd+P4BxI3gE8TbvY+CmlHfvZ/zfIKe0TC7og=,tag:oyU3lWcAA/B6n3V2P6H2zA==,type:str]
+    - ENC[AES256_GCM,data:T2kKPuFxHybR,iv:P/aj1lqEgzt2Unz7BtIe72vxoBzUvh+f19X/avX4vqA=,tag:lL9u1JI6frKl4yqwRNFjtA==,type:str]
 easytier_config_server: ENC[AES256_GCM,data:Yo6gyWVqVnf/bxtTD8wzdchPZiRNhbzFWum4EpcE+yHE1imni+DjVQo/tIsifPhcqDc=,iv:e1x6MtkEJelM/TwPyufuhBFLIUXLb1WA16M8Dz6cc/I=,tag:c33DQY6BmIm8uEHCsbxmfQ==,type:str]
 easytier_machine_id: ENC[AES256_GCM,data:c6H/ZDCkku+uA6YtmttxcmO3LfwE74/wmLOhb6jk/bmKWUdJ,iv:0neHD/yZA7Y0Fq0IW063Xl3q9ivnKnrVIwc0HAJ5lwE=,tag:l2MJ3y8roC7GWSCyMWQC0Q==,type:str]
 sops:
@@ -14,7 +18,7 @@ sops:
             9Up9c/xRtjMzTSuiydbg7CHfxCbieGFP/Y6WWVONx4c+bypopFOYdw==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1vxxfmwathgflpvu4wgqpugtjj6tg9f3f3jyp42vfqv0her6hm3js9ny8f4
-    lastmodified: "2026-11-21T20:29:36Z"
-    mac: ENC[AES256_GCM,data:0gG0lp/IVmGdMEWRLcI3BONsGUW6pVCY6bihqt4vbVGDcZOHnt/TYOphBSlc7fbRKhyLPlQbum2eLpwOtbPXrCDhHTc+FCo72uJJd3J6X2Iz52HNSRW4akOc6UhN3ZLDeFnv7hMYVOMkyrQUJygK/c4cf2lUObaNP8IB7gHL+L8=,iv:/rn0wvtQuNNft4XC83gHvUBpuX/UrbcgCAQex2qDCck=,tag:4xrO2Vp5KR4QuZiR1WGqxA==,type:str]
+    lastmodified: "2026-11-24T05:34:06Z"
+    mac: ENC[AES256_GCM,data:A2dvIujfxBPze/J5scK3SZpnkcXnGoCb+jrflexXLVIN1/+waQrOEPVELDBcqYP1YzBVJjZzmeTocIoaxhfqwMHLh/dumvmSPmZ3J4mHVQHVHkp+/nnanCMfo9kZyQOW/mT3KKpoCNJAFTcZ0iNp9dyx9I1w2PK1WwbuX/UUc0Q=,iv:6BpWa7UOGUdnxjY3pV4sWFy7QW/QKlqTicYa/Zi6iX8=,tag:7HnNS8WCpp2eBu4gqYIshw==,type:str]
     unencrypted_regex: ^(kind)$
     version: 3.13.3

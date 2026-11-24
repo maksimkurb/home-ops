@@ -11,8 +11,9 @@
     frpc_python_packages:
       - python3
   pre_tasks:
-    - name: Install Python for Ansible on OpenWrt
+    - name: Install Python for Ansible on OpenWrt (other hosts such as Proxmox already have it)
       ansible.builtin.raw: |
+        [ -f /etc/openwrt_release ] || exit 0
         for p in {{ frpc_python_packages | join(' ') }}; do
           apk info -e "$p" >/dev/null 2>&1 || apk add "$p" || exit 1
         done
