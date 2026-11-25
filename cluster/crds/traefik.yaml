@@ -7,7 +7,7 @@ metadata:
 spec:
   interval: 12h
   ref:
-    tag: v42.4.1
+    tag: v43.0.0
   ignore: |
     /*
     !/traefik/crds
