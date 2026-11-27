@@ -78,7 +78,7 @@ spec:
           main:
             image:
               repository: docker.io/glauth/glauth
-              tag: v2.5.4
+              tag: v2.5.5
             command:
               - "/app/glauth"
               - "-c"

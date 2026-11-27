@@ -164,7 +164,7 @@ spec:
           app:
             image:
               repository: docker.io/apache/tika
-              tag: 3.3.3.0
+              tag: 3.4.0.0
             env:
               LANG: C.UTF-8
               LC_ALL: C.UTF-8
@@ -181,7 +181,7 @@ spec:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.1.4
+              tag: 9.2.1
             resources:
               requests:
                 cpu: 5m
